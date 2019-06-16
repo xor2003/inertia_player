@@ -502,7 +502,7 @@ class cpp:
 		if name in self.blacklist:
 			jump_proc = True
 
-		if self.context.has_global(name) :
+		if self.context.has_global(name):
 			hasglobal = True
 			g = self.context.get_global(name)
 			if isinstance(g, proc_module.proc):
@@ -553,12 +553,12 @@ class cpp:
 		dst = self.jump_to_label(name)
 		if dst!="__dispatch_call":
 			dst="k"+dst
-		else:
+			else:
 			dst="__disp"
 
-		if self.far:
+			if self.far:
 			self.body += "\tR(CALLF(%s));\n" %(dst)
-		else:
+			else:
 			self.body += "\tR(CALL(%s));\n" %(dst)
 		'''
 		name = name.lower()
@@ -866,7 +866,7 @@ class cpp:
 		self.body += "\tR(CMC);\n"
 
 	def __proc(self, name, def_skip = 0):
-		print "__print(%s)" %name
+		print "cpp::__proc(%s)" %name
 		#traceback.print_stack(file=sys.stdout)
 		try:
 			skip = def_skip

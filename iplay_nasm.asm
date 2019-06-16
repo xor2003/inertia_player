@@ -113,9 +113,9 @@ loc_1007B:
 
 loc_10080:
 		inc	ax
-		cmp	ax, [_word_245D4]
+		cmp	ax, [_mod_channels_number]
 		jbe	short loc_1008A
-		mov	ax, [_word_245D4]
+		mov	ax, [_mod_channels_number]
 
 loc_1008A:				; CODE XREF: _moduleread+85j
 		push	cs
@@ -163,7 +163,7 @@ _lfreaderr:				; CODE XREF: _moduleread+22j
 _mod_n_t_module:	; DATA XREF: _moduleread+61o
 		mov	DWORD [_module_type_text], 2E542E4Eh
 		mov	WORD [_word_245D2], 0Fh
-		mov	WORD [_word_245D4], 4
+		mov	WORD [_mod_channels_number], 4
 		mov	si, _byte_306DE
 		call	_mod_1021E
 		call	_mod_102F5
@@ -181,7 +181,7 @@ _mod_flt8_module:			; DATA XREF: seg003:0DDAo
 		mov	DWORD [_module_type_text], 38544C46h ;	FLT8
 		mov	WORD [_moduleflag_246D0], 11b
 		mov	WORD [_word_245D2], 1Fh
-		mov	WORD [_word_245D4], 8
+		mov	WORD [_mod_channels_number], 8
 		mov	si, _byte_308BE
 		call	_mod_1021E
 		mov	si, _byte_27FE8
@@ -217,7 +217,7 @@ loc_10137:				; CODE XREF: _mod_n_t_module+75j
 		ja	short locret_10154
 		dec	WORD [_word_24662]
 		mov	WORD [_word_245D2], 1Fh
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 
 loc_10152:
 		jmp	short loc_101A6
@@ -247,19 +247,19 @@ _mod_ch_module:				; DATA XREF: seg003:0DFDo
 		ja	short locret_10154
 		dec	WORD [_word_24662]
 		mov	WORD [_word_245D2], 1Fh
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		jmp	short loc_101A6
 ; ---------------------------------------------------------------------------
 
 _mod_cd81_module:			; DATA XREF: seg003:0DE3o seg003:0DECo
 		mov	WORD [_word_245D2], 1Fh
-		mov	WORD [_word_245D4], 8
+		mov	WORD [_mod_channels_number], 8
 		jmp	short loc_101A6
 ; ---------------------------------------------------------------------------
 
 _mod_mk_module:				; DATA XREF: seg003:0D9Bo seg003:0DA4o ...
 		mov	WORD [_word_245D2], 1Fh
-		mov	WORD [_word_245D4], 4
+		mov	WORD [_mod_channels_number], 4
 
 loc_101A6:				; CODE XREF: _mod_n_t_module:loc_10152j
 					; _mod_n_t_module+CDj ...
@@ -297,7 +297,7 @@ loc_101F4:
 		add	eax, 1084
 		cmp	eax, edx
 		jnz	short loc_10213
-		mov	WORD [_word_245D4], 8
+		mov	WORD [_mod_channels_number], 8
 		mov	DWORD [_module_type_text], 20574F57h ;	WOW
 
 loc_10213:				; CODE XREF: _mod_n_t_module+106j
@@ -445,7 +445,7 @@ _mod_read_10311:	; CODE XREF: _mod_n_t_module+67p
 loc_10315:				; CODE XREF: _mod_read_10311+D5j
 		push	cx
 		mov	dx, _word_31508
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		shl	cx, 8
 		call	_dosfread
 		test	WORD [_moduleflag_246D0], 10b
@@ -478,7 +478,7 @@ loc_1035C:				; CODE XREF: _mod_read_10311+18j
 
 loc_10365:				; CODE XREF: _mod_read_10311+CEj
 		push	cx
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		xor	ch, ch
 
 loc_1036C:				; CODE XREF: _mod_read_10311+C5j
@@ -559,7 +559,7 @@ _stm_module:				; DATA XREF: seg003:0E0Co
 
 loc_103FF:				; CODE XREF: __2stm_module+9j
 		mov	WORD [_moduleflag_246D0], 1000b
-		mov	WORD [_word_245D4], 4
+		mov	WORD [_mod_channels_number], 4
 		mov	WORD [_word_245D2], 1Fh
 		mov	WORD [_freq_245DE], 8448
 		mov	al, 60h	; '`'
@@ -663,7 +663,7 @@ loc_104F9:				; CODE XREF: __2stm_module+195j
 
 loc_1050C:				; CODE XREF: __2stm_module+18Ej
 		push	cx
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		xor	ch, ch
 
 loc_10513:				; CODE XREF: __2stm_module+185j
@@ -784,11 +784,11 @@ loc_10618:				; CODE XREF: _s3m_module+51j
 					; _s3m_module+78j ...
 		mov	ax, dx
 		push	cs
-		call	near _change_amplif
+		call	near _getset_amplif
 
 loc_1061E:				; CODE XREF: _s3m_module+45j
 		xor	si, si
-		mov	di, _volume_25908
+		mov	di, _channels_25908
 		xor	dx, dx
 		mov	cx, 20h	; ' '
 
@@ -812,8 +812,8 @@ loc_10640:				; CODE XREF: _s3m_module+97j
 		dec	cx
 		jnz	short loc_10628
 		inc	dx
-		mov	[_word_245D4], dx
-		mov	cx, [_word_245D4]
+		mov	[_mod_channels_number], dx
+		mov	cx, [_mod_channels_number]
 		xor	si, si
 
 loc_10652:				; CODE XREF: _s3m_module+CEj
@@ -1096,9 +1096,9 @@ loc_1088D:				; CODE XREF: _s3m_module+2AAj
 
 loc_1088F:				; CODE XREF: _s3m_module+2F4j
 		and	ch, 1Fh
-		cmp	byte [_word_245D4+1], ch
+		cmp	byte [_mod_channels_number+1], ch
 		jnb	short loc_1089C
-		mov	byte [_word_245D4+1], ch
+		mov	byte [_mod_channels_number+1], ch
 
 loc_1089C:				; CODE XREF: _s3m_module+2FFj
 		call	sub_11BA6
@@ -1119,7 +1119,7 @@ loc_108B1:				; CODE XREF: _s3m_module+246j
 		inc	ax
 		cmp	ax, [_word_245F2]
 		jb	loc_107B4
-		mov	ax, [_word_245D4]
+		mov	ax, [_mod_channels_number]
 		inc	ah
 		cmp	al, ah
 		jb	short loc_108C9
@@ -1127,7 +1127,7 @@ loc_108B1:				; CODE XREF: _s3m_module+246j
 
 loc_108C9:				; CODE XREF: _s3m_module+32Ej
 		xor	ah, ah
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		call	near _mod_readfile_11F4E
 		jb	loc_10099
 		retn
@@ -1156,7 +1156,7 @@ loc_10914:				; CODE XREF: _e669_module+9j
 		mov	WORD [_moduleflag_246D0], 100b
 		mov	BYTE [_byte_24673], 80h ; '€'
 		mov	BYTE [_byte_2467E], 2
-		mov	WORD [_word_245D4], 8
+		mov	WORD [_mod_channels_number], 8
 		movzx	ax, BYTE [_byte_30576]
 		mov	[_word_245D2], ax
 		mov	al, [_byte_30577]
@@ -1260,7 +1260,7 @@ loc_10A2D:				; CODE XREF: _e669_module+1C9j
 
 loc_10A40:				; CODE XREF: _e669_module+1C0j
 		push	cx
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		xor	ch, ch
 
 loc_10A47:				; CODE XREF: _e669_module+1B7j
@@ -1475,7 +1475,7 @@ loc_10C20:				; CODE XREF: _snd_off-3615j
 		jbe	short loc_10C15
 		dec	cx
 		jnz	short loc_10C12
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		mov	bx, _byte_33508
 		mov	cx, [_word_245F2]
 
@@ -1483,7 +1483,7 @@ loc_10C36:				; CODE XREF: _snd_off-354Aj
 		push	bx
 		push	cx
 		mov	si, _word_31508
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 
 loc_10C3F:				; CODE XREF: _snd_off-35AFj
 		push	bx
@@ -1526,7 +1526,7 @@ loc_10C73:				; CODE XREF: _snd_off-35D5j
 loc_10C89:				; CODE XREF: _snd_off-3555j
 		push	cx
 		push	si
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		xor	ch, ch
 
 loc_10C91:				; CODE XREF: _snd_off-3562j
@@ -1605,7 +1605,7 @@ _psm_module:		; DATA XREF: seg003:0E37o
 		mov	DWORD [_module_type_text], 204D5350h
 		mov	WORD [_moduleflag_246D0], 1000000b
 		mov	ax, [_word_30556]
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		mov	ax, [_word_30554]
 		mov	[_word_245D2], ax
 		mov	WORD [_freq_245DE], 8448
@@ -1787,9 +1787,9 @@ loc_10EDD:				; CODE XREF: _psm_module+1ABj
 
 loc_10EDF:				; CODE XREF: _psm_module+1B5j
 		and	ch, 1Fh
-		cmp	byte [_word_245D4+1], ch
+		cmp	byte [_mod_channels_number+1], ch
 		jnb	short loc_10EEC
-		mov	byte [_word_245D4+1], ch
+		mov	byte [_mod_channels_number+1], ch
 
 loc_10EEC:				; CODE XREF: _psm_module+1C0j
 		call	sub_11BA6
@@ -1807,7 +1807,7 @@ loc_10EF4:				; CODE XREF: _psm_module+16Aj
 		pop	cx
 		dec	cx
 		jnz	loc_10E4C
-		mov	ax, [_word_245D4]
+		mov	ax, [_mod_channels_number]
 		inc	ah
 		cmp	al, ah
 		jb	short loc_10F11
@@ -1815,7 +1815,7 @@ loc_10EF4:				; CODE XREF: _psm_module+16Aj
 
 loc_10F11:				; CODE XREF: _psm_module+1E7j
 		xor	ah, ah
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		call	near _mod_readfile_11F4E
 		jb	loc_10099
 		retn
@@ -1830,7 +1830,7 @@ faar_module:		; DATA XREF: seg003:0E40o
 		mov	WORD [_moduleflag_246D0], 10000000b
 		mov	BYTE [_byte_24673], 0
 		mov	BYTE [_byte_2467E], 2
-		mov	WORD [_word_245D4], 10h
+		mov	WORD [_mod_channels_number], 10h
 		mov	al, byte [_word_30552+1]
 		and	ax, 0Fh
 		mov	di, ax
@@ -1843,7 +1843,7 @@ faar_module:		; DATA XREF: seg003:0E40o
 		cmp	BYTE [_sndcard_type],	0
 		jnz	short loc_10F80
 		xor	si, si
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 
 loc_10F6A:				; CODE XREF: faar_module+60j
 		mov	al, byte [_word_30554+si]
@@ -1923,7 +1923,7 @@ loc_1100F:				; CODE XREF: faar_module+E6j
 		sub	ax, 2
 		shr	ax, 2
 		xor	dx, dx
-		div	WORD [_word_245D4]
+		div	WORD [_mod_channels_number]
 		push	ax
 		dec	al
 		and	al, 3Fh
@@ -1952,7 +1952,7 @@ loc_11037:				; CODE XREF: faar_module+113j
 
 loc_11051:				; CODE XREF: faar_module+1F7j
 		push	cx
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		xor	ch, ch
 
 loc_11058:				; CODE XREF: faar_module+1ECj
@@ -2363,7 +2363,7 @@ loc_1138E:				; CODE XREF: _ult_module+14Cj
 		rep movsb
 		movzx	ax, BYTE [_byte_30639]
 		inc	ax
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		movzx	ax, BYTE [_byte_3063A]
 		inc	ax
 		mov	[_word_245F2], ax
@@ -2377,12 +2377,12 @@ loc_113C6:				; CODE XREF: _ult_module+186j
 		cmp	ax, 3033h
 		jb	short loc_113F8
 		mov	dx, _word_3063B
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		call	_dosfread
 		cmp	BYTE [_sndcard_type],	0
 		jnz	short loc_113F8
 		xor	si, si
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 
 loc_113E2:				; CODE XREF: _ult_module+1BDj
 		mov	al, byte [_word_3063B+si]
@@ -2397,7 +2397,7 @@ loc_113E2:				; CODE XREF: _ult_module+1BDj
 loc_113F8:				; CODE XREF: _ult_module+190j
 					; _ult_module+1A1j
 		mov	si, _dword_30518
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 
 loc_113FF:				; CODE XREF: _ult_module+1F9j
 		push	cx
@@ -2437,7 +2437,7 @@ loc_11438:				; CODE XREF: _ult_module+2C6j
 		push	cx
 		mov	si, _dword_30518
 		mov	di, _byte_30908
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 
 loc_11443:				; CODE XREF: _ult_module+250j
 		push	cx
@@ -2480,7 +2480,7 @@ loc_1145A:				; CODE XREF: _ult_module+237j
 loc_11494:				; CODE XREF: _ult_module+2BFj
 		push	cx
 		push	si
-		mov	cx, [_word_245D4]
+		mov	cx, [_mod_channels_number]
 		xor	ch, ch
 
 loc_1149C:				; CODE XREF: _ult_module+2B2j
@@ -2833,7 +2833,7 @@ _inr_module:		; DATA XREF: seg003:off_25326o
 		mov	al, [_byte_257DC]
 		mov	[_byte_2467E], al
 		mov	ax, [_word_257E6]
-		mov	[_word_245D4], ax
+		mov	[_mod_channels_number], ax
 		dec	ax
 		mov	[_byte_2461B], al
 		mov	ax, [_word_257EC]
@@ -3186,7 +3186,7 @@ _clean_11C43:		; CODE XREF: _moduleread:loc_1003Dp
 		mov	WORD [_word_24630], 2
 		mov	WORD [_word_245FA], 0
 		mov	WORD [_word_245F8], 0
-		mov	WORD [_word_245D4], 4
+		mov	WORD [_mod_channels_number], 4
 		mov	WORD [_word_245D6], 4
 		mov	WORD [_word_245D8], 0
 		mov	WORD [_word_245DA], 0
@@ -3200,7 +3200,7 @@ loc_11CB8:				; CODE XREF: _clean_11C43+6Dj
 		mov	BYTE [_byte_2461A], 0
 		mov	DWORD [_dword_245C4], 0
 		mov	WORD [_amplification], 100
-		mov	BYTE [_byte_24625], 0
+		mov	BYTE [_high_amplif], 0
 		mov	ax, ds
 		mov	es, ax
 		cld
@@ -3208,7 +3208,7 @@ loc_11CB8:				; CODE XREF: _clean_11C43+6Dj
 		mov	cx, 8
 		mov	eax, '    '
 		rep stosd
-		mov	di, _volume_25908
+		mov	di, _channels_25908
 		xor	eax, eax
 		mov	cx, 280h
 		rep stosd
@@ -4415,7 +4415,7 @@ sub_1265D:		; CODE XREF: _read_module+86P
 		mov	ax, [es:_volume_245FC]
 		dec	ax
 		mov	cl, al
-		mov	si, _volume_25908
+		mov	si, _channels_25908
 		mov	di, asc_246B0 ; "				"
 		movzx	bp, BYTE [es:_sndcard_type]
 		mov	ch, [es:_byte_24666]
@@ -4425,7 +4425,7 @@ sub_1265D:		; CODE XREF: _read_module+86P
 		dec	dh
 		and	dh, 3
 		shl	dh, 1
-		or	dh, [es:_byte_24623]
+		or	dh, [es:_is_stereo]
 		shl	dh, 1
 		or	dh, [es:_byte_24671]
 		shl	dh, 3
@@ -4445,7 +4445,7 @@ sub_126A9:		; CODE XREF: _read_module+6AP
 		mov	si, _myout
 		mov	bl, byte [es:_word_245FA]
 		mov	bh, byte [es:_word_245D2]
-		mov	cl, byte [es:_word_245D4]
+		mov	cl, byte [es:_mod_channels_number]
 		mov	ch, [es:_byte_24617]
 		mov	eax, [es:_module_type_text]
 		retf
@@ -4468,8 +4468,8 @@ _volume_prep:		; CODE XREF: seg001:18BEP
 		call	_ems_save_mapctx
 		pop	es
 		pop	di
-		mov	si, _volume_25908
-		mov	dx, [_word_245D4]
+		mov	si, _channels_25908
+		mov	dx, [_mod_channels_number]
 
 loc_126F0:				; CODE XREF: _volume_prep+2Dj
 		push	dx
@@ -4500,8 +4500,8 @@ loc_12721:				; CODE XREF: _volume_prep+3Bj
 		mov	ax, ds
 		mov	es, ax
 		cld
-		mov	si, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	si, _channels_25908
+		mov	cx, [_mod_channels_number]
 
 loc_1272D:				; CODE XREF: _volume_prep+87j
 		pushf
@@ -4530,8 +4530,8 @@ loc_1272D:				; CODE XREF: _volume_prep+87j
 		jnz	short loc_1272D
 		pop	es
 		pop	di
-		mov	si, _volume_25908
-		mov	ax, [_word_245D4]
+		mov	si, _channels_25908
+		mov	ax, [_mod_channels_number]
 
 loc_1275F:				; CODE XREF: _volume_prep+C8j
 		push	ax
@@ -4909,8 +4909,8 @@ _volume_12A66:	; CODE XREF: _vlm_141DF+1p _snd_off+14p
 		push	ds
 		mov	ax, seg003
 		mov	ds, ax
-		mov	cx, [_word_245D4]
-		mov	bx, _volume_25908
+		mov	cx, [_mod_channels_number]
+		mov	bx, _channels_25908
 
 loc_12A73:				; CODE XREF: _volume_12A66+19j
 		push	bx
@@ -4936,8 +4936,8 @@ _change_volume:	; CODE XREF: _keyb_19EFD+17P
 		cmp	ax, -1
 		jz	short loc_12AA9
 		mov	[_volume_245FC],	ax
-		mov	cx, [_word_245D4]
-		mov	bx, _volume_25908
+		mov	cx, [_mod_channels_number]
+		mov	bx, _channels_25908
 
 loc_12A98:				; CODE XREF: _change_volume+24j
 		push	bx
@@ -4959,7 +4959,7 @@ loc_12AA9:				; CODE XREF: _change_volume+9j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_change_amplif:	; CODE XREF: _s3m_module+84p
+_getset_amplif:	; CODE XREF: _s3m_module+84p
 					; _eff_14020+9p	...
 		push	ds
 		mov	cx, seg003
@@ -4967,15 +4967,15 @@ _change_amplif:	; CODE XREF: _s3m_module+84p
 		cmp	ax, -1
 		jz	short loc_12ACE
 		mov	[_amplification], ax
-		mov	BYTE [_byte_24625], 0
+		mov	BYTE [_high_amplif], 0
 		cmp	ax, 100
 		jbe	short loc_12ACB
-		mov	BYTE [_byte_24625], 1
+		mov	BYTE [_high_amplif], 1
 
-loc_12ACB:				; CODE XREF: _change_amplif+16j
+loc_12ACB:				; CODE XREF: _getset_amplif+16j
 		call	sub_13044
 
-loc_12ACE:				; CODE XREF: _change_amplif+9j
+loc_12ACE:				; CODE XREF: _getset_amplif+9j
 		mov	ax, [_amplification]
 		pop	ds
 		retf
@@ -5022,10 +5022,10 @@ sub_12AFD:		; CODE XREF: _keyb_19EFD+1F9P
 		mov	bx, seg003
 		mov	ds, bx
 		movzx	bx, ch
-		cmp	bx, [_word_245D4]
+		cmp	bx, [_mod_channels_number]
 		jnb	short loc_12B16
 		imul	bx, 80
-		add	bx, _volume_25908
+		add	bx, _channels_25908
 		call	_eff_13A43
 
 loc_12B16:				; CODE XREF: sub_12AFD+Dj
@@ -5051,8 +5051,8 @@ sub_12B18:		; CODE XREF: _moduleread:loc_10092p
 		mov	BYTE [_byte_2461C], 0
 		mov	BYTE [_byte_2461D], 0
 		mov	si, _dword_27BC8
-		mov	bx, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	bx, _channels_25908
+		mov	cx, [_mod_channels_number]
 		xor	al, al
 
 loc_12B42:				; CODE XREF: sub_12B18+65j
@@ -5117,9 +5117,9 @@ loc_12B92:				; CODE XREF: sub_12B83+Bj
 		mov	al, 2
 
 loc_12B98:				; CODE XREF: sub_12B83+11j
-		mov	[_word_245D4], ax
-		mov	di, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	[_mod_channels_number], ax
+		mov	di, _channels_25908
+		mov	cx, [_mod_channels_number]
 		xor	dx, dx
 		xor	bx, bx
 
@@ -5212,8 +5212,8 @@ loc_12C75:				; CODE XREF: _someplaymode+75j
 		mov	[_dword_2463C], eax
 
 loc_12C86:				; CODE XREF: _someplaymode+62j
-		mov	di, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	di, _channels_25908
+		mov	cx, [_mod_channels_number]
 		xor	ax, ax
 
 loc_12C8F:				; CODE XREF: _someplaymode+9Ej
@@ -5386,7 +5386,7 @@ sub_12DA8:		; CODE XREF: _callsubx+24P
 		mov	WORD [off_245C8], sub_13429
 		mov	WORD [off_245CC], sub_131EF
 		mov	WORD [off_245CE], sub_131DA
-		mov	BYTE [_byte_24623], 0
+		mov	BYTE [_is_stereo], 0
 		mov	BYTE [_bit_mode], 8
 		mov	WORD [_word_245E8], 400h
 		mov	BYTE [_snd_set_flag],	0
@@ -5436,7 +5436,7 @@ loc_12E74:				; CODE XREF: sub_12DA8+C8j
 loc_12E7D:				; CODE XREF: sub_12DA8+D1j
 		mov	[_flag_playsetttings], al
 		mov	ax, 400h
-		mov	cl, [_byte_24623]
+		mov	cl, [_is_stereo]
 		and	cl, 1
 		cmp	BYTE [_bit_mode], 16
 		jnz	short loc_12E9F
@@ -5490,7 +5490,7 @@ sub_12EBA:		; CODE XREF: _read_module+E3P
 		mov	BYTE [_byte_24621], 0
 		mov	ax, ds
 		mov	es, ax
-		mov	di, _volume_25908
+		mov	di, _channels_25908
 		xor	eax, eax
 		mov	cx, 280h
 		cld
@@ -5636,7 +5636,7 @@ _configure_timer:	; CODE XREF: _covox_setp _stereo_setp ...
 		call	_set_timer
 		mov	BYTE [cs:_byte_14F70], 1
 		mov	ax, [_word_245E4]
-		mov	[cs:_word_14F6C], ax
+		mov	[cs:audio_len], ax
 		popf
 		retn
 
@@ -5651,7 +5651,7 @@ _memfill8080:	; CODE XREF: _set_timer_int+18p
 		xor	ax, ax
 		call	_set_timer
 		mov	BYTE [cs:_byte_14F70], 0
-		mov	WORD [cs:_word_14F6C], 1
+		mov	WORD [cs:audio_len], 1
 		mov	es, word [_dma_buf_pointer+2]
 		xor	di, di
 		mov	cx, 400h
@@ -5692,7 +5692,7 @@ loc_13038:				; CODE XREF: sub_13017+2Aj
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_13044:		; CODE XREF: _change_amplif:loc_12ACBp
+sub_13044:		; CODE XREF: _getset_amplif:loc_12ACBp
 					; sub_12B83:loc_12BEFp
 		mov	al, [_byte_2467E]
 		cmp	al, 0
@@ -5734,7 +5734,7 @@ loc_13091:				; CODE XREF: sub_13044+27j
 		mov	ax, 2
 
 loc_130A2:				; CODE XREF: sub_13044+59j
-		cmp	BYTE [_byte_24623], 1
+		cmp	BYTE [_is_stereo], 1
 		jnz	short loc_130AE
 		shr	ax, 1
 		adc	ax, 0
@@ -5760,7 +5760,7 @@ loc_130BC:				; CODE XREF: sub_13044+122j
 		mov	bp, ax
 		shr	eax, 16
 		mov	ecx, eax
-		cmp	BYTE [_byte_24625], 1
+		cmp	BYTE [_high_amplif], 1
 		jz	short loc_13120
 		xor	ax, ax
 		xor	dx, dx
@@ -6031,8 +6031,8 @@ loc_13499:				; CODE XREF: sub_13429+5Cj
 
 sub_135CA:		; CODE XREF: sub_12F56+1Fp
 					; sub_140B6+3Cp ...
-		mov	bx, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	bx, _channels_25908
+		mov	cx, [_mod_channels_number]
 		xor	ax, ax
 
 loc_135D3:				; CODE XREF: sub_135CA+1Aj
@@ -6060,8 +6060,8 @@ loc_135F2:				; CODE XREF: sub_135CA+31j
 
 loc_135FD:				; CODE XREF: sub_135CA+26j
 		mov	word [_pointer_245B4], si
-		mov	bx, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	bx, _channels_25908
+		mov	cx, [_mod_channels_number]
 
 loc_13608:				; CODE XREF: sub_135CA+56j
 		test	byte [bx+17h], 1
@@ -6098,13 +6098,13 @@ sub_13623:		; CODE XREF: sub_12CAD+1Cp
 		mov	dh, al
 		and	dh, 0E0h
 		and	ax, 1Fh
-		cmp	ax, [_word_245D4]
+		cmp	ax, [_mod_channels_number]
 		jnb	loc_137BE
 		shl	ax, 4
 		mov	bx, ax
 		shl	ax, 2
 		add	bx, ax
-		add	bx, _volume_25908
+		add	bx, _channels_25908
 		test	dh, 80h
 		jz	short loc_13661
 
@@ -7210,7 +7210,7 @@ loc_13D36:				; CODE XREF: sub_13CF6+39j
 		mov	[_word_245EE], ax
 		mov	ax, [_word_245E8]
 		mov	[_word_245E4], ax
-		mov	[cs:_word_14F6C], ax
+		mov	[cs:audio_len], ax
 		retn
 ; ---------------------------------------------------------------------------
 
@@ -7710,7 +7710,7 @@ _eff_14020:		; CODE XREF: sub_13623+196j
 		push	si
 		push	es
 		push	cs
-		call	near _change_amplif
+		call	near _getset_amplif
 		pop	es
 		pop	si
 		pop	bx
@@ -7827,8 +7827,8 @@ sub_140B6:		; CODE XREF: _gravis_set+1Ep
 		mov	al, [_byte_24668]
 		cmp	al, [_byte_24667]
 		jnb	short loc_140E6
-		mov	bx, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	bx, _channels_25908
+		mov	cx, [_mod_channels_number]
 
 loc_140D8:				; CODE XREF: sub_140B6+2Dj
 		push	bx
@@ -7853,8 +7853,8 @@ loc_140E6:				; CODE XREF: sub_140B6+19j
 ; ---------------------------------------------------------------------------
 
 loc_140F7:				; CODE XREF: sub_140B6+3Aj
-		mov	bx, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	bx, _channels_25908
+		mov	cx, [_mod_channels_number]
 
 loc_140FE:				; CODE XREF: sub_140B6+53j
 		push	bx
@@ -8206,7 +8206,7 @@ _word_14913	dw 536h			; DATA XREF: _wss_set+14w
 
 _sb16_init:		; DATA XREF: seg003:0D08o
 		mov	BYTE [_sndflags_24622], 9
-		mov	BYTE [_byte_24623], 1
+		mov	BYTE [_is_stereo], 1
 		mov	BYTE [_bit_mode], 16
 		call	_sb16_detect_port
 		mov	dx, _aErrorSoundcardN ; "Error: Soundcard	not found!\r\n"
@@ -8352,7 +8352,7 @@ loc_14B77:				; CODE XREF: _sb16_on+62j
 					; clear	byte pointer flip-flop.
 		or	al, al
 		js	short loc_14B77
-		mov	al, [_byte_24623]
+		mov	al, [_is_stereo]
 		and	al, 1
 		shl	al, 5
 		or	al, ah
@@ -8473,7 +8473,7 @@ _sbpro_set:				; CODE XREF: _sb_set+6j
 		call	_ReadMixerSB
 		mov	[_byte_24664], al
 		and	al, 0FDh
-		cmp	BYTE [_byte_24623], 0
+		cmp	BYTE [_is_stereo], 0
 		jz	short loc_14C89
 		call	_WriteMixerSB
 		or	al, 22h
@@ -8736,7 +8736,7 @@ _timer_int_end:	; CODE XREF: _covox_timer_int+22j
 		mov	ax, seg003
 		mov	ds, ax
 		mov	ax, [_word_245E4]
-		mov	[cs:_word_14F6C], ax
+		mov	[cs:audio_len], ax
 		sti
 		call	sub_16C69
 		pop	gs
@@ -8748,7 +8748,7 @@ _timer_int_end:	; CODE XREF: _covox_timer_int+22j
 ; ---------------------------------------------------------------------------
 
 loc_14F3C:				; CODE XREF: _timer_int_end+6j
-		mov	WORD [cs:_word_14F6C], 1
+		mov	WORD [cs:audio_len], 1
 		jmp	FAR [cs:_int8addr]
 
 ; ---------------------------------------------------------------------------
@@ -8769,7 +8769,7 @@ loc_14F50:				; CODE XREF: seg000:4F4Dj
 ; ---------------------------------------------------------------------------
 _int8addr	dd 0			; DATA XREF: sub_12DA8+6Aw
 					; _clean_int8_mem_timr+5r ...
-_word_14F6C	dw 0			; DATA XREF: _configure_timer+1Bw
+audio_len	dw 0			; DATA XREF: _configure_timer+1Bw
 					; _memfill8080+Dw ...
 _timer_word_14F6E dw 0			; DATA XREF: _set_timerw seg000:4F59r
 _byte_14F70	db 0			; DATA XREF: _configure_timer+12w
@@ -8785,7 +8785,7 @@ _byte_14F73	db 0			; DATA XREF: sub_13CF6+11w
 
 _covox_init:		; DATA XREF: seg003:0D0Eo
 		mov	BYTE [_sndflags_24622], 3
-		mov	BYTE [_byte_24623], 0
+		mov	BYTE [_is_stereo], 0
 		mov	BYTE [_bit_mode], 8
 		cmp	WORD [_snd_base_port], 0FFFFh
 		jnz	short loc_14F95
@@ -8846,14 +8846,14 @@ _word_14FC8	dw 378h			; DATA XREF: _covox_init+24w
 		pop	ax
 		inc	WORD [cs:_word_14FC5]
 		jz	short loc_14FE3
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
 
 loc_14FE3:				; CODE XREF: _covox_timer_int+1Bj
 		mov	WORD [cs:_word_14FC5], 0F000h
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 
@@ -8879,7 +8879,7 @@ _covox_clean:	; DATA XREF: seg003:0D50o
 
 _stereo_init:	; DATA XREF: seg003:0D10o
 		mov	BYTE [_sndflags_24622], 3
-		mov	BYTE [_byte_24623], 1
+		mov	BYTE [_is_stereo], 1
 		mov	BYTE [_bit_mode], 8
 		cmp	WORD [_snd_base_port], -1
 		jnz	short loc_1501D
@@ -8956,14 +8956,14 @@ _word_15056	dw 1234h		; DATA XREF: _stereo_init+3Aw
 		pop	ax
 		add	WORD [cs:_word_15056], 2
 		jb	short loc_1507E
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
 
 loc_1507E:				; CODE XREF: _stereo_timer_int+2Ej
 		mov	WORD [cs:_word_15056], 0F000h
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 
@@ -8989,7 +8989,7 @@ _stereo_clean:	; DATA XREF: seg003:0D52o
 
 _adlib_init:		; DATA XREF: seg003:0D12o
 		mov	BYTE [_sndflags_24622], 0Bh
-		mov	BYTE [_byte_24623], 0
+		mov	BYTE [_is_stereo], 0
 		mov	BYTE [_bit_mode], 8
 		call	_adlib_18389
 		mov	ax, 2120h
@@ -9074,7 +9074,7 @@ loc_1513C:				; CODE XREF: seg000:5155j
 		mov	al, 20h	; ' '
 		out	20h, al		; Interrupt controller,	8259A.
 		pop	ax
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
@@ -9105,7 +9105,7 @@ _adlib_clean:	; DATA XREF: seg003:0D54o
 
 _pcspeaker_init:	; DATA XREF: seg003:0D14o
 		mov	BYTE [_sndflags_24622], 3
-		mov	BYTE [_byte_24623], 0
+		mov	BYTE [_is_stereo], 0
 		mov	BYTE [_bit_mode], 8
 		pushf
 		cli
@@ -9173,14 +9173,14 @@ _word_151A3	dw 1234h		; DATA XREF: _pcspeaker_init+22w
 		pop	bx
 		inc	WORD [cs:_word_151A3]
 		jz	short loc_151C9
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
 
 loc_151C9:				; CODE XREF: seg000:51BDj
 		mov	WORD [cs:_word_151A3], 0F000h
-		dec	WORD [cs:_word_14F6C]
+		dec	WORD [cs:audio_len]
 		jz	near _timer_int_end
 		iret
 
@@ -9242,7 +9242,7 @@ nn:					; CODE XREF: _snd_initialze+13j
 
 _midi_init:				; DATA XREF: seg003:0D16o
 		mov	BYTE [_sndflags_24622], 12h
-		mov	BYTE [_byte_24623], 1
+		mov	BYTE [_is_stereo], 1
 		mov	BYTE [_bit_mode], 8
 		mov	ax, [_snd_base_port]
 		cmp	ax, 0FFFFh
@@ -9256,7 +9256,7 @@ loc_15302:				; CODE XREF: _snd_initialze+1107j
 		mov	WORD [off_245C8], _midi_15466
 		mov	WORD [off_245CC], _midi_154AC
 		mov	WORD [off_245CE], _midi_1544D
-		mov	bx, _volume_25908
+		mov	bx, _channels_25908
 		mov	ah, 1
 
 loc_15325:				; CODE XREF: _snd_initialze+1146j
@@ -9306,8 +9306,8 @@ _midi_int8p:		; DATA XREF: _midi_seto
 		mov	al, [_byte_24668]
 		cmp	al, [_byte_24667]
 		jnb	short loc_1538F
-		mov	bx, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	bx, _channels_25908
+		mov	cx, [_mod_channels_number]
 
 loc_15380:				; CODE XREF: _midi_int8p+37j
 		push	bx
@@ -9680,7 +9680,7 @@ sub_15577:		; CODE XREF: sub_16C69:loc_16CB9p
 		call	sub_154F4
 		test	BYTE [_flag_playsetttings], 10h
 		jnz	_lc_perfrm_interpol
-		cmp	BYTE [_byte_24625], 1
+		cmp	BYTE [_high_amplif], 1
 		jz	loc_15E48
 		xor	edx, edx
 		mov	ax, [_word_245E4]
@@ -10946,7 +10946,7 @@ sub_1609F:		; CODE XREF: sub_16C69+4Bp
 		call	sub_154F4
 		test	BYTE [_flag_playsetttings], 10h
 		jnz	_lc_perfrm_interpol2
-		cmp	BYTE [_byte_24625], 1
+		cmp	BYTE [_high_amplif], 1
 		jz	loc_16959
 		xor	edx, edx
 		mov	ax, [_word_245E4]
@@ -12328,10 +12328,10 @@ sub_16C69:		; CODE XREF: sub_13017:loc_13038p
 
 loc_16C88:				; CODE XREF: sub_16C69+Ej
 		mov	BYTE [_byte_24682], 0
-		cmp	BYTE [_byte_24623], 1
+		cmp	BYTE [_is_stereo], 1
 		jz	loc_171D3
-		mov	si, _volume_25908
-		mov	cx, [_word_245D4]
+		mov	si, _channels_25908
+		mov	cx, [_mod_channels_number]
 
 loc_16C9D:				; CODE XREF: sub_16C69+59j
 		cmp	byte [si+1Dh], 0
@@ -12388,7 +12388,7 @@ loc_16CEE:				; CODE XREF: sub_16C69+80j
 
 sub_16CF6:		; CODE XREF: sub_16C69+7Ap
 					; sub_16C69:loc_16CEBp
-		cmp	BYTE [_byte_24625], 1
+		cmp	BYTE [_high_amplif], 1
 		jz	loc_16E24
 		mov	bx, cx
 		and	bx, 0Fh
@@ -12976,8 +12976,8 @@ locret_171D2:				; CODE XREF: sub_16CF6+30Ej
 ; START	OF FUNCTION CHUNK FOR sub_16C69
 
 loc_171D3:				; CODE XREF: sub_16C69+29j
-		mov	cx, [_word_245D4]
-		mov	si, _volume_25908
+		mov	cx, [_mod_channels_number]
+		mov	si, _channels_25908
 
 loc_171DA:				; CODE XREF: sub_16C69+5B7j
 		push	cx
@@ -13052,7 +13052,7 @@ loc_17257:				; CODE XREF: sub_16C69+5E9j
 
 sub_1725F:		; CODE XREF: sub_16C69+5E3p
 					; sub_16C69:loc_17254p
-		cmp	BYTE [_byte_24625], 1
+		cmp	BYTE [_high_amplif], 1
 		jz	loc_17441
 		or	si, 1
 		mov	edx, 80808080h
@@ -13716,7 +13716,7 @@ loc_1781C:				; CODE XREF: sub_16C69+BAEj
 
 sub_17824:		; CODE XREF: sub_16C69+BA8p
 					; sub_16C69:loc_17819p
-		cmp	BYTE [_byte_24625], 1
+		cmp	BYTE [_high_amplif], 1
 		jz	loc_17A58
 		mov	bx, cx
 		and	bx, 0Fh
@@ -18379,7 +18379,7 @@ _keyb_19EFD:		; CODE XREF: _start+6EBp _keyb_19EFD+5Aj ...
 		call far _change_volume
 		mov	[_word_1DE6A], ax
 		mov	ax, -1
-		call far _change_amplif
+		call far _getset_amplif
 		mov	[_word_1DE6C], ax
 		call far _get_playsettings
 		mov	[_flg_play_settings], al
@@ -18647,7 +18647,7 @@ loc_1A17A:				; CODE XREF: _keyb_19EFD+279j
 
 _l_rbracket:				; CODE XREF: _keyb_19EFD+B6j
 		mov	ax, 0FFFFh
-		call far _change_amplif
+		call far _getset_amplif
 		mov	cx, 1
 		test	WORD [cs:_keyb_switches], 3
 		jnz	short loc_1A199
@@ -18660,13 +18660,13 @@ loc_1A199:				; CODE XREF: _keyb_19EFD+297j
 		mov	ax, 2500
 
 loc_1A1A3:				; CODE XREF: _keyb_19EFD+2A1j
-		call far _change_amplif
+		call far _getset_amplif
 		jmp	_keyb_19EFD
 ; ---------------------------------------------------------------------------
 
 _l_lbracket:				; CODE XREF: _keyb_19EFD+B0j
 		mov	ax, -1
-		call far _change_amplif
+		call far _getset_amplif
 		mov	cx, 1
 		test	WORD [cs:_keyb_switches], 3
 		jnz	short loc_1A1C2
@@ -18683,7 +18683,7 @@ loc_1A1C9:				; CODE XREF: _keyb_19EFD+2C7j
 		mov	ax, 50
 
 loc_1A1D1:				; CODE XREF: _keyb_19EFD+2CFj
-		call far _change_amplif
+		call far _getset_amplif
 		jmp	_keyb_19EFD
 ; ---------------------------------------------------------------------------
 
@@ -24690,7 +24690,7 @@ _savesp_245D0	dw 0			; DATA XREF: _moduleread+15w
 					; _moduleread+B6r ...
 _word_245D2	dw 0			; DATA XREF: _mod_n_t_module+9w
 					; _mod_n_t_module+43w ...
-_word_245D4	dw 0			; DATA XREF: _moduleread+81r
+_mod_channels_number	dw 0			; DATA XREF: _moduleread+81r
 					; _moduleread+87r ...
 _word_245D6	dw 0			; DATA XREF: _clean_11C43+4Aw
 					; sub_12B83+52w ...
@@ -24779,12 +24779,12 @@ _byte_24621	db 0			; DATA XREF: sub_12EBA+3Dw
 					; _proaud_14700+73Bw ...
 _sndflags_24622	db 0			; DATA XREF: _useless_11787+9r
 					; _inr_read_118B0+AEr ...
-_byte_24623	db 0			; DATA XREF: sub_1265D+33r
+_is_stereo	db 0			; DATA XREF: sub_1265D+33r
 					; sub_12DA8+50w ...
 _bit_mode	db 8			; DATA XREF: sub_12DA8+55w
 					; sub_12DA8+E2r ...
-_byte_24625	db 0			; DATA XREF: _clean_11C43+89w
-					; _change_amplif+Ew ...
+_high_amplif	db 0			; DATA XREF: _clean_11C43+89w
+					; _getset_amplif+Ew ...
 _gravis_port	dw 0			; DATA XREF: _volume_prep+61r
 					; _gravis_13215+49r ...
 _byte_24628	db 0			; DATA XREF: _mod_readfile_11F4E+1BFr
@@ -25715,7 +25715,7 @@ unk_258A6	db  49h	; I		; DATA XREF: _useless_writeinr_118+Eo
 		db    0
 		db    0
 		db    0
-_volume_25908	times	0A00h	db 0		; DATA XREF: _s3m_module+89o
+_channels_25908	times	0A00h	db 0		; DATA XREF: _s3m_module+89o
 					; _clean_11C43+A2o ...
 ; char _myout[152]
 _myout		resb 18C0h		; DATA XREF: _mod_1024A+3o

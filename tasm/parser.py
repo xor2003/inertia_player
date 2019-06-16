@@ -501,7 +501,7 @@ class parser:
 							self.set_global(name, op.label(name, proc, line_number=self.offset_id, far=farb))
 							self.offset_id += 1
 						else:
-							print "Label %s is outside the procedure" %name
+							print "!!! Label %s is outside the procedure" %name
 						skipping_binary_data = False
 					else:
 						print "skipping binary data for %s" % (name,)
@@ -618,7 +618,7 @@ class parser:
 
 					binary_width = 1
 					offset = int(len(self.binary_data)/16)
-					print "segement %s %x" %(name, offset)
+					print "segment %s %x" %(name, offset)
 					self.cur_seg_offset = 16
 
 					num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf

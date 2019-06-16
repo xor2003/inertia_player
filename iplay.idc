@@ -1905,7 +1905,7 @@ static Bytes_0(void) {
 	OpOff		(x,	1,	0X245A0);
 	OpOff		(x,	129,	0X245A0);
 	MakeCode	(0X12AAE);
-	MakeName	(0X12AAE,	"_change_amplif");
+	MakeName	(0X12AAE,	"_getset_amplif");
 	MakeCode	(x=0X12AAF);
 	OpSeg		(x,	1);
 	MakeCode	(x=0X12AB4);
@@ -10432,7 +10432,7 @@ static Bytes_2(void) {
 	MakeDword	(0X25896);
 	MakeByte	(0X25908);
 	MakeArray	(0X25908,	0XA00);
-	MakeName	(0X25908,	"_volume_25908");
+	MakeName	(0X25908,	"_channels_25908");
 	MakeByte	(0X26308);
 	MakeArray	(0X26308,	0X18C0);
 	MakeName	(0X26308,	"_myout");

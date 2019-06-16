@@ -25,7 +25,7 @@ import op
 class proc:
 	last_addr = 0xc000
 	
-	def __init__(self, name):
+	def __init__(self, name, line_number=0, far=False):
 		self.name = name
 		self.calls = []
 		self.stmts = []
@@ -34,6 +34,9 @@ class proc:
 		self.__label_re = re.compile(r'^([\S@]+)::?(.*)$')
 		self.offset = proc.last_addr
 		proc.last_addr += 4
+		self.line_number = 0
+		self.line_number = line_number
+		self.far = far
 
 	def add_label(self, label, proc, line_number=0):
 		self.stmts.append(op.label(label, proc, line_number=line_number))
@@ -160,7 +163,7 @@ class proc:
 		#self.optimize_sequence(op._movsw);
 	
 	def add(self, stmt, line_number=0):
-#		print stmt
+		#print stmt
 		#comment = stmt.find(';')
 		#comments = ""
 		#if comment >= 0:
@@ -227,7 +230,7 @@ class proc:
 		for i in self.stmts:
 			r.append(i.__str__())
 		return "\n".join(r)
-
+	
 	def visit(self, visitor, skip = 0):
 		for i in xrange(skip, len(self.stmts)):
 			self.stmts[i].visit(visitor)

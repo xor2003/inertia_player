@@ -4481,7 +4481,7 @@ sub_1265D proc far		; CODE XREF: _read_module+86P
 		dec	dh
 		and	dh, 3
 		shl	dh, 1
-		or	dh, es:[_byte_24623]
+		or	dh, es:[_is_stereo]
 		shl	dh, 1
 		or	dh, es:[_byte_24671]
 		shl	dh, 3
@@ -5492,7 +5492,7 @@ sub_12DA8 proc far		; CODE XREF: _callsubx+24P
 		mov	[off_245C8], offset sub_13429
 		mov	[off_245CC], offset sub_131EF
 		mov	[off_245CE], offset sub_131DA
-		mov	_byte_24623, 0
+		mov	_is_stereo, 0
 		mov	_bit_mode, 8
 		mov	_word_245E8, 400h
 		mov	_snd_set_flag,	0
@@ -5542,7 +5542,7 @@ loc_12E74::				; CODE XREF: sub_12DA8+C8j
 loc_12E7D::				; CODE XREF: sub_12DA8+D1j
 		mov	_flag_playsetttings, al
 		mov	ax, 400h
-		mov	cl, _byte_24623
+		mov	cl, _is_stereo
 		and	cl, 1
 		cmp	_bit_mode, 16
 		jnz	short loc_12E9F
@@ -5759,7 +5759,7 @@ _configure_timer proc	near	; CODE XREF: _covox_onp _stereo_setp ...
 		call	_set_timer
 		mov	cs:[_byte_14F70], 1
 		mov	ax, _word_245E4
-		mov	cs:[_word_14F6C], ax
+		mov	cs:[audio_len], ax
 		popf
 		retn
 _configure_timer endp
@@ -5775,7 +5775,7 @@ _memfill8080 proc near	; CODE XREF: _set_timer_int+18p
 		xor	ax, ax
 		call	_set_timer
 		mov	cs:[_byte_14F70], 0
-		mov	cs:[_word_14F6C], 1
+		mov	cs:[audio_len], 1
 		mov	es, word ptr [_dma_buf_pointer+2]
 		assume es:nothing
 		xor	di, di
@@ -5861,7 +5861,7 @@ loc_13091::				; CODE XREF: sub_13044+27j
 		mov	ax, 2
 
 loc_130A2::				; CODE XREF: sub_13044+59j
-		cmp	_byte_24623, 1
+		cmp	_is_stereo, 1
 		jnz	short loc_130AE
 		shr	ax, 1
 		adc	ax, 0
@@ -7379,7 +7379,7 @@ loc_13D36::				; CODE XREF: sub_13CF6+39j
 		mov	_word_245EE, ax
 		mov	ax, _word_245E8
 		mov	_word_245E4, ax
-		mov	cs:[_word_14F6C], ax
+		mov	cs:[audio_len], ax
 		retn
 ; ---------------------------------------------------------------------------
 
@@ -8404,7 +8404,7 @@ _word_14913	dw 536h			; DATA XREF: _wss_set+14w
 
 _sb16_init proc near		; DATA XREF: seg003:0D08o
 		mov	_sndflags_24622, 9
-		mov	_byte_24623, 1
+		mov	_is_stereo, 1
 		mov	_bit_mode, 16
 		call	_sb16_detect_port
 		mov	dx, offset _aErrorSoundcardN ; "Error: Soundcard	not found!\r\n"
@@ -8551,7 +8551,7 @@ loc_14B77::				; CODE XREF: _sb16_on+62j
 					; clear	byte pointer flip-flop.
 		or	al, al
 		js	short loc_14B77
-		mov	al, _byte_24623
+		mov	al, _is_stereo
 		and	al, 1
 		shl	al, 5
 		or	al, ah
@@ -8675,7 +8675,7 @@ _sbpro_set::				; CODE XREF: _sb_set+6j
 		call	_ReadMixerSB
 		mov	_byte_24664, al
 		and	al, 0FDh
-		cmp	_byte_24623, 0
+		cmp	_is_stereo, 0
 		jz	short loc_14C89
 		call	_WriteMixerSB
 		or	al, 22h
@@ -8938,7 +8938,7 @@ _timer_int_end proc far	; CODE XREF: _covox_timer_int+22j
 		mov	ax, seg003
 		mov	ds, ax
 		mov	ax, _word_245E4
-		mov	cs:[_word_14F6C], ax
+		mov	cs:[audio_len], ax
 		sti
 		call	prepare_samples
 		pop	gs
@@ -8950,7 +8950,7 @@ _timer_int_end proc far	; CODE XREF: _covox_timer_int+22j
 ; ---------------------------------------------------------------------------
 
 loc_14F3C::				; CODE XREF: _timer_int_end+6j
-		mov	cs:[_word_14F6C], 1
+		mov	cs:[audio_len], 1
 		jmp	cs:[_int8addr]
 _timer_int_end endp
 
@@ -8972,7 +8972,7 @@ loc_14F50::				; CODE XREF: _text:4F4Dj
 ; ---------------------------------------------------------------------------
 _int8addr	dd 0			; DATA XREF: sub_12DA8+6Aw
 					; _clean_int8_mem_timr+5r ...
-_word_14F6C	dw 0			; DATA XREF: _configure_timer+1Bw
+audio_len	dw 0			; DATA XREF: _configure_timer+1Bw
 					; _memfill8080+Dw ...
 _timer_word_14F6E dw 0			; DATA XREF: _set_timerw _text:4F59r
 _byte_14F70	db 0			; DATA XREF: _configure_timer+12w
@@ -8988,7 +8988,7 @@ _byte_14F73	db 0			; DATA XREF: sub_13CF6+11w
 
 _covox_init proc near		; DATA XREF: seg003:0D0Eo
 		mov	_sndflags_24622, 3
-		mov	_byte_24623, 0
+		mov	_is_stereo, 0
 		mov	_bit_mode, 8
 		cmp	_snd_base_port, 0FFFFh
 		jnz	short loc_14F95
@@ -9054,14 +9054,14 @@ _word_14FC8	dw 378h			; DATA XREF: _covox_init+24w
 		pop	ax
 		inc	cs:[_word_14FC5]
 		jz	short loc_14FE3
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
 
 loc_14FE3::				; CODE XREF: _covox_timer_int+1Bj
 		mov	cs:[_word_14FC5], 0F000h
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 _covox_timer_int endp	; sp-analysis failed
@@ -9090,7 +9090,7 @@ _covox_deinit endp
 
 _stereo_init proc near	; DATA XREF: seg003:0D10o
 		mov	_sndflags_24622, 3
-		mov	_byte_24623, 1
+		mov	_is_stereo, 1
 		mov	_bit_mode, 8
 		cmp	_snd_base_port, -1
 		jnz	short loc_1501D
@@ -9171,14 +9171,14 @@ _word_15056	dw 1234h		; DATA XREF: _stereo_init+3Aw
 		pop	ax
 		add	cs:[_word_15056], 2
 		jb	short loc_1507E
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
 
 loc_1507E::				; CODE XREF: _stereo_timer_int+2Ej
 		mov	cs:[_word_15056], 0F000h
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 _stereo_timer_int endp ; sp-analysis failed
@@ -9207,7 +9207,7 @@ _stereo_clean endp
 
 _adlib_init proc near		; DATA XREF: seg003:0D12o
 		mov	_sndflags_24622, 0Bh
-		mov	_byte_24623, 0
+		mov	_is_stereo, 0
 		mov	_bit_mode, 8
 		call	_adlib_18389
 		mov	ax, 2120h
@@ -9296,7 +9296,7 @@ loc_1513C::				; CODE XREF: _text:5155j
 		mov	al, 20h	; ' '
 		out	20h, al		; Interrupt controller,	8259A.
 		pop	ax
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
@@ -9329,7 +9329,7 @@ _adlib_clean endp
 
 _pcspeaker_init proc near	; DATA XREF: seg003:0D14o
 		mov	_sndflags_24622, 3
-		mov	_byte_24623, 0
+		mov	_is_stereo, 0
 		mov	_bit_mode, 8
 		pushf
 		cli
@@ -9399,14 +9399,14 @@ _word_151A3	dw 1234h		; DATA XREF: _pcspeaker_init+22w
 		pop	bx
 		inc	cs:[_word_151A3]
 		jz	short loc_151C9
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 ; ---------------------------------------------------------------------------
 
 loc_151C9::				; CODE XREF: _text:51BDj
 		mov	cs:[_word_151A3], 0F000h
-		dec	cs:[_word_14F6C]
+		dec	cs:[audio_len]
 		jz	near ptr _timer_int_end
 		iret
 
@@ -9470,7 +9470,7 @@ nn::					; CODE XREF: _snd_initialze+13j
 
 _midi_init::				; DATA XREF: seg003:0D16o
 		mov	_sndflags_24622, 12h
-		mov	_byte_24623, 1
+		mov	_is_stereo, 1
 		mov	_bit_mode, 8
 		mov	ax, _snd_base_port
 		cmp	ax, 0FFFFh
@@ -12575,7 +12575,7 @@ prepare_samples proc near		; CODE XREF: sub_13017:loc_13038p
 
 loc_16C88::				; CODE XREF: prepare_samples+Ej
 		mov	_byte_24682, 0
-		cmp	_byte_24623, 1
+		cmp	_is_stereo, 1
 		jz	loc_171D3
 		mov	si, offset _volume_25908
 		mov	cx, _word_245D4
@@ -25178,7 +25178,7 @@ _byte_24621	db 0			; DATA XREF: sub_12EBA+3Dw
 					; _proaud_14700+73Bw ...
 _sndflags_24622	db 0			; DATA XREF: _useless_11787+9r
 					; _inr_read_118B0+AEr ...
-_byte_24623	db 0			; DATA XREF: sub_1265D+33r
+_is_stereo	db 0			; DATA XREF: sub_1265D+33r
 					; sub_12DA8+50w ...
 _bit_mode	db 8			; DATA XREF: sub_12DA8+55w
 					; sub_12DA8+E2r ...
