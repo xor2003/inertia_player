@@ -26,37 +26,22 @@
 /* Cambridge, MA 02139, USA.                                    */
 /****************************************************************/
 
+#include "memmgr.h"
 #include "error.h"
 
-#include <stdint.h>
-typedef char BYTE;
-typedef uint16_t UWORD;
-#include "mcb.h"
+#include "asm.h"
+
+struct Memory;
+extern Memory m;
 
 #ifdef VERSION_STRING
 static BYTE *memmgrRcsId =
     "$Id: memmgr.c 1338 2007-07-20 20:52:33Z mceric $";
 #endif
 
-//#define MK_FP(seg,ofs)      (&(raddr(seg,ofs))) //  ( (ULONG(seg)<<4)+(UWORD)(ofs) )
-#define FP_SEG(fp)           ( (  ((uint8_t*)(fp)) - ((uint8_t*)(&m)) )>>4)// ( (UWORD) ((fp)>>4) )
-//#define FP_OFF(fp)            ( (UWORD) (fp) )
-#define SUCCESS 0
-//#define NULL 0
 
-uint16_t first_mcb=FP_SEG(&m.heap);         /* Start of user memory                 */
+uint16_t first_mcb; //=FP_SEG(&m.heap);         /* Start of user memory                 */
 db mem_access_mode=0;   /* memory allocation scheme             */
-
-#define nxtMCBsize(mcbp,size) ((mcb*)(((db*)mcbp) + (size<<4) + 0x10))
-#define nxtMCB(mcbp) nxtMCBsize((mcbp), (mcbp)->m_size)
-
-#define mcbFree(mcbp) ((mcbp)->m_psp == FREE_PSP)
-#define mcbValid(mcbp)	( ((mcbp)->m_size != 0xffff) && \
-        ((mcbp)->m_type == MCB_NORMAL || (mcbp)->m_type == MCB_LAST) )
-#define mcbFreeable(mcbp) \
-	((mcbp)->m_type == MCB_NORMAL || (mcbp)->m_type == MCB_LAST)
-
-#define para2far(seg) ( (mcb *)((db *)&m + ((seg)<<4)) ) //(seg<<4)
 
 typedef mcb * mcb_p;
 
@@ -431,9 +416,10 @@ static void mcb_init_copy(dw seg, dw size, mcb *near_mcb)
   memcpy(para2far(seg), near_mcb, sizeof(mcb));
 }
 
-static void mcb_init(dw seg, dw size, BYTE type)
+void mcb_init(dw seg, dw size, BYTE type)
 {
-  static mcb near_mcb({0});
+  static mcb near_mcb;
+  first_mcb = seg;
   near_mcb.m_type = type;
   mcb_init_copy(seg, size, &near_mcb);
 }

@@ -4,14 +4,14 @@
  *
  */
 
-#include "asm.c"
+//#include "asm.c"
 #include "iplay_masm_.h"
 //#include <thread>         // std::thread
 #include <time.h>
 
 extern "C"
 {
-#include "SDL.h"
+#include "SDL2/SDL.h"
 };
 
 #include <unistd.h>
@@ -113,6 +113,8 @@ static _STATE state;
 static _STATE* _state=&state;
 X86_REGREF
 
+_state->_indent=0;
+
 R(MOV(cs, seg_offset(_text)));	// mov cs,_TEXT
 
   R(MOV(ss, seg_offset(int8stack)));	// mov cs,_TEXT
@@ -195,7 +197,26 @@ int init(_STATE* _state)
 {
 X86_REGREF
 
+_state->_indent=0;
 logDebug=fopen("iplay_masm_.log","w");
+
+  log_debug("~~~ %d %d %d", HEAP_SIZE, (HEAP_SIZE >> 4), seg_offset(heap) );
+  /* We expect ram_top as Kbytes, so convert to paragraphs */
+  mcb_init(seg_offset(heap), (HEAP_SIZE >> 4) - seg_offset(heap) - 1, MCB_LAST);
+
+  R(MOV(ss, seg_offset(stack)));	// mov cs,_TEXT
+#if _BITS == 32
+  esp = ((dd)(db*)&m.stack[STACK_SIZE - 4]);
+#else
+  esp=0;
+  sp = STACK_SIZE - 4;
+  es=0;
+ *(dw*)(raddr(0,0x408)) = 0x378; //LPT
+#endif
+
+
+
+
 
 memset(m._vlm_byte_table,0x8200,0);
 
@@ -389,7 +410,8 @@ _lfreaderr:
 	R(MOV(fs, ax));	// 145 mov	fs, ax
 	R(POP(dx));	// 147 pop	dx
 	R(POP(ax));	// 148 pop	ax
-	R(MOV(esp, m._savesp_245D0));	// 149 mov	sp, _savesp_245D0
+assert(0); // Out of memory. Code below is not working under SDL
+ 	R(MOV(esp, m._savesp_245D0));	// 149 mov	sp, _savesp_245D0
 	R(POP(ds));	// 150 pop	ds
 	R(STC);	// 151 stc
 	R(RETF);	// 152 retf
@@ -20102,7 +20124,7 @@ case ksub_1725f: 	goto sub_1725f;
 case ksub_17824: 	goto sub_17824;
 case ksub_182db: 	goto sub_182db;
 case ksub_1ab8c: 	goto sub_1ab8c;
-default: log_error("Jump/call to nothere %d\n", __disp);stackDump(_state); abort();
+default: log_error("Jump/call to nothere %x\n", __disp);stackDump(_state); abort();
 };
 }
 

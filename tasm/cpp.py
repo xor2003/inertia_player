@@ -80,7 +80,6 @@ class cpp:
 		self.pointer_flag = False
 		self.lea = False
 		self.fd.write("""%s
-#include "asm.c"
 #include \"%s\"
 
 //namespace %s {
@@ -520,7 +519,7 @@ class cpp:
 			## x0r return "goto %s" %self.resolve_label(name)
 			if not hasglobal:
 				name = self.expand(name, destination = True)
-				self.body += "__disp = " + name + ";\n"
+				self.body += "__disp = (_offsets)" + name + ";\n"
 				name = "__dispatch_call";
 			else:
 				if isinstance(g, op.label) and g.far:
@@ -553,12 +552,12 @@ class cpp:
 		dst = self.jump_to_label(name)
 		if dst!="__dispatch_call":
 			dst="k"+dst
-			else:
+		else:
 			dst="__disp"
 
-			if self.far:
+		if self.far:
 			self.body += "\tR(CALLF(%s));\n" %(dst)
-			else:
+		else:
 			self.body += "\tR(CALL(%s));\n" %(dst)
 		'''
 		name = name.lower()
@@ -906,6 +905,9 @@ int init(_STATE* _state)
 {
 X86_REGREF
 
+_state->_indent=0;
+ecx=0;
+
 initscr();
 resize_term(25, 80);
  cbreak(); // put keys directly to program
@@ -922,6 +924,21 @@ resize_term(25, 80);
 	curs_set(0);
 
 	refresh();
+
+  log_debug("~~~ heap_size=%%d para=%%d heap_ofs=%%d", HEAP_SIZE, (HEAP_SIZE >> 4), seg_offset(heap) );
+  /* We expect ram_top as Kbytes, so convert to paragraphs */
+  mcb_init(seg_offset(heap), (HEAP_SIZE >> 4) - seg_offset(heap) - 1, MCB_LAST);
+
+  R(MOV(ss, seg_offset(stack)));
+#if _BITS == 32
+  esp = ((dd)(db*)&m.stack[STACK_SIZE - 4]);
+#else
+  esp=0;
+  sp = STACK_SIZE - 4;
+  es=0;
+ *(dw*)(raddr(0,0x408)) = 0x378; //LPT
+#endif
+
 	return(0);
 }
 
@@ -1097,7 +1114,7 @@ else goto __dispatch_call;
 
 
 
-		self.hd.write("\ntypedef enum {\n")
+		self.hd.write("\nenum _offsets : int {\n")
 		offsets = []
 		for k, v in self.context.get_globals().items():
 			k = re.sub(r'[^A-Za-z0-9_]', '_', k)
@@ -1112,7 +1129,7 @@ else goto __dispatch_call;
 		self.hd.write("kbegin = 0x1001,\n")
 		for o in offsets:
 			self.hd.write("k%s = %s,\n" %o)
-		self.hd.write("} _offsets;\n")
+		self.hd.write("};\n")
 
 
 		data_head = "\nstruct __attribute__((__packed__)) Memory{\n"

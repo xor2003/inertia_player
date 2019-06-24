@@ -9,10 +9,14 @@
 
 #include "asm.h"
 
+struct Memory;
+extern Memory m;
+
+void mainproc(_offsets _i, _STATE* _state);
 //namespace iplay_masm_ {
 
 
-typedef enum {
+enum _offsets : int {
 kbegin = 0x1001,
 k_moduleread = 0x1111,
 kloc_10006 = 0x1112,
@@ -1941,7 +1945,7 @@ kloc_1c7cc = 0x1894,
 k_mouse_1c7cf = 0x1895,
 kloc_1c7e9 = 0x1896,
 k_int8old = 0x1897,
-} _offsets;
+};
 
 struct __attribute__((__packed__)) Memory{
  db dummy1[4096]; // protective

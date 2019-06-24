@@ -28,6 +28,13 @@
 /* Cambridge, MA 02139, USA.                                    */
 /****************************************************************/
 
+#ifndef __MCB_H__
+#define __MCB_H__
+
+#include <stdint.h>
+typedef char BYTE;
+typedef uint16_t UWORD;
+
 #ifdef MAIN
 #ifdef VERSION_STRINGS
 static BYTE *mcb_hRcsId =
@@ -67,3 +74,4 @@ typedef struct  __attribute__((__packed__)) {
   BYTE m_name[8];               /* owner name limited to 8 bytes        */
 } mcb;
 
+#endif

@@ -1,8 +1,8 @@
 #include "asm.h"
 //#include "snow.h"
-#include "iplay_masm_.h"
+//#include "iplay_masm_.h"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <assert.h>
 
 #include <time.h>
@@ -13,84 +13,12 @@ extern struct Memory m;
 
 /* https://commons.wikimedia.org/wiki/File:Table_of_x86_Registers_svg.svg */
 
-#define REGDEF_hl(Z)   \
-uint32_t& e##Z##x = _state->e##Z##x; \
-uint16_t& Z##x = *(uint16_t *)& e##Z##x; \
-uint8_t& Z##l = *(uint8_t *)& e##Z##x; \
-uint8_t& Z##h = *(((uint8_t *)& e##Z##x)+1); 
-
-#define REGDEF_l(Z) \
-uint32_t& e##Z = _state->e##Z; \
-uint16_t& Z = *(uint16_t *)& e##Z ; \
-uint8_t&  Z##l = *(uint8_t *)& e##Z ;
-
-#define REGDEF_nol(Z) \
-uint32_t& e##Z = _state->e##Z; \
-uint16_t& Z = *(uint16_t *)& e##Z ;
 
 //struct uc_x86_state {
 //    REGDEF_nol(flags);
 //};
 
-struct _STATE{
-dd eax;
-dd ebx;
-dd ecx;
-dd edx;
-dd esi;
-dd edi;
-dd esp;
-dd ebp;
-dd eip;
 
-dw cs;         
-dw ds;         
-dw es;         
-dw fs;         
-dw gs;         
-dw ss;         
-                      
-bool CF;       
-bool PF;       
-bool AF;       
-bool ZF;       
-bool SF;       
-bool DF;       
-bool OF;       
-db _indent; 
-char _str[256];
-};
-
-#define X86_REGREF \
-    REGDEF_hl(a);     \
-    REGDEF_hl(b);     \
-    REGDEF_hl(c);     \
-    REGDEF_hl(d);     \
-                      \
-    REGDEF_l(si);     \
-    REGDEF_l(di);     \
-    REGDEF_l(sp);     \
-    REGDEF_l(bp);     \
-                      \
-    REGDEF_nol(ip);   \
-                      \
-dw& cs = _state->cs;         \
-dw& ds = _state->ds;         \
-dw& es = _state->es;         \
-dw& fs = _state->fs;         \
-dw& gs = _state->gs;         \
-dw& ss = _state->ss;         \
-                      \
-bool& CF = _state->CF;       \
-bool& PF = _state->PF;       \
-bool& AF = _state->AF;       \
-bool& ZF = _state->ZF;       \
-bool& SF = _state->SF;       \
-bool& DF = _state->DF;       \
-bool& OF = _state->OF;       \
-dd& stackPointer = _state->esp;\
-_offsets __disp; \
-dw _source;
 
 /*
 #undef REGDEF_hl
@@ -136,9 +64,8 @@ db vgaRamPaddingBefore[VGARAM_SIZE];
 db vgaRam[VGARAM_SIZE];
 db vgaRamPaddingAfter[VGARAM_SIZE];
 db* diskTransferAddr = 0;
-#include "memmgr.c"
+//#include "memmgr.c"
 
-static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 
 bool isLittle;
 bool jumpToBackGround;
@@ -237,7 +164,7 @@ X86_REGREF
 	hexDump((void *) realAddress(edi,es),50);
 	log_debug("fs: %d -> %p\n",fs,(void *) realAddress(0,fs));
 	log_debug("gs: %d -> %p\n",gs,(void *) realAddress(0,gs));
-	log_debug("adress heap: %p\n",(void *) &m.heap);
+//	log_debug("adress heap: %p\n",(void *) &m.heap);
 	log_debug("adress vgaRam: %p\n",(void *) &vgaRam);
 	log_debug("first pixels vgaRam: %x\n",*vgaRam);
 	log_debug("flags: ZF = %d\n",ZF);
@@ -975,8 +902,7 @@ X86_REGREF
 }
 
 //jmp_buf jmpbuffer;
-void * dest;
-void * src;
+
 /*
 void program() {
 int i;
@@ -1000,6 +926,15 @@ moveToBackGround:
 return ;//(executionFinished == 0);
 }
 */
+
+const char* log_spaces(int n) 
+{ 
+ static const char s[]="                                                                                          ";
+//	memset(s, ' ', n); 
+//	*(s+n) = 0; 
+  return s+(88-n);
+}
+
 void realtocurs()
 {
 
@@ -1049,6 +984,30 @@ static short realtocurs[16] =
 
 }
 
+/*
+"Programming for MS-DOS" (Ray Duncan)
+
+                  COM                            EXE
+                  ===                            ===
+CS:IP           PSP:0100H             Defined by program's END statement
+AL              00 if default FCB#1 has valid drive, FF if invalid drive
+AH              Ditto, FCB#2
+ Bill comment : FCB1 is filled from the first command argument, FCB2 from the
+    second. From DOS5 (or maybe DOS6 - it's a long time ago...) FCB1 was
+    left empty and FCB2 was filled from argument 1. AFAIAA, this was never
+    fixed. What effect it has on this claim (re AX contents) I'm not sure.
+
+DS              PSP                              PSP
+ES              PSP                              PSP
+SS              PSP                              Seg with STACK attribute
+SP              0FFFEH or top word in avail.     Size of STACK segment
+                 memory, whichever is least.
+
+From: "The MS-DOS Encyclopaedia" (also Duncan) - talking about .EXE files. There is no comment on this point when discussing .COM files.
+
+"The other processor registers (BX,CX,DX,BP,SI and DI) contain unknown values when the program receives control from MS-DOS."
+*/
+
 int init(_STATE* state);
 void mainproc(_offsets _i, _STATE* state);
 
@@ -1058,19 +1017,10 @@ int main(int argc, char *argv[])
   _STATE* _state=&state;
   X86_REGREF
   
-  /* We expect ram_top as Kbytes, so convert to paragraphs */
-  mcb_init(seg_offset(heap), (HEAP_SIZE / 1024) * 64 - first_mcb - 1, MCB_LAST);
+	_state->_indent=0;
 
-  R(MOV(ss, seg_offset(stack)));	// mov cs,_TEXT
-#if _BITS == 32
-  esp = ((dd)(db*)&m.stack[STACK_SIZE - 4]);
-#else
-  esp=0;
-  sp = STACK_SIZE - 4;
-  es=0;
- *(dw*)(raddr(0,0x408)) = 0x378; //LPT
-#endif
-
+	eax = 0x0ffff;
+	ebx=ecx=edx=ebp=esi=edi=DF=0;
 
 	init(_state);
 
@@ -1082,8 +1032,7 @@ int main(int argc, char *argv[])
 	*(((dw*)&m)+0x81+s)=0xD;
 
   }
-
-	mainproc(kbegin, _state);
+	mainproc((_offsets) 0x1001, _state);
 	return(0);
 }
 
