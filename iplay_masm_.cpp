@@ -225,6 +225,7 @@ resize_term(25, 80);
  cbreak(); // put keys directly to program
     noecho(); // do not echo
     keypad(stdscr, TRUE); // provide keypad buttons
+    nodelay(stdscr, TRUE);
 
     if (!has_colors())
     {
@@ -4378,8 +4379,8 @@ if (ttt==0)
 	R(INC(di));	// 4945 inc	di
 	R(ADC(si, bp));	// 4946 adc	si, bp
 	R(DEC(cx));	// 4947 dec	cx
-hexDump(sss,ssss);
-hexDump(ttt,16);
+//hexDump(sss,ssss);
+//hexDump(ttt,16);
 		R(JNZ(loc_12921));	// 4948 jnz	loc_12921
 locret_12a55:
 	R(RETN);	// 4952 retn
@@ -12990,7 +12991,8 @@ loc_193c7:
 loc_193fc:
 	R(CALL(k_put_message));	// 17379 call	_put_message
 loc_193ff:
-	R(MOV(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17382 mov	ax, cs:[_key_code] ; keyboard message loop here
+//	R(MOV(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17382 mov	ax, cs:[_key_code] ; keyboard message loop here
+ax=getscan();
 	R(OR(ax, ax));	// 17383 or	ax, ax
 		R(JZ(loc_193c7));	// 17384 jz	short loc_193C7
 	R(PUSH(ax));	// 17385 push	ax
@@ -13074,7 +13076,8 @@ loc_194ce:
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 17470 xor	ax, ax
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), ax));	// 17471 mov	cs:[_key_code], ax
 loc_194da:
-	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17474 xchg	ax, cs:[_key_code]
+//	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17474 xchg	ax, cs:[_key_code]
+ax=getscan();
 	R(OR(ax, ax));	// 17475 or	ax, ax
 		R(JZ(loc_194da));	// 17476 jz	short loc_194DA
 loc_194e3:
@@ -13239,7 +13242,8 @@ loc_196b0:
 	R(CALL(k_message_1be77));	// 17674 call	_message_1BE77
 loc_196d0:
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 17677 xor	ax, ax
-	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17678 xchg	ax, cs:[_key_code]
+//	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17678 xchg	ax, cs:[_key_code]
+ax=getscan();
 	R(OR(ax, ax));	// 17679 or	ax, ax
 		R(JZ(loc_196d0));	// 17680 jz	short loc_196D0
 		R(JS(loc_196d0));	// 17681 js	short loc_196D0
@@ -14091,7 +14095,8 @@ __disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,_offs_draw))));
 	R(TEST(m._byte_1DE90, 1));	// 18737 test	_byte_1DE90, 1
 		R(JNZ(loc_1a3a7));	// 18738 jnz	loc_1A3A7
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 18739 xor	ax, ax
-	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 18740 xchg	ax, cs:[_key_code]
+//	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 18740 xchg	ax, cs:[_key_code]
+ax=getscan();
 	R(OR(ax, ax));	// 18741 or	ax, ax
 		R(JZ(_keyb_screen_loop));	// 18742 jz	short _keyb_screen_loop
 	R(MOV(m._word_1DE50, ax));	// 18743 mov	_word_1DE50, ax
@@ -14526,6 +14531,7 @@ loc_1a3c5:
 //	R(MOV(edx, *(dd*)(raddr(es,0x46C))));	// 19277 mov	edx, es:[46Ch]
 	edx=time(0)*18.20648193359375;
 	R(CMP(edx, m._dword_1DE88));	// 19278 cmp	edx, _dword_1DE88
+//x0r goto loc_1a3f6;
 		R(JZ(loc_1a3f6));	// 19279 jz	short loc_1A3F6
 	R(MOV(m._dword_1DE88, edx));	// 19280 mov	_dword_1DE88, edx
 	R(POP(es));	// 19281 pop	es

@@ -810,6 +810,7 @@ _offsets __disp; \
 dw _source;
 
 void realtocurs();
+dw getscan();
 
 struct SDL_Renderer;
 extern SDL_Renderer *renderer;
