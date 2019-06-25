@@ -21,7 +21,7 @@ Sure ASM2C is better but it written on swift and less instructions supported, al
 
 TODO: add FPU instructions support, keyboard?
 
-Execute to convert masm16 to C:
+Execute to convert your masm 16 bit source to C:
 -------------------------------
 
 masm-recover <some.asm>
@@ -38,10 +38,10 @@ There is source code for MASM, TASM Ideal and Nasm, gcc which can be built and r
 
 TODO: fix sound on SDL, finish porting (keyboard, graphics mode,...)
 
-Binary is available on release page
+Binary is available on releases page
 -------------------------------
 
-To build from source Inertia for SDL:
+Building Inertia for SDL from source:
 -------------------------------
 1. get PDCurses or other curses library+headers, SDL2, mingw32
 2. build_mingw.bat
