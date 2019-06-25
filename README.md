@@ -27,6 +27,8 @@ masm-recover <some.asm>
 
 (Some small resulting source code modification will be also required to build)
 
+IDA Pro Free https://www.hex-rays.com/products/ida/support/download_freeware.shtml
+
 Inertia Player 1.22 source code
 =============
 Famous reverse engenerred MOD, S3M player.
