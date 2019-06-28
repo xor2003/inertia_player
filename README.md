@@ -4,6 +4,8 @@ Translator may be used to port your DOS assembler code to SDL C. Since there is 
 Your porting path:
 DOS binary 16 bit real or 32 bit protected modes -> IDA Pro (disassembly) -> export assembler (masm format) -> Tasmx to compile (dosbox debugger to fix) -> this MASM to C translator -> C SDL source.
 
+Optionally you can recompile resulting C to 32 bits with optimization and recompile to get cleaner C code without dead code and flags update.
+
 Key features:
 - Segment memory model and 16bit offsets.
 - Most of x86 instructions (except FPU) are supported (well tested with QEMU tests).
