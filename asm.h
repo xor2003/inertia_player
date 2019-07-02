@@ -73,6 +73,9 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 #define STOSD STOS(4,0)
 #endif
 
+#define INSB {db a = asm2C_IN(dx);*realAddress(edi,es)=a;edi+=1;}
+#define INSW {dw a = asm2C_INW(dx);*realAddress(edi,es)=a;edi+=2;}
+
 #define LOOP(label) DEC(ecx); JNZ(label)
 #define LOOPE(label) --ecx; if (ecx!=0 && ZF) GOTOLABEL(label) //TODO
 #define LOOPNE(label) --ecx; if (ecx!=0 && !ZF) GOTOLABEL(label) //TODO

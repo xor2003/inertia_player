@@ -23333,7 +23333,7 @@ loc_1C6EF:				; CODE XREF: _mouse_init+1Aj
 		push	es
 		mov	ax, seg001
 		mov	es, ax
-		mov	dx, loc_1C72C
+		mov	dx, mouse_handler
 		mov	cx, 1Fh
 		mov	ax, 0Ch
 		int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
@@ -23371,7 +23371,7 @@ locret_1C72B:				; CODE XREF: _mouse_deinit+5j
 
 ; ---------------------------------------------------------------------------
 
-loc_1C72C:				; DATA XREF: _mouse_init+34o
+mouse_handler:				; DATA XREF: _mouse_init+34o
 		push	ds
 		push	dseg
 		pop	ds

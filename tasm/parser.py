@@ -685,7 +685,8 @@ class parser:
 						elif cmd1l == '=':
 							self.reset_global(cmd0, op.const(vv, size=size))
 						'''
-						self.proc.add_equ(cmd0.lower(), vv, line_number=self.line_number)
+						if self.proc is not None:
+							self.proc.add_equ(cmd0.lower(), vv, line_number=self.line_number)
 					else:
 						print "skipping binary data for %s" % (cmd0.lower(),)
 						skipping_binary_data = True

@@ -478,7 +478,7 @@ _mod_ch_module:
 	R(CMP(al, 9));	// 233 cmp	al, 9
 		R(JA(locret_10154));	// 234 ja	short locret_10154
 	R(IMUL3_2(dx,ax,10));	// 235 imul	dx, ax,	10
-	R(MOV(al, *(raddr(ds,offset(seg003,unk_30941)))));	// 236 mov	al, byte ptr [unk_30941]
+	R(MOV(al, m.unk_30941));	// 236 mov	al, byte ptr [unk_30941]
 	R(SUB(al, '0'));	// 237 sub	al, '0'
 		R(JC(locret_10154));	// 238 jb	short locret_10154
 	R(CMP(al, 9));	// 239 cmp	al, 9
@@ -1001,7 +1001,7 @@ loc_10680:
 	R(MOV(es, ax));	// 853 mov	es, ax
 	R(MOV(di, offset(seg003,_myout)));	// 854 mov	di, offset _myout ; out
 	R(MOV(bx, offset(seg003,_dword_30566)+2));	// 855 mov	bx, (offset _dword_30566+2)
-	R(ADD(bx, *(dw*)(raddr(ds,offset(seg003,unk_30528)))));	// 856 add	bx, word ptr [unk_30528]
+	R(ADD(bx, *(dw*)&m.unk_30528));	// 856 add	bx, word ptr [unk_30528]
 	R(MOVZX(ecx, m._word_245D2));	// 857 movzx	ecx, _word_245D2
 loc_106a3:
 	R(PUSH(bx));	// 860 push	bx
@@ -1076,7 +1076,7 @@ loc_1074f:
 	R(MOV(si, offset(seg003,_dword_30566)+2));	// 937 mov	si, (offset _dword_30566+2)
 	di = 0;AFFECT_ZF(0); AFFECT_SF(di,0);	// 938 xor	di, di
 	bx = 0;AFFECT_ZF(0); AFFECT_SF(bx,0);	// 939 xor	bx, bx
-	R(MOV(ax, *(dw*)(raddr(ds,offset(seg003,unk_30528)))));	// 940 mov	ax, word ptr [unk_30528]
+	R(MOV(ax, *(dw*)&m.unk_30528));	// 940 mov	ax, word ptr [unk_30528]
 	R(CMP(ax, 0x80));	// 941 cmp	ax, 80h	; 'À'
 	R(MOV(ah, al));	// 942 mov	ah, al
 		R(JA(loc_1079a));	// 943 ja	short loc_1079A
@@ -1115,7 +1115,7 @@ loc_107ac:
 loc_107b4:
 	R(PUSH(ax));	// 986 push	ax
 	R(MOV(bx, offset(seg003,_dword_30566)+2));	// 987 mov	bx, (offset _dword_30566+2)
-	R(ADD(bx, *(dw*)(raddr(ds,offset(seg003,unk_30528)))));	// 988 add	bx, word ptr [unk_30528]
+	R(ADD(bx, *(dw*)&m.unk_30528));	// 988 add	bx, word ptr [unk_30528]
 	R(ADD(ax, m._word_3052A));	// 989 add	ax, _word_3052A
 	R(SHL(ax, 1));	// 990 shl	ax, 1
 	R(ADD(bx, ax));	// 991 add	bx, ax
@@ -1942,7 +1942,7 @@ loc_1100f:
 	R(PUSH(ax));	// 1935 push	ax
 	R(DEC(al));	// 1936 dec	al
 	R(AND(al, 0x3F));	// 1937 and	al, 3Fh
-	R(MOV(*(raddr(ds,offset(seg003,_chrin))), al));	// 1938 mov	byte ptr [_chrin], al
+	R(MOV(m._chrin, al));	// 1938 mov	byte ptr [_chrin], al
 	di = 0;AFFECT_ZF(0); AFFECT_SF(di,0);	// 1939 xor	di, di
 	R(MOV(cx, m._word_245FA));	// 1940 mov	cx, _word_245FA
 	R(MOV(ah, *(raddr(ds,offset(seg003,_chrin)+3))));	// 1941 mov	ah, byte ptr [_chrin+3]
@@ -2065,7 +2065,7 @@ loc_110ff:
 	R(DEC(cx));	// 2086 dec	cx
 		R(JNZ(loc_11051));	// 2087 jnz	loc_11051
 	R(MOV(cx, 0x3F));	// 2088 mov	cx, 3Fh	; '?'
-	R(SUB(cl, *(raddr(ds,offset(seg003,_chrin)))));	// 2089 sub	cl, byte ptr [_chrin]
+	R(SUB(cl, m._chrin));	// 2089 sub	cl, byte ptr [_chrin]
 loc_11120:
 	al = 0;AFFECT_ZF(0); AFFECT_SF(al,0);	// 2092 xor	al, al
 	R(CLD);	// 2093 cld
@@ -2187,14 +2187,14 @@ _ult_module:
 	R(MOV(m._module_type_text, 0x20544C55));	// 2232 mov	_module_type_text, 20544C55h
 	R(MOV(m._moduleflag_246D0, 0x200));	// 2233 mov	_moduleflag_246D0, 1000000000b
 	R(MOV(m._byte_24673, 0));	// 2234 mov	_byte_24673, 0
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_chrin))), 0x40));	// 2235 mov	word ptr [_chrin], 40h ;	'@'
+	R(MOV(*(dw*)&m._chrin, 0x40));	// 2235 mov	word ptr [_chrin], 40h ;	'@'
 	R(MOV(ax, m._word_30515));	// 2236 mov	ax, _word_30515
 loc_11256:
 	R(XCHG(al, ah));	// 2239 xchg	al, ah
 	R(MOV(m._word_30515, ax));	// 2240 mov	_word_30515, ax
 	R(CMP(ax, 0x3034));	// 2241 cmp	ax, 3034h
 		R(JC(loc_11265));	// 2242 jb	short loc_11265
-	R(ADD(*(dw*)(raddr(ds,offset(seg003,_chrin))), 2));	// 2243 add	word ptr [_chrin], 2
+	R(ADD(*(dw*)&m._chrin, 2));	// 2243 add	word ptr [_chrin], 2
 loc_11265:
 	R(MOV(m._byte_24679, 6));	// 2246 mov	_byte_24679, 6
 	R(MOV(m._byte_2467A, 0x7D));	// 2247 mov	_byte_2467A, 7Dh ; '}'
@@ -2213,7 +2213,7 @@ loc_1126f:
 	R(CALL(k_dosseek));	// 2261 call	_dosseek
 	R(MOVZX(ax, m._my_in));	// 2262 movzx	ax, _my_in
 	R(MOV(m._word_245D2, ax));	// 2263 mov	_word_245D2, ax
-	R(MUL1_2(*(dw*)(raddr(ds,offset(seg003,_chrin)))));	// 2264 mul	word ptr [_chrin]
+	R(MUL1_2(*(dw*)&m._chrin));	// 2264 mul	word ptr [_chrin]
 	R(MOV(cx, ax));	// 2265 mov	cx, ax
 	R(MOV(dx, offset(seg003,_byte_30539)));	// 2266 mov	dx, offset _byte_30539
 	R(CALL(k_dosfread));	// 2267 call	_dosfread
@@ -2287,7 +2287,7 @@ loc_11359:
 	R(POP(cx));	// 2344 pop	cx
 	R(ADD(di, 0x40));	// 2345 add	di, 40h	; '@'
 loc_11365:
-	R(ADD(si, *(dw*)(raddr(ds,offset(seg003,_chrin)))));	// 2348 add	si, word ptr [_chrin]
+	R(ADD(si, *(dw*)&m._chrin));	// 2348 add	si, word ptr [_chrin]
 	R(DEC(cx));	// 2349 dec	cx
 		R(JNZ(loc_112b4));	// 2350 jnz	loc_112B4
 	R(MOV(dx, offset(seg003,_byte_30539)));	// 2351 mov	dx, offset _byte_30539
@@ -2527,10 +2527,10 @@ _ult_read:
 	R(MOV(dx, offset(seg003,_word_3063B)));	// 2629 mov	dx, offset _word_3063B
 	R(MOV(cx, 2));	// 2630 mov	cx, 2
 	R(CALL(k_dosfread));	// 2631 call	_dosfread
-	R(CMP(*(raddr(ds,offset(seg003,_word_3063B))), 0x0FC));	// 2632 cmp	byte ptr [_word_3063B], 0FCh ; '¹'
+	R(CMP(m._word_3063B, 0x0FC));	// 2632 cmp	byte ptr [_word_3063B], 0FCh ; '¹'
 		R(JZ(loc_11585));	// 2633 jz	short loc_11585
 	R(MOV(ax, m._word_3063B));	// 2634 mov	ax, _word_3063B
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dword_3063D))), ax));	// 2635 mov	word ptr [_dword_3063D],	ax
+	R(MOV(*(dw*)&m._dword_3063D, ax));	// 2635 mov	word ptr [_dword_3063D],	ax
 	R(MOV(*(raddr(ds,offset(seg003,_word_3063B)+1)), 1));	// 2636 mov	byte ptr [_word_3063B+1], 1
 	R(MOV(dx, offset(seg003,_dword_3063D)+2));	// 2637 mov	dx, (offset _dword_3063D+2)
 	R(MOV(cx, 3));	// 2638 mov	cx, 3
@@ -2627,7 +2627,7 @@ loc_11991:
 	R(CMP(eax, 0x53444E45));	// 2778 cmp	eax, 53444E45h	; ENDS
 		R(JZ(loc_119af));	// 2779 jz	short loc_119AF
 loc_11999:
-	R(MOV(dx, *(dw*)(raddr(ds,offset(seg003,_dword_257A0)))));	// 2783 mov	dx, word ptr [_dword_257A0]
+	R(MOV(dx, *(dw*)&m._dword_257A0));	// 2783 mov	dx, word ptr [_dword_257A0]
 	R(MOV(cx, *(dw*)(raddr(ds,offset(seg003,_dword_257A0)+2))));	// 2784 mov	cx, word ptr [_dword_257A0+2]
 	R(MOV(bx, m._fhandle_module));	// 2785 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 2786 mov	ax, 4200h
@@ -2702,7 +2702,7 @@ loc_11a39:
 	R(MOV(bx, m._fhandle_module));	// 2879 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2880 mov	ax, 4201h
 	R(INT(0x21));	// 2881 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
-	R(ADD(*(dw*)(raddr(ds,offset(seg003,_dword_257A0))), ax));	// 2883 add	word ptr [_dword_257A0],	ax
+	R(ADD(*(dw*)&m._dword_257A0, ax));	// 2883 add	word ptr [_dword_257A0],	ax
 	R(ADC(*(dw*)(raddr(ds,offset(seg003,_dword_257A0)+2)), dx));	// 2884 adc	word ptr [_dword_257A0+2], dx
 	R(MOV(eax, m._chrin));	// 2885 mov	eax, _chrin
 	R(CMP(eax, 0x54534C54));	// 2886 cmp	eax, 54534C54h	; TLST
@@ -2774,7 +2774,7 @@ loc_11b20:
 	R(CMP(eax, 0x4D444E45));	// 2967 cmp	eax, 4D444E45h	; ENDM
 		R(JZ(loc_11b41));	// 2968 jz	short loc_11B41
 loc_11b28:
-	R(MOV(dx, *(dw*)(raddr(ds,offset(seg003,_dword_257A0)))));	// 2972 mov	dx, word ptr [_dword_257A0]
+	R(MOV(dx, *(dw*)&m._dword_257A0));	// 2972 mov	dx, word ptr [_dword_257A0]
 	R(MOV(cx, *(dw*)(raddr(ds,offset(seg003,_dword_257A0)+2))));	// 2973 mov	cx, word ptr [_dword_257A0+2]
 	R(MOV(bx, m._fhandle_module));	// 2974 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 2975 mov	ax, 4200h
@@ -3021,7 +3021,7 @@ STOSD;	// 0 stosd
 _ems_init:
 	R(MOV(m._ems_enabled, 0));	// 3294 mov	_ems_enabled, 0
 	R(MOV(ax, 1));	// 3295 mov	ax, 1
-	R(TEST(*(raddr(ds,offset(seg003,_config_word))), 2));	// 3296 test	byte ptr [_config_word],	2
+	R(TEST(m._config_word, 2));	// 3296 test	byte ptr [_config_word],	2
 		R(JZ(loc_11e00));	// 3297 jz	loc_11E00
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 3298 xor	ax, ax
 	R(MOV(es, ax));	// 3299 mov	es, ax
@@ -3289,7 +3289,7 @@ loc_11fd6:
 	R(CALL(k_alloc_dma_buf));	// 3682 call	_alloc_dma_buf
 		R(JC(locret_1221f));	// 3683 jb	locret_1221F
 	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2)), ax));	// 3684 mov	word ptr [_dma_buf_pointer+2], ax
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer))), 0));	// 3685 mov	word ptr [_dma_buf_pointer], 0
+	R(MOV(*(dw*)&m._dma_buf_pointer, 0));	// 3685 mov	word ptr [_dma_buf_pointer], 0
 	R(MOV(di, offset(seg003,_myout)));	// 3686 mov	di, offset _myout
 	R(MOV(cx, m._word_245D2));	// 3687 mov	cx, _word_245D2
 loc_11ff7:
@@ -3359,7 +3359,7 @@ loc_120aa:
 	R(MOV(cx, 0x8000));	// 3765 mov	cx, 8000h
 	R(MOV(ax, m._word_24630));	// 3766 mov	ax, _word_24630
 	R(CALL(k_nongravis_182e7));	// 3767 call	_nongravis_182E7
-	R(XOR(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer))), 0x8000));	// 3768 xor	word ptr [_dma_buf_pointer], 8000h
+	R(XOR(*(dw*)&m._dma_buf_pointer, 0x8000));	// 3768 xor	word ptr [_dma_buf_pointer], 8000h
 	R(ADD(m._word_24630, 0x800));	// 3769 add	_word_24630, 800h
 	R(POP(di));	// 3770 pop	di
 	R(POP(ecx));	// 3771 pop	ecx
@@ -3386,7 +3386,7 @@ loc_120e7:
 	R(PUSH(cx));	// 3797 push	cx
 	R(MOV(ax, m._word_24630));	// 3798 mov	ax, _word_24630
 	R(CALL(k_nongravis_182e7));	// 3799 call	_nongravis_182E7
-	R(XOR(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer))), 0x8000));	// 3800 xor	word ptr [_dma_buf_pointer], 8000h
+	R(XOR(*(dw*)&m._dma_buf_pointer, 0x8000));	// 3800 xor	word ptr [_dma_buf_pointer], 8000h
 	R(POP(ax));	// 3801 pop	ax
 	R(ADD(ax, 0x21));	// 3802 add	ax, 21h	; '!'
 	R(AND(al, 0x0E0));	// 3803 and	al, 0E0h
@@ -3953,25 +3953,25 @@ loc_1265b:
 render_1265d:
 	R(MOV(ax, seg_offset(seg003)));	// 4468 mov	ax, seg003
 	R(MOV(es, ax));	// 4469 mov	es, ax
-	R(MOV(ax, *(dw*)(raddr(es,offset(seg003,_volume_245FC)))));	// 4471 mov	ax, es:[_volume_245FC]
+	R(MOV(ax, *(dw*)&m._volume_245FC));	// 4471 mov	ax, es:[_volume_245FC]
 	R(DEC(ax));	// 4472 dec	ax
 	R(MOV(cl, al));	// 4473 mov	cl, al
 	R(MOV(si, offset(seg003,_channels_25908)));	// 4474 mov	si, offset _channels_25908
 	R(MOV(di, offset(seg003,asc_246B0)));	// 4475 mov	di, offset asc_246B0 ; "				"
-	R(MOVZX(bp, *(raddr(es,offset(seg003,_sndcard_type)))));	// 4476 movzx	bp, es:[_sndcard_type]
-	R(MOV(ch, *(raddr(es,offset(seg003,_byte_24666)))));	// 4477 mov	ch, es:[_byte_24666]
-	R(MOV(bh, *(raddr(es,offset(seg003,_byte_24667)))));	// 4478 mov	bh, es:[_byte_24667]
-	R(MOV(dl, *(raddr(es,offset(seg003,_sndflags_24622)))));	// 4479 mov	dl, es:[_sndflags_24622]
-	R(MOV(dh, *(raddr(es,offset(seg003,_byte_24628)))));	// 4480 mov	dh, es:[_byte_24628]
+	R(MOVZX(bp, m._sndcard_type));	// 4476 movzx	bp, es:[_sndcard_type]
+	R(MOV(ch, m._byte_24666));	// 4477 mov	ch, es:[_byte_24666]
+	R(MOV(bh, m._byte_24667));	// 4478 mov	bh, es:[_byte_24667]
+	R(MOV(dl, m._sndflags_24622));	// 4479 mov	dl, es:[_sndflags_24622]
+	R(MOV(dh, m._byte_24628));	// 4480 mov	dh, es:[_byte_24628]
 	R(DEC(dh));	// 4481 dec	dh
 	R(AND(dh, 3));	// 4482 and	dh, 3
 	R(SHL(dh, 1));	// 4483 shl	dh, 1
-	R(OR(dh, *(raddr(es,offset(seg003,_is_stereo)))));	// 4484 or	dh, es:[_is_stereo]
+	R(OR(dh, m._is_stereo));	// 4484 or	dh, es:[_is_stereo]
 	R(SHL(dh, 1));	// 4485 shl	dh, 1
-	R(OR(dh, *(raddr(es,offset(seg003,_byte_24671)))));	// 4486 or	dh, es:[_byte_24671]
+	R(OR(dh, m._byte_24671));	// 4486 or	dh, es:[_byte_24671]
 	R(SHL(dh, 3));	// 4487 shl	dh, 3
-	R(MOV(al, *(raddr(es,offset(seg003,_word_245F6)))));	// 4488 mov	al, byte ptr es:[_word_245F6]
-	R(MOV(ah, *(raddr(es,offset(seg003,_word_245F0)))));	// 4489 mov	ah, byte ptr es:[_word_245F0]
+	R(MOV(al, m._word_245F6));	// 4488 mov	al, byte ptr es:[_word_245F6]
+	R(MOV(ah, m._word_245F0));	// 4489 mov	ah, byte ptr es:[_word_245F0]
 	R(RETF);	// 4490 retf
  // Procedure sub_126a9() start
 sub_126a9:
@@ -3979,11 +3979,11 @@ sub_126a9:
 	R(MOV(es, ax));	// 4500 mov	es, ax
 	R(MOV(di, offset(seg003,asc_246B0)));	// 4501 mov	di, offset asc_246B0 ; "				"
 	R(MOV(si, offset(seg003,_myout)));	// 4502 mov	si, offset _myout
-	R(MOV(bl, *(raddr(es,offset(seg003,_word_245FA)))));	// 4503 mov	bl, byte ptr es:[_word_245FA]
-	R(MOV(bh, *(raddr(es,offset(seg003,_word_245D2)))));	// 4504 mov	bh, byte ptr es:[_word_245D2]
-	R(MOV(cl, *(raddr(es,offset(seg003,_mod_channels_number)))));	// 4505 mov	cl, byte ptr es:[_mod_channels_number]
-	R(MOV(ch, *(raddr(es,offset(seg003,_byte_24617)))));	// 4506 mov	ch, es:[_byte_24617]
-	R(MOV(eax, *(dd*)(raddr(es,offset(seg003,_module_type_text)))));	// 4507 mov	eax, es:[_module_type_text]
+	R(MOV(bl, m._word_245FA));	// 4503 mov	bl, byte ptr es:[_word_245FA]
+	R(MOV(bh, m._word_245D2));	// 4504 mov	bh, byte ptr es:[_word_245D2]
+	R(MOV(cl, m._mod_channels_number));	// 4505 mov	cl, byte ptr es:[_mod_channels_number]
+	R(MOV(ch, m._byte_24617));	// 4506 mov	ch, es:[_byte_24617]
+	R(MOV(eax, *(dd*)&m._module_type_text));	// 4507 mov	eax, es:[_module_type_text]
 	R(RETF);	// 4508 retf
  // Procedure _volume_prep() start
 _volume_prep:
@@ -4022,7 +4022,7 @@ loc_12702:
 	R(MOV(cl, m._dma_channel_0));	// 4554 mov	cl, _dma_channel_0
 	R(CALL(k_alloc_dma_buf));	// 4555 call	_alloc_dma_buf
 	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dword_24640)+2)), ax));	// 4556 mov	word ptr [_dword_24640+2], ax
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dword_24640))), 0));	// 4557 mov	word ptr [_dword_24640],	0
+	R(MOV(*(dw*)&m._dword_24640, 0));	// 4557 mov	word ptr [_dword_24640],	0
 loc_12721:
 	R(MOV(ax, ds));	// 4560 mov	ax, ds
 	R(MOV(es, ax));	// 4561 mov	es, ax
@@ -4406,7 +4406,7 @@ _volume_12a66:
 loc_12a73:
 	R(PUSH(bx));	// 4983 push	bx
 	R(PUSH(cx));	// 4984 push	cx
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CE))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CE);
 	R(CALL(__disp));	// 4985 call	[off_245CE]
 	R(POP(cx));	// 4986 pop	cx
 	R(POP(bx));	// 4987 pop	bx
@@ -4429,7 +4429,7 @@ loc_12a98:
 	R(PUSH(bx));	// 5013 push	bx
 	R(PUSH(cx));	// 5014 push	cx
 	R(MOV(al, *(raddr(ds,bx+8))));	// 5015 mov	al, [bx+8]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 	R(CALL(__disp));	// 5016 call	[off_245CC]
 	R(POP(cx));	// 5017 pop	cx
 	R(POP(bx));	// 5018 pop	bx
@@ -4770,10 +4770,10 @@ sub_12da8:
 	R(MOV(m._config_word, si));	// 5488 mov	_config_word, si
 	R(MOV(ax, di));	// 5489 mov	ax, di
 	R(MOV(m._byte_246DC, 0x4B));	// 5490 mov	_byte_246DC, 4Bh ; 'K'
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245CA))), ksub_13177));	// 5491 mov	[off_245CA], offset sub_13177
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245C8))), ksub_13429));	// 5492 mov	[off_245C8], offset sub_13429
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245CC))), ksub_131ef));	// 5493 mov	[off_245CC], offset sub_131EF
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245CE))), ksub_131da));	// 5494 mov	[off_245CE], offset sub_131DA
+	R(MOV(*(dw*)&m.off_245CA, ksub_13177));	// 5491 mov	[off_245CA], offset sub_13177
+	R(MOV(*(dw*)&m.off_245C8, ksub_13429));	// 5492 mov	[off_245C8], offset sub_13429
+	R(MOV(*(dw*)&m.off_245CC, ksub_131ef));	// 5493 mov	[off_245CC], offset sub_131EF
+	R(MOV(*(dw*)&m.off_245CE, ksub_131da));	// 5494 mov	[off_245CE], offset sub_131DA
 	R(MOV(m._is_stereo, 0));	// 5495 mov	_is_stereo, 0
 	R(MOV(m._bit_mode, 8));	// 5496 mov	_bit_mode, 8
 	R(MOV(m._word_245E8, 0x400));	// 5497 mov	_word_245E8, 400h
@@ -4810,11 +4810,11 @@ loc_12e55:
 		R(JZ(loc_12e6b));	// 5529 jz	short loc_12E6B
 	R(OR(al, 0x10));	// 5530 or	al, 10h
 loc_12e6b:
-	R(TEST(*(raddr(ds,offset(seg003,_config_word))), 4));	// 5533 test	byte ptr [_config_word],	4
+	R(TEST(m._config_word, 4));	// 5533 test	byte ptr [_config_word],	4
 		R(JZ(loc_12e74));	// 5534 jz	short loc_12E74
 	R(OR(al, 4));	// 5535 or	al, 4
 loc_12e74:
-	R(TEST(*(raddr(ds,offset(seg003,_config_word))), 0x80));	// 5538 test	byte ptr [_config_word],	80h
+	R(TEST(m._config_word, 0x80));	// 5538 test	byte ptr [_config_word],	80h
 		R(JZ(loc_12e7d));	// 5539 jz	short loc_12E7D
 	R(OR(al, 8));	// 5540 or	al, 8
 loc_12e7d:
@@ -4824,8 +4824,8 @@ loc_12e7d:
 	R(AND(cl, 1));	// 5546 and	cl, 1
 	R(CMP(m._bit_mode, 16));	// 5547 cmp	_bit_mode, 16
 		R(JNZ(loc_12e9f));	// 5548 jnz	short loc_12E9F
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245E0))), offset(seg003,_myin)));	// 5549 mov	[off_245E0], offset _myin
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245E2))), offset(seg003,_chrin)));	// 5550 mov	[off_245E2], offset _chrin
+	R(MOV(*(dw*)&m.off_245E0, offset(seg003,_myin)));	// 5549 mov	[off_245E0], offset _myin
+	R(MOV(*(dw*)&m.off_245E2, offset(seg003,_chrin)));	// 5550 mov	[off_245E2], offset _chrin
 	R(INC(cl));	// 5551 inc	cl
 loc_12e9f:
 	R(SHR(ax, cl));	// 5554 shr	ax, cl
@@ -4951,7 +4951,7 @@ pcm_buffer = raddr(ax,0);
 		audio_pos =pcm_buffer;
 	R(POP(dx));	// 5714 pop	dx
 		R(JC(locret_12fb3));	// 5715 jb	short locret_12FB3
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer))), 0));	// 5716 mov	word ptr [_dma_buf_pointer], 0
+	R(MOV(*(dw*)&m._dma_buf_pointer, 0));	// 5716 mov	word ptr [_dma_buf_pointer], 0
 	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2)), ax));	// 5717 mov	word ptr [_dma_buf_pointer+2], ax
 	R(PUSH(ax));	// 5718 push	ax
 	R(PUSH(dx));	// 5719 push	dx
@@ -5037,18 +5037,18 @@ sub_13044:
 		R(JMP(loc_13080));	// 5832 jmp	short loc_13080
 loc_1305a:
 	R(MOV(m._byte_2467D, 0x3F));	// 5836 mov	_byte_2467D, 3Fh ; '?'
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_2462E))), offset(seg003,_table_24798)));	// 5837 mov	[off_2462E], offset _table_24798
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_24656))), offset(seg003,_table_25221)));	// 5838 mov	[off_24656], offset _table_25221
+	R(MOV(*(dw*)&m.off_2462E, offset(seg003,_table_24798)));	// 5837 mov	[off_2462E], offset _table_24798
+	R(MOV(*(dw*)&m.off_24656, offset(seg003,_table_25221)));	// 5838 mov	[off_24656], offset _table_25221
 		R(JMP(loc_13091));	// 5839 jmp	short loc_13091
 loc_1306d:
 	R(MOV(m._byte_2467D, 0x3F));	// 5843 mov	_byte_2467D, 3Fh ; '?'
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_2462E))), offset(seg003,_table_24818)));	// 5844 mov	[off_2462E], offset _table_24818
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_24656))), offset(seg003,_table_25261)));	// 5845 mov	[off_24656], offset _table_25261
+	R(MOV(*(dw*)&m.off_2462E, offset(seg003,_table_24818)));	// 5844 mov	[off_2462E], offset _table_24818
+	R(MOV(*(dw*)&m.off_24656, offset(seg003,_table_25261)));	// 5845 mov	[off_24656], offset _table_25261
 		R(JMP(loc_13091));	// 5846 jmp	short loc_13091
 loc_13080:
 	R(MOV(m._byte_2467D, 0x40));	// 5851 mov	_byte_2467D, 40h ; '@'
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_2462E))), offset(seg003,_table_24716)));	// 5852 mov	[off_2462E], offset _table_24716
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_24656))), offset(seg003,_table_251E0)));	// 5853 mov	[off_24656], offset _table_251E0
+	R(MOV(*(dw*)&m.off_2462E, offset(seg003,_table_24716)));	// 5852 mov	[off_2462E], offset _table_24716
+	R(MOV(*(dw*)&m.off_24656, offset(seg003,_table_251E0)));	// 5853 mov	[off_24656], offset _table_251E0
 loc_13091:
 	R(MOV(di, offset(seg003,_vlm_byte_table)));	// 5857 mov	di, offset _vlm_byte_table
 	R(MOVZX(eax, m._word_245D6));	// 5858 movzx	eax, _word_245D6
@@ -5062,7 +5062,7 @@ loc_130a2:
 	R(ADC(ax, 0));	// 5867 adc	ax, 0
 loc_130ae:
 	R(MOVZX(ebp, ax));	// 5870 movzx	ebp, ax
-	R(MOV(si, *(dw*)(raddr(ds,offset(seg003,off_24656)))));	// 5871 mov	si, [off_24656]
+	R(MOV(si, *(dw*)&m.off_24656));	// 5871 mov	si, [off_24656]
 	R(MOVZX(cx, m._byte_2467D));	// 5872 movzx	cx, _byte_2467D
 	R(INC(cx));	// 5873 inc	cx
 loc_130bc:
@@ -5283,7 +5283,7 @@ loc_135f2:
 	R(OR(al, al));	// 6191 or	al, al
 		R(JNZ(loc_135f2));	// 6192 jnz	short loc_135F2
 loc_135fd:
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_pointer_245B4))), si));	// 6195 mov	word ptr [_pointer_245B4], si
+	R(MOV(*(dw*)&m._pointer_245B4, si));	// 6195 mov	word ptr [_pointer_245B4], si
 	R(MOV(bx, offset(seg003,_channels_25908)));	// 6196 mov	bx, offset _channels_25908
 	R(MOV(cx, m._mod_channels_number));	// 6197 mov	cx, _mod_channels_number
 loc_13608:
@@ -5293,7 +5293,7 @@ loc_13608:
 		R(JNZ(loc_1361c));	// 6203 jnz	short loc_1361C
 	R(MOV(ax, *(dw*)(raddr(ds,bx))));	// 6204 mov	ax, [bx]
 	R(PUSH(cx));	// 6205 push	cx
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 	R(CALL(__disp));	// 6206 call	[off_245CA]
 	R(POP(cx));	// 6207 pop	cx
 loc_1361c:
@@ -5431,7 +5431,7 @@ loc_13742:
 	R(CMP(al, 0x19));	// 6367 cmp	al, 19h
 		R(JZ(loc_13ed3));	// 6368 jz	loc_13ED3
 loc_13791:
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245C8))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245C8);
 	R(CALL(__disp));	// 6372 call	[off_245C8]
 	R(TEST(*(raddr(ds,bx+9)), 4));	// 6373 test	byte ptr [bx+9], 4
 		R(JNZ(loc_1379f));	// 6374 jnz	short loc_1379F
@@ -5458,7 +5458,7 @@ loc_137be:
 	R(RETN);	// 6397 retn
 loc_137ce:
 	R(CALL(ksub_137d5));	// 6402 call	sub_137D5
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CE))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CE);
 		R(JMP(__dispatch_call));	// 6403 jmp	[off_245CE]
  // Procedure sub_137d5() start
 sub_137d5:
@@ -5484,7 +5484,7 @@ __disp = static_cast<_offsets>(*(dw*)(raddr(cs,offset(_text,_effoff_18F60)+di)))
 	R(TEST(*(raddr(ds,bx+0x3D)), 0x40));	// 6429 test	byte ptr [bx+3Dh], 40h
 		R(JZ(locret_13812));	// 6430 jz	short locret_13812
 	R(MOV(al, *(raddr(ds,bx+8))));	// 6431 mov	al, [bx+8]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 6432 jmp	[off_245CC]
 locret_13812:
 	R(RETN);	// 6436 retn
@@ -5558,7 +5558,7 @@ loc_1388b:
 	R(MOV(*(dw*)(raddr(ds,bx)), 0x0A0));	// 6538 mov	word ptr [bx], 0A0h ; 'à'
 loc_13897:
 	R(MOV(ax, *(dw*)(raddr(ds,bx))));	// 6541 mov	ax, [bx]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 6542 jmp	[off_245CA]
  // Procedure _eff_1389d() start
 _eff_1389d:
@@ -5577,7 +5577,7 @@ loc_138b3:
 	R(MOV(*(dw*)(raddr(ds,bx)), 13696));	// 6571 mov	word ptr [bx], 13696
 loc_138b7:
 	R(MOV(ax, *(dw*)(raddr(ds,bx))));	// 6574 mov	ax, [bx]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 6575 jmp	[off_245CA]
 loc_138bd:
 	R(MOV(ax, *(dw*)(raddr(ds,bx))));	// 6583 mov	ax, [bx]
@@ -5615,13 +5615,13 @@ loc_138fc:
 	R(MOV(*(dw*)(raddr(ds,bx)), ax));	// 6625 mov	[bx], ax
 	R(MOV(*(dw*)(raddr(ds,bx+0x10)), 0));	// 6626 mov	word ptr [bx+10h], 0
 	R(AND(*(raddr(ds,bx+0x17)), 0x0EF));	// 6627 and	byte ptr [bx+17h], 0EFh
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 6628 jmp	[off_245CA]
 loc_1390b:
 	R(TEST(*(raddr(ds,bx+0x17)), 0x20));	// 6633 test	byte ptr [bx+17h], 20h
 		R(JNZ(loc_13917));	// 6634 jnz	short loc_13917
 	R(MOV(ax, *(dw*)(raddr(ds,bx))));	// 6635 mov	ax, [bx]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 6636 jmp	[off_245CA]
 loc_13917:
 	R(MOV(di, *(dw*)(raddr(ds,bx+0x38))));	// 6640 mov	di, [bx+38h]
@@ -5635,7 +5635,7 @@ loc_1391f:
 		R(JNZ(loc_1391f));	// 6649 jnz	short loc_1391F
 loc_13929:
 	R(MOV(ax, *(dw*)(raddr(ds,di))));	// 6652 mov	ax, [di]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 6653 jmp	[off_245CA]
  // Procedure _eff_1392f() start
 _eff_1392f:
@@ -5695,7 +5695,7 @@ loc_1399d:
 	R(SHR(dh, 2));	// 6726 shr	dh, 2
 	R(AND(dh, 0x3C));	// 6727 and	dh, 3Ch
 	R(ADD(*(raddr(ds,bx+0x0D)), dh));	// 6728 add	[bx+0Dh], dh
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 6729 jmp	[off_245CA]
  // Procedure _eff_139ac() start
 _eff_139ac:
@@ -5769,7 +5769,7 @@ loc_13a36:
 	R(SHR(dh, 2));	// 6830 shr	dh, 2
 	R(AND(dh, 0x3C));	// 6831 and	dh, 3Ch
 	R(ADD(*(raddr(ds,bx+0x0F)), dh));	// 6832 add	[bx+0Fh], dh
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 6833 jmp	[off_245CC]
  // Procedure _eff_13a43() start
 _eff_13a43:
@@ -5808,7 +5808,7 @@ loc_13a9b:
 loc_13aae:
 	R(CMP(m._byte_2461A, 0));	// 6897 cmp	_byte_2461A, 0
 		R(JNZ(loc_13ac6));	// 6898 jnz	short loc_13AC6
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CE))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CE);
 	R(CALL(__disp));	// 6899 call	[off_245CE]
 	R(AND(*(raddr(ds,bx+0x17)), 0x0FB));	// 6900 and	byte ptr [bx+17h], 0FBh
 	R(OR(*(raddr(ds,bx+0x17)), 0x40));	// 6901 or	byte ptr [bx+17h], 40h
@@ -5836,7 +5836,7 @@ loc_13ae0:
 	al = 0;AFFECT_ZF(0); AFFECT_SF(al,0);	// 6938 xor	al, al
 loc_13ae8:
 	R(MOV(*(raddr(ds,bx+8)), al));	// 6941 mov	[bx+8],	al
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 6942 jmp	[off_245CC]
 loc_13aef:
 	R(SHR(al, 4));	// 6947 shr	al, 4
@@ -5848,7 +5848,7 @@ loc_13af2:
 	R(MOV(al, m._byte_2467D));	// 6954 mov	al, _byte_2467D
 loc_13aff:
 	R(MOV(*(raddr(ds,bx+8)), al));	// 6957 mov	[bx+8],	al
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 6958 jmp	[off_245CC]
  // Procedure _eff_13b06() start
 _eff_13b06:
@@ -5858,7 +5858,7 @@ _eff_13b06:
 	R(INC(ax));	// 6970 inc	ax
 	R(TEST(m._flag_playsetttings, 4));	// 6971 test	_flag_playsetttings, 4
 		R(JNZ(loc_13b5b));	// 6972 jnz	short loc_13B5B
-	R(BT(*(dw*)(raddr(ds,offset(seg003,_byte_282E8))), ax));	// 6973 bt	word ptr [_byte_282E8], ax
+	R(BT(*(dw*)&m._byte_282E8, ax));	// 6973 bt	word ptr [_byte_282E8], ax
 		R(JNC(loc_13b5b));	// 6974 jnb	short loc_13B5B
 	R(MOV(cx, m._word_245FA));	// 6975 mov	cx, _word_245FA
 	R(ADD(cx, 7));	// 6976 add	cx, 7
@@ -5914,7 +5914,7 @@ _eff_13b78:
 	R(MOV(al, m._byte_2467D));	// 7046 mov	al, _byte_2467D
 loc_13b81:
 	R(MOV(*(raddr(ds,bx+8)), al));	// 7049 mov	[bx+8],	al
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 7050 jmp	[off_245CC]
  // Procedure _eff_13b88() start
 _eff_13b88:
@@ -6029,7 +6029,7 @@ loc_13c77:
 	R(DIV1(dl));	// 7232 div	dl
 	R(OR(ah, ah));	// 7233 or	ah, ah
 		R(JNZ(locret_13cf4));	// 7234 jnz	short locret_13CF4
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245C8))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245C8);
 		R(JMP(__dispatch_call));	// 7235 jmp	[off_245C8]
  // Procedure _eff_13c88() start
 _eff_13c88:
@@ -6048,7 +6048,7 @@ _eff_13ca2:
 	R(CMP(al, m._byte_24668));	// 7268 cmp	al, _byte_24668
 		R(JNZ(locret_13cf4));	// 7269 jnz	short locret_13CF4
 	al = 0;AFFECT_ZF(0); AFFECT_SF(al,0);	// 7270 xor	al, al
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 7271 jmp	[off_245CC]
 loc_13cae:
 	R(MOV(al, *(raddr(ds,bx+0x0B))));	// 7278 mov	al, [bx+0Bh]
@@ -6355,11 +6355,11 @@ loc_13f0c:
 	R(CMP(ah, dl));	// 7735 cmp	ah, dl
 		R(JC(loc_13f34));	// 7736 jb	short loc_13F34
 	al = 0;AFFECT_ZF(0); AFFECT_SF(al,0);	// 7737 xor	al, al
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 7738 jmp	[off_245CC]
 loc_13f34:
 	R(MOV(al, *(raddr(ds,bx+8))));	// 7742 mov	al, [bx+8]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CC))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CC);
 		R(JMP(__dispatch_call));	// 7743 jmp	[off_245CC]
  // Procedure _eff_13f3b() start
 _eff_13f3b:
@@ -6466,11 +6466,11 @@ loc_14000:
 	R(SHL(al, 4));	// 7876 shl	al, 4
 	R(OR(al, ah));	// 7877 or	al, ah
 	R(CALL(ksub_13826));	// 7878 call	sub_13826
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 7879 jmp	[off_245CA]
 loc_1401a:
 	R(MOV(ax, *(dw*)(raddr(ds,bx))));	// 7883 mov	ax, [bx]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(seg003,off_245CA))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_245CA);
 		R(JMP(__dispatch_call));	// 7884 jmp	[off_245CA]
  // Procedure _eff_14020() start
 _eff_14020:
@@ -6586,7 +6586,7 @@ loc_140fe:
 	R(ADD(bx, 0x50));	// 8056 add	bx, 50h	; 'P'
 	R(DEC(cx));	// 8057 dec	cx
 		R(JNZ(loc_140fe));	// 8058 jnz	short loc_140FE
-	R(MOV(si, *(dw*)(raddr(ds,offset(seg003,_pointer_245B4)))));	// 8059 mov	si, word ptr [_pointer_245B4]	// 8060 jmp	short $+2
+	R(MOV(si, *(dw*)&m._pointer_245B4));	// 8059 mov	si, word ptr [_pointer_245B4]	// 8060 jmp	short $+2
 loc_14111:
 	R(CMP(m._byte_2466B, 1));	// 8064 cmp	_byte_2466B, 1
 		R(JZ(loc_141ba));	// 8065 jz	loc_141BA
@@ -6643,7 +6643,7 @@ loc_1419e:
 	R(CALL(k_eff_13ce8));	// 8128 call	_eff_13CE8
 	R(POP(bx));	// 8129 pop	bx
 loc_141a2:
-	R(BTS(*(dw*)(raddr(ds,offset(seg003,_byte_282E8))), bx));	// 8132 bts	word ptr [_byte_282E8], bx
+	R(BTS(*(dw*)&m._byte_282E8, bx));	// 8132 bts	word ptr [_byte_282E8], bx
 	R(MOVZX(bx, *(raddr(ds,offset(seg003,_byte_27FE8)+bx))));	// 8133 movzx	bx, [_byte_27FE8+bx]
 	R(MOV(m._my_seg_index, bx));	// 8134 mov	_my_seg_index,	bx
 	R(SHL(bx, 1));	// 8135 shl	bx, 1
@@ -6659,7 +6659,7 @@ loc_141ba:
 	R(MOV(m._byte_2466C, 0));	// 8146 mov	_byte_2466C, 0
 	R(MOV(m._byte_2466D, 0));	// 8147 mov	_byte_2466D, 0
 loc_141da:
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_pointer_245B4))), si));	// 8150 mov	word ptr [_pointer_245B4], si
+	R(MOV(*(dw*)&m._pointer_245B4, si));	// 8150 mov	word ptr [_pointer_245B4], si
 	R(RETN);	// 8151 retn
  // Procedure _vlm_141df() start
 _vlm_141df:
@@ -6791,7 +6791,7 @@ loc_14afd:
 	R(MOV(eax, 0x1000));	// 8475 mov	eax, 1000h
 	R(MOV(cl, m._dma_chn_mask));	// 8476 mov	cl, _dma_chn_mask
 	R(CALL(k_alloc_dma_buf));	// 8477 call	_alloc_dma_buf
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer))), 0));	// 8478 mov	word ptr [_dma_buf_pointer], 0
+	R(MOV(*(dw*)&m._dma_buf_pointer, 0));	// 8478 mov	word ptr [_dma_buf_pointer], 0
 	R(MOV(*(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2)), ax));	// 8479 mov	word ptr [_dma_buf_pointer+2], ax
 	R(CLC);	// 8480 clc
 	R(RETN);	// 8481 retn
@@ -6821,7 +6821,7 @@ loc_14b47:
 	R(IN(al, dx));	// 8517 in	al, dx		; DMA controller, 8237A-5.
 	R(OR(al, al));	// 8519 or	al, al
 		R(JS(loc_14b47));	// 8520 js	short loc_14B47
-	R(MOV(al, *(raddr(ds,offset(seg003,_freq1)))));	// 8521 mov	al, byte ptr [_freq1]
+	R(MOV(al, m._freq1));	// 8521 mov	al, byte ptr [_freq1]
 	R(OUT(dx, al));	// 8522 out	dx, al		; DMA controller, 8237A-5.
 loc_14b50:
 	R(IN(al, dx));	// 8526 in	al, dx		; DMA controller, 8237A-5.
@@ -7429,10 +7429,10 @@ _midi_init:
 loc_15302:
 	R(MOV(m._word_2465C, ax));	// 9481 mov	_word_2465C, ax
 	R(MOV(m._snd_base_port, ax));	// 9482 mov	_snd_base_port, ax
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245CA))), k_nullsub_4));	// 9483 mov	[off_245CA], offset _nullsub_4
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245C8))), k_midi_15466));	// 9484 mov	[off_245C8], offset _midi_15466
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245CC))), k_midi_154ac));	// 9485 mov	[off_245CC], offset _midi_154AC
-	R(MOV(*(dw*)(raddr(ds,offset(seg003,off_245CE))), k_midi_1544d));	// 9486 mov	[off_245CE], offset _midi_1544D
+	R(MOV(*(dw*)&m.off_245CA, k_nullsub_4));	// 9483 mov	[off_245CA], offset _nullsub_4
+	R(MOV(*(dw*)&m.off_245C8, k_midi_15466));	// 9484 mov	[off_245C8], offset _midi_15466
+	R(MOV(*(dw*)&m.off_245CC, k_midi_154ac));	// 9485 mov	[off_245CC], offset _midi_154AC
+	R(MOV(*(dw*)&m.off_245CE, k_midi_1544d));	// 9486 mov	[off_245CE], offset _midi_1544D
 	R(MOV(bx, offset(seg003,_channels_25908)));	// 9487 mov	bx, offset _channels_25908
 	R(MOV(ah, 1));	// 9488 mov	ah, 1
 loc_15325:
@@ -7661,7 +7661,7 @@ loc_154b5:
 	R(MOV(ah, 7));	// 9806 mov	ah, 7
 	R(CALL(k_midi_15413));	// 9807 call	_midi_15413
 	R(MOV(al, 0x80));	// 9808 mov	al, 80h	; 'À'
-	R(ADD(di, *(dw*)(raddr(ds,offset(seg003,off_24656)))));	// 9809 add	di, [off_24656]
+	R(ADD(di, *(dw*)&m.off_24656));	// 9809 add	di, [off_24656]
 	R(MUL1_1(*(raddr(ds,di))));	// 9810 mul	byte ptr [di]
 	R(CALL(k_midi_15413));	// 9811 call	_midi_15413
 locret_154d9:
@@ -9344,7 +9344,7 @@ loc_1690b:
 	R(ADD(al, 4));	// 12141 add	al, 4
 	R(CMP(al, ah));	// 12142 cmp	al, ah
 		R(JNC(loc_16942));	// 12143 jnb	short loc_16942
-	R(MOV(*(raddr(ds,offset(seg003,_word_24614))), al));	// 12144 mov	byte ptr [_word_24614], al
+	R(MOV(m._word_24614, al));	// 12144 mov	byte ptr [_word_24614], al
 	R(MOVZX(ebx, al));	// 12145 movzx	ebx, al
 	R(SHL(ebx, 9));	// 12146 shl	ebx, 9
 	R(ADD(bx, offset(seg003,_vlm_byte_table)));	// 12147 add	bx, offset _vlm_byte_table
@@ -9355,14 +9355,14 @@ loc_16929:
 		R(JBE(loc_16942));	// 12153 jbe	short loc_16942
 	R(CMP(al, ah));	// 12154 cmp	al, ah
 		R(JBE(loc_16942));	// 12155 jbe	short loc_16942
-	R(MOV(*(raddr(ds,offset(seg003,_word_24614))), al));	// 12156 mov	byte ptr [_word_24614], al
+	R(MOV(m._word_24614, al));	// 12156 mov	byte ptr [_word_24614], al
 	R(MOVZX(ebx, al));	// 12157 movzx	ebx, al
 	R(SHL(ebx, 9));	// 12158 shl	ebx, 9
 	R(ADD(bx, offset(seg003,_vlm_byte_table)));	// 12159 add	bx, offset _vlm_byte_table
 __disp = static_cast<_offsets>(dx);
 		R(JMP(__dispatch_call));	// 12160 jmp	dx
 loc_16942:
-	R(MOV(*(raddr(ds,offset(seg003,_word_24614))), ah));	// 12164 mov	byte ptr [_word_24614], ah
+	R(MOV(m._word_24614, ah));	// 12164 mov	byte ptr [_word_24614], ah
 	R(MOV(m._byte_24616, 0));	// 12165 mov	_byte_24616, 0
 	R(MOVZX(ebx, ah));	// 12166 movzx	ebx, ah
 	R(SHL(ebx, 9));	// 12167 shl	ebx, 9
@@ -10237,7 +10237,7 @@ loc_171da:
 		R(JNZ(loc_1721a));	// 13236 jnz	short loc_1721A
 	R(CMP(*(raddr(ds,si+0x3A)), 0));	// 13237 cmp	byte ptr [si+3Ah], 0
 		R(JZ(loc_17202));	// 13238 jz	short loc_17202
-	R(MOV(di, *(dw*)(raddr(ds,offset(seg003,off_245E0)))));	// 13239 mov	di, [off_245E0]
+	R(MOV(di, *(dw*)&m.off_245E0));	// 13239 mov	di, [off_245E0]
 	R(TEST(m._byte_24682, 1));	// 13240 test	_byte_24682, 1
 		R(JZ(loc_171f8));	// 13241 jz	short loc_171F8
 	R(CALL(kchanel_15577));	// 13242 call	chanel_15577
@@ -10247,7 +10247,7 @@ loc_171f8:
 	R(CALL(kchanel_1609f));	// 13248 call	chanel_1609f
 		R(JMP(loc_1721a));	// 13249 jmp	short loc_1721A
 loc_17202:
-	R(MOV(di, *(dw*)(raddr(ds,offset(seg003,off_245E2)))));	// 13253 mov	di, [off_245E2]
+	R(MOV(di, *(dw*)&m.off_245E2));	// 13253 mov	di, [off_245E2]
 	R(TEST(m._byte_24682, 2));	// 13254 test	_byte_24682, 2
 		R(JZ(loc_17212));	// 13255 jz	short loc_17212
 	R(CALL(kchanel_15577));	// 13256 call	chanel_15577
@@ -11374,7 +11374,7 @@ loc_182f7:
 	R(MOV(cx, ax));	// 14699 mov	cx, ax
 	R(SUB(bx, ax));	// 14700 sub	bx, ax
 	R(MOV(m._word_24636, bx));	// 14701 mov	_word_24636, bx
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 14702 add	ax, word ptr [_dma_buf_pointer]
+	R(ADD(ax, *(dw*)&m._dma_buf_pointer));	// 14702 add	ax, word ptr [_dma_buf_pointer]
 	R(MOV(m._word_24634, ax));	// 14703 mov	_word_24634, ax
 	R(SHR(cx, 4));	// 14704 shr	cx, 4
 	R(ADD(cx, bp));	// 14705 add	cx, bp
@@ -11815,9 +11815,9 @@ loc_186ef:
 	R(MOV(ax, dx));	// 15298 mov	ax, dx
 	R(AND(al, 0x0F0));	// 15299 and	al, 0F0h
 	R(AND(dx, 0x0F));	// 15300 and	dx, 0Fh
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15301 add	ax, word ptr [_dma_buf_pointer]
+	R(ADD(ax, *(dw*)&m._dma_buf_pointer));	// 15301 add	ax, word ptr [_dma_buf_pointer]
 	R(ADC(dx, 0));	// 15302 adc	dx, 0
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dword_24694)))));	// 15303 add	ax, word ptr [_dword_24694]
+	R(ADD(ax, *(dw*)&m._dword_24694));	// 15303 add	ax, word ptr [_dword_24694]
 	R(ADC(dx, *(dw*)(raddr(ds,offset(seg003,_dword_24694)+2))));	// 15304 adc	dx, word ptr [_dword_24694+2]
 	R(OUT(0, al));	// 15305 out	0, al
 	R(MOV(al, ah));	// 15306 mov	al, ah
@@ -11845,9 +11845,9 @@ loc_18761:
 	R(MOV(ax, dx));	// 15345 mov	ax, dx
 	R(AND(al, 0x0F0));	// 15346 and	al, 0F0h
 	R(AND(dx, 0x0F));	// 15347 and	dx, 0Fh
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15348 add	ax, word ptr [_dma_buf_pointer]
+	R(ADD(ax, *(dw*)&m._dma_buf_pointer));	// 15348 add	ax, word ptr [_dma_buf_pointer]
 	R(ADC(dx, 0));	// 15349 adc	dx, 0
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dword_24694)))));	// 15350 add	ax, word ptr [_dword_24694]
+	R(ADD(ax, *(dw*)&m._dword_24694));	// 15350 add	ax, word ptr [_dword_24694]
 	R(ADC(dx, *(dw*)(raddr(ds,offset(seg003,_dword_24694)+2))));	// 15351 adc	dx, word ptr [_dword_24694+2]
 	R(OUT(2, al));	// 15352 out	2, al		; DMA controller, 8237A-5.
 	R(MOV(al, ah));	// 15355 mov	al, ah
@@ -11875,9 +11875,9 @@ loc_187a6:
 	R(MOV(ax, dx));	// 15396 mov	ax, dx
 	R(AND(al, 0x0F0));	// 15397 and	al, 0F0h
 	R(AND(dx, 0x0F));	// 15398 and	dx, 0Fh
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15399 add	ax, word ptr [_dma_buf_pointer]
+	R(ADD(ax, *(dw*)&m._dma_buf_pointer));	// 15399 add	ax, word ptr [_dma_buf_pointer]
 	R(ADC(dx, 0));	// 15400 adc	dx, 0
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dword_24694)))));	// 15401 add	ax, word ptr [_dword_24694]
+	R(ADD(ax, *(dw*)&m._dword_24694));	// 15401 add	ax, word ptr [_dword_24694]
 	R(ADC(dx, *(dw*)(raddr(ds,offset(seg003,_dword_24694)+2))));	// 15402 adc	dx, word ptr [_dword_24694+2]
 	R(OUT(4, al));	// 15403 out	4, al		; DMA controller, 8237A-5.
 	R(MOV(al, ah));	// 15406 mov	al, ah
@@ -11905,9 +11905,9 @@ loc_187eb:
 	R(MOV(ax, dx));	// 15447 mov	ax, dx
 	R(AND(al, 0x0F0));	// 15448 and	al, 0F0h
 	R(AND(dx, 0x0F));	// 15449 and	dx, 0Fh
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15450 add	ax, word ptr [_dma_buf_pointer]
+	R(ADD(ax, *(dw*)&m._dma_buf_pointer));	// 15450 add	ax, word ptr [_dma_buf_pointer]
 	R(ADC(dx, 0));	// 15451 adc	dx, 0
-	R(ADD(ax, *(dw*)(raddr(ds,offset(seg003,_dword_24694)))));	// 15452 add	ax, word ptr [_dword_24694]
+	R(ADD(ax, *(dw*)&m._dword_24694));	// 15452 add	ax, word ptr [_dword_24694]
 	R(ADC(dx, *(dw*)(raddr(ds,offset(seg003,_dword_24694)+2))));	// 15453 adc	dx, word ptr [_dword_24694+2]
 	R(OUT(6, al));	// 15454 out	6, al		; DMA controller, 8237A-5.
 	R(MOV(al, ah));	// 15457 mov	al, ah
@@ -11931,7 +11931,7 @@ loc_18830:
 	R(OUT(0x0D6, al));	// 15485 out	0D6h, al
 	R(MOVZX(edx, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2))));	// 15486 movzx	edx, word ptr [_dma_buf_pointer+2]
 	R(SHL(edx, 4));	// 15487 shl	edx, 4
-	R(MOVZX(eax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15488 movzx	eax, word ptr [_dma_buf_pointer]
+	R(MOVZX(eax, *(dw*)&m._dma_buf_pointer));	// 15488 movzx	eax, word ptr [_dma_buf_pointer]
 	R(ADD(eax, edx));	// 15489 add	eax, edx
 	R(ADD(eax, m._dword_24694));	// 15490 add	eax, _dword_24694
 	R(SHR(eax, 1));	// 15491 shr	eax, 1
@@ -11960,7 +11960,7 @@ loc_18878:
 	R(OUT(0x0D6, al));	// 15525 out	0D6h, al
 	R(MOVZX(edx, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2))));	// 15526 movzx	edx, word ptr [_dma_buf_pointer+2]
 	R(SHL(edx, 4));	// 15527 shl	edx, 4
-	R(MOVZX(eax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15528 movzx	eax, word ptr [_dma_buf_pointer]
+	R(MOVZX(eax, *(dw*)&m._dma_buf_pointer));	// 15528 movzx	eax, word ptr [_dma_buf_pointer]
 	R(ADD(eax, edx));	// 15529 add	eax, edx
 	R(ADD(eax, m._dword_24694));	// 15530 add	eax, _dword_24694
 	R(SHR(eax, 1));	// 15531 shr	eax, 1
@@ -11989,7 +11989,7 @@ loc_188c2:
 	R(OUT(0x0D6, al));	// 15565 out	0D6h, al
 	R(MOVZX(edx, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2))));	// 15566 movzx	edx, word ptr [_dma_buf_pointer+2]
 	R(SHL(edx, 4));	// 15567 shl	edx, 4
-	R(MOVZX(eax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15568 movzx	eax, word ptr [_dma_buf_pointer]
+	R(MOVZX(eax, *(dw*)&m._dma_buf_pointer));	// 15568 movzx	eax, word ptr [_dma_buf_pointer]
 	R(ADD(eax, edx));	// 15569 add	eax, edx
 	R(ADD(eax, m._dword_24694));	// 15570 add	eax, _dword_24694
 	R(SHR(eax, 1));	// 15571 shr	eax, 1
@@ -12018,7 +12018,7 @@ loc_1890c:
 	R(OUT(0x0D8, al));	// 15619 out	0D8h, al
 	R(MOVZX(edx, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2))));	// 15620 movzx	edx, word ptr [_dma_buf_pointer+2]
 	R(SHL(edx, 4));	// 15621 shl	edx, 4
-	R(MOVZX(eax, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)))));	// 15622 movzx	eax, word ptr [_dma_buf_pointer]
+	R(MOVZX(eax, *(dw*)&m._dma_buf_pointer));	// 15622 movzx	eax, word ptr [_dma_buf_pointer]
 	R(ADD(eax, edx));	// 15623 add	eax, edx
 	R(ADD(eax, m._dword_24694));	// 15624 add	eax, _dword_24694
 	R(SHR(eax, 1));	// 15625 shr	eax, 1
@@ -12252,7 +12252,7 @@ _getmemallocstrat:
 	R(RETN);	// 15971 retn
  // Procedure _setmemalloc1() start
 _setmemalloc1:
-	R(TEST(*(raddr(ds,offset(seg003,_config_word))), 1));	// 15980 test	byte ptr [_config_word],	1
+	R(TEST(m._config_word, 1));	// 15980 test	byte ptr [_config_word],	1
 		R(JZ(_setmemalloc2));	// 15981 jz	short _setmemalloc2
 	R(MOV(ax, 0x181));	// 15982 mov	ax, 181h
 		R(JMP(_setmemallocstrat));	// 15983 jmp	short _setmemallocstrat
@@ -12713,11 +12713,11 @@ loc_190e2:
 		R(JNZ(loc_19086));	// 17041 jnz	short loc_19086
 	R(BT(ebp, 0x0B));	// 17042 bt	ebp, 0Bh
 		R(JNC(loc_190f7));	// 17043 jnb	short loc_190F7
-	R(OR(*(raddr(ds,offset(dseg,_configword))), 4));	// 17044 or	byte ptr [_configword], 4
+	R(OR(m._configword, 4));	// 17044 or	byte ptr [_configword], 4
 loc_190f7:
 	R(BT(ebp, 3));	// 17047 bt	ebp, 3
 		R(JNC(loc_19103));	// 17048 jnb	short loc_19103
-	R(AND(*(raddr(ds,offset(dseg,_configword))), 0x0FB));	// 17049 and	byte ptr [_configword], 0FBh
+	R(AND(m._configword, 0x0FB));	// 17049 and	byte ptr [_configword], 0FBh
 loc_19103:
 	R(BT(ebp, 6));	// 17052 bt	ebp, 6
 		R(JNC(loc_19114));	// 17053 jnb	short loc_19114
@@ -12735,19 +12735,19 @@ loc_19125:
 loc_19131:
 	R(BT(ebp, 4));	// 17069 bt	ebp, 4
 		R(JNC(loc_1913d));	// 17070 jnb	short loc_1913D
-	R(AND(*(raddr(ds,offset(dseg,_configword))), 0x0FD));	// 17071 and	byte ptr [_configword], 0FDh
+	R(AND(m._configword, 0x0FD));	// 17071 and	byte ptr [_configword], 0FDh
 loc_1913d:
 	R(BT(ebp, 0x14));	// 17074 bt	ebp, 14h
 		R(JNC(loc_19149));	// 17075 jnb	short loc_19149
-	R(AND(*(raddr(ds,offset(dseg,_configword))), 0x0FE));	// 17076 and	byte ptr [_configword], 0FEh
+	R(AND(m._configword, 0x0FE));	// 17076 and	byte ptr [_configword], 0FEh
 loc_19149:
 	R(BT(ebp, 0x0E));	// 17079 bt	ebp, 0Eh
 		R(JNC(loc_19155));	// 17080 jnb	short loc_19155
-	R(AND(*(raddr(ds,offset(dseg,_configword))), 0x0BF));	// 17081 and	byte ptr [_configword], 0BFh
+	R(AND(m._configword, 0x0BF));	// 17081 and	byte ptr [_configword], 0BFh
 loc_19155:
 	R(BT(ebp, 2));	// 17084 bt	ebp, 2
 		R(JNC(loc_19161));	// 17085 jnb	short loc_19161
-	R(OR(*(raddr(ds,offset(dseg,_configword))), 0x40));	// 17086 or	byte ptr [_configword], 40h
+	R(OR(m._configword, 0x40));	// 17086 or	byte ptr [_configword], 40h
 loc_19161:
 	R(BT(ebp, 0x15));	// 17089 bt	ebp, 15h
 	R(SETB(al))	// 17090 setb	al
@@ -12815,7 +12815,7 @@ loc_191ea:
 loc_19212:
 	R(SHL(bx, 1));	// 17174 shl	bx, 1
 	R(MOV(ax, *(dw*)(raddr(ds,offset(dseg,off_1CA8E)+bx))));	// 17175 mov	ax, [off_1CA8E+bx]
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), ax));	// 17176 mov	[off_1DE3C], ax
+	R(MOV(*(dw*)&m.off_1DE3C, ax));	// 17176 mov	[off_1DE3C], ax
 	R(CMP(*(db*)&m._buffer_1DB6C, 0x40));	// 17177 cmp	_buffer_1DB6C,	40h ; '@'
 		R(JZ(loc_19d94));	// 17178 jz	loc_19D94
 	R(CMP(*(db*)&m._buffer_1DB6C, 0x20));	// 17179 cmp	_buffer_1DB6C,	20h ; ' '
@@ -12831,7 +12831,7 @@ loc_19212:
 	R(CALL(k_readallmoules));	// 17186 call	_readallmoules
 		R(JC(loc_19250));	// 17187 jb	short loc_19250
 loc_19242:
-	R(CMP(*(raddr(ds,offset(dseg,_word_1DE50))), 0x1C));	// 17190 cmp	byte ptr [_word_1DE50], 1Ch
+	R(CMP(m._word_1DE50, 0x1C));	// 17190 cmp	byte ptr [_word_1DE50], 1Ch
 		R(JZ(loc_192e0));	// 17191 jz	loc_192E0
 	R(MOV(m._byte_1DE7E, 0));	// 17192 mov	_byte_1DE7E, 0
 loc_19250:
@@ -12888,7 +12888,7 @@ loc_192c3:
 	R(INT(0x21));	// 17261 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
 loc_192ca:
 	R(MOV(m._byte_1DE7E, 5));	// 17265 mov	_byte_1DE7E, 5
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer))), offset(dseg,_aNotEnoughMemor)));	// 17266 mov	word ptr [_messagepointer], offset _aNotEnoughMemor ; "Not enough	memory.\r\n$"
+	R(MOV(*(dw*)&m._messagepointer, offset(dseg,_aNotEnoughMemor)));	// 17266 mov	word ptr [_messagepointer], offset _aNotEnoughMemor ; "Not enough	memory.\r\n$"
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), ds));	// 17267 mov	word ptr [_messagepointer+2], ds
 	R(CALL(k_callsubx));	// 17268 call	_callsubx
 		R(JC(loc_19256));	// 17269 jb	loc_19256
@@ -13267,11 +13267,11 @@ loc_196f1:
 	R(POP(fs));	// 17700 pop	fs
 	R(PUSH(fs));	// 17701 push	fs
 	R(MOV(eax, *(dd*)(raddr(fs,0x0C))));	// 17702 mov	eax, fs:[0Ch]
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,_aFile))), eax));	// 17703 mov	dword ptr [_aFile], eax ; "File"
+	R(MOV(*(dd*)&m._aFile, eax));	// 17703 mov	dword ptr [_aFile], eax ; "File"
 	R(MOV(eax, *(dd*)(raddr(fs,0x10))));	// 17704 mov	eax, fs:[10h]
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,_aName))), eax));	// 17705 mov	dword ptr [_aName], eax ; "name"
+	R(MOV(*(dd*)&m._aName, eax));	// 17705 mov	dword ptr [_aName], eax ; "name"
 	R(MOV(eax, *(dd*)(raddr(fs,0x14))));	// 17706 mov	eax, fs:[14h]
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,_a_ext))), eax));	// 17707 mov	dword ptr [_a_ext], eax ; ".Ext"
+	R(MOV(*(dd*)&m._a_ext, eax));	// 17707 mov	dword ptr [_a_ext], eax ; ".Ext"
 	R(MOV(si, offset(dseg,_aDeletingFile)));	// 17708 mov	si, offset _aDeletingFile ; "Deleting file: "
 	R(MOV(ax, 0x7E0D));	// 17709 mov	ax, 7E0Dh
 	R(CALL(k_message_1be77));	// 17710 call	_message_1BE77
@@ -13298,7 +13298,7 @@ loc_19762:
 	R(MOV(bl, 0x7F));	// 17737 mov	bl, 7Fh	; ''
 	R(MOV(ax, 0x7800));	// 17738 mov	ax, 7800h
 	R(CALL(k_draw_frame));	// 17739 call	_draw_frame
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_1DE3C);
 	R(CALL(__disp));	// 17740 call	[off_1DE3C]
 	R(CALL(k_keyb_screen_loop));	// 17741 call	_keyb_screen_loop
 	R(MOV(m._byte_1DE7F, 0));	// 17742 mov	_byte_1DE7F, 0
@@ -13337,7 +13337,7 @@ loc_197d6:
 	R(MOV(m._byte_1DE7F, 0));	// 17780 mov	_byte_1DE7F, 0
 		R(JMP(loc_192f7));	// 17781 jmp	loc_192F7
 loc_197e7:
-	R(XOR(*(raddr(ds,offset(dseg,_configword))), 0x20));	// 17785 xor	byte ptr [_configword], 20h
+	R(XOR(m._configword, 0x20));	// 17785 xor	byte ptr [_configword], 20h
 		R(JMP(loc_193bc));	// 17786 jmp	loc_193BC
 loc_19827:
 	R(CALL(k_mouse_hide));	// 17799 call	_mouse_hide
@@ -13362,6 +13362,7 @@ loc_19848:
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 17821 xor	dx, dx
 	R(MOV(es, dx));	// 17822 mov	es, dx
 //	R(MOV(edx, *(dd*)(raddr(es,0x46C))));	// 17824 mov	edx, es:[46Ch]
+goto loc_1987c; //x0r
 	edx=time(0)*18.20648193359375;
 	R(CMP(edx, m._dword_1DE88));	// 17825 cmp	edx, _dword_1DE88
 		R(JZ(loc_1987c));	// 17826 jz	short loc_1987C
@@ -13625,7 +13626,7 @@ loc_19a6e:
 	R(CLD);	// 18160 cld
 	REP	// 0 rep
 STOSD;	// 0 stosd
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,_buffer_1DB6C))), 0x2A2E2A));	// 18162 mov	dword ptr [_buffer_1DB6C], 2A2E2Ah ; '*.*'
+	R(MOV(*(dd*)&m._buffer_1DB6C, 0x2A2E2A));	// 18162 mov	dword ptr [_buffer_1DB6C], 2A2E2Ah ; '*.*'
 	R(MOV(m._word_1DE5C, 0));	// 18163 mov	_word_1DE5C, 0
 	R(MOV(m._word_1DE54, 0));	// 18164 mov	_word_1DE54, 0
 	R(MOV(m._word_1DE56, 0));	// 18165 mov	_word_1DE56, 0
@@ -13645,9 +13646,9 @@ loc_19ac3:
 	R(MOV(*(dw*)(raddr(fs,di)), ax));	// 18181 mov	fs:[di], ax
 	R(INC(m._word_1DE66));	// 18182 inc	_word_1DE66
 	R(AND(m._word_1DE66, 7));	// 18183 and	_word_1DE66, 7
-	R(TEST(*(raddr(ds,offset(dseg,unk_1DC01))), 0x10));	// 18184 test	byte ptr [unk_1DC01], 10h
+	R(TEST(m.unk_1DC01, 0x10));	// 18184 test	byte ptr [unk_1DC01], 10h
 		R(JZ(loc_19b1d));	// 18185 jz	short loc_19B1D
-	R(CMP(*(dw*)(raddr(ds,offset(dseg,_buffer_1DB6C))), '.'));	// 18186 cmp	word ptr [_buffer_1DB6C], '.'
+	R(CMP(*(dw*)&m._buffer_1DB6C, '.'));	// 18186 cmp	word ptr [_buffer_1DB6C], '.'
 		R(JZ(loc_19b1d));	// 18187 jz	short loc_19B1D
 	R(MOV(*(raddr(es,2)), 0));	// 18188 mov	byte ptr es:[2], 0
 	R(MOV(si, offset(dseg,_buffer_1DB6C)));	// 18189 mov	si, offset _buffer_1DB6C
@@ -13670,7 +13671,7 @@ loc_19b1d:
 	R(POP(es));	// 18209 pop	es
 		R(JNC(loc_19ac3));	// 18211 jnb	short loc_19AC3
 loc_19b24:
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,_buffer_1DB6C))), 0x2A2E2A));	// 18214 mov	dword ptr [_buffer_1DB6C], 2A2E2Ah
+	R(MOV(*(dd*)&m._buffer_1DB6C, 0x2A2E2A));	// 18214 mov	dword ptr [_buffer_1DB6C], 2A2E2Ah
 	R(MOV(m._word_1DE4E, 2));	// 18215 mov	_word_1DE4E, 2
 	R(PUSH(es));	// 18216 push	es
 	R(CALL(k_find_mods));	// 18217 call	_find_mods
@@ -13685,7 +13686,7 @@ loc_19b3c:
 	R(MOV(*(dw*)(raddr(fs,di)), ax));	// 18228 mov	fs:[di], ax
 	R(INC(m._word_1DE66));	// 18229 inc	_word_1DE66
 	R(AND(m._word_1DE66, 7));	// 18230 and	_word_1DE66, 7
-	R(TEST(*(raddr(ds,offset(dseg,unk_1DC01))), 0x10));	// 18231 test	byte ptr [unk_1DC01], 10h
+	R(TEST(m.unk_1DC01, 0x10));	// 18231 test	byte ptr [unk_1DC01], 10h
 		R(JNZ(loc_19c99));	// 18232 jnz	loc_19C99
 	R(MOV(si, offset(dseg,_buffer_1DB6C)));	// 18233 mov	si, offset _buffer_1DB6C
 	R(MOV(cx, 8));	// 18234 mov	cx, 8
@@ -13730,11 +13731,11 @@ MOVSD;	// 18275 movsd
 	R(CMP(*(dw*)(raddr(cs,offset(seg001,_key_code))), 1));	// 18278 cmp	cs:[_key_code], 1
 		R(JNZ(loc_19bdd));	// 18279 jnz	short loc_19BDD
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), 0));	// 18280 mov	cs:[_key_code], 0
-	R(OR(*(raddr(ds,offset(dseg,_configword))), 0x20));	// 18281 or	byte ptr [_configword], 20h
+	R(OR(m._configword, 0x20));	// 18281 or	byte ptr [_configword], 20h
 loc_19bdd:
 	R(MOV(si, offset(dseg,asc_1DA00)));	// 18284 mov	si, offset asc_1DA00 ; "		      "
 	R(MOV(cx, 0x16));	// 18285 mov	cx, 16h
-	R(TEST(*(raddr(ds,offset(dseg,_configword))), 0x20));	// 18286 test	byte ptr [_configword], 20h
+	R(TEST(m._configword, 0x20));	// 18286 test	byte ptr [_configword], 20h
 		R(JNZ(loc_19c80));	// 18287 jnz	loc_19C80
 	R(MOV(ax, 0x3D00));	// 18288 mov	ax, 3D00h
 	R(INT(0x21));	// 18289 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
@@ -13919,13 +13920,13 @@ loc_19d81:
 	R(RETN);	// 18526 retn
 loc_19d83:
 	R(MOV(m._byte_1DE7E, 3));	// 18530 mov	_byte_1DE7E, 3
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer))), offset(dseg,_aModuleLoadErro)));	// 18531 mov	word ptr [_messagepointer], offset _aModuleLoadErro ; "Module load error.\r\n$"
+	R(MOV(*(dw*)&m._messagepointer, offset(dseg,_aModuleLoadErro)));	// 18531 mov	word ptr [_messagepointer], offset _aModuleLoadErro ; "Module load error.\r\n$"
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), ds));	// 18532 mov	word ptr [_messagepointer+2], ds
 	R(STC);	// 18533 stc
 	R(RETN);	// 18534 retn
 loc_19d94:
 	R(MOV(m._byte_1DE7E, 4));	// 18541 mov	_byte_1DE7E, 4
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer))), offset(dseg,_aListFileNotFou)));	// 18542 mov	word ptr [_messagepointer], offset _aListFileNotFou ; "List file not found.\r\n$"
+	R(MOV(*(dw*)&m._messagepointer, offset(dseg,_aListFileNotFou)));	// 18542 mov	word ptr [_messagepointer], offset _aListFileNotFou ; "List file not found.\r\n$"
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), ds));	// 18543 mov	word ptr [_messagepointer+2], ds
 	R(MOV(dx, offset(dseg,_buffer_1DB6C)+1));	// 18544 mov	dx, (offset _buffer_1DB6C+1)
 	R(MOV(ax, 0x3D00));	// 18545 mov	ax, 3D00h
@@ -13978,7 +13979,7 @@ loc_19e09:
  // Procedure _read_module() start
 _read_module:
 	R(MOV(m._byte_1DE7E, 3));	// 18610 mov	_byte_1DE7E, 3
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer))), offset(dseg,_aModuleLoadErro)));	// 18611 mov	word ptr [_messagepointer], offset _aModuleLoadErro ; "Module load error.\r\n$"
+	R(MOV(*(dw*)&m._messagepointer, offset(dseg,_aModuleLoadErro)));	// 18611 mov	word ptr [_messagepointer], offset _aModuleLoadErro ; "Module load error.\r\n$"
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), ds));	// 18612 mov	word ptr [_messagepointer+2], ds
 	R(MOV(si, dx));	// 18613 mov	si, dx
 loc_19e22:
@@ -14027,7 +14028,7 @@ STOSB;	// 0 stosb
 	R(MOV(m._current_patterns, 0));	// 18664 mov	_current_patterns, 0
 	R(MOV(m._byte_1DE84, 0));	// 18665 mov	_byte_1DE84, 0
 	R(CALLF(ksub_126a9));	// 18666 call	sub_126A9
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,_module_type_txt))), eax));	// 18667 mov	dword ptr [_module_type_txt], eax ; "	"
+	R(MOV(*(dd*)&m._module_type_txt, eax));	// 18667 mov	dword ptr [_module_type_txt], eax ; "	"
 	ch = 0;AFFECT_ZF(0); AFFECT_SF(ch,0);	// 18668 xor	ch, ch
 	R(MOV(m._amount_of_x, cx));	// 18669 mov	_amount_of_x, cx
 	R(MOV(m._byte_1DE73, bl));	// 18670 mov	_byte_1DE73, bl
@@ -14039,7 +14040,7 @@ STOSB;	// 0 stosb
 	R(AND(al, 0x10));	// 18676 and	al, 10h
 	R(SHR(al, 4));	// 18677 shr	al, 4
 	R(MOV(m._byte_1DE7B, al));	// 18678 mov	_byte_1DE7B, al
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_segfsbx_1DE28))), si));	// 18679 mov	word ptr [_segfsbx_1DE28], si
+	R(MOV(*(dw*)&m._segfsbx_1DE28, si));	// 18679 mov	word ptr [_segfsbx_1DE28], si
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_segfsbx_1DE28)+2)), es));	// 18680 mov	word ptr [_segfsbx_1DE28+2], es
 	R(MOV(si, di));	// 18681 mov	si, di
 	R(MOV(di, offset(dseg,asc_1CC2D)));	// 18682 mov	di, offset asc_1CC2D ; "			      "
@@ -14068,7 +14069,7 @@ loc_19ecc:
 	R(MOV(m._volume_1DE34, eax));	// 18708 mov	_volume_1DE34,	eax
 	R(MOV(m._byte_1DE7C, 0));	// 18709 mov	_byte_1DE7C, 0
 	R(CALLF(ksub_12eba));	// 18710 call	sub_12EBA
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_1DE3C);
 	R(CALL(__disp));	// 18711 call	[off_1DE3C]
  // Procedure _keyb_screen_loop() start
 _keyb_screen_loop:
@@ -14086,7 +14087,7 @@ _keyb_screen_loop:
 	R(MOV(m._word_1DE6C, ax));	// 18729 mov	_word_1DE6C, ax
 	R(CALLF(k_get_playsettings));	// 18730 call	_get_playsettings
 	R(MOV(m._flg_play_settings, al));	// 18731 mov	_flg_play_settings, al
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,_offs_draw))));
+__disp = static_cast<_offsets>(*(dw*)&m._offs_draw);
  	R(CALL(__disp));	// 18732 call	[_offs_draw] //x0r
 	R(CMP(m._byte_1DE7C, 1));	// 18733 cmp	_byte_1DE7C, 1
 		R(JZ(loc_1a393));	// 18734 jz	loc_1A393
@@ -14371,11 +14372,11 @@ _l_f6:
 	R(CALL(k_f6_undoc));	// 19074 call	_f6_undoc
 		R(JMP(_keyb_screen_loop));	// 19075 jmp	_keyb_screen_loop
 _l_f8:
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,off_1DE42))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_1DE42);
 	R(CALL(__disp));	// 19079 call	[off_1DE42]
 	R(CALL(k_dosexec));	// 19080 call	_dosexec
 	R(MOV(m._byte_1DE70, 0x0FF));	// 19081 mov	_byte_1DE70, 0FFh
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))));
+__disp = static_cast<_offsets>(*(dw*)&m.off_1DE3C);
 	R(CALL(__disp));	// 19082 call	[off_1DE3C]
 		R(JMP(_keyb_screen_loop));	// 19083 jmp	_keyb_screen_loop
 _l_f9:
@@ -14476,7 +14477,7 @@ loc_1a34b:
 		R(JZ(loc_1a356));	// 19212 jz	short loc_1A356
 	R(ADD(al, 20));	// 19213 add	al, 20
 loc_1a356:
-	R(CMP(al, *(raddr(ds,offset(dseg,_amount_of_x)))));	// 19216 cmp	al, byte ptr [_amount_of_x]
+	R(CMP(al, m._amount_of_x));	// 19216 cmp	al, byte ptr [_amount_of_x]
 		R(JNC(_keyb_screen_loop));	// 19217 jnb	_keyb_screen_loop
 	R(MOV(ch, al));	// 19218 mov	ch, al
 	R(LFS(bx, m._segfsbx_1DE28));	// 19219 lfs	bx, _segfsbx_1DE28
@@ -14490,9 +14491,9 @@ loc_1a356:
 	R(CALLF(ksub_12cad));	// 19227 call	sub_12CAD
 		R(JMP(_keyb_screen_loop));	// 19228 jmp	_keyb_screen_loop
 _l_enter:
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,_offs_draw))));
+__disp = static_cast<_offsets>(*(dw*)&m._offs_draw);
 	R(CALL(__disp));	// 19233 call	[_offs_draw]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,_offs_draw2))));
+__disp = static_cast<_offsets>(*(dw*)&m._offs_draw2);
 	R(CALL(__disp));	// 19234 call	[_offs_draw2]
 	R(CLC);	// 19235 clc
 	R(RETN);	// 19236 retn
@@ -14500,9 +14501,9 @@ _l_esc:
 	R(MOV(m._byte_1DE7C, 1));	// 19241 mov	_byte_1DE7C, 1
 	R(AND(m._byte_1DE90, 0x0FD));	// 19242 and	_byte_1DE90, 0FDh
 loc_1a393:
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,_offs_draw))));
+__disp = static_cast<_offsets>(*(dw*)&m._offs_draw);
 	R(CALL(__disp));	// 19245 call	[_offs_draw]
-__disp = static_cast<_offsets>(*(dw*)(raddr(ds,offset(dseg,_offs_draw2))));
+__disp = static_cast<_offsets>(*(dw*)&m._offs_draw2);
 	R(CALL(__disp));	// 19246 call	[_offs_draw2]
 	R(CALLF(k_snd_offx));	// 19247 call	_snd_offx
 	R(CALLF(k_memfree_125da));	// 19248 call	_memfree_125DA
@@ -14531,7 +14532,7 @@ loc_1a3c5:
 //	R(MOV(edx, *(dd*)(raddr(es,0x46C))));	// 19277 mov	edx, es:[46Ch]
 	edx=time(0)*18.20648193359375;
 	R(CMP(edx, m._dword_1DE88));	// 19278 cmp	edx, _dword_1DE88
-//x0r goto loc_1a3f6;
+goto loc_1a3f6; //x0r prevent crash
 		R(JZ(loc_1a3f6));	// 19279 jz	short loc_1A3F6
 	R(MOV(m._dword_1DE88, edx));	// 19280 mov	_dword_1DE88, edx
 	R(POP(es));	// 19281 pop	es
@@ -14542,50 +14543,50 @@ loc_1a3f6:
 		R(JMP(loc_193bc));	// 19288 jmp	loc_193BC
  // Procedure _f1_help() start
 _f1_help:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), k_text_init));	// 19297 mov	[off_1DE3C], offset _text_init
+	R(MOV(*(dw*)&m.off_1DE3C, k_text_init));	// 19297 mov	[off_1DE3C], offset _text_init
 	R(MOV(m._offs_draw, k_f1_draw));	// 19298 mov	_offs_draw, offset _f1_draw
 	R(MOV(m._offs_draw2, k_text_init2));	// 19299 mov	_offs_draw2, offset _text_init2
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE42))), kloc_1a4a6));	// 19300 mov	[off_1DE42], offset loc_1A4A6
+	R(MOV(*(dw*)&m.off_1DE42, kloc_1a4a6));	// 19300 mov	[off_1DE42], offset loc_1A4A6
 	R(CALL(k_text_init));	// 19301 call	_text_init
 	R(RETN);	// 19302 retn
  // Procedure _f2_waves() start
 _f2_waves:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), k_init_vga_waves));	// 19311 mov	[off_1DE3C], offset _init_vga_waves
+	R(MOV(*(dw*)&m.off_1DE3C, k_init_vga_waves));	// 19311 mov	[off_1DE3C], offset _init_vga_waves
 	R(MOV(m._offs_draw, k_f2_draw_waves));	// 19312 mov	_offs_draw, offset _f2_draw_waves
 	R(MOV(m._offs_draw2, k_f2_draw_waves2));	// 19313 mov	_offs_draw2, offset _f2_draw_waves2
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE42))), k_init_vga_waves));	// 19314 mov	[off_1DE42], offset _init_vga_waves
+	R(MOV(*(dw*)&m.off_1DE42, k_init_vga_waves));	// 19314 mov	[off_1DE42], offset _init_vga_waves
 	R(CALL(k_init_vga_waves));	// 19315 call	_init_vga_waves
 	R(RETN);	// 19316 retn
  // Procedure _f3_textmetter() start
 _f3_textmetter:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), k_text_init));	// 19325 mov	[off_1DE3C], offset _text_init
+	R(MOV(*(dw*)&m.off_1DE3C, k_text_init));	// 19325 mov	[off_1DE3C], offset _text_init
 	R(MOV(m._offs_draw, k_f3_draw));	// 19326 mov	_offs_draw, offset _f3_draw
 	R(MOV(m._offs_draw2, k_text_init2));	// 19327 mov	_offs_draw2, offset _text_init2
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE42))), kloc_1a4a6));	// 19328 mov	[off_1DE42], offset loc_1A4A6
+	R(MOV(*(dw*)&m.off_1DE42, kloc_1a4a6));	// 19328 mov	[off_1DE42], offset loc_1A4A6
 	R(CALL(k_text_init));	// 19329 call	_text_init
 	R(RETN);	// 19330 retn
  // Procedure _f4_patternnae() start
 _f4_patternnae:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), k_text_init));	// 19339 mov	[off_1DE3C], offset _text_init
+	R(MOV(*(dw*)&m.off_1DE3C, k_text_init));	// 19339 mov	[off_1DE3C], offset _text_init
 	R(MOV(m._offs_draw, k_f4_draw));	// 19340 mov	_offs_draw, offset _f4_draw
 	R(MOV(m._offs_draw2, k_text_init2));	// 19341 mov	_offs_draw2, offset _text_init2
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE42))), kloc_1a4a6));	// 19342 mov	[off_1DE42], offset loc_1A4A6
+	R(MOV(*(dw*)&m.off_1DE42, kloc_1a4a6));	// 19342 mov	[off_1DE42], offset loc_1A4A6
 	R(CALL(k_text_init));	// 19343 call	_text_init
 	R(RETN);	// 19344 retn
  // Procedure _f5_graphspectr() start
 _f5_graphspectr:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), k_init_f5_spectr));	// 19353 mov	[off_1DE3C], offset _init_f5_spectr
+	R(MOV(*(dw*)&m.off_1DE3C, k_init_f5_spectr));	// 19353 mov	[off_1DE3C], offset _init_f5_spectr
 	R(MOV(m._offs_draw, k_f5_draw_spectr));	// 19354 mov	_offs_draw, offset _f5_draw_spectr
 	R(MOV(m._offs_draw2, k_f5_draw_spectr));	// 19355 mov	_offs_draw2, offset _f5_draw_spectr
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE42))), k_init_f5_spectr));	// 19356 mov	[off_1DE42], offset _init_f5_spectr
+	R(MOV(*(dw*)&m.off_1DE42, k_init_f5_spectr));	// 19356 mov	[off_1DE42], offset _init_f5_spectr
 	R(CALL(k_init_f5_spectr));	// 19357 call	_init_f5_spectr
 	R(RETN);	// 19358 retn
  // Procedure _f6_undoc() start
 _f6_undoc:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE3C))), k_text_init));	// 19367 mov	[off_1DE3C], offset _text_init
+	R(MOV(*(dw*)&m.off_1DE3C, k_text_init));	// 19367 mov	[off_1DE3C], offset _text_init
 	R(MOV(m._offs_draw, k_f6_draw));	// 19368 mov	_offs_draw, offset _f6_draw
 	R(MOV(m._offs_draw2, k_text_init2));	// 19369 mov	_offs_draw2, offset _text_init2
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,off_1DE42))), kloc_1a4a6));	// 19370 mov	[off_1DE42], offset loc_1A4A6
+	R(MOV(*(dw*)&m.off_1DE42, kloc_1a4a6));	// 19370 mov	[off_1DE42], offset loc_1A4A6
 	R(CALL(k_text_init));	// 19371 call	_text_init
 	R(RETN);	// 19372 retn
  // Procedure _text_init() start
@@ -14778,7 +14779,7 @@ loc_1a687:
 		R(JZ(loc_1a6b7));	// 19620 jz	short loc_1A6B7
 	R(MOV(si, offset(dseg,_buffer_1DC6C)+2));	// 19621 mov	si, (offset _buffer_1DC6C+2)
 loc_1a691:
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_buffer_1DC6C))), 0x2820));	// 19624 mov	word ptr [_buffer_1DC6C], 2820h
+	R(MOV(*(dw*)&m._buffer_1DC6C, 0x2820));	// 19624 mov	word ptr [_buffer_1DC6C], 2820h
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 19625 xor	dx, dx
 loc_1a699:
 	R(MOV(ax, m._outp_freq));	// 19628 mov	ax, _outp_freq
@@ -14802,7 +14803,7 @@ loc_1a6c2:
 	R(MOV(si, offset(dseg,_bottom_menu)));	// 19649 mov	si, offset _bottom_menu ; str
 	R(CALL(k_write_scr));	// 19650 call	_write_scr
 	R(CALLF(ksub_126a9));	// 19651 call	sub_126A9
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_dword_1DE2C))), si));	// 19652 mov	word ptr [_dword_1DE2C],	si
+	R(MOV(*(dw*)&m._dword_1DE2C, si));	// 19652 mov	word ptr [_dword_1DE2C],	si
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_dword_1DE2C)+2)), es));	// 19653 mov	word ptr [_dword_1DE2C+2], es
 	R(PUSH(cx));	// 19654 push	cx
 	R(MOV(si, offset(dseg,_buffer_1DC6C)));	// 19655 mov	si, offset _buffer_1DC6C
@@ -15089,7 +15090,7 @@ put_sample_name:
 		R(JS(loc_1a9a5));	// 19944 js	short loc_1A9A5
 	R(SHL(ax, 6));	// 19945 shl	ax, 6
 	R(MOV(si, ax));	// 19946 mov	si, ax
-	R(ADD(si, *(dw*)(raddr(ds,offset(dseg,_dword_1DE2C)))));	// 19947 add	si, word ptr [_dword_1DE2C]
+	R(ADD(si, *(dw*)&m._dword_1DE2C));	// 19947 add	si, word ptr [_dword_1DE2C]
 	R(CALL(k_txt_1abae));	// 19948 call	_txt_1ABAE
 loc_1a9c2:
 	R(ADD(di, 2));	// 19951 add	di, 2
@@ -15327,13 +15328,13 @@ _f4_draw:
 	R(MOV(si, offset(dseg,_aSamplename)));	// 20224 mov	si, offset _aSamplename ; "# SampleName	 "
 	R(MOV(ah, 0x7E));	// 20225 mov	ah, 7Eh	; '~'
 	R(CALL(k_text_1bf69));	// 20226 call	_text_1BF69
-	R(MOV(di, *(dw*)(raddr(ds,offset(dseg,_videomempointer)))));	// 20227 mov	di, word ptr [_videomempointer]
+	R(MOV(di, *(dw*)&m._videomempointer));	// 20227 mov	di, word ptr [_videomempointer]
 	R(ADD(di, 0x464));	// 20228 add	di, 464h
 	R(LFS(bx, m._dword_1DE2C));	// 20229 lfs	bx, _dword_1DE2C
 	R(MOV(bp, m._current_patterns));	// 20230 mov	bp, _current_patterns
 	R(IMUL3_2(ax,bp,0x40));	// 20231 imul	ax, bp,	40h
 	R(ADD(bx, ax));	// 20232 add	bx, ax
-	R(MOV(dl, *(raddr(ds,offset(dseg,_word_1DE6E)))));	// 20233 mov	dl, byte ptr [_word_1DE6E]
+	R(MOV(dl, m._word_1DE6E));	// 20233 mov	dl, byte ptr [_word_1DE6E]
 	R(DEC(dl));	// 20234 dec	dl
 loc_1abf0:
 	R(CMP(bp, m._word_1DE46));	// 20237 cmp	bp, _word_1DE46
@@ -15514,7 +15515,7 @@ _init_vga_waves:
 		R(JC(loc_1ae5e));	// 20454 jb	loc_1AE5E
 	R(CMP(ax, 2));	// 20455 cmp	ax, 2
 		R(JNZ(loc_1ae5e));	// 20456 jnz	loc_1AE5E
-	R(CMP(*(dw*)(raddr(ds,offset(dseg,_buffer_1DC6C))), 0x4453));	// 20457 cmp	word ptr [_buffer_1DC6C], 4453h ; 'SD' check picture signature
+	R(CMP(*(dw*)&m._buffer_1DC6C, 0x4453));	// 20457 cmp	word ptr [_buffer_1DC6C], 4453h ; 'SD' check picture signature
 		R(JNZ(loc_1ae5e));	// 20458 jnz	loc_1AE5E
 	R(CALL(k_set_egasequencer));	// 20459 call	_set_egasequencer
 	R(CALL(k_read2buffer));	// 20460 call	_read2buffer
@@ -15838,7 +15839,7 @@ loc_1b014:
 	REP	// 0 rep
 STOSD;	// 0 stosd
 	R(MOV(ax, 0x200));	// 20891 mov	ax, 200h
-	R(TEST(*(raddr(ds,offset(dseg,_configword))), 8));	// 20892 test	byte ptr [_configword], 8
+	R(TEST(m._configword, 8));	// 20892 test	byte ptr [_configword], 8
 		R(JNZ(loc_1b080));	// 20893 jnz	short loc_1B080
 	R(SHR(ax, 1));	// 20894 shr	ax, 1
 loc_1b080:
@@ -15945,7 +15946,7 @@ loc_1b134:
 	R(ADD(eax, m._dword_24508));	// 21007 add	eax, _dword_24508
 	R(MOV(*(dd*)(raddr(ds,si+4)), eax));	// 21008 mov	[si+4],	eax
 	R(MOV(eax, m._dword_244C8));	// 21009 mov	eax, _dword_244C8
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,unk_244C4))), eax));	// 21010 mov	dword ptr [unk_244C4], eax
+	R(MOV(*(dd*)&m.unk_244C4, eax));	// 21010 mov	dword ptr [unk_244C4], eax
 	R(MOV(eax, m._multip_244CC));	// 21011 mov	eax, _multip_244CC
 	R(IMUL1_4(m._dword_244C8));	// 21012 imul	_dword_244C8
 	R(SHRD(eax, edx, 0x10));	// 21013 shrd	eax, edx, 10h
@@ -15958,7 +15959,7 @@ loc_1b134:
 	R(IMUL1_4(m._multip_244CC));	// 21020 imul	_multip_244CC
 	R(SHRD(eax, edx, 0x10));	// 21021 shrd	eax, edx, 10h
 	R(ADD(m._dword_244D4, eax));	// 21022 add	_dword_244D4, eax
-	R(MOV(eax, *(dd*)(raddr(ds,offset(dseg,unk_244C4)))));	// 21023 mov	eax, [dword ptr	unk_244C4]
+	R(MOV(eax, *(dd*)&m.unk_244C4));	// 21023 mov	eax, [dword ptr	unk_244C4]
 	R(IMUL1_4(m._multip_244D0));	// 21024 imul	_multip_244D0
 	R(SHRD(eax, edx, 0x10));	// 21025 shrd	eax, edx, 10h
 	R(ADD(m._dword_244D4, eax));	// 21026 add	_dword_244D4, eax
@@ -16066,9 +16067,9 @@ loc_1b282:
 	R(ADD(eax, m._dword_24508));	// 21132 add	eax, _dword_24508
 	R(MOV(*(dd*)(raddr(ds,si+4)), eax));	// 21133 mov	[si+4],	eax
 	R(MOV(eax, m._dword_244C8));	// 21134 mov	eax, _dword_244C8
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,unk_244C4))), eax));	// 21135 mov	dword ptr [unk_244C4], eax
+	R(MOV(*(dd*)&m.unk_244C4, eax));	// 21135 mov	dword ptr [unk_244C4], eax
 	R(MOV(eax, m._dword_244C8));	// 21136 mov	eax, _dword_244C8
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,unk_244C4))), eax));	// 21137 mov	dword ptr [unk_244C4], eax
+	R(MOV(*(dd*)&m.unk_244C4, eax));	// 21137 mov	dword ptr [unk_244C4], eax
 	R(MOV(eax, m._multip_244CC));	// 21138 mov	eax, _multip_244CC
 	R(IMUL1_4(m._dword_244C8));	// 21139 imul	_dword_244C8
 	R(SHRD(eax, edx, 0x10));	// 21140 shrd	eax, edx, 10h
@@ -16081,7 +16082,7 @@ loc_1b282:
 	R(IMUL1_4(m._multip_244CC));	// 21147 imul	_multip_244CC
 	R(SHRD(eax, edx, 0x10));	// 21148 shrd	eax, edx, 10h
 	R(ADD(m._dword_244D4, eax));	// 21149 add	_dword_244D4, eax
-	R(MOV(eax, *(dd*)(raddr(ds,offset(dseg,unk_244C4)))));	// 21150 mov	eax, [dword ptr	unk_244C4]
+	R(MOV(eax, *(dd*)&m.unk_244C4));	// 21150 mov	eax, [dword ptr	unk_244C4]
 	R(IMUL1_4(m._multip_244D0));	// 21151 imul	_multip_244D0
 	R(SHRD(eax, edx, 0x10));	// 21152 shrd	eax, edx, 10h
 	R(ADD(m._dword_244D4, eax));	// 21153 add	_dword_244D4, eax
@@ -16226,7 +16227,7 @@ loc_1b4cd:
 	R(MOV(ecx, m._multip_244CC));	// 21307 mov	ecx, _multip_244CC
 	R(MOV(ebp, m._multip_244D0));	// 21308 mov	ebp, _multip_244D0
 	R(MOV(eax, m._dword_244C8));	// 21309 mov	eax, _dword_244C8
-	R(MOV(*(dd*)(raddr(ds,offset(dseg,unk_244C4))), eax));	// 21310 mov	dword ptr [unk_244C4], eax
+	R(MOV(*(dd*)&m.unk_244C4, eax));	// 21310 mov	dword ptr [unk_244C4], eax
 	R(MOV(eax, m._dword_244C8));	// 21311 mov	eax, _dword_244C8
 	R(IMUL1_4(ecx));	// 21312 imul	ecx
 	R(SHRD(eax, edx, 0x10));	// 21313 shrd	eax, edx, 10h
@@ -16239,7 +16240,7 @@ loc_1b4cd:
 	R(IMUL1_4(ecx));	// 21320 imul	ecx
 	R(SHRD(eax, edx, 0x10));	// 21321 shrd	eax, edx, 10h
 	R(ADD(m._dword_244D4, eax));	// 21322 add	_dword_244D4, eax
-	R(MOV(eax, *(dd*)(raddr(ds,offset(dseg,unk_244C4)))));	// 21323 mov	eax, [dword ptr	unk_244C4]
+	R(MOV(eax, *(dd*)&m.unk_244C4));	// 21323 mov	eax, [dword ptr	unk_244C4]
 	R(IMUL1_4(ebp));	// 21324 imul	ebp
 	R(SHRD(eax, edx, 0x10));	// 21325 shrd	eax, edx, 10h
 	R(ADD(m._dword_244D4, eax));	// 21326 add	_dword_244D4, eax
@@ -17358,7 +17359,7 @@ _loadcfg:
 	R(POP(bx));	// 22645 pop	bx
 		R(JC(loc_1bfc9));	// 22646 jb	short loc_1BFC9
 	R(MOV(eax, m._dword_1DCEC));	// 22647 mov	eax, _dword_1DCEC
-	R(CMP(eax, *(dd*)(raddr(ds,offset(dseg,_cfg_buffer)))));	// 22648 cmp	eax, [dword ptr	_cfg_buffer]
+	R(CMP(eax, *(dd*)&m._cfg_buffer));	// 22648 cmp	eax, [dword ptr	_cfg_buffer]
 	R(STC);	// 22649 stc
 		R(JNZ(loc_1bfc9));	// 22650 jnz	short loc_1BFC9
 	R(MOV(dx, offset(dseg,_snd_card_type)));	// 22651 mov	dx, offset _snd_card_type
@@ -17744,7 +17745,7 @@ MOVSB;	// 23240 movsb
 	R(RETN);	// 23242 retn
 loc_1c321:
 	R(MOV(m._byte_1DE7E, 2));	// 23247 mov	_byte_1DE7E, 2
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer))), offset(dseg,_aModuleNotFound)));	// 23248 mov	word ptr [_messagepointer], offset _aModuleNotFound ; "Module not	found.\r\n$"
+	R(MOV(*(dw*)&m._messagepointer, offset(dseg,_aModuleNotFound)));	// 23248 mov	word ptr [_messagepointer], offset _aModuleNotFound ; "Module not	found.\r\n$"
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), ds));	// 23249 mov	word ptr [_messagepointer+2], ds
 	R(STC);	// 23250 stc
 	R(RETN);	// 23251 retn
@@ -17866,7 +17867,7 @@ _callsubx:
 	R(MOV(bh, m._byte_1DCF8));	// 23403 mov	bh, _byte_1DCF8
 	R(CALLF(ksub_12da8));	// 23404 call	sub_12DA8
 	R(MOV(m._byte_1DE7E, 1));	// 23405 mov	_byte_1DE7E, 1
-	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer))), dx));	// 23406 mov	word ptr [_messagepointer], dx
+	R(MOV(*(dw*)&m._messagepointer, dx));	// 23406 mov	word ptr [_messagepointer], dx
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), fs));	// 23407 mov	word ptr [_messagepointer+2], fs
 		R(JC(locret_1c4a7));	// 23408 jb	short locret_1C4A7
 	R(MOV(m._byte_1DE7E, 0));	// 23409 mov	_byte_1DE7E, 0
@@ -18067,7 +18068,7 @@ loc_1c6ef:
 	R(PUSH(es));	// 23776 push	es
 	R(MOV(ax, seg_offset(seg001)));	// 23777 mov	ax, seg001
 	R(MOV(es, ax));	// 23778 mov	es, ax
-	R(MOV(dx, kloc_1c72c));	// 23780 mov	dx, offset loc_1C72C
+	R(MOV(dx, kmouse_handler));	// 23780 mov	dx, offset mouse_handler
 	R(MOV(cx, 0x1F));	// 23781 mov	cx, 1Fh
 	R(MOV(ax, 0x0C));	// 23782 mov	ax, 0Ch
 	R(INT(0x33));	// 23783 int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
@@ -18091,7 +18092,7 @@ _mouse_deinit:
 	R(INT(0x33));	// 23813 int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
 locret_1c72b:
 	R(RETN);	// 23817 retn
-loc_1c72c:
+mouse_handler:
 	R(PUSH(ds));	// 23823 push	ds
 	R(PUSH(ax));	// 23824 push	ax
 	R(MOV(ax, seg_offset(dseg)));	// 23825 mov	ax, dseg
@@ -20030,7 +20031,7 @@ case kloc_1c6b9: 	goto loc_1c6b9;
 case kloc_1c6be: 	goto loc_1c6be;
 case kloc_1c6ef: 	goto loc_1c6ef;
 case kloc_1c708: 	goto loc_1c708;
-case kloc_1c72c: 	goto loc_1c72c;
+case kmouse_handler: 	goto mouse_handler;
 case kloc_1c783: 	goto loc_1c783;
 case kloc_1c7a7: 	goto loc_1c7a7;
 case kloc_1c7af: 	goto loc_1c7af;

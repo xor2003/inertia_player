@@ -262,6 +262,16 @@ int8_t asm2C_IN(int16_t address) {
 	}
 }
 
+uint16_t asm2C_INW(uint16_t address) {
+	switch(address) {
+	case 0x3DA:
+		break;
+	default:
+		log_error("Unknown INW %d\n",address);
+		return 0;
+	}
+}
+
 bool is_little_endian_real_check() {
 	union
 	{
@@ -677,7 +687,7 @@ X86_REGREF
 			return;
 		}
       /* Free memory */
-    case 0x49:
+	    case 0x49:
       if ((rc = DosMemFree(es - 1)) < SUCCESS)
       {
         if (DosMemCheck() != SUCCESS)
@@ -689,7 +699,7 @@ X86_REGREF
       break;
 
       /* Set memory block size */
-    case 0x4a:
+		    case 0x4a:
         if (DosMemCheck() != SUCCESS)
            {log_error("before 4a: MCB chain corrupted\n");exit(1);}
 
@@ -894,6 +904,10 @@ X86_REGREF
 		}
 		break;
 */
+	case 0x33: // mouse not implemented yet
+	{
+		break;
+	}
 	default:
 		break;
 	}
@@ -939,6 +953,7 @@ dw getscan()
 {
  dw o=0;
  int ch = getch();
+ o = ch;
 //if (ch==ERR) return(0);
 
 //log_debug(">> %x\n",ch);
@@ -947,7 +962,6 @@ dw getscan()
 {
 case ERR: {o=0;break;}
 
-case 0x30: {o=0xb;break;}
 case 0x31: {o=0x2;break;}
 case 0x32: {o=0x3;break;}
 case 0x33: {o=0x4;break;}
@@ -957,10 +971,69 @@ case 0x36: {o=0x7;break;}
 case 0x37: {o=0x8;break;}
 case 0x38: {o=0x9;break;}
 case 0x39: {o=0xa;break;}
+case 0x30: {o=0xb;break;}
 
+case KEY_F(1): {o=0x3B;break;}
+case KEY_F(2): {o=0x3C;break;}
+case KEY_F(3): {o=0x3D;break;}
+case KEY_F(4): {o=0x3E;break;}
+case KEY_F(5): {o=0x3F;break;}
+case KEY_F(6): {o=0x40;break;}
+case KEY_F(7): {o=0x41;break;}
+case KEY_F(8): {o=0x42;break;}
+case KEY_F(9): {o=0x43;break;}
+case KEY_F(10): {o=0x44;break;}
+case KEY_LEFT: {o=0xe04B;break;}
+case KEY_B2: {o=0x4C;break;}
+case KEY_RIGHT: {o=0xe04D;break;}
+case KEY_END: {o=0x4F;break;}
+case KEY_DOWN: {o=0xe050;break;}
+case KEY_NPAGE: {o=0xe051;break;}
+case KEY_IC: {o=0xe052;break;}
+case KEY_DC: {o=0xe053;break;}
+case KEY_F(13): {o=0x54;break;}
+case KEY_F(14): {o=0x55;break;}
+case KEY_F(15): {o=0x56;break;}
+case KEY_F(11): {o=0x57;break;}
+case KEY_F(12): {o=0x58;break;}
+case KEY_F(18): {o=0x59;break;}
+case KEY_F(19): {o=0x5A;break;}
+case KEY_F(20): {o=0x5B;break;}
+case KEY_F(21): {o=0x5C;break;}
+case KEY_F(22): {o=0x5D;break;}
+case KEY_F(25): {o=0x5E;break;}
+case KEY_F(26): {o=0x5F;break;}
+case KEY_F(27): {o=0x60;break;}
+case KEY_F(28): {o=0x61;break;}
+case KEY_F(29): {o=0x62;break;}
+case KEY_F(30): {o=0x63;break;}
+case KEY_F(31): {o=0x64;break;}
+case KEY_F(32): {o=0x65;break;}
+case KEY_F(33): {o=0x66;break;}
+case KEY_F(34): {o=0x67;break;}
+case KEY_F(37): {o=0x68;break;}
+case KEY_F(38): {o=0x69;break;}
+case KEY_F(39): {o=0x6A;break;}
+case KEY_F(40): {o=0x6B;break;}
+case KEY_F(41): {o=0x6C;break;}
+case KEY_F(42): {o=0x6D;break;}
+case KEY_F(43): {o=0x6E;break;}
+case KEY_F(44): {o=0x6F;break;}
+case KEY_F(45): {o=0x70;break;}
+case KEY_F(46): {o=0x71;break;}
+case KEY_BTAB: {o=0xF;break;}
+case KEY_HOME: {o=0xe047;break;}
+case KEY_UP: {o=0xe048;break;}
+case KEY_PPAGE: {o=0xe049;break;}
+case KEY_F(23): {o=0x87;break;}
+case KEY_F(24): {o=0x88;break;}
+case KEY_F(35): {o=0x89;break;}
+case KEY_F(36): {o=0x8A;break;}
+case KEY_F(47): {o=0x8B;break;}
+case KEY_F(48): {o=0x8C;break;}
+#ifdef __PDCURSES__
 case ALT_ESC: {o=0x1;break;}
 case ALT_BKSP: {o=0xE;break;}
-case KEY_BTAB: {o=0xF;break;}
 case ALT_Q: {o=0x10;break;}
 case ALT_W: {o=0x11;break;}
 case ALT_E: {o=0x12;break;}
@@ -998,59 +1071,8 @@ case ALT_COMMA: {o=0x33;break;}
 case ALT_STOP: {o=0x34;break;}
 case ALT_FSLASH: {o=0x35;break;}
 case ALT_PADSTAR: {o=0x37;break;}
-case KEY_F(1): {o=0x3B;break;}
-case KEY_F(2): {o=0x3C;break;}
-case KEY_F(3): {o=0x3D;break;}
-case KEY_F(4): {o=0x3E;break;}
-case KEY_F(5): {o=0x3F;break;}
-case KEY_F(6): {o=0x40;break;}
-case KEY_F(7): {o=0x41;break;}
-case KEY_F(8): {o=0x42;break;}
-case KEY_F(9): {o=0x43;break;}
-case KEY_F(10): {o=0x44;break;}
-case KEY_HOME: {o=0xe047;break;}
-case KEY_UP: {o=0xe048;break;}
-case KEY_PPAGE: {o=0xe049;break;}
 case ALT_PADMINUS: {o=0x4A;break;}
-case KEY_LEFT: {o=0xe04B;break;}
-case KEY_B2: {o=0x4C;break;}
-case KEY_RIGHT: {o=0xe04D;break;}
 case ALT_PADPLUS: {o=0x4E;break;}
-case KEY_END: {o=0x4F;break;}
-case KEY_DOWN: {o=0xe050;break;}
-case KEY_NPAGE: {o=0xe051;break;}
-case KEY_IC: {o=0xe052;break;}
-case KEY_DC: {o=0xe053;break;}
-case KEY_F(13): {o=0x54;break;}
-case KEY_F(14): {o=0x55;break;}
-case KEY_F(15): {o=0x56;break;}
-case KEY_F(11): {o=0x57;break;}
-case KEY_F(12): {o=0x58;break;}
-case KEY_F(18): {o=0x59;break;}
-case KEY_F(19): {o=0x5A;break;}
-case KEY_F(20): {o=0x5B;break;}
-case KEY_F(21): {o=0x5C;break;}
-case KEY_F(22): {o=0x5D;break;}
-case KEY_F(25): {o=0x5E;break;}
-case KEY_F(26): {o=0x5F;break;}
-case KEY_F(27): {o=0x60;break;}
-case KEY_F(28): {o=0x61;break;}
-case KEY_F(29): {o=0x62;break;}
-case KEY_F(30): {o=0x63;break;}
-case KEY_F(31): {o=0x64;break;}
-case KEY_F(32): {o=0x65;break;}
-case KEY_F(33): {o=0x66;break;}
-case KEY_F(34): {o=0x67;break;}
-case KEY_F(37): {o=0x68;break;}
-case KEY_F(38): {o=0x69;break;}
-case KEY_F(39): {o=0x6A;break;}
-case KEY_F(40): {o=0x6B;break;}
-case KEY_F(41): {o=0x6C;break;}
-case KEY_F(42): {o=0x6D;break;}
-case KEY_F(43): {o=0x6E;break;}
-case KEY_F(44): {o=0x6F;break;}
-case KEY_F(45): {o=0x70;break;}
-case KEY_F(46): {o=0x71;break;}
 case CTL_LEFT: {o=0x73;break;}
 case CTL_RIGHT: {o=0x74;break;}
 case CTL_END: {o=0x75;break;}
@@ -1071,12 +1093,6 @@ case ALT_EQUAL: {o=0x83;break;}
 case CTL_PGUP: {o=0x84;break;}
 //case KEY_F(11): {o=0x85;break;}
 //case KEY_F(12): {o=0x86;break;}
-case KEY_F(23): {o=0x87;break;}
-case KEY_F(24): {o=0x88;break;}
-case KEY_F(35): {o=0x89;break;}
-case KEY_F(36): {o=0x8A;break;}
-case KEY_F(47): {o=0x8B;break;}
-case KEY_F(48): {o=0x8C;break;}
 case CTL_UP: {o=0x8D;break;}
 case CTL_PADMINUS: {o=0x8E;break;}
 case CTL_PADCENTER: {o=0x8F;break;}
@@ -1100,6 +1116,7 @@ case ALT_DEL: {o=0xA3;break;}
 case ALT_PADSLASH: {o=0xA4;break;}
 case ALT_TAB: {o=0xA5;break;}
 case ALT_PADENTER: {o=0xA6;break;}
+#endif
  }
  return o;
 }
