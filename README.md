@@ -7,21 +7,28 @@ DOS binary 16 bit real or 32 bit protected modes -> IDA Pro (disassembly) -> exp
 Optionally you can recompile resulting C to 32 bits with optimization and recompile to get cleaner C code without dead code and flags update.
 
 Key features:
-- Segment memory model and 16bit offsets.
 - Most of x86 instructions (except FPU) are supported (well tested with QEMU tests).
-- flags: Carry, Zero, Sign are supported for most of x86 instructions.
+flags: Carry, Zero, Sign are supported for most of x86 instructions.
+- Segment memory model and 16bit offsets.
 - Some BIOS/DOS Int 10h, 21h interrupts are supported.
   Also DOS memory manager and stack.
 - CGA text mode is supported using Curses (PDcurses or NCurses).
 - VGA 320x200x256 support (partial)
 
-Other code reused: ASM2C (x86 instruction emulation), tasm-recover (from SCUMMVM project; highly modified), QEMU x86 test suit, FreeDOS memory manager.
+3 party code used: ASM2C (x86 instruction emulation), tasm-recover (from SCUMMVM project; highly modified), QEMU x86 test suit, FreeDOS memory manager.
 
 License: GPL2.
 
-Sure ASM2C is better but it written on swift and less instructions supported, also only protected mode.
+Sure ASM2C have cleaner code and good parser but it written on Swift and less instructions supported, also only protected mode.
 
-TODO: add FPU instructions support, keyboard?
+TODO: 
+- equ out of segment/proceedure
+- macros support
+- full VGA/EGA
+- better parser based on Masm EBNF
+- proper SB emulation or use DOSBOX as library
+- add FPU instructions support
+- better keyboard
 
 Execute to convert your masm 16 bit source to C:
 -------------------------------
