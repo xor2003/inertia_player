@@ -30,6 +30,15 @@ TODO:
 - add FPU instructions support
 - better keyboard
 
+Also to easier disassembling (exe to asm) need to collect run-time information from dosbox or other emulator to annotate IDA disassembly. Maybe modify dosbox debugger tracing mechanism to collect:
+- current instruction is code
+- access to memory (which segment), offset which segment
+- segement register value
+
+To build resulting disassembly I use uasm(jwasm)/masm6, link5/tlink. See uasm\Samples\Dos\ for examples.
+
+See list of DOS games with debug information http://bringerp.free.fr/forum/viewtopic.php?f=1&t=128
+
 Execute to convert your masm 16 bit source to C:
 -------------------------------
 
