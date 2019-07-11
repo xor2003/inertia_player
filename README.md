@@ -30,7 +30,7 @@ masm-recover <some.asm>
 
 (Some small resulting source code modification will be also required to build)
 
-IDA Pro Free https://www.hex-rays.com/products/ida/support/download_freeware.shtml
+IDA Pro Free https://www.scummvm.org/news/20180331/
 
 Inertia Player 1.22 source code
 =============
