@@ -1,7 +1,6 @@
 #ifndef __asm_h__
 #define __asm_h__
 
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -10,16 +9,42 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <assert.h>
+
+#ifndef __BORLANDC__
+#include <stdint.h>
 #include <stdbool.h>
+#define MYPACKED __attribute__((__packed__))
+#else
+typedef unsigned long uint32_t;
+typedef long int32_t;
+typedef unsigned short int uint16_t;
+typedef short int int16_t;
+typedef unsigned char uint8_t;
+typedef char int8_t;
+struct uint64_t
+{
+	long a;
+	long b;
+};
+
+#define __attribute__(x)
+#define __packed__
+#define MYPACKED
+#endif
 //#include <pthread.h>
+
+typedef uint8_t db;
+typedef uint16_t dw;
+typedef uint32_t dd;
+typedef uint64_t dq;
 
 #include "curses.h"
 
 
-#define VGARAM_SIZE 320*200
-#define STACK_SIZE 1024*10
+#define VGARAM_SIZE (320*200)
+#define STACK_SIZE (1024*10)
 //#define HEAP_SIZE 1024*640 - 16 - STACK_SIZE
-#define HEAP_SIZE 1024*1024 - 16 - STACK_SIZE
+#define HEAP_SIZE (1024*1024) - 16 - STACK_SIZE
 
 #define NB_SELECTORS 128
 
@@ -108,6 +133,8 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 #define STOSB STOS(1,3)
 #define STOSW STOS(2,2)
 #else
+
+//SDL2 VGA
 #define STOSB { \
 	if (es==0xa000)\
 		{ \
@@ -118,7 +145,11 @@ SDL_SetRenderDrawColor(renderer, vgaPalette[3*al+2], vgaPalette[3*al+1], vgaPale
 	else \
 		{STOS(1,0);} \
 	}
-
+/*
+#define STOSB { \
+		{STOS(1,0);} \
+	}
+*/
 #define STOSW { \
 	if (es==0xB800)  \
 		{dd t=(di>>1);attrset(COLOR_PAIR(ah)); mvaddch(t/80, t%80, al); /*attroff(COLOR_PAIR(ah))*/;di+=2;refresh();} \
@@ -156,10 +187,6 @@ SDL_SetRenderDrawColor(renderer, vgaPalette[3*al+2], vgaPalette[3*al+1], vgaPale
 
 
 
-typedef uint8_t db;
-typedef uint16_t dw;
-typedef uint32_t dd;
-typedef uint64_t dq;
 
 #ifdef MSB_FIRST
 typedef struct dblReg {
@@ -485,7 +512,7 @@ void MOV_(D* dest, const S& src)
 // LEA - Load Effective Address
 #define LEA(dest,src) dest = src
 
-#define XCHG(dest,src) {dd t = (dd) dest; dest = src; src = t;}//std::swap(dest,src); //TODO
+#define XCHG(dest,src) {dd t = (dd) dest; dest = src; src = t;}//std::swap(dest,src); TODO
 
 
 #define MOVS(dest,src,s)  {dest=src; dest+=s; src+=s; }
@@ -566,6 +593,7 @@ void asm2C_printOffsets(unsigned int offset);
 #define TESTJUMPTOBACKGROUND  //if (jumpToBackGround) CALL(moveToBackGround);
 
 void asm2C_OUT(int16_t address, int data);
+
 #define OUT(a,b) asm2C_OUT(a,b)
 int8_t asm2C_IN(int16_t data);
 #define IN(a,b) a = asm2C_IN(b); TESTJUMPTOBACKGROUND
@@ -735,7 +763,11 @@ bool is_little_endian();
 			   ))
 #endif
 
+#ifndef __BORLANDC__
 enum  _offsets : int;
+#else
+enum  _offsets;
+#endif
 
 struct _STATE{
 dd eax;
@@ -815,10 +847,13 @@ dw _source;
 void realtocurs();
 dw getscan();
 
+// SDL2 VGA
 struct SDL_Renderer;
 extern SDL_Renderer *renderer;
+
 extern db vgaPalette[256*3];
 
+extern chtype vga_to_curses[256];
 #include "memmgr.h"
 
 #ifdef __cplusplus

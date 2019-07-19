@@ -52,9 +52,10 @@ static struct __fl __eflags;
 #define DF __eflags._DF
 #define SF __eflags._SF
 */
-
+// SDL2 VGA
     SDL_Renderer *renderer;
     SDL_Window *window;
+
 db vgaPalette[256*3];
 dd selectorsPointer;
 dd selectors[NB_SELECTORS];
@@ -386,11 +387,13 @@ X86_REGREF
 			}
 			case 0x13: {
 				log_debug2("Switch to VGA\n");
+// SDL2 VGA
 				SDL_Init(SDL_INIT_VIDEO);
 				SDL_CreateWindowAndRenderer(320, 200, 0, &window, &renderer);
 				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 				SDL_RenderClear(renderer);
 			        SDL_RenderPresent(renderer); 
+
 				//stackDump(_state);
 				return;
 			}
@@ -1220,5 +1223,41 @@ int main(int argc, char *argv[])
   }
 	mainproc((_offsets) 0x1001, _state);
 	return(0);
+}
+
+chtype vga_to_curses[256];
+void prepare_cp437_to_curses()
+{
+for(size_t i=0; i<256; i++)
+	{ vga_to_curses[i] = i; }
+    vga_to_curses['\0'] = ' ';
+    vga_to_curses[0x04] = ACS_DIAMOND;
+    vga_to_curses[0x18] = ACS_UARROW;
+    vga_to_curses[0x19] = ACS_DARROW;
+    vga_to_curses[0x1a] = ACS_RARROW;
+    vga_to_curses[0x1b] = ACS_LARROW;
+    vga_to_curses[0x9c] = ACS_STERLING;
+    vga_to_curses[0xb0] = ACS_BOARD;
+    vga_to_curses[0xb1] = ACS_CKBOARD;
+    vga_to_curses[0xb3] = ACS_VLINE;
+    vga_to_curses[0xb4] = ACS_RTEE;
+    vga_to_curses[0xbf] = ACS_URCORNER;
+    vga_to_curses[0xc0] = ACS_LLCORNER;
+    vga_to_curses[0xc1] = ACS_BTEE;
+    vga_to_curses[0xc2] = ACS_TTEE;
+    vga_to_curses[0xc3] = ACS_LTEE;
+    vga_to_curses[0xc4] = ACS_HLINE;
+    vga_to_curses[0xc5] = ACS_PLUS;
+    vga_to_curses[0xce] = ACS_LANTERN;
+    vga_to_curses[0xd8] = ACS_NEQUAL;
+    vga_to_curses[0xd9] = ACS_LRCORNER;
+    vga_to_curses[0xda] = ACS_ULCORNER;
+    vga_to_curses[0xdb] = ACS_BLOCK;
+    vga_to_curses[0xe3] = ACS_PI;
+    vga_to_curses[0xf1] = ACS_PLMINUS;
+    vga_to_curses[0xf2] = ACS_GEQUAL;
+    vga_to_curses[0xf3] = ACS_LEQUAL;
+    vga_to_curses[0xf8] = ACS_DEGREE;
+    vga_to_curses[0xfe] = ACS_BULLET;
 }
 

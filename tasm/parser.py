@@ -46,7 +46,7 @@ class parser:
 		self.h_data = []
 		self.cur_seg_offset = 0
 		self.dummy_enum = 0
-		self.segment = ""
+		self.segment = "default_seg"
 
 		self.symbols = []
 		self.link_later = []
@@ -483,7 +483,7 @@ class parser:
 		self.data_started = True
 		return r, rh, elements
 
-	def add_label(self, name, far="", proc = False):
+	def add_label(self, name, far="", isproc = False):
 				if self.visible():
 					#name = m.group(1)
 					#print "~name: %s" %name
@@ -491,8 +491,15 @@ class parser:
 					#print "~~name: %s" %name
 					if not (name.lower() in self.skip_binary_data):
 						print "offset %s -> %s" %(name, "&m." + name.lower() + " - &m." + self.segment)
+						if self.proc is None:
+							nname = "mainproc"
+							self.proc = proc(nname)
+							#print "procedure %s, #%d" %(name, len(self.proc_list))
+							self.proc_list.append(nname)
+							self.set_global(nname, self.proc)
+
 						if self.proc is not None:
-							self.proc.add_label(name, proc)
+							self.proc.add_label(name, isproc)
 							#self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, len(self.proc.stmts)))
 							self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, self.offset_id))
 							farb = False
@@ -506,6 +513,40 @@ class parser:
 					else:
 						print "skipping binary data for %s" % (name,)
 						skipping_binary_data = True
+
+	def create_segment(self, name):
+					binary_width = 1
+					offset = int(len(self.binary_data)/16)
+					print "segment %s %x" %(name, offset)
+					self.cur_seg_offset = 16
+
+					num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
+					if num:
+						l = [ '0' ] * num
+						self.binary_data += l
+
+						self.dummy_enum += 1
+						labell = "dummy" + str(self.dummy_enum)
+
+						self.c_data.append("{"+ ",".join(l) +"}, // padding\n")
+						self.h_data.append(" db " + labell + "["+ str(num) + "]; // padding\n")
+
+					num = 0x10
+					l = [ '0' ] * num
+					self.binary_data += l
+
+					self.c_data.append("{"+ ",".join(l) +"}, // segment " + name + "\n")
+					self.h_data.append(" db " + name + "["+ str(num) + "]; // segment " + name + "\n")
+
+					self.set_global(name, op.var(binary_width, offset, issegment = True))
+					'''
+					if self.proc == None:
+						name = "mainproc"
+						self.proc = proc(name)
+						#print "procedure %s, #%d" %(name, len(self.proc_list))
+						self.proc_list.append(name)
+						self.set_global(name, self.proc)
+					'''
 
 
 	def parse(self, fname):
@@ -583,7 +624,7 @@ class parser:
 				continue
 			elif cmd0l == 'ends':
 				print "segement %s ends" %(self.segment)
-				self.segment = ""
+				self.segment = "default_seg"
 				continue
 			elif cmd0l == 'assume':
 				print "skipping: %s" %line
@@ -603,6 +644,7 @@ class parser:
 					cmd2l = ""
 					if len(cmd) >= 3:
 						cmd2l = cmd[2].lower()
+					print "procedure name %s" %cmd0l
 					'''
 					name = cmd0l
 					self.proc = proc(name)
@@ -610,42 +652,12 @@ class parser:
 					self.proc_list.append(name)
 					self.set_global(name, self.proc)
 					'''
-					self.add_label(cmd0l, far=cmd2l, proc = True)
+					self.add_label(cmd0l, far=cmd2l, isproc = True)
 					continue
 				elif cmd1l == 'segment':
 					name = cmd0l
 					self.segment = name
-
-					binary_width = 1
-					offset = int(len(self.binary_data)/16)
-					print "segment %s %x" %(name, offset)
-					self.cur_seg_offset = 16
-
-					num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
-					if num:
-						l = [ '0' ] * num
-						self.binary_data += l
-
-						self.dummy_enum += 1
-						labell = "dummy" + str(self.dummy_enum)
-
-						self.c_data.append("{"+ ",".join(l) +"}, // padding\n")
-						self.h_data.append(" db " + labell + "["+ str(num) + "]; // padding\n")
-
-					num = 0x10
-					l = [ '0' ] * num
-					self.binary_data += l
-
-					self.c_data.append("{"+ ",".join(l) +"}, // segment " + name + "\n")
-					self.h_data.append(" db " + name + "["+ str(num) + "]; // segment " + name + "\n")
-
-					self.set_global(name, op.var(binary_width, offset, issegment = True))
-					if self.proc == None:
-						name = "mainproc"
-						self.proc = proc(name)
-						#print "procedure %s, #%d" %(name, len(self.proc_list))
-						self.proc_list.append(name)
-						self.set_global(name, self.proc)
+					self.create_segment(name)
 					continue
 
 				elif cmd1l == 'ends':
@@ -685,8 +697,8 @@ class parser:
 						elif cmd1l == '=':
 							self.reset_global(cmd0, op.const(vv, size=size))
 						'''
-						if self.proc is not None:
-							self.proc.add_equ(cmd0.lower(), vv, line_number=self.line_number)
+						#if self.proc is not None:
+						self.proc.add_equ(cmd0.lower(), vv, line_number=self.line_number)
 					else:
 						print "skipping binary data for %s" % (cmd0.lower(),)
 						skipping_binary_data = True

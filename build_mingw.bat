@@ -3,5 +3,5 @@ rem -DDEBUG=1
 "C:\MinGW\bin\g++.exe" -mno-ms-bitfields asm.c  -c %OPT%
 "C:\MinGW\bin\g++.exe" -mno-ms-bitfields memmgr.c -c %OPT%
 "C:\MinGW\bin\g++.exe" -mno-ms-bitfields %1.cpp -c %OPT%
-"C:\MinGW\bin\g++.exe" -mno-ms-bitfields %1.o asm.o memmgr.o pdcurses.lib -o %1 %OPT%
+"C:\MinGW\bin\g++.exe" -mno-ms-bitfields %1.o asm.o memmgr.o -o %1 %OPT% pdcurses.lib
 rem  -lgdi32 -lcomdlg32
