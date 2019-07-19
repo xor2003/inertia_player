@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #define MYPACKED __attribute__((__packed__))
+#define MYINT_ENUM : int
 #else
 typedef unsigned long uint32_t;
 typedef long int32_t;
@@ -27,9 +28,8 @@ struct uint64_t
 	long b;
 };
 
-#define __attribute__(x)
-#define __packed__
 #define MYPACKED
+#define MYINT_ENUM
 #endif
 //#include <pthread.h>
 

@@ -31,7 +31,17 @@
 #ifndef __MCB_H__
 #define __MCB_H__
 
+#ifndef __BORLANDC__
 #include <stdint.h>
+#define MYPACKED __attribute__((__packed__))
+#else
+#define MYPACKED
+typedef unsigned long uint32_t;
+typedef unsigned short int uint16_t;
+typedef short int int16_t;
+typedef unsigned char uint8_t;
+#endif
+
 typedef char BYTE;
 typedef uint16_t UWORD;
 
@@ -66,7 +76,7 @@ static BYTE *mcb_hRcsId =
 typedef UWORD seg;
 typedef UWORD offset;
 
-typedef struct  __attribute__((__packed__)) {
+typedef struct MYPACKED {
   BYTE m_type;                  /* mcb type - chain or end              */
   UWORD m_psp;                  /* owner id via psp segment             */
   UWORD m_size;                 /* size of segment in paragraphs        */

@@ -1114,7 +1114,7 @@ else goto __dispatch_call;
 
 
 
-		self.hd.write("\nenum _offsets : int {\n")
+		self.hd.write("\nenum _offsets MYINT_ENUM {\n")
 		offsets = []
 		for k, v in self.context.get_globals().items():
 			k = re.sub(r'[^A-Za-z0-9_]', '_', k)
@@ -1132,7 +1132,7 @@ else goto __dispatch_call;
 		self.hd.write("};\n")
 
 
-		data_head = "\nstruct __attribute__((__packed__)) Memory{\n"
+		data_head = "\nstruct MYPACKED Memory{\n"
 		for v in hdata_bin:
 			#data_impl += "0x%02x, " %v
 			data_head += "%s" %v
