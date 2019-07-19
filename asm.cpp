@@ -2,11 +2,14 @@
 //#include "snow.h"
 //#include "iplay_masm_.h"
 
+#ifndef __BORLANDC__
 #include <SDL2/SDL.h>
+#include <thread>
+#endif
+
 #include <assert.h>
 
 #include <time.h>
-#include <thread>
 
 struct /*__attribute__((__packed__))*/ Memory;
 extern struct Memory m;
@@ -53,17 +56,19 @@ static struct __fl __eflags;
 #define SF __eflags._SF
 */
 // SDL2 VGA
+#ifdef SDL_MAJOR_VERSION
     SDL_Renderer *renderer;
     SDL_Window *window;
+db vgaRamPaddingBefore[VGARAM_SIZE];
+db vgaRam[VGARAM_SIZE];
+db vgaRamPaddingAfter[VGARAM_SIZE];
+#endif
 
 db vgaPalette[256*3];
 dd selectorsPointer;
 dd selectors[NB_SELECTORS];
 
 dd heapPointer;
-db vgaRamPaddingBefore[VGARAM_SIZE];
-db vgaRam[VGARAM_SIZE];
-db vgaRamPaddingAfter[VGARAM_SIZE];
 db* diskTransferAddr = 0;
 //#include "memmgr.c"
 
@@ -129,6 +134,7 @@ void log_debug2(const char *fmt, ...) {
 }
 
 void checkIfVgaRamEmpty() {
+#ifdef SDL_MAJOR_VERSION
 	int i;
 	int vgaram_empty = 1;
 	for(i = 0; i < VGARAM_SIZE; i++)
@@ -136,6 +142,7 @@ void checkIfVgaRamEmpty() {
 			vgaram_empty = 0;
 	log_debug("vgaram_empty : %s\n", vgaram_empty ? "true" : "false");
 	(void) vgaram_empty;
+#endif
 }
 
 void stackDump(_STATE* _state) {
@@ -166,8 +173,10 @@ X86_REGREF
 	log_debug("fs: %d -> %p\n",fs,(void *) realAddress(0,fs));
 	log_debug("gs: %d -> %p\n",gs,(void *) realAddress(0,gs));
 //	log_debug("adress heap: %p\n",(void *) &m.heap);
+#ifdef SDL_MAJOR_VERSION
 	log_debug("adress vgaRam: %p\n",(void *) &vgaRam);
 	log_debug("first pixels vgaRam: %x\n",*vgaRam);
+#endif
 	log_debug("flags: ZF = %d\n",ZF);
 	log_debug("top stack=%d\n",stackPointer);
 	checkIfVgaRamEmpty();
@@ -304,6 +313,7 @@ bool is_little_endian()
 }
 
 
+#ifndef __BORLANDC__ //TODO
 //#if !CYGWIN
   #include <sys/time.h>
 double realElapsedTime(void) {              // returns 0 first time called
@@ -314,6 +324,7 @@ double realElapsedTime(void) {              // returns 0 first time called
    //     t0 = tv;
     return ((tv.tv_sec /*- t0.tv_sec*/ + (tv.tv_usec /* - t0.tv_usec*/)) / 1000000.) * 18.;
 }
+#endif
 /*
 #else
 #include <windows.h>
@@ -387,13 +398,14 @@ X86_REGREF
 			}
 			case 0x13: {
 				log_debug2("Switch to VGA\n");
-// SDL2 VGA
+#ifdef SDL_MAJOR_VERSION //TODO
+
 				SDL_Init(SDL_INIT_VIDEO);
 				SDL_CreateWindowAndRenderer(320, 200, 0, &window, &renderer);
 				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 				SDL_RenderClear(renderer);
 			        SDL_RenderPresent(renderer); 
-
+#endif
 				//stackDump(_state);
 				return;
 			}
@@ -442,6 +454,7 @@ X86_REGREF
         	    struct tm* loctime;
 
 		        
+#ifndef __BORLANDC__  //TODO
 		    struct timeval curtime;
 	            gettimeofday(&curtime, NULL);
     
@@ -453,6 +466,7 @@ X86_REGREF
 
 	            ch = (loctime->tm_hour);
 		    dl = 0;
+#endif
 			break;
 			}
 
