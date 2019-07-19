@@ -41,7 +41,7 @@ typedef uint64_t dq;
 #include "curses.h"
 
 
-#define VGARAM_SIZE (320*200)
+#define VGARAM_SIZE 320*200
 #define STACK_SIZE (1024*10)
 //#define HEAP_SIZE 1024*640 - 16 - STACK_SIZE
 #define HEAP_SIZE (1024*1024) - 16 - STACK_SIZE
