@@ -41,10 +41,10 @@ typedef uint64_t dq;
 #include "curses.h"
 
 
-#define VGARAM_SIZE 320*200
-#define STACK_SIZE (1024*10)
+#define VGARAM_SIZE (320*200)
+#define STACK_SIZE (1024*64-16)
 //#define HEAP_SIZE 1024*640 - 16 - STACK_SIZE
-#define HEAP_SIZE (1024*1024) - 16 - STACK_SIZE
+#define HEAP_SIZE (1024*1024 - 16 - STACK_SIZE)
 
 #define NB_SELECTORS 128
 
@@ -135,6 +135,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 #else
 
 //SDL2 VGA
+#ifdef SDL_MAJOR_VERSION
 #define STOSB { \
 	if (es==0xa000)\
 		{ \
@@ -145,11 +146,12 @@ SDL_SetRenderDrawColor(renderer, vgaPalette[3*al+2], vgaPalette[3*al+1], vgaPale
 	else \
 		{STOS(1,0);} \
 	}
-/*
+#else
 #define STOSB { \
 		{STOS(1,0);} \
 	}
-*/
+#endif
+
 #define STOSW { \
 	if (es==0xB800)  \
 		{dd t=(di>>1);attrset(COLOR_PAIR(ah)); mvaddch(t/80, t%80, al); /*attroff(COLOR_PAIR(ah))*/;di+=2;refresh();} \

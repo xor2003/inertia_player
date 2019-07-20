@@ -1,5 +1,5 @@
-#ifndef TASMRECOVER_TEST
-#define TASMRECOVER_TEST
+#ifndef TASMRECOVER_TEST_I386_STUBS_H__
+#define TASMRECOVER_TEST_I386_STUBS_H__
 
 /* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
 
@@ -8,11 +8,10 @@
  */
 
 #include "asm.h"
-
 //namespace test-i386 {
 
 
-typedef enum {
+enum _offsets MYINT_ENUM {
 kbegin = 0x1001,
 kprintf = 0x1002,
 kexec_addl = 0x1111,
@@ -341,9 +340,9 @@ kmain = 0x1253,
 kloc_40d571 = 0x1254,
 kloc_40d581 = 0x1255,
 ksub_40d5c0 = 0x1256,
-} _offsets;
+};
 
-struct __attribute__((__packed__)) Memory{
+struct MYPACKED Memory{
  db dummy1[4096]; // protective
  db _text[16]; // segment _text
 dd dword_40D5D0[3];
@@ -20828,9 +20827,9 @@ db dummy20074;
 db dummy20075;
  db dummy20076[12]; // padding
 
-db stack[STACK_SIZE];
+			db stack[STACK_SIZE];
 			db heap[HEAP_SIZE];
-
+int sss;
 		};
 
 //class test-i386Context {
