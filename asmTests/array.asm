@@ -14,6 +14,8 @@ start: ;IGNORE
 sti                             ; Set The Interrupt Flag
 cld                             ; Clear The Direction Flag
 
+MOV ds, _data
+
 cmp var1[1],2
 cmp var1[bx],2
 cmp var1[bx+si],2
@@ -24,7 +26,7 @@ jne failure
 cmp [var1],2
 jne failure
 
-JMP exitLabel
+;JMP exitLabel
 
 
 cmp [var1+1],5

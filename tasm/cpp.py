@@ -118,7 +118,7 @@ class cpp:
 		#print g
 		if isinstance(g, op.const):
 			print "it is const"
-			#value = self.expand_equ(g.value)
+			value = self.expand_equ(g.value)
 			print "equ: %s -> %s" %(name, self.expand_equ(g.value))
 		elif isinstance(g, proc.proc):
 			print "it is proc"

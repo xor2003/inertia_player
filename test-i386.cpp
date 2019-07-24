@@ -4,13 +4,16 @@
  *
  */
 
+#define _BITS 32
+#define _PROTECTED_MODE 1
+
 #include "test-i386.h"
 
 //namespace test-i386 {
 
 extern "C"
 {
-int iprintf(const char*, ...);
+db* iiprintf(db*);
 }
 
 int init(_STATE* _state)
@@ -19,6 +22,9 @@ X86_REGREF
 
 _state->_indent=0;
 ecx=0;
+
+printf("Starting\n");
+//logDebug=fopen("test-i386.log","w");
 
 /*
 initscr();
@@ -65,7 +71,7 @@ if (__disp==kbegin) goto main;
 else goto __dispatch_call;
  // Procedure exec_addl() start
 __printf:
-iprintf((const char*)stackPointer);
+stackPointer = iiprintf((db*)stackPointer);
 	RET;
 exec_addl:
 #undef s0
@@ -13767,6 +13773,7 @@ sub_40d5c0:
 
 return;
 __dispatch_call:
+__disp=(_offsets) (((int)__disp)&0x0ffff);
 switch (__disp) {
 case kprintf: 	goto __printf;
 case kexec_adc: 	goto exec_adc;

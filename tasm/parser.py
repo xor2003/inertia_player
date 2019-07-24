@@ -39,7 +39,11 @@ class parser:
 
 		self.entry_point = ""
 
-		self.proc = None
+		#self.proc = None
+		nname = "mainproc"
+		self.proc = proc(nname)
+		self.proc_list.append(nname)
+		self.set_global(nname, self.proc)
 
 		self.binary_data = []
 		self.c_data = []
@@ -491,13 +495,14 @@ class parser:
 					#print "~~name: %s" %name
 					if not (name.lower() in self.skip_binary_data):
 						print "offset %s -> %s" %(name, "&m." + name.lower() + " - &m." + self.segment)
+						'''
 						if self.proc is None:
 							nname = "mainproc"
 							self.proc = proc(nname)
 							#print "procedure %s, #%d" %(name, len(self.proc_list))
 							self.proc_list.append(nname)
 							self.set_global(nname, self.proc)
-
+						'''
 						if self.proc is not None:
 							self.proc.add_label(name, isproc)
 							#self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, len(self.proc.stmts)))
@@ -587,6 +592,13 @@ class parser:
 			
 			cmd0 = str(cmd[0])
 			cmd0l = cmd0.lower()
+
+			m = re.match('(\.\d86[pr]?)', line)
+			if m is not None:
+				line = m.group(1).strip()
+				print line
+				continue
+
 			if cmd0l == 'if':
 				self.push_if(cmd[1])
 				continue
@@ -620,7 +632,7 @@ class parser:
 				self.include(os.path.dirname(fname), cmd[1])
 				continue
 			elif cmd0l == 'endp' or (len(cmd) >= 2 and str(cmd[1].lower()) == 'endp'):
-				#self.proc = None
+				self.proc = self.get_global('mainproc')
 				continue
 			elif cmd0l == 'ends':
 				print "segement %s ends" %(self.segment)
@@ -691,12 +703,14 @@ class parser:
 						if m is not None:
 							vv = m.group(1).strip()
 							size = 2
-						'''
+
+						vv = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', vv)
+
 						if cmd1l == 'equ':
 							self.set_global(cmd0, op.const(vv, size=size))
 						elif cmd1l == '=':
 							self.reset_global(cmd0, op.const(vv, size=size))
-						'''
+						
 						#if self.proc is not None:
 						self.proc.add_equ(cmd0, vv, line_number=self.line_number)
 					else:

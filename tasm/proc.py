@@ -220,7 +220,7 @@ class proc:
 		#print "args %s" %s[1:]
 		value = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', value)
 		o = cl(label, value)
-		o.command = str(line_number) + " " + label + " = " + value
+		o.command = str(line_number) + " " + label + " equ " + value
 		o.cmd = o.command
 #		print "~~~" + o.command + o.comments
 		self.stmts.append(o)

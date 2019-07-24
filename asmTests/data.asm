@@ -31,6 +31,7 @@ assume  cs:_TEXT,ds:_DATA
 
 _start proc near
 start: ;IGNORE
+MOV ds, _data
 
 mov al, 'Z' - 'A' +1
 

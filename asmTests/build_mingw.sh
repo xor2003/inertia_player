@@ -1,6 +1,6 @@
 #!/bin/sh
-export OPT="-O0  -mno-ms-bitfields -Wno-multichar   -I/MinGW/include/ -lmingw32 -lSDL2main -lSDL2 -ggdb3"
-export CXX="/cygdrive/c/MinGW/bin/g++"
+export OPT="-O0  -mno-ms-bitfields -Wno-multichar  -lSDL2main -lSDL2 -ggdb3 -DDEBUG=3"
+export CXX="g++"
 # -DDEBUG=1
 $CXX asm.cpp  -c $OPT
 $CXX memmgr.cpp -c $OPT

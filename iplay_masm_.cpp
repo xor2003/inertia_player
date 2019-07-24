@@ -199,7 +199,7 @@ X86_REGREF
 
 _state->_indent=0;
 logDebug=fopen("iplay_masm_.log","w");
-
+	
   log_debug("~~~ %d %d %d", HEAP_SIZE, (HEAP_SIZE >> 4), seg_offset(heap) );
   /* We expect ram_top as Kbytes, so convert to paragraphs */
   mcb_init(seg_offset(heap), (HEAP_SIZE >> 4) - seg_offset(heap) - 1, MCB_LAST);

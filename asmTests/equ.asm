@@ -1,6 +1,10 @@
 .386p
 
 _DATA   segment use32 dword public 'DATA' ;IGNORE
+var1 db 6
+     db 12
+     db 12
+     db 12
 _DATA   ends ;IGNORE
 
 _TEXT   segment use32 dword public 'CODE' ;IGNORE
@@ -8,23 +12,27 @@ assume  cs:_TEXT,ds:_DATA
 _start proc near
 start:
 
-xor eax,eax
-xor edx,edx
-xor ebx,ebx
 
-inc ebx
+mov eax, B
+cmp eax,1
+jne failure
+B = 1
+
+B = 2
+mov eax, B
+cmp eax,2
+jne failure
+
+mov eax, CC
+cmp eax,4
+jne failure
+B = 1
+
 call incebx
-inc ecx
-inc ecx
-call aincecx
 
-cmp edx,1
-jne failure
-
-cmp ecx,3
-jne failure
-
-cmp ebx,3
+DDD = var1
+movzx eax, DDD
+cmp eax,6
 jne failure
 
 JMP exitLabel
@@ -32,34 +40,24 @@ JMP exitLabel
 
 MOV al,0
 JMP exitLabel
-failure:
-mov al,1
+failure::
+;mov al,1
 exitLabel:
 mov ah,4ch                    ; AH=4Ch - Exit To DOS
 int 21h
 _start endp
 
 incebx proc near
-inc ebx
-cmp ebx,TWO
-je ok
-ret
-ok:
-inc ebx
+
+B = 3
+mov eax, B
+cmp eax,3
+jne failure
+
+CC equ 4
+
 ret
 inceBX endp
-
-aincecx proc near
-inc ecx
-call aincedx
-tWO equ 2
-ret
-aincecx endp
-
-aincedx proc near
-inc edx
-ret
-aincedx endp
 
 
 _TEXT   ends ;IGNORE
