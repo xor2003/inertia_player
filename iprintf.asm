@@ -1,4 +1,4 @@
-; printf1.asm   print an integer from storage and from a register
+; printf1.asm   call printf by replacing real stack with emulated stack
 ; Assemble:	nasm -f coff -g -l iprintf.lst  iprintf.asm
 ; Link:		gcc -o printf1  printf1.o
 ; Run:		printf1

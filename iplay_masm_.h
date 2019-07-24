@@ -16,7 +16,7 @@ void mainproc(_offsets _i, _STATE* _state);
 //namespace iplay_masm_ {
 
 
-enum _offsets : int {
+enum _offsets MYINT_ENUM {
 kbegin = 0x1001,
 k_moduleread = 0x1111,
 kloc_10006 = 0x1112,
@@ -1947,7 +1947,7 @@ kloc_1c7e9 = 0x1896,
 k_int8old = 0x1897,
 };
 
-struct __attribute__((__packed__)) Memory{
+struct MYPACKED Memory{
  db dummy1[4096]; // protective
  db _text[16]; // segment _text
 db asc_1058C[5];

@@ -9,13 +9,16 @@
 //#include <thread>         // std::thread
 #include <time.h>
 
+#ifndef __BORLANDC__
 extern "C"
 {
 #include "SDL2/SDL.h"
 };
-
 #include <unistd.h>
+#endif
 
+
+#ifdef SDL_MAJOR_VERSION
 //Buffer:
 //|-----------|-------------|
 //chunk-------pos---len-----|
@@ -157,6 +160,7 @@ R(MOV(cs, seg_offset(_text)));	// mov cs,_TEXT
 	log_debug("m.audio_len=%d\n",m.audio_len);
 
 } 
+#endif
 
 /*
 std::thread int8_thread;
@@ -218,7 +222,9 @@ logDebug=fopen("iplay_masm_.log","w");
 
 
 
+#ifdef SDL_MAJOR_VERSION
 memset(m._vlm_byte_table,0x8200,0);
+#endif
 
 initscr();
 resize_term(25, 80);
@@ -245,6 +251,7 @@ R(MOV(cs, seg_offset(_text)));	// mov cs,_TEXT
 
 
 //---------------------------
+#ifdef SDL_MAJOR_VERSION
 	//Init
 	if(SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)) {  
 		printf( "Could not initialize SDL - %s\n", SDL_GetError()); 
@@ -289,6 +296,7 @@ R(MOV(cs, seg_offset(_text)));	// mov cs,_TEXT
 //		while(audio_len>0)//Wait until finish
 //			SDL_Delay(1); 
 //	}
+#endif
 
 	*(dw *)realAddress(8*4,0)=k_int8old;
 //    int8_thread = std::thread(int8_thread_proc);
