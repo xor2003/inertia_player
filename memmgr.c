@@ -31,8 +31,8 @@
 
 #include "asm.h"
 
-struct Memory;
-extern Memory m;
+//struct Memory;
+//extern Memory m;
 
 #ifdef VERSION_STRING
 static BYTE *memmgrRcsId =

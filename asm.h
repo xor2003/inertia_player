@@ -38,7 +38,6 @@ typedef uint16_t dw;
 typedef uint32_t dd;
 typedef uint64_t dq;
 
-#include "curses.h"
 
 #define VGARAM_SIZE (320*200)
 
@@ -75,7 +74,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
   #define raddr(segment,offset) ((db *)&m+(db)(offset)+selectors[segment])
  #endif
 #else
- #define raddr(segment,offset) (((db *)&m + (segment<<4) + offset ))
+ #define raddr(segment,offset) (((db *)&m + ((segment)<<4) + (offset) ))
 #endif
 
 #define realAddress(offset, segment) raddr(segment,offset)
@@ -584,12 +583,7 @@ void MOV_(D* dest, const S& src)
 #define CLC CF=0 //TODO
 #define CMC CF ^= 1 //TODO
 
-struct _STATE;
-void stackDump(_STATE* state);
-void hexDump (void *addr, int len);
-void asm2C_INT(_STATE* state, int a);
-void asm2C_init();
-void asm2C_printOffsets(unsigned int offset);
+//struct _STATE;
 
 // directjeu nosetjmp,2
 // directmenu
@@ -768,41 +762,100 @@ bool is_little_endian();
 			   ))
 #endif
 
+typedef unsigned short _offsets;
+/*
 #ifndef __BORLANDC__
 enum  _offsets : int;
 #else
 enum  _offsets;
 #endif
+*/
 
 struct _STATE{
-dd eax;
-dd ebx;
-dd ecx;
-dd edx;
-dd esi;
-dd edi;
-dd esp;
-dd ebp;
-dd eip;
+dd _eax;
+dd _ebx;
+dd _ecx;
+dd _edx;
+dd _esi;
+dd _edi;
+dd _esp;
+dd _ebp;
+dd _eip;
 
-dw cs;         
-dw ds;         
-dw es;         
-dw fs;         
-dw gs;         
-dw ss;         
+dw _cs;         
+dw _ds;         
+dw _es;         
+dw _fs;         
+dw _gs;         
+dw _ss;         
                       
-bool CF;       
-bool PF;       
-bool AF;       
-bool ZF;       
-bool SF;       
-bool DF;       
-bool OF;       
+bool _CF;       
+bool _PF;       
+bool _AF;       
+bool _ZF;       
+bool _SF;       
+bool _DF;       
+bool _OF;       
 db _indent; 
 const char *_str;
 };
 
+#define eax (_state->_eax)
+#define ax  (*(dw*)&(_state->_eax))
+#define al  (*(db*)&(_state->_eax))
+#define ah  (*((db*)&(_state->_eax)+1))
+
+#define ebx (_state->_ebx)
+#define bx  (*(dw*)&(_state->_ebx))
+#define bl  (*(db*)&(_state->_ebx))
+#define bh  (*((db*)&(_state->_ebx)+1))
+
+#define ecx (_state->_ecx)
+#define cx  (*(dw*)&(_state->_ecx))
+#define cl  (*(db*)&(_state->_ecx))
+#define ch  (*((db*)&(_state->_ecx) +1))
+
+#define edx (_state->_edx)
+#define dx  (*(dw*)&(_state->_edx))
+#define dl  (*(db*)&(_state->_edx))
+#define dh  (*((db*)&(_state->_edx)+1))
+
+#define esi (_state->_esi)
+#define si  (*(dw*)&(_state->_esi))
+#define sil (*(db*)&(_state->_esi))
+
+#define edi (_state->_edi)
+#define di  (*(dw*)&(_state->_edi))
+#define dil (*(db*)&(_state->_edi))
+
+#define ebp (_state->_ebp)
+#define bp  (*(dw*)&(_state->_ebp))
+#define bpl (*(db*)&(_state->_ebp))
+
+#define esp (_state->_esp)
+#define sp  (*(dw*)&(_state->_esp))
+#define spl (*(db*)&(_state->_esp))
+
+#define eip (_state->_eip)
+#define ip  (*(dw*)&(_state->_eip))
+
+#define cs  (_state->_cs)
+#define ds  (_state->_ds)
+#define es  (_state->_es)
+#define fs  (_state->_fs)
+#define gs  (_state->_gs)
+#define ss  (_state->_ss)
+                      
+#define CF  (_state->_CF)
+#define PF  (_state->_PF)
+#define AF  (_state->_AF)
+#define ZF  (_state->_ZF)
+#define SF  (_state->_SF)
+#define DF  (_state->_DF)
+#define OF  (_state->_OF)
+#define stackPointer (_state->_esp)
+
+/*
 #define REGDEF_hl(Z)   \
 uint32_t& e##Z##x = _state->e##Z##x; \
 uint16_t& Z##x = *(uint16_t *)& e##Z##x; \
@@ -848,17 +901,27 @@ bool& OF = _state->OF;       \
 dd& stackPointer = _state->esp;\
 _offsets __disp; \
 dw _source;
+*/
+#define X86_REGREF \
+dw __disp; \
+dw _source;
+
+void stackDump(struct _STATE* state);
+void hexDump (void *addr, int len);
+void asm2C_INT(struct _STATE* state, int a);
+void asm2C_init();
+void asm2C_printOffsets(unsigned int offset);
 
 void realtocurs();
 dw getscan();
 
 // SDL2 VGA
-struct SDL_Renderer;
-extern SDL_Renderer *renderer;
+//struct SDL_Renderer;
+extern struct SDL_Renderer *renderer;
 
 extern db vgaPalette[256*3];
 
-extern chtype vga_to_curses[256];
+//extern chtype vga_to_curses[256];
 #include "memmgr.h"
 
 #ifdef __cplusplus

@@ -1,15 +1,16 @@
-#include "asm.h"
-//#include "snow.h"
-//#include "iplay_masm_.h"
-
 #ifndef __BORLANDC__
 #include <SDL2/SDL.h>
-#include <thread>
+//#include <thread>
 #endif
+
 
 #include <assert.h>
 
 #include <time.h>
+
+#include "curses.h"
+
+#include "asm.h"
 
 struct /*__attribute__((__packed__))*/ Memory;
 extern struct Memory m;
@@ -145,7 +146,7 @@ void checkIfVgaRamEmpty() {
 #endif
 }
 
-void stackDump(_STATE* _state) {
+void stackDump(struct _STATE* _state) {
 X86_REGREF
 
 	log_debug("is_little_endian()=%d\n",isLittle);
@@ -358,7 +359,7 @@ void asm2C_init() {
 }
 
 
-void asm2C_INT(_STATE* _state, int a) {
+void asm2C_INT(struct _STATE* _state, int a) {
 X86_REGREF
 	static FILE * file;
 	int i;
@@ -969,13 +970,13 @@ const char* log_spaces(int n)
 dw getscan()
 {
  dw o=0;
- int ch = getch();
- o = ch;
+ int chr = getch();
+ o = chr;
 //if (ch==ERR) return(0);
 
 //log_debug(">> %x\n",ch);
 
- switch (ch)
+ switch (chr)
 {
 case ERR: {o=0;break;}
 
@@ -1211,13 +1212,13 @@ From: "The MS-DOS Encyclopaedia" (also Duncan) - talking about .EXE files. There
 "The other processor registers (BX,CX,DX,BP,SI and DI) contain unknown values when the program receives control from MS-DOS."
 */
 
-int init(_STATE* state);
-void mainproc(_offsets _i, _STATE* state);
+int init(struct _STATE* state);
+void mainproc(_offsets _i, struct _STATE* state);
 
 int main(int argc, char *argv[])
 {
-  _STATE state;
-  _STATE* _state=&state;
+  struct _STATE state;
+  struct _STATE* _state=&state;
   X86_REGREF
   
 	_state->_indent=0;
