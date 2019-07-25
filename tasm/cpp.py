@@ -40,7 +40,7 @@ class cpp:
 		self.logger.info('Protocol problem: %s', 'connection reset')
 
 		self.namespace = namespace
-		fname = namespace.lower() + ".cpp"
+		fname = namespace.lower() + ".c"
 		header = namespace.lower() + ".h"
 		self.indirection = 0
 		self.current_size = 0
@@ -81,6 +81,7 @@ class cpp:
 		self.lea = False
 		self.fd.write("""%s
 #include \"%s\"
+#include <curses.h>
 
 //namespace %s {
 """ %(banner, header, namespace))
@@ -519,7 +520,7 @@ class cpp:
 			## x0r return "goto %s" %self.resolve_label(name)
 			if not hasglobal:
 				name = self.expand(name, destination = True)
-				self.body += "__disp = (_offsets)" + name + ";\n"
+				self.body += "__disp = (dw)" + name + ";\n"
 				name = "__dispatch_call";
 			else:
 				if isinstance(g, op.label) and g.far:
@@ -901,7 +902,7 @@ class cpp:
 				self.body += "int %s() {\ngoto %s;\n" %(self.function_name_remapping[name], self.context.entry_point);
 			else:
 				self.body += """
-int init(_STATE* _state)
+int init(struct _STATE* _state)
 {
 X86_REGREF
 
@@ -942,7 +943,7 @@ resize_term(25, 80);
 	return(0);
 }
 
-void %s(_offsets _i, _STATE* _state){
+void %s(_offsets _i, struct _STATE* _state){
 X86_REGREF
 __disp=_i;
 if (__disp==kbegin) goto %s;
@@ -1056,7 +1057,7 @@ else goto __dispatch_call;
 		self.fd.write("default: log_error(\"Jump/call to nothere %d\\n\", __disp);stackDump(_state); abort();\n")
 		self.fd.write("};\n}\n")
 
-		data_impl += "\nMemory m = {\n"
+		data_impl += "\nstruct Memory m = {\n"
 		for v in cdata_bin:
 			#data_impl += "0x%02x, " %v
 			data_impl += "%s" %v
@@ -1114,7 +1115,7 @@ else goto __dispatch_call;
 
 
 
-		self.hd.write("\nenum _offsets MYINT_ENUM {\n")
+		#self.hd.write("\nenum _offsets MYINT_ENUM {\n")
 		offsets = []
 		for k, v in self.context.get_globals().items():
 			k = re.sub(r'[^A-Za-z0-9_]', '_', k)
@@ -1126,10 +1127,10 @@ else goto __dispatch_call;
 				offsets.append((k.lower(), hex(v.line_number)))
 
 		offsets = sorted(offsets, key=lambda t: t[1])
-		self.hd.write("kbegin = 0x1001,\n")
+		self.hd.write("#define kbegin 0x1001\n")
 		for o in offsets:
-			self.hd.write("k%s = %s,\n" %o)
-		self.hd.write("};\n")
+			self.hd.write("#define k%s %s\n" %o)
+		#self.hd.write("};\n")
 
 
 		data_head = "\nstruct MYPACKED Memory{\n"
