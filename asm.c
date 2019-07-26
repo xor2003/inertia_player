@@ -8,7 +8,7 @@
 
 #include <time.h>
 
-#include "curses.h"
+#include <curses.h>
 
 #include "asm.h"
 
