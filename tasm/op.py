@@ -90,7 +90,7 @@ class baseop(object):
 #               traceback.print_stack(file=sys.stdout)
                 return lex.parse_args(text)
                 #a, b = lex.parse_args(text)
-#               print "a %s b %s" %(a, b)
+#               logging.info "a %s b %s" %(a, b)
                 #return self.parse_arg(a), self.parse_arg(b)
         def __str__(self):
                 return str(self.__class__)

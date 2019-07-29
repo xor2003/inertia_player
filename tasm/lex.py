@@ -41,7 +41,7 @@ def parse_args(text):
                         if not string:
                                 raise SyntaxError("escape found in no string: %s" %text);
         
-                        print("escaping[%s]" %c)
+                        logging.debug("escaping[%s]" %c)
                         escape = False
                         token += c
                         continue
@@ -74,5 +74,5 @@ def parse_args(text):
         return result
 
 def compile(width, data):
-        print(data)
+        logging.debug(data)
         return data

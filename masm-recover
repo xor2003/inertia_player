@@ -1,5 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""masm-recover
 
+Usage:
+  masm-recover <in>
+"""
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -21,10 +26,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+#from docopt import docopt
+
+
 from __future__ import print_function
 from tasm.parser import parser
 from tasm.cpp import cpp
-import sys, re
+import sys, re, logging
 
 def tracefunc(frame, event, arg, indent=[0]):
       if event == "call":
@@ -35,27 +43,56 @@ def tracefunc(frame, event, arg, indent=[0]):
           indent[0] -= 2
       return tracefunc
 
-import sys
+def valid(params):
+    inf = params.get('<in>', False)
+    #outf = params.get('<out>', False)
+    if not inf:
+        return False
+    #if not outf:
+    #    return False
+
 #sys.settrace(tracefunc)
 
 sys.stdout.reconfigure(encoding='utf-8')
+# assuming loglevel is bound to the string value obtained from the
+# command line argument. Convert to upper case to allow the user to
+# specify --log=DEBUG or --log=debug
+name = sys.argv[1] #arguments['<in>']
+m = re.match(r'.*?([A-Za-z90-9_\.-]+)\.asm', name.lower())
+outname=""
+if m is not None:
+	outname = m.group(1).strip()
+
+'''
+numeric_level = getattr(logging, loglevel.upper(), None)
+if not isinstance(numeric_level, int):
+'''
+numeric_level = logging.DEBUG
+logging.basicConfig(
+	handlers=[logging.FileHandler(name+'.log', 'w', 'utf-8')], 
+	format='%(levelname)s: %(message)s',
+	level=numeric_level
+)
+
+root = logging.getLogger()
+#root.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stderr)
+handler.setLevel(logging.ERROR)
+#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#handler.setFormatter(formatter)
+root.addHandler(handler)
+
 p = parser(skip_binary_data = [
 	# These data blobs are not output
 	# dreamweb.asm
 #	'characterset1',
 	])
 p.strip_path = 3
-name = sys.argv[1]
 context = p.parse(name)
-#context = p.parse('addsub.asm')
 p.link()
 
-
-m = re.match(r'.*?([A-Za-z90-9_\.-]+)\.asm', name.lower())
-if m is not None:
-	name = m.group(1).strip()
-
-generator = cpp(context, name, blacklist = [
+generator = cpp(context, outname, blacklist = [
 	# These functions are not processed
 
 #	'aboutturn',
