@@ -1,5 +1,5 @@
 #ifndef __BORLANDC__
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
 //#include <thread>
 #endif
 

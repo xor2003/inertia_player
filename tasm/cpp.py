@@ -1,3 +1,4 @@
+from __future__ import print_function
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -19,7 +20,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-import op, traceback, re, proc, string, logging, sys
+import logging
+from builtins import hex
+from builtins import str
+from builtins import range
+from builtins import object
+from . import op, proc
+import traceback, re, string, logging, sys
 from copy import copy
 proc_module = proc
 
@@ -32,7 +39,7 @@ def parse_bin(s):
         #print "BINARY: %s -> %s" %(b, v)
         return v
 
-class cpp:
+class cpp(object):
         def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, skip_addr_constants = False, header_omit_blacklisted = False, function_name_remapping = { }):
                 FORMAT = "%(filename)s:%(lineno)d %(message)s"
                 logging.basicConfig(format=FORMAT)
@@ -51,8 +58,8 @@ class cpp:
  *
  */
 """
-                self.fd = open(fname, "wt")
-                self.hd = open(header, "wt")
+                self.fd = open(fname, "wt", encoding="cp1251")
+                self.hd = open(header, "wt", encoding="cp1251")
                 hid = "TASMRECOVER_%s_STUBS_H__" %namespace.upper()
                 self.hd.write("""#ifndef %s
 #define %s
@@ -90,7 +97,7 @@ class cpp:
         def expand_cb(self, match):
                 name_original = match.group(0)
                 name = name_original.lower()
-                print "expand_cb name = %s indirection = %u" %(name, self.indirection)
+                print("expand_cb name = %s indirection = %u" %(name, self.indirection))
                 if len(name) == 2 and \
                         ((name[0] in ['a', 'b', 'c', 'd'] and name[1] in ['x', 'h', 'l']) or name in ['si', 'di', 'bp', 'es', 'ds', 'cs', 'fs', 'gs', 'ss']):
                         return name
@@ -105,7 +112,7 @@ class cpp:
                         except:
                                 pass
                         else:
-                                print "OFFSET = %s" %offset
+                                print("OFFSET = %s" %offset)
                                 self.indirection = 0
                                 self.used_data_offsets.add((name,offset))
                                 return "offset_%s" % (name,)
@@ -113,23 +120,23 @@ class cpp:
                 try:
                         g = self.context.get_global(name)
                 except:
-                        print "expand_cb exception on name = %s" %name
+                        print("expand_cb exception on name = %s" %name)
                         return name_original
                         
                 #print g
                 if isinstance(g, op.const):
-                        print "it is const"
+                        print("it is const")
                         value = self.expand_equ(g.value)
-                        print "equ: %s -> %s" %(name, self.expand_equ(g.value))
+                        print("equ: %s -> %s" %(name, self.expand_equ(g.value)))
                 elif isinstance(g, proc.proc):
-                        print "it is proc"
+                        print("it is proc")
                         if self.indirection != -1:
-                                print "proc %s offset %s" %(str(proc.proc), str(g.offset))
+                                print("proc %s offset %s" %(str(proc.proc), str(g.offset)))
                                 raise Exception("invalid proc label usage")
                         value = str(g.offset)
                         self.indirection = 0
                 elif isinstance(g, op.var):
-                        print "it is var "+str(g.size)
+                        print("it is var "+str(g.size))
                         size = g.size
                         self.current_size = size
                         if size == 0:
@@ -177,19 +184,19 @@ class cpp:
 
         def is_register(self, expr):
                 if len(expr) == 2 and expr[0] in ['a', 'b', 'c', 'd'] and expr[1] in ['h', 'l']:
-                        print 'is reg res 1'
+                        print('is reg res 1')
                         return 1
                 if expr in ['ax', 'bx', 'cx', 'dx', 'si', 'di', 'sp', 'bp', 'ds', 'cs', 'es', 'fs', 'gs', 'ss']:
-                        print 'is reg res 2'
+                        print('is reg res 2')
                         return 2
                 if expr in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'esp', 'ebp']:
-                        print 'is reg res 4'
+                        print('is reg res 4')
                         return 4
                 return 0
 
         def get_size(self, expr):
                 expr = expr.strip()
-                print 'get_size("%s")' %expr
+                print('get_size("%s")' %expr)
 
                 try:
                         v = self.context.parse_int(expr)
@@ -202,21 +209,21 @@ class cpp:
                                 size = 2
                         elif v < 4294967296:
                                 size = 4
-                        print 'get_size res %d' %size
+                        print('get_size res %d' %size)
                         return size
                 except:
                         pass
 
                 if re.match(r'byte\s+ptr\s', expr) is not None:
-                        print 'get_size res 1'
+                        print('get_size res 1')
                         return 1
 
                 if re.match(r'word\s+ptr\s', expr) is not None:
-                        print 'get_size res 2'
+                        print('get_size res 2')
                         return 2
 
                 if re.match(r'dword\s+ptr\s', expr) is not None:
-                        print 'get_size res 4'
+                        print('get_size res 4')
                         return 4
 
                 size = self.is_register(expr)
@@ -237,41 +244,41 @@ class cpp:
 
                 m = re.match(r'[a-zA-Z_]\w*', expr)
                 if m is not None:
-                        print 'expr match some a-z'
+                        print('expr match some a-z')
                         name = m.group(0)
-                        print 'name = %s' %name
+                        print('name = %s' %name)
                         try:
                                 g = self.context.get_global(name)
                                 if isinstance(g, op.const):
                                         return self.get_size(g.value)
-                                print 'get_size res %d' %g.size
+                                print('get_size res %d' %g.size)
                                 return g.size
                         except:
                                 pass
 
-                ex = string.replace(expr, "\\\\", "\\")
+                ex = str.replace(expr, "\\\\", "\\")
                 m = re.match(r'\'(.+)\'$', ex)  # char constants
                 if m is not None:
                         return len(m.group(1))
 
-                print 'get_size res 0'
+                print('get_size res 0')
                 return 0
 
         def expand_equ_cb(self, match):
                 name = match.group(0).lower()
-                print "expand_equ_cb %s" %name
+                print("expand_equ_cb %s" %name)
                 try:
                         g = self.context.get_global(name)
                         if isinstance(g, op.const):
                                 return g.value
                         return str(g.offset)
                 except:
-                        print "some exception"
+                        print("some exception")
                         return name
 
         def expand_equ(self, expr):
                 n = 1
-                print "expand_equ(%s)" %expr
+                print("expand_equ(%s)" %expr)
                 #while n > 0:
                 #       expr, n = re.subn(r'\b[a-zA-Z_][a-zA-Z0-9_]+\b', self.expand_equ_cb, expr)
                 #while n > 0:
@@ -280,13 +287,13 @@ class cpp:
                 return "(%s)" %expr
 
         def expand(self, expr, def_size = 0, destination = False):
-                print "EXPAND(expr:\"%s\")" %expr
+                print("EXPAND(expr:\"%s\")" %expr)
                 self.seg_prefix=""
 
                 expr = expr.strip()
 
                 expr = re.sub(r'^\(\s*(.*?)\s*\)$', '\\1', expr) # (expr)
-                print "wo curls "+expr
+                print("wo curls "+expr)
 
                 size = self.get_size(expr) if def_size == 0 else def_size
 
@@ -298,9 +305,9 @@ class cpp:
 
                 try:
                         g = self.context.get_global(expr)
-                        print "found global %s" %expr
+                        print("found global %s" %expr)
                         if not self.lea and isinstance(g, op.var):
-                                print "it is not lea and it is var"
+                                print("it is not lea and it is var")
                                 if g.issegment:
                                         return "seg_offset(%s)" %expr.lower()
                                 else:
@@ -313,7 +320,7 @@ class cpp:
                 except:
                         pass
 
-                ex = string.replace(expr, "\\\\", "\\")
+                ex = str.replace(expr, "\\\\", "\\")
                 m = re.match(r'\'(.+)\'$', ex)  # char constants
                 if m is not None:
                         return expr
@@ -343,10 +350,10 @@ class cpp:
                         expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', self.expand_cb, expr) # parse each item
                         #expr = "offsetof(struct Mem,%s)" %expr
 
-                        print "after it is offset ~%s~" %expr
+                        print("after it is offset ~%s~" %expr)
                         return expr
 
-                print "1:\"%s\")" %expr
+                print("1:\"%s\")" %expr)
                 m = re.match(r'byte\s+ptr\s+(.*)', expr)
                 if m is not None:
                         expr = m.group(1).strip()
@@ -362,7 +369,7 @@ class cpp:
                         expr = m.group(1).strip()
                         size = 2
 
-                print "2:\"%s\")" %expr
+                print("2:\"%s\")" %expr)
 
                 m = re.match(r'\[(.*)\]$', expr)
                 if m is not None:
@@ -373,7 +380,7 @@ class cpp:
                 if m is not None:
                         self.seg_prefix = m.group(1)
                         expr = m.group(2).strip()
-                        print "SEGMENT %s, remains: %s" %(self.seg_prefix, expr)
+                        print("SEGMENT %s, remains: %s" %(self.seg_prefix, expr))
                 else:
                         self.seg_prefix = "ds"
 
@@ -396,7 +403,7 @@ class cpp:
                         #print "COMMON_REG: ", reg, plus
                         expr = "%s%s" %(reg, plus)
 
-                print "~~ "+expr
+                print("~~ "+expr)
                 expr = re.sub(r'"(.)"', '\'\\1\'', expr) # convert string
                 expr = re.sub(r'\[((0x)?[0-9][a-fA-F0-9]*)\]', '+\\1', expr) # convert [num]
 
@@ -409,7 +416,7 @@ class cpp:
                         expr = re.sub(r'dword\s+ptr\s*', '', expr)
                         expr = re.sub(r'word\s+ptr\s*', '', expr)
 
-                        print "EXPAND() BEFORE: %d %s" %(indirection, expr)
+                        print("EXPAND() BEFORE: %d %s" %(indirection, expr))
                         self.indirection = indirection
                         self.pointer_flag = False
                         self.current_size = 0
@@ -417,8 +424,8 @@ class cpp:
                         if size == 0 and self.current_size != 0:
                                 size = self.current_size
                                 self.expr_size = size
-                        print "EXPAND() AFTER: %d %s" %(self.indirection, expr)
-                        print "is a pointer %d expr_size %d" %(self.pointer_flag, self.expr_size)
+                        print("EXPAND() AFTER: %d %s" %(self.indirection, expr))
+                        print("is a pointer %d expr_size %d" %(self.pointer_flag, self.expr_size))
                         '''
                         if destination and not self.lea:
                                 if self.expr_size == 1:  # x0r
@@ -430,7 +437,7 @@ class cpp:
                         '''
                         self.pointer_flag = False
                         indirection = self.indirection
-                        print "AFTER: %d %s" %(indirection, expr)
+                        print("AFTER: %d %s" %(indirection, expr))
                         #traceback.print_stack(file=sys.stdout)
 
                 if indirection == 1:
@@ -442,9 +449,9 @@ class cpp:
                         elif size == 4:
                                 expr = "*(dd*)(raddr(%s,%s))" %(self.seg_prefix, expr)
                         else:
-                                print "~%s~ @invalid size 0" %expr
+                                print("~%s~ @invalid size 0" %expr)
                                 expr = "*(dw*)(raddr(%s,%s))" %(self.seg_prefix, expr)
-                        print "expr: %s" %expr
+                        print("expr: %s" %expr)
                 elif indirection == 0:
                         pass
                 elif indirection == -1:
@@ -465,18 +472,18 @@ class cpp:
                         try:
                                 offset, proc, pos = self.context.get_offset(name)
                         except:
-                                print "no label %s, trying procedure" %name
+                                print("no label %s, trying procedure" %name)
                                 try:
                                         proc = self.context.get_global(name)
                                 except:
-                                        print "resolve_label exception"
+                                        print("resolve_label exception")
                                         return name
 
                                 pos = 0
                                 if not isinstance(proc, proc_module.proc):
                                         raise CrossJump("cross-procedure jump to non label and non procedure %s" %(name))
                         self.proc.labels.add(name)
-                        for i in xrange(0, len(self.unbounded)):
+                        for i in range(0, len(self.unbounded)):
                                 u = self.unbounded[i]
                                 if u[1] == proc:
                                         if pos < u[2]:
@@ -487,7 +494,7 @@ class cpp:
                 return self.mangle_label(name)
 
         def jump_to_label(self, name):
-                print "jump_to_label(%s)" %name
+                print("jump_to_label(%s)" %name)
                 name = name.strip()
                 jump_proc = False
 
@@ -497,7 +504,7 @@ class cpp:
                 prog = re.compile(r'^\s*(near|far|short)\s*(ptr)?\s*', re.I) # x0r TODO
                 name = re.sub(prog, '', name)
                 name = self.resolve_label(name)
-                print "label %s" %name
+                print("label %s" %name)
                 hasglobal = False
                 if name in self.blacklist:
                         jump_proc = True
@@ -544,11 +551,11 @@ class cpp:
                 name = name.lower()
                 if name in self.proc_queue or name in self.proc_done or name in self.failed:
                         return
-                print "+scheduling function %s..." %name
+                print("+scheduling function %s..." %name)
                 self.proc_queue.append(name)
 
         def _call(self, name):
-                print "cpp._call(%s)" %name
+                print("cpp._call(%s)" %name)
                 #dst = self.expand(name, destination = True)
                 dst = self.jump_to_label(name)
                 if dst!="__dispatch_call":
@@ -585,7 +592,7 @@ class cpp:
                 dst_size, src_size = self.get_size(dst), self.get_size(src)
                 if dst_size == 0:
                         if src_size == 0:
-                                print "parse2: %s %s both sizes are 0" %(dst, src)
+                                print("parse2: %s %s both sizes are 0" %(dst, src))
                                 #raise Exception("both sizes are 0")
                         dst_size = src_size
                 if src_size == 0:
@@ -866,7 +873,7 @@ class cpp:
                 self.body += "\tR(CMC);\n"
 
         def __proc(self, name, def_skip = 0):
-                print "cpp::__proc(%s)" %name
+                print("cpp::__proc(%s)" %name)
                 #traceback.print_stack(file=sys.stdout)
                 try:
                         skip = def_skip
@@ -875,7 +882,7 @@ class cpp:
                         if self.context.has_global(name):
                                 self.proc = self.context.get_global(name)
                         else:
-                                print "No procedure named %s, trying label" %name
+                                print("No procedure named %s, trying label" %name)
                                 off, src_proc, skip = self.context.get_offset(name)
 
                                 self.proc = proc_module.proc(name)
@@ -950,7 +957,7 @@ if (__disp==kbegin) goto %s;
 else goto __dispatch_call;
 """ %(name, self.context.entry_point);
 
-                        print name
+                        print(name)
                         self.proc.optimize()
                         self.unbounded = []
                         self.proc.visit(self, skip)
@@ -990,7 +997,7 @@ else goto __dispatch_call;
                                 raise Exception("temps count == %d at the exit of proc" %self.temps_count);
                         return True
                 except (CrossJump, op.Unsupported) as e:
-                        print "%s: ERROR: %s" %(name, e)
+                        print("%s: ERROR: %s" %(name, e))
                         self.failed.append(name)
                 except:
                         raise
@@ -999,7 +1006,7 @@ else goto __dispatch_call;
                 return "uint%d_t" %(width * 8)
 
         def write_stubs(self, fname, procs):
-                fd = open(fname, "wt")
+                fd = open(fname, "wt", encoding="cp1251")
                 fd.write("//namespace %s {\n" %self.namespace)
                 for p in procs:
                         if p in self.function_name_remapping:
@@ -1019,11 +1026,11 @@ else goto __dispatch_call;
                         if name in self.failed or name in self.proc_done:
                                 continue
                         if len(self.proc_queue) == 0 and len(self.procs) > 0:
-                                print "queue's empty, adding remaining procs:"
+                                print("queue's empty, adding remaining procs:")
                                 for p in self.procs:
                                         self.schedule(p)
                                 self.procs = []
-                        print "continuing on %s" %name
+                        print("continuing on %s" %name)
                         self.proc_done.append(name)
                         self.__proc(name)
                         self.methods.append(name)
@@ -1034,8 +1041,8 @@ else goto __dispatch_call;
                 self.fd.write("\n")
                 self.fd.write("\n".join(self.translated))
                 self.fd.write("\n")
-                print "%d ok, %d failed of %d, %.02g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed))
-                print "\n".join(self.failed)
+                print("%d ok, %d failed of %d, %.02g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed)))
+                print("\n".join(self.failed))
                 data_bin = self.data_seg
                 cdata_bin = self.cdata_seg
                 hdata_bin = self.hdata_seg
@@ -1045,14 +1052,14 @@ else goto __dispatch_call;
 
                 self.fd.write("\nreturn;\n__dispatch_call:\nswitch (__disp) {\n")
                 offsets = []
-                for k, v in self.context.get_globals().items():
+                for k, v in list(self.context.get_globals().items()):
                         k = re.sub(r'[^A-Za-z0-9_]', '_', k)
                         if isinstance(v, op.label):
                                 offsets.append((k.lower(), k))
 
                 offsets = sorted(offsets, key=lambda t: t[1])
                 for o in offsets:
-                        print o
+                        print(o)
                         self.fd.write("case k%s: \tgoto %s;\n" %o)
                 self.fd.write("default: log_error(\"Jump/call to nothere %d\\n\", __disp);stackDump(_state); abort();\n")
                 self.fd.write("};\n}\n")
@@ -1099,7 +1106,7 @@ else goto __dispatch_call;
                 #       self.hd.write("static const uint16_t offset_%s = 0x%04x;\n" %(name, addr))
 
                 offsets = []
-                for k, v in self.context.get_globals().items():
+                for k, v in list(self.context.get_globals().items()):
                         k = re.sub(r'[^A-Za-z0-9_]', '_', k)
                         if isinstance(v, op.var):
                                 pass #offsets.append((k.capitalize(), hex(v.offset)))
@@ -1117,7 +1124,7 @@ else goto __dispatch_call;
 
                 #self.hd.write("\nenum _offsets MYINT_ENUM {\n")
                 offsets = []
-                for k, v in self.context.get_globals().items():
+                for k, v in list(self.context.get_globals().items()):
                         k = re.sub(r'[^A-Za-z0-9_]', '_', k)
                         if isinstance(v, op.var):
                                 pass #offsets.append((k.capitalize(), hex(v.offset)))

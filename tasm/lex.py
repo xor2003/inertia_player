@@ -1,3 +1,4 @@
+from __future__ import print_function
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -18,6 +19,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
+import logging
+from builtins import str
 
 def parse_args(text):
         #print "parsing: [%s]" %text
@@ -38,7 +41,7 @@ def parse_args(text):
                         if not string:
                                 raise SyntaxError("escape found in no string: %s" %text);
         
-                        print "escaping[%s]" %c
+                        print("escaping[%s]" %c)
                         escape = False
                         token += c
                         continue
@@ -71,5 +74,5 @@ def parse_args(text):
         return result
 
 def compile(width, data):
-        print data
+        print(data)
         return data

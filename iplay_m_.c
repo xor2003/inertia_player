@@ -7,7 +7,7 @@
 #ifndef __BORLANDC__
 //extern "C"
 //{
-#include "SDL2/SDL.h"
+//#include "SDL2/SDL.h"
 //};
 #include <unistd.h>
 #endif
@@ -4956,9 +4956,12 @@ _set_timer_int:
 	R(MOV(ebx, 0x1000));	// 5711 mov	ebx, 1000h	; bytes
 	R(PUSH(dx));	// 5712 push	dx		; dx = subrouting offset
 	R(CALL(k_memalloc));	// 5713 call	_memalloc
+
+#ifdef SDL_MAJOR_VERSION
 pcm_buffer = raddr(ax,0);
 		m.audio_len =pcm_buffer_size;
 		audio_pos =pcm_buffer;
+#endif
 	R(POP(dx));	// 5714 pop	dx
 		R(JC(locret_12fb3));	// 5715 jb	short locret_12FB3
 	R(MOV(*(dw*)&m._dma_buf_pointer, 0));	// 5716 mov	word ptr [_dma_buf_pointer], 0
@@ -7156,7 +7159,9 @@ loc_14f95:
  // Procedure _covox_on() start
 _covox_on:
 	R(CALL(k_configure_timer));	// 9021 call	_configure_timer
+#ifdef SDL_MAJOR_VERSION
 SDL_PauseAudio(0);
+#endif
 	R(RETN);	// 9022 retn
  // Procedure _covox_timer_int() start
 _covox_timer_int:

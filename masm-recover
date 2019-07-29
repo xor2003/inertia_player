@@ -21,6 +21,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+from __future__ import print_function
 from tasm.parser import parser
 from tasm.cpp import cpp
 import sys, re
@@ -28,15 +29,16 @@ import sys, re
 def tracefunc(frame, event, arg, indent=[0]):
       if event == "call":
           indent[0] += 2
-          print "-" * indent[0] + "> call function", frame.f_code.co_filename, frame.f_code.co_name
+          print("-" * indent[0] + "> call function", frame.f_code.co_filename, frame.f_code.co_name)
       elif event == "return":
-          print "<" + "-" * indent[0], "exit function", frame.f_code.co_name
+          print("<" + "-" * indent[0], "exit function", frame.f_code.co_name)
           indent[0] -= 2
       return tracefunc
 
 import sys
 #sys.settrace(tracefunc)
 
+sys.stdout.reconfigure(encoding='utf-8')
 p = parser(skip_binary_data = [
 	# These data blobs are not output
 	# dreamweb.asm

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -19,8 +20,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+from builtins import str
+from builtins import object
 import re
-import lex
+from . import lex
 
 #import traceback
 #import sys
@@ -28,7 +32,7 @@ import lex
 class Unsupported(Exception):
         pass
 
-class var:
+class var(object):
         def __init__(self, size, offset, name="", segment="", issegment = False):
                 self.size = size
                 self.offset = offset
@@ -36,13 +40,13 @@ class var:
                 self.segment = segment
                 self.issegment = issegment
 
-class const:
+class const(object):
         def __init__(self, value, size=0):
                 self.value = value
                 if size:
                         self.size = size
 
-class reg:
+class reg(object):
         def __init__(self, name):
                 self.name = name
         def size(self):
@@ -50,25 +54,25 @@ class reg:
         def __str__(self):
                 return "<register %s>" %self.name
 
-class unref:
+class unref(object):
         def __init__(self, exp):
                 self.exp = exp
         def __str__(self):
                 return "<unref %s>" %self.exp
 
-class ref:
+class ref(object):
         def __init__(self, name):
                 self.name = name
         def __str__(self):
                 return "<ref %s>" %self.name
 
-class glob:
+class glob(object):
         def __init__(self, name):
                 self.name = name
         def __str__(self):
                 return "<global %s>" %self.name
 
-class segment:
+class segment(object):
         def __init__(self, name):
                 self.name = name
         def __str__(self):

@@ -1,8 +1,11 @@
-MASM x86 to C translator 0.8
+MASM x86 to C translator 0.9
 ==============
-Translator may be used to port your DOS assembler code to SDL C. Since there is no working decompiler for 16 bit DOS code yet.
+Translator may be used to port your DOS x86 (MASM) assembler code to SDL C. (Since there is no working decompiler for 16 bit DOS code yet.
+Because of DOS segmentation model, etc)
+Translator generates pseudo assembler instruction which can be compiled with C compiler.
 Your porting path:
-DOS binary 16 bit real or 32 bit protected modes -> IDA Pro (disassembly) -> export assembler (masm format) -> Tasmx to compile (dosbox debugger to fix) -> this MASM to C translator -> C SDL source.
+DOS binary 16 bit real or 32 bit protected modes -> IDA Pro (disassembly) -> export assembler (masm format) -> uasm to compile (dosbox debugger to fix) -> this MASM to C translator -> C SDL source.
+In other repo there are scripts which can help to convert DOSBOX run-time traces into IDA annotations.
 
 Optionally you can recompile resulting C to 32 bits with optimization and recompile to get cleaner C code without dead code and flags update.
 
@@ -11,7 +14,7 @@ Key features:
 flags: Carry, Zero, Sign are supported for most of x86 instructions.
 - Segment memory model and 16bit offsets.
 - Some BIOS/DOS Int 10h, 21h interrupts are supported.
-  Also DOS memory manager and stack.
+  Also DOS memory manager and stack. (Maybe I will reuse DOSBOX implementations in future)
 - CGA text mode is supported using Curses (PDcurses or NCurses).
 - VGA 320x200x256 support (partial)
 
@@ -44,17 +47,17 @@ Execute to convert your masm 16 bit source to C:
 
 masm-recover <some.asm>
 
-(Some small resulting source code modification will be also required to build)
+(Some source code modification might also required to build)
 
 IDA Pro Free https://www.scummvm.org/news/20180331/
 
 Inertia Player 1.22 source code
 =============
 Famous reverse engenerred MOD, S3M player.
-Currently platform DOS (ASM), SDL2 (C++)
-There is source code for MASM, TASM Ideal and Nasm, gcc which can be built and running
+Currently platform DOS (ASM), SDL2 (C)
+There is source code for MASM, Nasm, C which can be built and running
 
-TODO: fix sound on SDL, finish porting (keyboard, graphics mode,...)
+TODO: finish sound supprt on SDL, finish porting (keyboard, graphics mode,...)
 
 Binary is available on releases page
 -------------------------------
@@ -64,6 +67,6 @@ Building Inertia for SDL from source:
 1. get PDCurses or other curses library+headers, SDL2, mingw32
 2. build_mingw.bat
 3. execute:
-iplay_masm.exe HACKER4.S3M 
+iplay_m_.exe HACKER4.S3M 
 
-
+Or just get prebuilt
