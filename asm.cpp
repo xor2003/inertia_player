@@ -1,8 +1,22 @@
+#include "asm.h"
+
+struct /*__attribute__((__packed__))*/ Memory;
+extern Memory m;
+
 #ifndef __BORLANDC__
-//#include <SDL2/SDL.h>
-//#include <thread>
+ #ifndef __DJGPP__
+  #include <SDL/SDL.h>
+ #endif
+// #include <thread>
 #endif
 
+#ifdef __DJGPP__
+ #include <pc.h>
+ #include <dos.h>
+ #include <dpmi.h>
+ #include <go32.h>
+ #include <sys/farptr.h>
+#endif
 
 #include <assert.h>
 
@@ -10,10 +24,6 @@
 
 #include <curses.h>
 
-#include "asm.h"
-
-struct /*__attribute__((__packed__))*/ Memory;
-extern struct Memory m;
 
 /* https://commons.wikimedia.org/wiki/File:Table_of_x86_Registers_svg.svg */
 
@@ -57,9 +67,10 @@ static struct __fl __eflags;
 #define SF __eflags._SF
 */
 // SDL2 VGA
-#ifdef SDL_MAJOR_VERSION
+#if SDL_MAJOR_VERSION == 2
     SDL_Renderer *renderer;
     SDL_Window *window;
+
 db vgaRamPaddingBefore[VGARAM_SIZE];
 db vgaRam[VGARAM_SIZE];
 db vgaRamPaddingAfter[VGARAM_SIZE];
@@ -70,7 +81,8 @@ dd selectorsPointer;
 dd selectors[NB_SELECTORS];
 
 dd heapPointer;
-db* diskTransferAddr = 0;
+struct find_t;
+struct find_t * diskTransferAddr = 0;
 //#include "memmgr.c"
 
 
@@ -92,7 +104,8 @@ void log_error(const char *fmt, ...) {
 #ifdef __LIBRETRO__
 	log_cb(RETRO_LOG_ERROR,"%s",formatted_string);
 #else
-	if (logDebug!=NULL) { fprintf(logDebug,"%s",formatted_string); fflush(logDebug);} else { printf("%s",formatted_string); }
+	if (logDebug!=NULL) { fprintf(logDebug,"%s",formatted_string); fflush(logDebug);};
+	{ printf("%s",formatted_string); }
 #endif
 }
 void log_debug(const char *fmt, ...) {
@@ -135,7 +148,7 @@ void log_debug2(const char *fmt, ...) {
 }
 
 void checkIfVgaRamEmpty() {
-#ifdef SDL_MAJOR_VERSION
+#if SDL_MAJOR_VERSION == 2
 	int i;
 	int vgaram_empty = 1;
 	for(i = 0; i < VGARAM_SIZE; i++)
@@ -174,7 +187,7 @@ X86_REGREF
 	log_debug("fs: %d -> %p\n",fs,(void *) realAddress(0,fs));
 	log_debug("gs: %d -> %p\n",gs,(void *) realAddress(0,gs));
 //	log_debug("adress heap: %p\n",(void *) &m.heap);
-#ifdef SDL_MAJOR_VERSION
+#if SDL_MAJOR_VERSION == 2
 	log_debug("adress vgaRam: %p\n",(void *) &vgaRam);
 	log_debug("first pixels vgaRam: %x\n",*vgaRam);
 #endif
@@ -235,6 +248,9 @@ void hexDump (void *addr, int len) {
 }
 
 void asm2C_OUT(int16_t address, int data) {
+#ifdef __DJGPP__
+	outportb(address, data);
+#else
 	static int indexPalette = 0;
 	switch(address) {
 	case 0x3c8:
@@ -252,9 +268,13 @@ void asm2C_OUT(int16_t address, int data) {
 		log_debug("unknown OUT %d,%d\n",address, data);
 		break;
 	}
+#endif
 }
 
 int8_t asm2C_IN(int16_t address) {
+#ifdef __DJGPP__
+	return inportb(address);
+#else
 	static bool vblTick = 1;
 	switch(address) {
 	case 0x3DA:
@@ -271,9 +291,13 @@ int8_t asm2C_IN(int16_t address) {
 		log_error("Unknown IN %d\n",address);
 		return 0;
 	}
+#endif
 }
 
 uint16_t asm2C_INW(uint16_t address) {
+#ifdef __DJGPP__
+	return inportw(address);
+#else
 	switch(address) {
 	case 0x3DA:
 		break;
@@ -281,6 +305,7 @@ uint16_t asm2C_INW(uint16_t address) {
 		log_error("Unknown INW %d\n",address);
 		return 0;
 	}
+#endif
 }
 
 bool is_little_endian_real_check() {
@@ -343,6 +368,68 @@ double realElapsedTime(void) {              // granularity about 50 microsecs
 }
 #endif
 */
+void call_dos_realint(struct _STATE* _state, int a)
+{
+
+#ifdef __DJGPP__
+X86_REGREF
+	log_debug2("call_dos_realint %x ax=%x bx=%x cx=%x dx=%x\n",a,ax,bx,cx,dx);
+__dpmi_regs _dpmi_reg;
+   _dpmi_reg.x.ax = ax;
+   _dpmi_reg.x.bx = bx;
+   _dpmi_reg.x.cx = cx;
+   _dpmi_reg.x.dx = dx;
+   _dpmi_reg.x.si = si;
+   _dpmi_reg.x.di = di;
+   _dpmi_reg.x.bp = bp;
+   _dpmi_reg.x.ds = ds;
+   _dpmi_reg.x.es = es;
+   __dpmi_int(a, &_dpmi_reg);
+   ds = _dpmi_reg.x.ds;
+   es = _dpmi_reg.x.es;
+   ax = _dpmi_reg.x.ax;
+   bx = _dpmi_reg.x.bx;
+   cx = _dpmi_reg.x.cx;
+   dx = _dpmi_reg.x.dx;
+   si = _dpmi_reg.x.si;
+   di = _dpmi_reg.x.di;
+   bp = _dpmi_reg.x.bp;
+#endif   
+
+}
+
+void call_dos_protint(struct _STATE* _state, int a)
+{
+#ifdef __DJGPP__
+X86_REGREF
+// int21h: 9, 39h, 3Ah, 3Bh, 3Ch, 3Dh, 3Fh, 40h, 41h, 43h, 47h, 56h
+	log_debug2("call_dos_protint %x eax=%x ebx=%x ecx=%x edx=%x\n",a,eax,ebx,ecx,edx);
+     union REGS _dpmi_reg;
+   _dpmi_reg.d.eax = eax;
+   _dpmi_reg.d.ebx = ebx;
+   _dpmi_reg.d.ecx = ecx;
+   _dpmi_reg.d.edx = (dd)raddr(ds,dx);
+   _dpmi_reg.d.esi = esi;
+   _dpmi_reg.d.edi = (dd)raddr(es,di);//edi;
+   _dpmi_reg.d.ebp = ebp;
+   _dpmi_reg.d.ebx = ebx;
+
+   int86(a, &_dpmi_reg, &_dpmi_reg);
+
+   eax = _dpmi_reg.d.eax;
+   ebx = _dpmi_reg.d.ebx;
+   ecx = _dpmi_reg.d.ecx;
+//   edx = _dpmi_reg.d.edx;
+   esi = _dpmi_reg.d.esi;
+   edi = _dpmi_reg.d.edi;
+   ebx = _dpmi_reg.d.ebx;
+   ebp = _dpmi_reg.d.ebp;
+   CF = _dpmi_reg.d.cflag&1;
+#endif   
+
+}
+
+
 void asm2C_init() {
 	isLittle=is_little_endian();
 #ifdef MSB_FIRST
@@ -363,18 +450,11 @@ void asm2C_INT(struct _STATE* _state, int a) {
 X86_REGREF
 	static FILE * file;
 	int i;
-/*
-	db ah=READDBh(eax);
-	db al=READDBl(eax);
-	dw ax=READDW(eax);
-	dw bx=READDW(ebx);
-	dw cx=READDW(ecx);
-	dw dx=READDW(edx);
-*/
 	CF = 0;
 	int rc;
 #define SUCCESS         0       /* Function was successful      */
-	log_debug2("asm2C_INT ah=%x al=%x ax=%x bx=%x cx=%x dx=%x\n",ah,al,ax,bx,cx,dx);
+	log_debug2("INT %x ax=%x bx=%x cx=%x dx=%x\n",a,ax,bx,cx,dx);
+
 
 	switch(a) {
 	case 0x10:
@@ -383,7 +463,7 @@ X86_REGREF
 		{
 		case 0: { // set mode
 			switch(al)
-			{
+			 {
 			case 0x03: {
 				resize_term(25, 80);
 				clear();
@@ -399,7 +479,11 @@ X86_REGREF
 			}
 			case 0x13: {
 				log_debug2("Switch to VGA\n");
-#ifdef SDL_MAJOR_VERSION //TODO
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+#endif
+
+#if SDL_MAJOR_VERSION == 2
 
 				SDL_Init(SDL_INIT_VIDEO);
 				SDL_CreateWindowAndRenderer(320, 200, 0, &window, &renderer);
@@ -409,9 +493,9 @@ X86_REGREF
 #endif
 				//stackDump(_state);
 				return;
+			 }
 			}
-			}
-			break;
+
 		}
 		case 0x02: { // set cursor
 				int y,x;
@@ -452,10 +536,13 @@ X86_REGREF
 		switch(ah) {
 		    case 0x02:  /* GET REAL-TIME CLOCK TIME (AT,XT286,PS) */
 		         {
-        	    struct tm* loctime;
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+#else
 
 		        
 #ifndef __BORLANDC__  //TODO
+        	    struct tm* loctime;
 		    struct timeval curtime;
 	            gettimeofday(&curtime, NULL);
     
@@ -468,6 +555,7 @@ X86_REGREF
 	            ch = (loctime->tm_hour);
 		    dl = 0;
 #endif
+#endif
 			break;
 			}
 
@@ -476,6 +564,40 @@ X86_REGREF
 		break;
 	}
 	case 0x21:
+
+#ifdef __DJGPP__
+		switch(ah)
+		{
+			case 0x9:
+			case 0x19:
+			case 0x1A:
+			case 0x39:
+			case 0x3A:
+			case 0x3B:
+			case 0x3C:
+			case 0x3D:
+			case 0x3E:
+			case 0x3F:
+			case 0x40:
+			case 0x41:
+			case 0x43:
+			case 0x4e:
+			case 0x4f:
+//			case 0x47:
+//			case 0x56:
+			case 0x58:
+			{
+			call_dos_protint(_state, 0x21);
+			return;
+			}
+			case 0x42:
+			{
+		        call_dos_realint(_state, a);
+			}
+			default:
+				break;
+		}
+#endif
 		switch(ah)
 		{
 		case 0x9:
@@ -488,18 +610,35 @@ X86_REGREF
 		}
 		case 0xe: // select disk
 		{
+#ifdef __DJGPP__
+//        call_dos_realint(_state, a);
+     unsigned int _drives;
+     _dos_setdrive(dl+1, &_drives);
+     al = _drives;
+#else
 			al=1;
+#endif
+			return;
+		}
+		case 0x11: // search fcb
+		case 0x12: // search fcb
+		{
+			al=0xff;
 			return;
 		}
 		case 0x19: // Get default disk
 		{
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+#else
 			// def disk is C:
 			al=0x2;
+#endif
 			return;
 		}
 		case 0x1A: // Set disk transfer addr
 		{
-			diskTransferAddr=(db *)realAddress(dx,ds);
+			diskTransferAddr=(find_t *)realAddress(dx,ds);
 			return;
 		}
 		case 0x25: // Set disk transfer addr
@@ -514,14 +653,29 @@ X86_REGREF
 			es=*(dw *)realAddress(al*4+2,0);
 			return;
 		}
+		case 0x2a:
+		case 0x2b:
+		case 0x2d:
+		{
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+			return;
+#endif
+			break;
+		}
 		case 0x2c:
 		{
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+			return;
+#else
 			//MOV(8,8,READDBh(edx),(db)2);
 			// TOFIX
 			dh=0x2;
 			return;
+#endif
 		}
-		case 0x3d:
+		case 0x3d: //open
 		{
 			char fileName[1000];
 			if (path!=NULL) {
@@ -551,7 +705,7 @@ X86_REGREF
 			// TODO
 			return;
 		}
-		case 0x3e:
+		case 0x3e: //close
 		{
 			// bx: file handle to close
 			//TOFIX
@@ -565,7 +719,7 @@ X86_REGREF
 			file=NULL;
 			return;
 		}
-		case 0x3f:
+		case 0x3f: // read
 		{
 			/*
 			   [Index]AH = 3Fh - "READ" - READ FROM FILE OR DEVICE
@@ -697,13 +851,6 @@ X86_REGREF
 	return;
 			break;
 		}
-		case 0x4E: // find first matching file
-		{
-			// cur dir is root
-			log_debug2("Find first file %s\n",(void *) (db *) realAddress(dx, ds));
-			strcpy((char*)diskTransferAddr+0x1e,"HACKER4.S3M");
-			return;
-		}
       /* Free memory */
 	    case 0x49:
       if ((rc = DosMemFree(es - 1)) < SUCCESS)
@@ -731,9 +878,27 @@ X86_REGREF
 	CF=(rc!=SUCCESS);
 	return;
       break;
+		case 0x4E: // find first matching file
+		{
+			// cur dir is root
+			log_debug2("Find first file %s\n",(void *) (db *) realAddress(dx, ds));
+#ifdef __DJGPP__
+     CF = _dos_findfirst((const char *) raddr(ds, dx), cx,
+                                 diskTransferAddr);
+#else
+			strcpy((char*)diskTransferAddr+0x1e,"HACKER4.S3M");
+#endif
+			return;
+		}
 		case 0x4F: // find next matching file
 		{
+			// cur dir is root
+			log_debug2("Find next file %s\n",(void *) (db *) realAddress(dx, ds));
+#ifdef __DJGPP__
+     CF = _dos_findnext(diskTransferAddr);
+#else
 			CF=1;
+#endif
 			return;
 		}
 		case 0x4c:
@@ -748,6 +913,10 @@ X86_REGREF
 		}
 		case 0x58: // mem allocation policy
 		{
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+			return;
+#endif
 			return;
 		}
 		default:
@@ -924,9 +1093,17 @@ X86_REGREF
 */
 	case 0x33: // mouse not implemented yet
 	{
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+			return;
+#endif
 		break;
 	}
 	default:
+#ifdef __DJGPP__
+        call_dos_realint(_state, a);
+			return;
+#endif
 		break;
 	}
 	CF = 1;

@@ -1,5 +1,5 @@
-set OPT= -mno-ms-bitfields  -Wno-multichar  -lSDL2main -lSDL2 -ggdb3 -O2 -I.
-set CC="C:\cygwin\bin\gcc.exe"
+set OPT= -mno-ms-bitfields  -Wno-multichar  -lSDLmain -lSDL -ggdb3 -O2 -I.
+set CC=C:\cygwin\bin\gcc.exe
 rem -DDEBUG=1
 
 %CC% asm.c  -c %OPT%

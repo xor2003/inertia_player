@@ -83,6 +83,12 @@ handler.setLevel(logging.ERROR)
 #handler.setFormatter(formatter)
 root.addHandler(handler)
 
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#handler.setFormatter(formatter)
+root.addHandler(handler)
+
 p = parser(skip_binary_data = [
 	# These data blobs are not output
 	# dreamweb.asm

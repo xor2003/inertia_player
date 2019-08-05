@@ -87,6 +87,12 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 
 #define seg_offset(segment) ((offsetof(struct Memory,segment))>>4)
 
+// DJGPP
+#define MASK_LINEAR(addr)     (((size_t)addr) & 0x000FFFFF)
+#define RM_TO_LINEAR(addr)    (((((size_t)addr) & 0xFFFF0000) >> 12) + (((size_t)addr) & 0xFFFF))
+#define RM_OFFSET(addr)       (((size_t)addr) & 0xF)
+#define RM_SEGMENT(addr)      ((((size_t)addr) >> 4) & 0xFFFF)
+
 #if _BITS == 32
  #define MOVSS(a) {void * dest;void * src;src=realAddress(esi,ds); dest=realAddress(edi,es); \
 		memmove(dest,src,a); edi+=a; esi+=a; }
@@ -157,7 +163,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
  #else
 
  //SDL2 VGA
-  #ifdef SDL_MAJOR_VERSION
+  #if SDL_MAJOR_VERSION == 2
    #define STOSB { \
 	if (es==0xa000)\
 		{ \
@@ -290,11 +296,18 @@ typedef union registry16Bits
 	stackPointer-=sizeof(a); memcpy (&a, &stack[stackPointer], sizeof (a));}
 #define PUSH(a) {stackPointer-=sizeof(a); memcpy (&m.stack[stackPointer], &a, sizeof (a));  assert(stackPointer>8);}
 */
-#define PUSH(a) {dd t=a;stackPointer-=sizeof(a); \
+#ifdef DEBUG
+ #define PUSH(a) {dd t=a;stackPointer-=sizeof(a); \
 		memcpy (raddr(ss,stackPointer), &t, sizeof (a)); \
 		assert((raddr(ss,stackPointer) - ((db*)&m.stack))>8);log_debug("after push %x\n",stackPointer);}
 
-#define POP(a) { log_debug("before pop %x\n",stackPointer);memcpy (&a, raddr(ss,stackPointer), sizeof (a));stackPointer+=sizeof(a);}
+ #define POP(a) { log_debug("before pop %x\n",stackPointer);memcpy (&a, raddr(ss,stackPointer), sizeof (a));stackPointer+=sizeof(a);}
+#else
+ #define PUSH(a) {dd t=a;stackPointer-=sizeof(a); \
+		memcpy (raddr(ss,stackPointer), &t, sizeof (a));}
+
+ #define POP(a) {memcpy (&a, raddr(ss,stackPointer), sizeof (a));stackPointer+=sizeof(a);}
+#endif
 
 
 #define AFFECT_ZF(a) {ZF=((a)==0);}
@@ -636,21 +649,35 @@ int8_t asm2C_IN(int16_t data);
 #define RETF {db tt=0; POP(tt); if (tt!='x') {log_error("Stack corrupted.\n");exit(1);} \
  		POP(jmpbuffer); stackPointer-=2; longjmp(jmpbuffer, 0);}
 */
-#define CALL(label) \
+#if DEBUG
+ #define CALL(label) \
 	{ dw tt='xy'; PUSH(tt); \
 	  log_debug("after call %x\n",stackPointer); \
 	  ++_state->_indent;_state->_str=log_spaces(_state->_indent);\
 	  mainproc(label, _state); \
 	}
 
-#define RET {log_debug("before ret %x\n",stackPointer); dw tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
+ #define RET {log_debug("before ret %x\n",stackPointer); dw tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
 	log_debug("after ret %x\n",stackPointer); \
 	--_state->_indent;_state->_str=log_spaces(_state->_indent);return;}
 
-#define RETF {log_debug("before retf %x\n",stackPointer); dw tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
+ #define RETF {log_debug("before retf %x\n",stackPointer); dw tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
 	dw tmpp;POP(tmpp); \
 	log_debug("after retf %x\n",stackPointer); \
 	--_state->_indent;_state->_str=log_spaces(_state->_indent);return;}
+#else
+ #define CALL(label) \
+	{ dw tt='xy'; PUSH(tt); \
+	  mainproc(label, _state); \
+	}
+
+ #define RET {dw tt=0; POP(tt);  \
+	return;}
+
+ #define RETF {dw tt=0; POP(tt); \
+	dw tmpp;POP(tmpp); \
+	return;}
+#endif
 
 #define RETN RET
 #define IRET RETF
@@ -772,34 +799,35 @@ enum  _offsets;
 */
 
 struct _STATE{
-dd _eax;
-dd _ebx;
-dd _ecx;
-dd _edx;
-dd _esi;
-dd _edi;
-dd _esp;
-dd _ebp;
-dd _eip;
+dd eax;
+dd ebx;
+dd ecx;
+dd edx;
+dd esi;
+dd edi;
+dd esp;
+dd ebp;
+dd eip;
 
-dw _cs;         
-dw _ds;         
-dw _es;         
-dw _fs;         
-dw _gs;         
-dw _ss;         
+dw cs;         
+dw ds;         
+dw es;         
+dw fs;         
+dw gs;         
+dw ss;         
                       
-bool _CF;       
-bool _PF;       
-bool _AF;       
-bool _ZF;       
-bool _SF;       
-bool _DF;       
-bool _OF;       
+bool CF;       
+bool PF;       
+bool AF;       
+bool ZF;       
+bool SF;       
+bool DF;       
+bool OF;       
 db _indent; 
 const char *_str;
 };
 
+/*
 #define eax (_state->_eax)
 #define ax  (*(dw*)&(_state->_eax))
 #define al  (*(db*)&(_state->_eax))
@@ -855,7 +883,7 @@ const char *_str;
 #define OF  (_state->_OF)
 #define stackPointer (_state->_esp)
 
-/*
+*/
 #define REGDEF_hl(Z)   \
 uint32_t& e##Z##x = _state->e##Z##x; \
 uint16_t& Z##x = *(uint16_t *)& e##Z##x; \
@@ -901,11 +929,12 @@ bool& OF = _state->OF;       \
 dd& stackPointer = _state->esp;\
 _offsets __disp; \
 dw _source;
-*/
+
+/*
 #define X86_REGREF \
 dw __disp; \
 dw _source;
-
+*/
 void stackDump(struct _STATE* state);
 void hexDump (void *addr, int len);
 void asm2C_INT(struct _STATE* state, int a);

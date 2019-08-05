@@ -108,9 +108,9 @@ loc_1007B::
 
 loc_10080::
 		inc	ax
-		cmp	ax, _word_245D4
+		cmp	ax, _mod_channels_number
 		jbe	short loc_1008A
-		mov	ax, _word_245D4
+		mov	ax, _mod_channels_number
 
 loc_1008A::				; CODE XREF: _moduleread+85j
 		push	cs
@@ -160,7 +160,7 @@ _moduleread endp
 _mod_n_t_module proc near	; DATA XREF: _moduleread+61o
 		mov	_module_type_text, 2E542E4Eh
 		mov	_word_245D2, 0Fh
-		mov	_word_245D4, 4
+		mov	_mod_channels_number, 4
 		mov	si, offset _byte_306DE
 		call	_mod_1021E
 		call	_mod_102F5
@@ -178,7 +178,7 @@ _mod_flt8_module::			; DATA XREF: seg003:0DDAo
 		mov	_module_type_text, 38544C46h ;	FLT8
 		mov	_moduleflag_246D0, 11b
 		mov	_word_245D2, 1Fh
-		mov	_word_245D4, 8
+		mov	_mod_channels_number, 8
 		mov	si, offset _byte_308BE
 		call	_mod_1021E
 		mov	si, offset _byte_27FE8
@@ -214,7 +214,7 @@ loc_10137::				; CODE XREF: _mod_n_t_module+75j
 		ja	short locret_10154
 		dec	_word_24662
 		mov	_word_245D2, 1Fh
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 
 loc_10152::
 		jmp	short loc_101A6
@@ -244,19 +244,19 @@ _mod_ch_module::				; DATA XREF: seg003:0DFDo
 		ja	short locret_10154
 		dec	_word_24662
 		mov	_word_245D2, 1Fh
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		jmp	short loc_101A6
 ; ---------------------------------------------------------------------------
 
 _mod_cd81_module::			; DATA XREF: seg003:0DE3o seg003:0DECo
 		mov	_word_245D2, 1Fh
-		mov	_word_245D4, 8
+		mov	_mod_channels_number, 8
 		jmp	short loc_101A6
 ; ---------------------------------------------------------------------------
 
 _mod_mk_module::				; DATA XREF: seg003:0D9Bo seg003:0DA4o ...
 		mov	_word_245D2, 1Fh
-		mov	_word_245D4, 4
+		mov	_mod_channels_number, 4
 
 loc_101A6::				; CODE XREF: _mod_n_t_module:loc_10152j
 					; _mod_n_t_module+CDj ...
@@ -294,7 +294,7 @@ loc_101F4::
 		add	eax, 1084
 		cmp	eax, edx
 		jnz	short loc_10213
-		mov	_word_245D4, 8
+		mov	_mod_channels_number, 8
 		mov	_module_type_text, 20574F57h ;	WOW
 
 loc_10213::				; CODE XREF: _mod_n_t_module+106j
@@ -447,7 +447,7 @@ _mod_read_10311 proc near	; CODE XREF: _mod_n_t_module+67p
 loc_10315::				; CODE XREF: _mod_read_10311+D5j
 		push	cx
 		mov	dx, offset _word_31508
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		shl	cx, 8
 		call	_dosfread
 		test	_moduleflag_246D0, 10b
@@ -480,7 +480,7 @@ loc_1035C::				; CODE XREF: _mod_read_10311+18j
 
 loc_10365::				; CODE XREF: _mod_read_10311+CEj
 		push	cx
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		xor	ch, ch
 
 loc_1036C::				; CODE XREF: _mod_read_10311+C5j
@@ -562,7 +562,7 @@ _stm_module::				; DATA XREF: seg003:0E0Co
 
 loc_103FF::				; CODE XREF: __2stm_module+9j
 		mov	_moduleflag_246D0, 1000b
-		mov	_word_245D4, 4
+		mov	_mod_channels_number, 4
 		mov	_word_245D2, 1Fh
 		mov	_freq_245DE, 8448
 		mov	al, 60h	; '`'
@@ -666,7 +666,7 @@ loc_104F9::				; CODE XREF: __2stm_module+195j
 
 loc_1050C::				; CODE XREF: __2stm_module+18Ej
 		push	cx
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		xor	ch, ch
 
 loc_10513::				; CODE XREF: __2stm_module+185j
@@ -788,11 +788,11 @@ loc_10618::				; CODE XREF: _s3m_module+51j
 					; _s3m_module+78j ...
 		mov	ax, dx
 		push	cs
-		call	near ptr _change_amplif
+		call	near ptr _getset_amplif
 
 loc_1061E::				; CODE XREF: _s3m_module+45j
 		xor	si, si
-		mov	di, offset _volume_25908
+		mov	di, offset _channels_25908
 		xor	dx, dx
 		mov	cx, 20h	; ' '
 
@@ -816,8 +816,8 @@ loc_10640::				; CODE XREF: _s3m_module+97j
 		dec	cx
 		jnz	short loc_10628
 		inc	dx
-		mov	_word_245D4, dx
-		mov	cx, _word_245D4
+		mov	_mod_channels_number, dx
+		mov	cx, _mod_channels_number
 		xor	si, si
 
 loc_10652::				; CODE XREF: _s3m_module+CEj
@@ -1100,9 +1100,9 @@ loc_1088D::				; CODE XREF: _s3m_module+2AAj
 
 loc_1088F::				; CODE XREF: _s3m_module+2F4j
 		and	ch, 1Fh
-		cmp	byte ptr [_word_245D4+1], ch
+		cmp	byte ptr [_mod_channels_number+1], ch
 		jnb	short loc_1089C
-		mov	byte ptr [_word_245D4+1], ch
+		mov	byte ptr [_mod_channels_number+1], ch
 
 loc_1089C::				; CODE XREF: _s3m_module+2FFj
 		call	sub_11BA6
@@ -1123,7 +1123,7 @@ loc_108B1::				; CODE XREF: _s3m_module+246j
 		inc	ax
 		cmp	ax, _word_245F2
 		jb	loc_107B4
-		mov	ax, _word_245D4
+		mov	ax, _mod_channels_number
 		inc	ah
 		cmp	al, ah
 		jb	short loc_108C9
@@ -1131,7 +1131,7 @@ loc_108B1::				; CODE XREF: _s3m_module+246j
 
 loc_108C9::				; CODE XREF: _s3m_module+32Ej
 		xor	ah, ah
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		call	near ptr _mod_readfile_11F4E
 		jb	loc_10099
 		retn
@@ -1161,7 +1161,7 @@ loc_10914::				; CODE XREF: _e669_module+9j
 		mov	_moduleflag_246D0, 100b
 		mov	_byte_24673, 80h ; '€'
 		mov	_byte_2467E, 2
-		mov	_word_245D4, 8
+		mov	_mod_channels_number, 8
 		movzx	ax, _byte_30576
 		mov	_word_245D2, ax
 		mov	al, _byte_30577
@@ -1265,7 +1265,7 @@ loc_10A2D::				; CODE XREF: _e669_module+1C9j
 
 loc_10A40::				; CODE XREF: _e669_module+1C0j
 		push	cx
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		xor	ch, ch
 
 loc_10A47::				; CODE XREF: _e669_module+1B7j
@@ -1482,7 +1482,7 @@ loc_10C20::				; CODE XREF: _snd_off-3615j
 		jbe	short loc_10C15
 		dec	cx
 		jnz	short loc_10C12
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		mov	bx, offset _byte_33508
 		mov	cx, _word_245F2
 
@@ -1490,7 +1490,7 @@ loc_10C36::				; CODE XREF: _snd_off-354Aj
 		push	bx
 		push	cx
 		mov	si, offset _word_31508
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 
 loc_10C3F::				; CODE XREF: _snd_off-35AFj
 		push	bx
@@ -1533,7 +1533,7 @@ loc_10C73::				; CODE XREF: _snd_off-35D5j
 loc_10C89::				; CODE XREF: _snd_off-3555j
 		push	cx
 		push	si
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		xor	ch, ch
 
 loc_10C91::				; CODE XREF: _snd_off-3562j
@@ -1612,7 +1612,7 @@ _psm_module proc near		; DATA XREF: seg003:0E37o
 		mov	_module_type_text, 204D5350h
 		mov	_moduleflag_246D0, 1000000b
 		mov	ax, _word_30556
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		mov	ax, _word_30554
 		mov	_word_245D2, ax
 		mov	_freq_245DE, 8448
@@ -1794,9 +1794,9 @@ loc_10EDD::				; CODE XREF: _psm_module+1ABj
 
 loc_10EDF::				; CODE XREF: _psm_module+1B5j
 		and	ch, 1Fh
-		cmp	byte ptr [_word_245D4+1], ch
+		cmp	byte ptr [_mod_channels_number+1], ch
 		jnb	short loc_10EEC
-		mov	byte ptr [_word_245D4+1], ch
+		mov	byte ptr [_mod_channels_number+1], ch
 
 loc_10EEC::				; CODE XREF: _psm_module+1C0j
 		call	sub_11BA6
@@ -1814,7 +1814,7 @@ loc_10EF4::				; CODE XREF: _psm_module+16Aj
 		pop	cx
 		dec	cx
 		jnz	loc_10E4C
-		mov	ax, _word_245D4
+		mov	ax, _mod_channels_number
 		inc	ah
 		cmp	al, ah
 		jb	short loc_10F11
@@ -1822,7 +1822,7 @@ loc_10EF4::				; CODE XREF: _psm_module+16Aj
 
 loc_10F11::				; CODE XREF: _psm_module+1E7j
 		xor	ah, ah
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		call	near ptr _mod_readfile_11F4E
 		jb	loc_10099
 		retn
@@ -1838,7 +1838,7 @@ _far_module proc near		; DATA XREF: seg003:0E40o
 		mov	_moduleflag_246D0, 10000000b
 		mov	_byte_24673, 0
 		mov	_byte_2467E, 2
-		mov	_word_245D4, 10h
+		mov	_mod_channels_number, 10h
 		mov	al, byte ptr [_word_30552+1]
 		and	ax, 0Fh
 		mov	di, ax
@@ -1851,7 +1851,7 @@ _far_module proc near		; DATA XREF: seg003:0E40o
 		cmp	_sndcard_type,	0
 		jnz	short loc_10F80
 		xor	si, si
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 
 loc_10F6A::				; CODE XREF: _far_module+60j
 		mov	al, byte ptr [_word_30554+si]
@@ -1931,7 +1931,7 @@ loc_1100F::				; CODE XREF: _far_module+E6j
 		sub	ax, 2
 		shr	ax, 2
 		xor	dx, dx
-		div	_word_245D4
+		div	_mod_channels_number
 		push	ax
 		dec	al
 		and	al, 3Fh
@@ -1960,7 +1960,7 @@ loc_11037::				; CODE XREF: _far_module+113j
 
 loc_11051::				; CODE XREF: _far_module+1F7j
 		push	cx
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		xor	ch, ch
 
 loc_11058::				; CODE XREF: _far_module+1ECj
@@ -2374,7 +2374,7 @@ loc_1138E::				; CODE XREF: _ult_module+14Cj
 		rep movsb
 		movzx	ax, _byte_30639
 		inc	ax
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		movzx	ax, _byte_3063A
 		inc	ax
 		mov	_word_245F2, ax
@@ -2388,12 +2388,12 @@ loc_113C6::				; CODE XREF: _ult_module+186j
 		cmp	ax, 3033h
 		jb	short loc_113F8
 		mov	dx, offset _word_3063B
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		call	_dosfread
 		cmp	_sndcard_type,	0
 		jnz	short loc_113F8
 		xor	si, si
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 
 loc_113E2::				; CODE XREF: _ult_module+1BDj
 		mov	al, byte ptr [_word_3063B+si]
@@ -2408,7 +2408,7 @@ loc_113E2::				; CODE XREF: _ult_module+1BDj
 loc_113F8::				; CODE XREF: _ult_module+190j
 					; _ult_module+1A1j
 		mov	si, offset _dword_30518
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 
 loc_113FF::				; CODE XREF: _ult_module+1F9j
 		push	cx
@@ -2448,7 +2448,7 @@ loc_11438::				; CODE XREF: _ult_module+2C6j
 		push	cx
 		mov	si, offset _dword_30518
 		mov	di, offset _byte_30908
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 
 loc_11443::				; CODE XREF: _ult_module+250j
 		push	cx
@@ -2491,7 +2491,7 @@ loc_1145A::				; CODE XREF: _ult_module+237j
 loc_11494::				; CODE XREF: _ult_module+2BFj
 		push	cx
 		push	si
-		mov	cx, _word_245D4
+		mov	cx, _mod_channels_number
 		xor	ch, ch
 
 loc_1149C::				; CODE XREF: _ult_module+2B2j
@@ -2849,7 +2849,7 @@ _inr_module proc near		; DATA XREF: seg003:off_25326o
 		mov	al, _byte_257DC
 		mov	_byte_2467E, al
 		mov	ax, _word_257E6
-		mov	_word_245D4, ax
+		mov	_mod_channels_number, ax
 		dec	ax
 		mov	_byte_2461B, al
 		mov	ax, _word_257EC
@@ -3211,7 +3211,7 @@ _clean_11C43 proc far		; CODE XREF: _moduleread:loc_1003Dp
 		mov	_word_24630, 2
 		mov	_word_245FA, 0
 		mov	_word_245F8, 0
-		mov	_word_245D4, 4
+		mov	_mod_channels_number, 4
 		mov	_word_245D6, 4
 		mov	_word_245D8, 0
 		mov	_word_245DA, 0
@@ -3234,7 +3234,7 @@ loc_11CB8::				; CODE XREF: _clean_11C43+6Dj
 		mov	cx, 8
 		mov	eax, '    '
 		rep stosd
-		mov	di, offset _volume_25908
+		mov	di, offset _channels_25908
 		xor	eax, eax
 		mov	cx, 280h
 		rep stosd
@@ -4464,14 +4464,14 @@ _memfree_125DA endp
 
 
 sub_1265D proc far		; CODE XREF: _read_module+86P
-					; _keyb_19EFDP ...
+					; _keyb_screen_loopP ...
 		mov	ax, seg003
 		mov	es, ax
 		assume es:seg003
 		mov	ax, es:[_volume_245FC]
 		dec	ax
 		mov	cl, al
-		mov	si, offset _volume_25908
+		mov	si, offset _channels_25908
 		mov	di, offset asc_246B0 ; "				"
 		movzx	bp, es:[_sndcard_type]
 		mov	ch, es:[_byte_24666]
@@ -4502,7 +4502,7 @@ sub_126A9 proc far		; CODE XREF: _read_module+6AP
 		mov	si, offset _myout
 		mov	bl, byte ptr es:[_word_245FA]
 		mov	bh, byte ptr es:[_word_245D2]
-		mov	cl, byte ptr es:[_word_245D4]
+		mov	cl, byte ptr es:[_mod_channels_number]
 		mov	ch, es:[_byte_24617]
 		mov	eax, es:[_module_type_text]
 		retf
@@ -4528,8 +4528,8 @@ _volume_prep proc far		; CODE XREF: seg001:18BEP
 		pop	es
 		assume es:nothing
 		pop	di
-		mov	si, offset _volume_25908
-		mov	dx, _word_245D4
+		mov	si, offset _channels_25908
+		mov	dx, _mod_channels_number
 
 loc_126F0::				; CODE XREF: _volume_prep+2Dj
 		push	dx
@@ -4561,8 +4561,8 @@ loc_12721::				; CODE XREF: _volume_prep+3Bj
 		mov	es, ax
 		assume es:seg003
 		cld
-		mov	si, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	si, offset _channels_25908
+		mov	cx, _mod_channels_number
 
 loc_1272D::				; CODE XREF: _volume_prep+87j
 		pushf
@@ -4592,8 +4592,8 @@ loc_1272D::				; CODE XREF: _volume_prep+87j
 		pop	es
 		assume es:nothing
 		pop	di
-		mov	si, offset _volume_25908
-		mov	ax, _word_245D4
+		mov	si, offset _channels_25908
+		mov	ax, _mod_channels_number
 
 loc_1275F::				; CODE XREF: _volume_prep+C8j
 		push	ax
@@ -4976,8 +4976,8 @@ _volume_12A66 proc far	; CODE XREF: _vlm_141DF+1p _snd_off+14p
 		push	ds
 		mov	ax, seg003
 		mov	ds, ax
-		mov	cx, _word_245D4
-		mov	bx, offset _volume_25908
+		mov	cx, _mod_channels_number
+		mov	bx, offset _channels_25908
 
 loc_12A73::				; CODE XREF: _volume_12A66+19j
 		push	bx
@@ -4997,8 +4997,8 @@ _volume_12A66 endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_change_volume proc far	; CODE XREF: _keyb_19EFD+17P
-					; _keyb_19EFD+23AP ...
+_change_volume proc far	; CODE XREF: _keyb_screen_loop+17P
+					; _keyb_screen_loop+23AP ...
 		push	ds
 		mov	cx, seg003
 		mov	ds, cx
@@ -5006,8 +5006,8 @@ _change_volume proc far	; CODE XREF: _keyb_19EFD+17P
 		cmp	ax, -1
 		jz	short loc_12AA9
 		mov	_volume_245FC,	ax
-		mov	cx, _word_245D4
-		mov	bx, offset _volume_25908
+		mov	cx, _mod_channels_number
+		mov	bx, offset _channels_25908
 
 loc_12A98::				; CODE XREF: _change_volume+24j
 		push	bx
@@ -5031,7 +5031,7 @@ _change_volume endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_change_amplif proc far	; CODE XREF: _s3m_module+84p
+_getset_amplif proc far	; CODE XREF: _s3m_module+84p
 					; _eff_14020+9p	...
 		push	ds
 		mov	cx, seg003
@@ -5045,22 +5045,22 @@ _change_amplif proc far	; CODE XREF: _s3m_module+84p
 		jbe	short loc_12ACB
 		mov	_byte_24625, 1
 
-loc_12ACB::				; CODE XREF: _change_amplif+16j
+loc_12ACB::				; CODE XREF: _getset_amplif+16j
 		call	sub_13044
 
-loc_12ACE::				; CODE XREF: _change_amplif+9j
+loc_12ACE::				; CODE XREF: _getset_amplif+9j
 		mov	ax, _amplification
 		pop	ds
 		assume ds:dseg
 		retf
-_change_amplif endp
+_getset_amplif endp
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_get_playsettings proc far	; CODE XREF: _keyb_19EFD+2AP
-					; _keyb_19EFD+350P ...
+_get_playsettings proc far	; CODE XREF: _keyb_screen_loop+2AP
+					; _keyb_screen_loop+350P ...
 		push	ds
 		mov	ax, seg003
 		mov	ds, ax
@@ -5075,8 +5075,8 @@ _get_playsettings endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_set_playsettings proc far	; CODE XREF: _keyb_19EFD+357P
-					; _keyb_19EFD+36FP ...
+_set_playsettings proc far	; CODE XREF: _keyb_screen_loop+357P
+					; _keyb_screen_loop+36FP ...
 		push	ds
 		mov	bx, seg003
 		mov	ds, bx
@@ -5097,15 +5097,15 @@ _set_playsettings endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_12AFD proc far		; CODE XREF: _keyb_19EFD+1F9P
+sub_12AFD proc far		; CODE XREF: _keyb_screen_loop+1F9P
 		push	ds
 		mov	bx, seg003
 		mov	ds, bx
 		movzx	bx, ch
-		cmp	bx, _word_245D4
+		cmp	bx, _mod_channels_number
 		jnb	short loc_12B16
 		imul	bx, 80
-		add	bx, offset _volume_25908
+		add	bx, offset _channels_25908
 		call	_eff_13A43
 
 loc_12B16::				; CODE XREF: sub_12AFD+Dj
@@ -5133,8 +5133,8 @@ sub_12B18 proc far		; CODE XREF: _moduleread:loc_10092p
 		mov	_byte_2461C, 0
 		mov	_byte_2461D, 0
 		mov	si, offset _dword_27BC8
-		mov	bx, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	bx, offset _channels_25908
+		mov	cx, _mod_channels_number
 		xor	al, al
 
 loc_12B42::				; CODE XREF: sub_12B18+65j
@@ -5201,9 +5201,9 @@ loc_12B92::				; CODE XREF: sub_12B83+Bj
 		mov	al, 2
 
 loc_12B98::				; CODE XREF: sub_12B83+11j
-		mov	_word_245D4, ax
-		mov	di, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	_mod_channels_number, ax
+		mov	di, offset _channels_25908
+		mov	cx, _mod_channels_number
 		xor	dx, dx
 		xor	bx, bx
 
@@ -5297,8 +5297,8 @@ loc_12C75::				; CODE XREF: _someplaymode+75j
 		mov	_dword_2463C, eax
 
 loc_12C86::				; CODE XREF: _someplaymode+62j
-		mov	di, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	di, offset _channels_25908
+		mov	cx, _mod_channels_number
 		xor	ax, ax
 
 loc_12C8F::				; CODE XREF: _someplaymode+9Ej
@@ -5314,8 +5314,8 @@ _someplaymode endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_getset_playstate proc far	; CODE XREF: _keyb_19EFD+401P
-					; _keyb_19EFD:loc_1A30DP ...
+_getset_playstate proc far	; CODE XREF: _keyb_screen_loop+401P
+					; _keyb_screen_loop:loc_1A30DP ...
 		push	bx
 		push	ds
 		mov	bx, seg003
@@ -5337,8 +5337,8 @@ _getset_playstate endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_12CAD proc far		; CODE XREF: _keyb_19EFD+3CCP
-					; _keyb_19EFD+3DCP ...
+sub_12CAD proc far		; CODE XREF: _keyb_screen_loop+3CCP
+					; _keyb_screen_loop+3DCP ...
 		push	ds
 		push	es
 		mov	ax, seg003
@@ -5596,14 +5596,14 @@ sub_12EBA proc far		; CODE XREF: _read_module+E3P
 		mov	_byte_2466D, 0
 		mov	_byte_24671, 0
 		mov	_play_state, 0
-		mov	_word_24600, 0
+		mov	_samples_outoffs_24600, 0
 		mov	_word_24602, 0
 		mov	_byte_24620, 0
 		mov	_byte_24621, 0
 		mov	ax, ds
 		mov	es, ax
 		assume es:seg003
-		mov	di, offset _volume_25908
+		mov	di, offset _channels_25908
 		xor	eax, eax
 		mov	cx, 280h
 		cld
@@ -5660,7 +5660,7 @@ _snd_offx endp
 
 
 sub_12F56 proc far		; CODE XREF: sub_12EBA+58p
-					; _keyb_19EFD+167P ...
+					; _keyb_screen_loop+167P ...
 		pushf
 		cli
 		push	ds
@@ -5688,8 +5688,8 @@ sub_12F56 endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_get_12F7C proc far		; CODE XREF: _keyb_19EFD+148P
-					; _keyb_19EFD+174P
+_get_12F7C proc far		; CODE XREF: _keyb_screen_loop+148P
+					; _keyb_screen_loop+174P
 		pushf
 		cli
 		push	ds
@@ -5806,11 +5806,11 @@ loc_1302C::				; CODE XREF: sub_13017+Bj
 		add	di, 40h	; '@'
 		dec	cx
 		jnz	short loc_1301E
-		mov	_word_24600, 0
+		mov	_samples_outoffs_24600, 0
 
 loc_13038::				; CODE XREF: sub_13017+2Aj
 		call	prepare_samples
-		cmp	_word_24600, 800h
+		cmp	_samples_outoffs_24600, 800h
 		jbe	short loc_13038
 		retn
 sub_13017 endp
@@ -5819,7 +5819,7 @@ sub_13017 endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_13044 proc near		; CODE XREF: _change_amplif:loc_12ACBp
+sub_13044 proc near		; CODE XREF: _getset_amplif:loc_12ACBp
 					; sub_12B83:loc_12BEFp
 		mov	al, _byte_2467E
 		cmp	al, 0
@@ -6164,8 +6164,8 @@ sub_13429 endp
 
 sub_135CA proc near		; CODE XREF: sub_12F56+1Fp
 					; sub_140B6+3Cp ...
-		mov	bx, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	bx, offset _channels_25908
+		mov	cx, _mod_channels_number
 		xor	ax, ax
 
 loc_135D3::				; CODE XREF: sub_135CA+1Aj
@@ -6193,8 +6193,8 @@ loc_135F2::				; CODE XREF: sub_135CA+31j
 
 loc_135FD::				; CODE XREF: sub_135CA+26j
 		mov	word ptr [_pointer_245B4], si
-		mov	bx, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	bx, offset _channels_25908
+		mov	cx, _mod_channels_number
 
 loc_13608::				; CODE XREF: sub_135CA+56j
 		test	byte ptr [bx+17h], 1
@@ -6232,13 +6232,13 @@ sub_13623 proc near		; CODE XREF: sub_12CAD+1Cp
 		mov	dh, al
 		and	dh, 0E0h
 		and	ax, 1Fh
-		cmp	ax, _word_245D4
+		cmp	ax, _mod_channels_number
 		jnb	loc_137BE
 		shl	ax, 4
 		mov	bx, ax
 		shl	ax, 2
 		add	bx, ax
-		add	bx, offset _volume_25908
+		add	bx, offset _channels_25908
 		test	dh, 80h
 		jz	short loc_13661
 
@@ -6440,7 +6440,7 @@ sub_137D5 endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_13813 proc near		; CODE XREF: sub_140B6+24p
+chanl_2_eff_13813 proc near		; CODE XREF: sub_140B6+24p
 					; sub_140B6+4Ap ...
 		movzx	di, byte ptr [bx+0Ah]
 		cmp	di, 32
@@ -6448,7 +6448,7 @@ sub_13813 proc near		; CODE XREF: sub_140B6+24p
 		shl	di, 1
 		mov	al, [bx+0Bh]
 		jmp	cs:[_effoff_18FE4+di]
-sub_13813 endp
+chanl_2_eff_13813 endp
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -7896,7 +7896,7 @@ _eff_14020 proc near		; CODE XREF: sub_13623+196j
 		push	si
 		push	es
 		push	cs
-		call	near ptr _change_amplif
+		call	near ptr _getset_amplif
 		pop	es
 		pop	si
 		pop	bx
@@ -8018,13 +8018,13 @@ sub_140B6 proc near		; CODE XREF: _gravis_set+1Ep
 		mov	al, _byte_24668
 		cmp	al, _byte_24667
 		jnb	short loc_140E6
-		mov	bx, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	bx, offset _channels_25908
+		mov	cx, _mod_channels_number
 
 loc_140D8::				; CODE XREF: sub_140B6+2Dj
 		push	bx
 		push	cx
-		call	sub_13813
+		call	chanl_2_eff_13813
 		pop	cx
 		pop	bx
 		add	bx, 50h	; 'P'
@@ -8044,13 +8044,13 @@ loc_140E6::				; CODE XREF: sub_140B6+19j
 ; ---------------------------------------------------------------------------
 
 loc_140F7::				; CODE XREF: sub_140B6+3Aj
-		mov	bx, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	bx, offset _channels_25908
+		mov	cx, _mod_channels_number
 
 loc_140FE::				; CODE XREF: sub_140B6+53j
 		push	bx
 		push	cx
-		call	sub_13813
+		call	chanl_2_eff_13813
 		pop	cx
 		pop	bx
 		add	bx, 50h	; 'P'
@@ -8852,12 +8852,12 @@ loc_14E66::				; CODE XREF: _proaud_14700+75Bj
 
 loc_14E6E::				; CODE XREF: _proaud_14700+78Aj
 		mov	dx, ax
-		cmp	ax, _word_24600
+		cmp	ax, _samples_outoffs_24600
 		ja	short loc_14E79
 		add	ax, 1000h
 
 loc_14E79::				; CODE XREF: _proaud_14700+774j
-		sub	ax, _word_24600
+		sub	ax, _samples_outoffs_24600
 		cmp	ax, 800h
 		jb	short loc_14E8C
 		push	dx
@@ -9484,7 +9484,7 @@ loc_15302::				; CODE XREF: _snd_initialze+1107j
 		mov	[off_245C8], offset _midi_15466
 		mov	[off_245CC], offset _midi_154AC
 		mov	[off_245CE], offset _midi_1544D
-		mov	bx, offset _volume_25908
+		mov	bx, offset _channels_25908
 		mov	ah, 1
 
 loc_15325::				; CODE XREF: _snd_initialze+1146j
@@ -9536,13 +9536,13 @@ _midi_int8p proc far		; DATA XREF: _midi_seto
 		mov	al, _byte_24668
 		cmp	al, _byte_24667
 		jnb	short loc_1538F
-		mov	bx, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	bx, offset _channels_25908
+		mov	cx, _mod_channels_number
 
 loc_15380::				; CODE XREF: _midi_int8p+37j
 		push	bx
 		push	cx
-		call	sub_13813
+		call	chanl_2_eff_13813
 		pop	cx
 		pop	bx
 		add	bx, 50h	; 'P'
@@ -12577,8 +12577,8 @@ loc_16C88::				; CODE XREF: prepare_samples+Ej
 		mov	_byte_24682, 0
 		cmp	_is_stereo, 1
 		jz	loc_171D3
-		mov	si, offset _volume_25908
-		mov	cx, _word_245D4
+		mov	si, offset _channels_25908
+		mov	cx, _mod_channels_number
 
 loc_16C9D::				; CODE XREF: prepare_samples+59j
 		cmp	byte ptr [si+1Dh], 0
@@ -12604,7 +12604,7 @@ loc_16CBE::				; CODE XREF: prepare_samples+38j
 		add	si, 50h	; 'P'
 		dec	cx
 		jnz	short loc_16C9D
-		mov	di, _word_24600
+		mov	di, _samples_outoffs_24600
 		mov	cx, _word_245E4
 		mov	si, (offset _chrin+1)
 		mov	es, word ptr [_dma_buf_pointer+2]
@@ -12626,7 +12626,7 @@ loc_16CEB::				; CODE XREF: prepare_samples+71j
 		call	sub_16CF6
 
 loc_16CEE::				; CODE XREF: prepare_samples+80j
-		mov	_word_24600, di
+		mov	_samples_outoffs_24600, di
 		call	_ems_restore_mapctx
 		retn
 prepare_samples endp
@@ -13226,8 +13226,8 @@ sub_16CF6 endp
 ; START	OF FUNCTION CHUNK FOR prepare_samples
 
 loc_171D3::				; CODE XREF: prepare_samples+29j
-		mov	cx, _word_245D4
-		mov	si, offset _volume_25908
+		mov	cx, _mod_channels_number
+		mov	si, offset _channels_25908
 
 loc_171DA::				; CODE XREF: prepare_samples+5B7j
 		push	cx
@@ -13270,7 +13270,7 @@ loc_1721A::				; CODE XREF: prepare_samples+577j
 		jnz	short loc_171DA
 		cmp	_bit_mode, 16
 		jz	_lc_16bit
-		mov	di, _word_24600
+		mov	di, _samples_outoffs_24600
 		mov	cx, _word_245E4
 		mov	si, (offset _chrin+1)
 		mov	es, word ptr [_dma_buf_pointer+2]
@@ -13293,7 +13293,7 @@ loc_17254::				; CODE XREF: prepare_samples+5DAj
 		call	sub_1725F
 
 loc_17257::				; CODE XREF: prepare_samples+5E9j
-		mov	_word_24600, di
+		mov	_samples_outoffs_24600, di
 		call	_ems_restore_mapctx
 		retn
 ; END OF FUNCTION CHUNK	FOR prepare_samples
@@ -13936,7 +13936,7 @@ locret_177EE::				; CODE XREF: sub_1609F+1582j
 ; START	OF FUNCTION CHUNK FOR prepare_samples
 
 _lc_16bit::				; CODE XREF: prepare_samples+5BEj
-		mov	di, _word_24600
+		mov	di, _samples_outoffs_24600
 		mov	cx, _word_245E4
 		mov	si, offset _chrin
 		mov	es, word ptr [_dma_buf_pointer+2]
@@ -13958,7 +13958,7 @@ loc_17819::				; CODE XREF: prepare_samples+B9Fj
 		call	sub_17824
 
 loc_1781C::				; CODE XREF: prepare_samples+BAEj
-		mov	_word_24600, di
+		mov	_samples_outoffs_24600, di
 		call	_ems_restore_mapctx
 		retn
 ; END OF FUNCTION CHUNK	FOR prepare_samples
@@ -16854,7 +16854,7 @@ _effoff_18FA2	dw offset _eff_nullsub	; DATA XREF: sub_13623+196r
 		dw offset _eff_14020
 		dw offset _eff_14030
 		dw offset _eff_14067
-_effoff_18FE4	dw offset _eff_nullsub	; DATA XREF: sub_13813+Er
+_effoff_18FE4	dw offset _eff_nullsub	; DATA XREF: chanl_2_eff_13813+Er
 		dw offset _eff_13886
 		dw offset _eff_138A4
 		dw offset _eff_138D2
@@ -17738,7 +17738,7 @@ loc_19762::				; CODE XREF: _start+3ADj
 		mov	ax, 7800h
 		call	_draw_frame
 		call	[off_1DE3C]
-		call	_keyb_19EFD
+		call	_keyb_screen_loop
 		mov	_byte_1DE7F, 0
 		jmp	loc_192F7
 ; ---------------------------------------------------------------------------
@@ -18715,7 +18715,7 @@ _read_module endp ; sp-analysis failed
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_keyb_19EFD proc near		; CODE XREF: _start+6EBp _keyb_19EFD+5Aj ...
+_keyb_screen_loop proc near		; CODE XREF: _start+6EBp _keyb_screen_loop+5Aj ...
 		call	sub_1265D
 		mov	_byte_1DE72, ah
 		mov	_byte_1DE74, al
@@ -18725,7 +18725,7 @@ _keyb_19EFD proc near		; CODE XREF: _start+6EBp _keyb_19EFD+5Aj ...
 		call	_change_volume
 		mov	_word_1DE6A, ax
 		mov	ax, -1
-		call	_change_amplif
+		call	_getset_amplif
 		mov	_word_1DE6C, ax
 		call	_get_playsettings
 		mov	_flg_play_settings, al
@@ -18739,7 +18739,7 @@ _keyb_19EFD proc near		; CODE XREF: _start+6EBp _keyb_19EFD+5Aj ...
 		xor	ax, ax
 		xchg	ax, cs:[_key_code]
 		or	ax, ax
-		jz	short _keyb_19EFD
+		jz	short _keyb_screen_loop
 		mov	_word_1DE50, ax
 		mov	cx, 2
 		cmp	ax, 0E04Dh	; gr_right
@@ -18813,10 +18813,10 @@ loc_19F6C::
 		jz	_l_enter
 		cmp	al, 1
 		jz	_l_esc
-		jb	_keyb_19EFD
+		jb	_keyb_screen_loop
 		cmp	al, 0Bh
 		jbe	loc_1A33E
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
 loc_1A042::				; CODE XREF: _read_module+5Bj
@@ -18824,8 +18824,8 @@ loc_1A042::				; CODE XREF: _read_module+5Bj
 		retn
 ; ---------------------------------------------------------------------------
 
-_l_1A044::				; CODE XREF: _keyb_19EFD+65j
-					; _keyb_19EFD:loc_19F6Cj ...
+_l_1A044::				; CODE XREF: _keyb_screen_loop+65j
+					; _keyb_screen_loop:loc_19F6Cj ...
 		push	cx
 		call	_get_12F7C
 		and	bx, 3Fh
@@ -18841,11 +18841,11 @@ _l_1A044::				; CODE XREF: _keyb_19EFD+65j
 		pop	cx
 		dec	cx
 		jnz	short _l_1A044
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-loc_1A070::				; CODE XREF: _keyb_19EFD+79j
-					; _keyb_19EFD+86j ...
+loc_1A070::				; CODE XREF: _keyb_screen_loop+79j
+					; _keyb_screen_loop+86j ...
 		push	cx
 		call	_get_12F7C
 		and	bx, 3Fh
@@ -18862,32 +18862,32 @@ loc_1A070::				; CODE XREF: _keyb_19EFD+79j
 		pop	cx
 		dec	cx
 		jnz	short loc_1A070
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-loc_1A0A0::				; CODE XREF: _keyb_19EFD+18Aj
+loc_1A0A0::				; CODE XREF: _keyb_screen_loop+18Aj
 		pop	cx
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_up::					; CODE XREF: _keyb_19EFD+92j
+_l_up::					; CODE XREF: _keyb_screen_loop+92j
 		sub	_byte_1DE84, 1
-		jnb	_keyb_19EFD
+		jnb	_keyb_screen_loop
 		mov	_byte_1DE84, 0
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_down::					; CODE XREF: _keyb_19EFD+9Ej
+_l_down::					; CODE XREF: _keyb_screen_loop+9Ej
 		inc	_byte_1DE84
 		mov	ax, _amount_of_x
 		cmp	_byte_1DE84, al
-		jb	_keyb_19EFD
+		jb	_keyb_screen_loop
 		dec	al
 		mov	_byte_1DE84, al
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_right::				; CODE XREF: _keyb_19EFD+8Cj
+_l_right::				; CODE XREF: _keyb_screen_loop+8Cj
 		lfs	bx, _segfsbx_1DE28
 		mov	al, 50h	; 'P'
 		mul	_byte_1DE84
@@ -18897,21 +18897,21 @@ _l_right::				; CODE XREF: _keyb_19EFD+8Cj
 		jnz	short loc_1A0E6
 		mov	cl, 1
 
-loc_1A0E6::				; CODE XREF: _keyb_19EFD+1E5j
+loc_1A0E6::				; CODE XREF: _keyb_screen_loop+1E5j
 		mov	al, fs:[bx+3Ah]
 		add	al, cl
 		cmp	al, 80h	; '€'
 		jbe	short loc_1A0F2
 		mov	al, 80h	; '€'
 
-loc_1A0F2::				; CODE XREF: _keyb_19EFD+1F1j
-					; _keyb_19EFD+221j ...
+loc_1A0F2::				; CODE XREF: _keyb_screen_loop+1F1j
+					; _keyb_screen_loop+221j ...
 		mov	ch, _byte_1DE84
 		call	sub_12AFD
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_left::					; CODE XREF: _keyb_19EFD+98j
+_l_left::					; CODE XREF: _keyb_screen_loop+98j
 		lfs	bx, _segfsbx_1DE28
 		mov	al, 50h	; 'P'
 		mul	_byte_1DE84
@@ -18921,7 +18921,7 @@ _l_left::					; CODE XREF: _keyb_19EFD+98j
 		jnz	short loc_1A118
 		mov	cl, 1
 
-loc_1A118::				; CODE XREF: _keyb_19EFD+217j
+loc_1A118::				; CODE XREF: _keyb_screen_loop+217j
 		mov	al, fs:[bx+3Ah]
 		sub	al, cl
 		jnb	short loc_1A0F2
@@ -18929,27 +18929,27 @@ loc_1A118::				; CODE XREF: _keyb_19EFD+217j
 		jmp	short loc_1A0F2
 ; ---------------------------------------------------------------------------
 
-_l_l::					; CODE XREF: _keyb_19EFD+FEj
+_l_l::					; CODE XREF: _keyb_screen_loop+FEj
 		mov	al, 0
 		jmp	short loc_1A0F2
 ; ---------------------------------------------------------------------------
 
-_l_m::					; CODE XREF: _keyb_19EFD+104j
+_l_m::					; CODE XREF: _keyb_screen_loop+104j
 		mov	al, 64
 		jmp	short loc_1A0F2
 ; ---------------------------------------------------------------------------
 
-_l_r::					; CODE XREF: _keyb_19EFD+10Aj
+_l_r::					; CODE XREF: _keyb_screen_loop+10Aj
 		mov	al, 128
 		jmp	short loc_1A0F2
 ; ---------------------------------------------------------------------------
 
-_l_s::					; CODE XREF: _keyb_19EFD+110j
+_l_s::					; CODE XREF: _keyb_screen_loop+110j
 		mov	al, 166
 		jmp	short loc_1A0F2
 ; ---------------------------------------------------------------------------
 
-_l_plus::					; CODE XREF: _keyb_19EFD+A4j
+_l_plus::					; CODE XREF: _keyb_screen_loop+A4j
 		mov	ax, -1
 		call	_change_volume
 		mov	cx, 32
@@ -18957,18 +18957,18 @@ _l_plus::					; CODE XREF: _keyb_19EFD+A4j
 		jnz	short loc_1A14B
 		mov	cx, 2
 
-loc_1A14B::				; CODE XREF: _keyb_19EFD+249j
+loc_1A14B::				; CODE XREF: _keyb_screen_loop+249j
 		add	ax, cx
 		cmp	ax, 256
 		jb	short loc_1A155
 		mov	ax, 256
 
-loc_1A155::				; CODE XREF: _keyb_19EFD+253j
+loc_1A155::				; CODE XREF: _keyb_screen_loop+253j
 		call	_change_volume
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_minus::				; CODE XREF: _keyb_19EFD+AAj
+_l_minus::				; CODE XREF: _keyb_screen_loop+AAj
 		mov	ax, -1
 		call	_change_volume
 		mov	cx, 32
@@ -18976,78 +18976,78 @@ _l_minus::				; CODE XREF: _keyb_19EFD+AAj
 		jnz	short loc_1A174
 		mov	cx, 2
 
-loc_1A174::				; CODE XREF: _keyb_19EFD+272j
+loc_1A174::				; CODE XREF: _keyb_screen_loop+272j
 		sub	ax, cx
 		jnb	short loc_1A17A
 		xor	ax, ax
 
-loc_1A17A::				; CODE XREF: _keyb_19EFD+279j
+loc_1A17A::				; CODE XREF: _keyb_screen_loop+279j
 		call	_change_volume
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_rbracket::				; CODE XREF: _keyb_19EFD+B6j
+_l_rbracket::				; CODE XREF: _keyb_screen_loop+B6j
 		mov	ax, 0FFFFh
-		call	_change_amplif
+		call	_getset_amplif
 		mov	cx, 1
 		test	cs:[_keyb_switches], 3
 		jnz	short loc_1A199
 		mov	cx, 0Ah
 
-loc_1A199::				; CODE XREF: _keyb_19EFD+297j
+loc_1A199::				; CODE XREF: _keyb_screen_loop+297j
 		add	ax, cx
 		cmp	ax, 2500
 		jb	short loc_1A1A3
 		mov	ax, 2500
 
-loc_1A1A3::				; CODE XREF: _keyb_19EFD+2A1j
-		call	_change_amplif
-		jmp	_keyb_19EFD
+loc_1A1A3::				; CODE XREF: _keyb_screen_loop+2A1j
+		call	_getset_amplif
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_lbracket::				; CODE XREF: _keyb_19EFD+B0j
+_l_lbracket::				; CODE XREF: _keyb_screen_loop+B0j
 		mov	ax, -1
-		call	_change_amplif
+		call	_getset_amplif
 		mov	cx, 1
 		test	cs:[_keyb_switches], 3
 		jnz	short loc_1A1C2
 		mov	cx, 10
 
-loc_1A1C2::				; CODE XREF: _keyb_19EFD+2C0j
+loc_1A1C2::				; CODE XREF: _keyb_screen_loop+2C0j
 		sub	ax, cx
 		jnb	short loc_1A1C9
 		mov	ax, 50
 
-loc_1A1C9::				; CODE XREF: _keyb_19EFD+2C7j
+loc_1A1C9::				; CODE XREF: _keyb_screen_loop+2C7j
 		cmp	ax, 50
 		ja	short loc_1A1D1
 		mov	ax, 50
 
-loc_1A1D1::				; CODE XREF: _keyb_19EFD+2CFj
-		call	_change_amplif
-		jmp	_keyb_19EFD
+loc_1A1D1::				; CODE XREF: _keyb_screen_loop+2CFj
+		call	_getset_amplif
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f1::					; CODE XREF: _keyb_19EFD+BCj
+_l_f1::					; CODE XREF: _keyb_screen_loop+BCj
 		call	_f1_help
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f2::					; CODE XREF: _keyb_19EFD+C2j
+_l_f2::					; CODE XREF: _keyb_screen_loop+C2j
 		call	_f2_waves
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f3::					; CODE XREF: _keyb_19EFD+C8j
+_l_f3::					; CODE XREF: _keyb_screen_loop+C8j
 		call	_f3_textmetter
 		mov	_byte_1DE85, 0
 		test	cs:[_keyb_switches], 3
-		jz	_keyb_19EFD
+		jz	_keyb_screen_loop
 		mov	_byte_1DE85, 1
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f4::					; CODE XREF: _keyb_19EFD+CEj
+_l_f4::					; CODE XREF: _keyb_screen_loop+CEj
 		cmp	_offs_draw, offset _f4_draw
 		jnz	short loc_1A219
 		mov	ax, _word_1DE6E
@@ -19057,60 +19057,60 @@ _l_f4::					; CODE XREF: _keyb_19EFD+CEj
 		cmp	ax, _word_1DE46
 		jb	short loc_1A21F
 
-loc_1A219::				; CODE XREF: _keyb_19EFD+309j
+loc_1A219::				; CODE XREF: _keyb_screen_loop+309j
 		mov	_current_patterns, 0
 
-loc_1A21F::				; CODE XREF: _keyb_19EFD+31Aj
+loc_1A21F::				; CODE XREF: _keyb_screen_loop+31Aj
 		call	_f4_patternnae
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f5::					; CODE XREF: _keyb_19EFD+D4j
+_l_f5::					; CODE XREF: _keyb_screen_loop+D4j
 		call	_f5_graphspectr
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f6::					; CODE XREF: _keyb_19EFD+DAj
+_l_f6::					; CODE XREF: _keyb_screen_loop+DAj
 		call	_f6_undoc
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f8::					; CODE XREF: _keyb_19EFD+E0j
+_l_f8::					; CODE XREF: _keyb_screen_loop+E0j
 		call	[off_1DE42]
 		call	_dosexec
 		mov	_byte_1DE70, 0FFh
 		call	[off_1DE3C]
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f9::					; CODE XREF: _keyb_19EFD+E6j
+_l_f9::					; CODE XREF: _keyb_screen_loop+E6j
 		test	cs:[_keyb_switches], 100b
 		jnz	short _l_f11
 		call	_get_playsettings
 		xor	al, 1
 		call	_set_playsettings
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f10::					; CODE XREF: _keyb_19EFD+ECj
+_l_f10::					; CODE XREF: _keyb_screen_loop+ECj
 		test	cs:[_keyb_switches], 100b
 		jnz	short _l_f12
 		call	_get_playsettings
 		xor	al, 2
 		call	_set_playsettings
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f11::					; CODE XREF: _keyb_19EFD+F2j
-					; _keyb_19EFD+34Ej
+_l_f11::					; CODE XREF: _keyb_screen_loop+F2j
+					; _keyb_screen_loop+34Ej
 		call	_get_playsettings
 		xor	al, 4
 		call	_set_playsettings
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_f12::					; CODE XREF: _keyb_19EFD+F8j
-					; _keyb_19EFD+366j
+_l_f12::					; CODE XREF: _keyb_screen_loop+F8j
+					; _keyb_screen_loop+366j
 		call	_get_playsettings
 
 loc_1A288::
@@ -19119,10 +19119,10 @@ loc_1A288::
 
 loc_1A28F::
 		xor	byte ptr [_configword+1], 1
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_tab::					; CODE XREF: _keyb_19EFD+116j
+_l_tab::					; CODE XREF: _keyb_screen_loop+116j
 		test	cs:[_keyb_switches], 100b
 		jnz	short loc_1A2C1
 
@@ -19136,36 +19136,36 @@ loc_1A2A0::
 		call	_set_playsettings
 
 loc_1A2BE::
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-loc_1A2C1::				; CODE XREF: _keyb_19EFD+3A1j
+loc_1A2C1::				; CODE XREF: _keyb_screen_loop+3A1j
 		mov	cx, 0FFh
 		xor	bx, bx
 		mov	dx, 7D0Fh
 		call	sub_12CAD
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-loc_1A2D1::				; CODE XREF: _keyb_19EFD+3AAj
+loc_1A2D1::				; CODE XREF: _keyb_screen_loop+3AAj
 		mov	cx, 0FFh
 		xor	bx, bx
 		mov	dx, 910Fh
 		call	sub_12CAD
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-loc_1A2E1::				; CODE XREF: _keyb_19EFD+3B3j
+loc_1A2E1::				; CODE XREF: _keyb_screen_loop+3B3j
 		mov	cx, 0FFh
 		xor	bx, bx
 		mov	dx, 960Fh
 		call	sub_12CAD
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_numlock::				; CODE XREF: _keyb_19EFD+11Cj
+_l_numlock::				; CODE XREF: _keyb_screen_loop+11Cj
 		test	cs:[_keyb_switches], 100b
-		jz	_keyb_19EFD
+		jz	_keyb_screen_loop
 		mov	al, 0FFh
 		call	_getset_playstate
 		mov	ah, al
@@ -19174,12 +19174,12 @@ _l_numlock::				; CODE XREF: _keyb_19EFD+11Cj
 		jnz	short loc_1A30D
 		mov	al, 0
 
-loc_1A30D::				; CODE XREF: _keyb_19EFD+40Cj
+loc_1A30D::				; CODE XREF: _keyb_screen_loop+40Cj
 		call	_getset_playstate
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_scrollock::				; CODE XREF: _keyb_19EFD+122j
+_l_scrollock::				; CODE XREF: _keyb_screen_loop+122j
 		mov	al, 0FFh
 		call	_getset_playstate
 		mov	ah, al
@@ -19188,33 +19188,33 @@ _l_scrollock::				; CODE XREF: _keyb_19EFD+122j
 		jnz	short loc_1A326
 		mov	al, 0
 
-loc_1A326::				; CODE XREF: _keyb_19EFD+425j
+loc_1A326::				; CODE XREF: _keyb_screen_loop+425j
 		call	_getset_playstate
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_1_end::				; CODE XREF: _keyb_19EFD+128j
+_l_1_end::				; CODE XREF: _keyb_screen_loop+128j
 		mov	cx, 0FFh
 		xor	bx, bx
 		mov	dx, 0Dh
 		call	sub_12CAD
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-loc_1A33E::				; CODE XREF: _keyb_19EFD+13Ej
+loc_1A33E::				; CODE XREF: _keyb_screen_loop+13Ej
 		sub	al, 2
 		test	cs:[_keyb_switches], 11b
 		jz	short loc_1A34B
 		add	al, 10
 
-loc_1A34B::				; CODE XREF: _keyb_19EFD+44Aj
+loc_1A34B::				; CODE XREF: _keyb_screen_loop+44Aj
 		test	cs:[_keyb_switches], 100b
 		jz	short loc_1A356
 		add	al, 20
 
-loc_1A356::				; CODE XREF: _keyb_19EFD+455j
+loc_1A356::				; CODE XREF: _keyb_screen_loop+455j
 		cmp	al, byte ptr [_amount_of_x]
-		jnb	_keyb_19EFD
+		jnb	_keyb_screen_loop
 		mov	ch, al
 		lfs	bx, _segfsbx_1DE28
 		mov	ah, 80
@@ -19225,10 +19225,10 @@ loc_1A356::				; CODE XREF: _keyb_19EFD+455j
 		xor	cl, cl
 		xor	dx, dx
 		call	sub_12CAD
-		jmp	_keyb_19EFD
+		jmp	_keyb_screen_loop
 ; ---------------------------------------------------------------------------
 
-_l_enter::				; CODE XREF: _keyb_19EFD+12Ej
+_l_enter::				; CODE XREF: _keyb_screen_loop+12Ej
 					; DATA XREF: dseg:stru_244ABo
 		call	[_offs_draw]
 		call	[_offs_draw2]
@@ -19236,12 +19236,12 @@ _l_enter::				; CODE XREF: _keyb_19EFD+12Ej
 		retn
 ; ---------------------------------------------------------------------------
 
-_l_esc::					; CODE XREF: _keyb_19EFD+134j
+_l_esc::					; CODE XREF: _keyb_screen_loop+134j
 					; DATA XREF: dseg:stru_244B7o
 		mov	_byte_1DE7C, 1
 		and	_byte_1DE90, 0FDh
 
-loc_1A393::				; CODE XREF: _keyb_19EFD+3Bj
+loc_1A393::				; CODE XREF: _keyb_screen_loop+3Bj
 		call	[_offs_draw]
 		call	[_offs_draw2]
 		call	_snd_offx
@@ -19250,7 +19250,7 @@ loc_1A393::				; CODE XREF: _keyb_19EFD+3Bj
 		retn
 ; ---------------------------------------------------------------------------
 
-loc_1A3A7::				; CODE XREF: _keyb_19EFD+4Dj
+loc_1A3A7::				; CODE XREF: _keyb_screen_loop+4Dj
 		and	_byte_1DE90, 0FEh
 ;		mov	bx, offset stru_244AB ;	_mystr
 		mov	ax, _mousecolumn
@@ -19258,18 +19258,18 @@ loc_1A3A7::				; CODE XREF: _keyb_19EFD+4Dj
 		shr	ax, 3
 		shr	bp, 3
 		call	_mouse_1C7CF
-		jb	_keyb_19EFD
+		jb	_keyb_screen_loop
 		jmp	bx
 ; ---------------------------------------------------------------------------
 
-loc_1A3C5::				; CODE XREF: _keyb_19EFD+44j
+loc_1A3C5::				; CODE XREF: _keyb_screen_loop+44j
 ;		mov	bx, offset stru_244B7 ;	_mystr
 		mov	ax, _mousecolumn
 		mov	bp, _mouserow
 		shr	ax, 3
 		shr	bp, 3
 		call	_mouse_1C7CF
-		jb	_keyb_19EFD
+		jb	_keyb_screen_loop
 		push	es
 		xor	dx, dx
 		mov	es, dx
@@ -19283,16 +19283,16 @@ loc_1A3C5::				; CODE XREF: _keyb_19EFD+44j
 		jmp	bx
 ; ---------------------------------------------------------------------------
 
-loc_1A3F6::				; CODE XREF: _keyb_19EFD+4EFj
+loc_1A3F6::				; CODE XREF: _keyb_screen_loop+4EFj
 		pop	es
 		jmp	loc_193BC
-_keyb_19EFD endp
+_keyb_screen_loop endp
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_f1_help proc	near		; CODE XREF: _keyb_19EFD:_l_f1p
+_f1_help proc	near		; CODE XREF: _keyb_screen_loop:_l_f1p
 					; DATA XREF: dseg:02A6o
 		mov	[off_1DE3C], offset _text_init
 		mov	_offs_draw, offset _f1_draw
@@ -19306,7 +19306,7 @@ _f1_help endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_f2_waves proc near		; CODE XREF: _keyb_19EFD:_l_f2p
+_f2_waves proc near		; CODE XREF: _keyb_screen_loop:_l_f2p
 					; DATA XREF: dseg:02A0o
 		mov	[off_1DE3C], offset _init_vga_waves
 		mov	_offs_draw, offset _f2_draw_waves
@@ -19320,7 +19320,7 @@ _f2_waves endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_f3_textmetter proc near	; CODE XREF: _keyb_19EFD:_l_f3p
+_f3_textmetter proc near	; CODE XREF: _keyb_screen_loop:_l_f3p
 					; DATA XREF: dseg:off_1CA8Eo
 		mov	[off_1DE3C], offset _text_init
 		mov	_offs_draw, offset _f3_draw
@@ -19334,7 +19334,7 @@ _f3_textmetter endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_f4_patternnae proc near	; CODE XREF: _keyb_19EFD:loc_1A21Fp
+_f4_patternnae proc near	; CODE XREF: _keyb_screen_loop:loc_1A21Fp
 					; DATA XREF: dseg:02A4o
 		mov	[off_1DE3C], offset _text_init
 		mov	_offs_draw, offset _f4_draw
@@ -19348,7 +19348,7 @@ _f4_patternnae endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_f5_graphspectr proc near	; CODE XREF: _keyb_19EFD:_l_f5p
+_f5_graphspectr proc near	; CODE XREF: _keyb_screen_loop:_l_f5p
 					; DATA XREF: dseg:02A2o
 		mov	[off_1DE3C], offset _init_f5_spectr
 		mov	_offs_draw, offset _f5_draw_spectr
@@ -19362,7 +19362,7 @@ _f5_graphspectr endp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-_f6_undoc proc near		; CODE XREF: _keyb_19EFD:_l_f6p
+_f6_undoc proc near		; CODE XREF: _keyb_screen_loop:_l_f6p
 					; DATA XREF: dseg:02A8o
 		mov	[off_1DE3C], offset _text_init
 		mov	_offs_draw, offset _f6_draw
@@ -20216,7 +20216,7 @@ _txt_1ABAE endp
 
 ; ---------------------------------------------------------------------------
 
-_f4_draw proc near				; DATA XREF: _keyb_19EFD:_l_f4o
+_f4_draw proc near				; DATA XREF: _keyb_screen_loop:_l_f4o
 					; _f4_patternnae+6o
 		call	_txt_draw_bottom
 		les	di, _videomempointer
@@ -22946,7 +22946,7 @@ _set_keybsw endp
 _key_code	dw 0			; DATA XREF: _start:loc_193FFr
 					; _start+37Aw ...
 _keyb_switches	dw 0			; DATA XREF: _start+5D8r
-					; _keyb_19EFD+1DEr ...
+					; _keyb_screen_loop+1DEr ...
 _prev_scan_code	db 0			; DATA XREF: _int9_keyb+19r
 					; _int9_keyb+22w ...
 
@@ -23039,7 +23039,7 @@ _byte_1C1B8	db 0			; DATA XREF: _int9_keybr _dosexec+58w ...
 
 
 _dosexec proc	near		; CODE XREF: _start+747p
-					; _keyb_19EFD+338p
+					; _keyb_screen_loop+338p
 		mov	ax, 3
 		int	10h		; - VIDEO - SET	VIDEO MODE
 					; AL = mode
@@ -24770,7 +24770,7 @@ _videomempointer	dd 0			; DATA XREF: _start:loc_1917Dw
 _videopoint_shiftd dd 0			; DATA XREF: _text_init2+5Fw
 					; _text_init2+BEw ...
 _segfsbx_1DE28	dd 0			; DATA XREF: _read_module+99w
-					; _keyb_19EFD:_l_rightr ...
+					; _keyb_screen_loop:_l_rightr ...
 _dword_1DE2C	dd 0			; DATA XREF: _text_init2+22Aw
 					; seg001:196Br	...
 _messagepointer	dd 0			; DATA XREF: _start+228r _start+23Dw ...
@@ -24780,18 +24780,18 @@ _outp_freq	dw 0			; DATA XREF: _read_module+82w
 					; _text_init2:loc_1A699r ...
 _esseg_atstart	dw 0			; DATA XREF: _start+5w _parse_cmdline+7r ...
 off_1DE3C	dw offset loc_19050	; DATA XREF: _start+186w _start+6E7r ...
-_offs_draw	dw offset loc_19050	; DATA XREF: _keyb_19EFD+32r
-					; _keyb_19EFD:_l_f4r ...
-_offs_draw2	dw offset loc_19050	; DATA XREF: _keyb_19EFD+486r
-					; _keyb_19EFD+49Ar ...
-off_1DE42	dw offset loc_19050	; DATA XREF: _keyb_19EFD:_l_f8r
+_offs_draw	dw offset loc_19050	; DATA XREF: _keyb_screen_loop+32r
+					; _keyb_screen_loop:_l_f4r ...
+_offs_draw2	dw offset loc_19050	; DATA XREF: _keyb_screen_loop+486r
+					; _keyb_screen_loop+49Ar ...
+off_1DE42	dw offset loc_19050	; DATA XREF: _keyb_screen_loop:_l_f8r
 					; _f1_help+12w ...
 _amount_of_x	dw 0			; DATA XREF: _read_module+75w
 					; _read_module+D1r ...
-_word_1DE46	dw 0			; DATA XREF: _keyb_19EFD+316r
+_word_1DE46	dw 0			; DATA XREF: _keyb_screen_loop+316r
 					; _text_init2+244w ...
 _current_patterns dw 0			; DATA XREF: _read_module+5Fw
-					; _keyb_19EFD+30Fw ...
+					; _keyb_screen_loop+30Fw ...
 _word_1DE4A	dw 0			; DATA XREF: _find_mods+14w
 					; _find_mods+4Er
 _word_1DE4C	dw 0			; DATA XREF: _find_mods+2Ew
@@ -24820,26 +24820,26 @@ _word_1DE66	dw 0			; DATA XREF: _modules_search+6w
 					; _modules_search+79r ...
 _fhandle_1DE68	dw 0			; DATA XREF: _init_vga_waves+42w
 					; _init_vga_waves+49r ...
-_word_1DE6A	dw 0			; DATA XREF: _keyb_19EFD+1Cw
+_word_1DE6A	dw 0			; DATA XREF: _keyb_screen_loop+1Cw
 					; _txt_draw_bottom+118r
-_word_1DE6C	dw 0			; DATA XREF: _keyb_19EFD+27w
+_word_1DE6C	dw 0			; DATA XREF: _keyb_screen_loop+27w
 					; _txt_draw_bottom+13Br
-_word_1DE6E	dw 0			; DATA XREF: _keyb_19EFD+30Br
+_word_1DE6E	dw 0			; DATA XREF: _keyb_screen_loop+30Br
 					; _text_init2+52w ...
 _byte_1DE70	db 0			; DATA XREF: _start+168w _start+268w ...
 _byte_1DE71	db 0			; DATA XREF: seg001:loc_1A934w
 					; seg001:loc_1AA73w
-_byte_1DE72	db 0			; DATA XREF: _keyb_19EFD+5w
+_byte_1DE72	db 0			; DATA XREF: _keyb_screen_loop+5w
 					; _txt_draw_bottom+66r
 _byte_1DE73	db 0			; DATA XREF: _read_module+79w
 					; _txt_draw_bottom+72r
-_byte_1DE74	db 0			; DATA XREF: _keyb_19EFD+9w
+_byte_1DE74	db 0			; DATA XREF: _keyb_screen_loop+9w
 					; _txt_draw_bottom+92r
-_byte_1DE75	db 0			; DATA XREF: _keyb_19EFD+Cw
+_byte_1DE75	db 0			; DATA XREF: _keyb_screen_loop+Cw
 					; _txt_draw_bottom+1Br
-_byte_1DE76	db 0			; DATA XREF: _keyb_19EFD+10w
+_byte_1DE76	db 0			; DATA XREF: _keyb_screen_loop+10w
 					; _txt_draw_bottom+2Br
-_flg_play_settings db 0			; DATA XREF: _keyb_19EFD+2Fw
+_flg_play_settings db 0			; DATA XREF: _keyb_screen_loop+2Fw
 					; _txt_draw_bottom+4Cr ...
 _byte_1DE78	db 0			; DATA XREF: _read_module+8Bw
 					; _dosexec+2Cr ...
@@ -24862,9 +24862,9 @@ _byte_1DE82	db 0			; DATA XREF: _start+E1w
 _byte_1DE83	db 3			; DATA XREF: _start+E7w
 					; seg001:loc_1AA4Fr ...
 _byte_1DE84	db 0			; DATA XREF: _read_module+65w
-					; _keyb_19EFD:_l_upw ...
-_byte_1DE85	db 0			; DATA XREF: _keyb_19EFD+2EBw
-					; _keyb_19EFD+2FBw ...
+					; _keyb_screen_loop:_l_upw ...
+_byte_1DE85	db 0			; DATA XREF: _keyb_screen_loop+2EBw
+					; _keyb_screen_loop+2FBw ...
 _byte_1DE86	db 0			; DATA XREF: _start+D7w	_text_init2r ...
 		db 0
 _dword_1DE88	dd 0			; DATA XREF: _start+7DBr _start+7E2w ...
@@ -24970,10 +24970,10 @@ unk_24456	db  20h			; DATA XREF: dseg:7C5Bo dseg:7C5Fo
 ;		struct_0 <2, 1,	4Dh, 4,	offset loc_1964E>
 ;		dw 0FFFFh
 ; struct struct_0 stru_244AB
-;stru_244AB	struct_0 <2, 1,	4Dh, 4,	offset _l_enter>	; DATA XREF: _keyb_19EFD+4AFo
+;stru_244AB	struct_0 <2, 1,	4Dh, 4,	offset _l_enter>	; DATA XREF: _keyb_screen_loop+4AFo
 ;		dw 0FFFFh
 ; struct struct_0 stru_244B7
-;stru_244B7	struct_0 <0, 0,	4Fh, 31h, offset _l_esc>	; DATA XREF: _keyb_19EFD:loc_1A3C5o
+;stru_244B7	struct_0 <0, 0,	4Fh, 31h, offset _l_esc>	; DATA XREF: _keyb_screen_loop:loc_1A3C5o
 		dw 0FFFFh
 		db    0
 unk_244C4	db    0			; DATA XREF: _spectr_1B084+14Ew
@@ -25089,7 +25089,7 @@ _savesp_245D0	dw 0			; DATA XREF: _moduleread+15w
 					; _moduleread+B6r ...
 _word_245D2	dw 0			; DATA XREF: _mod_n_t_module+9w
 					; _mod_n_t_module+43w ...
-_word_245D4	dw 0			; DATA XREF: _moduleread+81r
+_mod_channels_number	dw 0			; DATA XREF: _moduleread+81r
 					; _moduleread+87r ...
 _word_245D6	dw 0			; DATA XREF: _clean_11C43+4Aw
 					; sub_12B83+52w ...
@@ -25131,7 +25131,7 @@ _volume_245FC	dw 100h			; DATA XREF: sub_1265D+5r
 					; _change_volume+Bw ...
 _amplification	dw 100			; DATA XREF: _clean_11C43+83w
 					; _volume_prepare_waves+72r ...
-_word_24600	dw 0			; DATA XREF: sub_12EBA+2Cw
+_samples_outoffs_24600	dw 0			; DATA XREF: sub_12EBA+2Cw
 					; sub_13017+1Bw ...
 _word_24602	dw 0			; DATA XREF: sub_12EBA+32w
 					; _proaud_14700:loc_14E10w ...
@@ -25183,7 +25183,7 @@ _is_stereo	db 0			; DATA XREF: sub_1265D+33r
 _bit_mode	db 8			; DATA XREF: sub_12DA8+55w
 					; sub_12DA8+E2r ...
 _byte_24625	db 0			; DATA XREF: _clean_11C43+89w
-					; _change_amplif+Ew ...
+					; _getset_amplif+Ew ...
 _gravis_port	dw 0			; DATA XREF: _volume_prep+61r
 					; _gravis_13215+49r ...
 _byte_24628	db 0			; DATA XREF: _mod_readfile_11F4E+1BFr
@@ -26114,7 +26114,7 @@ unk_258A6	db  49h	; I		; DATA XREF: _useless_writeinr_118+Eo
 		db    0
 		db    0
 		db    0
-_volume_25908	db 0A00h dup(0)		; DATA XREF: _s3m_module+89o
+_channels_25908	db 0A00h dup(0)		; DATA XREF: _s3m_module+89o
 					; _clean_11C43+A2o ...
 ; char _myout[152]
 _myout		db 18C0h dup(?)		; DATA XREF: _mod_1024A+3o

@@ -47,7 +47,7 @@ class cpp(object):
                 self.logger.info('Protocol problem: %s', 'connection reset')
 
                 self.namespace = namespace
-                fname = namespace.lower() + ".c"
+                fname = namespace.lower() + ".cpp"
                 header = namespace.lower() + ".h"
                 self.indirection = 0
                 self.current_size = 0
@@ -527,7 +527,7 @@ class cpp(object):
                         ## x0r return "goto %s" %self.resolve_label(name)
                         if not hasglobal:
                                 name = self.expand(name, destination = True)
-                                self.body += "__disp = (dw)" + name + ";\n"
+                                self.body += "__disp = (dw)(" + name + ");\n"
                                 name = "__dispatch_call";
                         else:
                                 if isinstance(g, op.label) and g.far:
