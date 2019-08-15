@@ -1,3 +1,8 @@
+workflow "Example Workflow" {
+  on = "push"
+  resolves = ["autopep8", "python-lint"]
+}
+
 action "python-lint" {
   uses = "CyberZHG/github-action-python-lint@0.0.2"
 }
