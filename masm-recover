@@ -70,7 +70,7 @@ if not isinstance(numeric_level, int):
 numeric_level = logging.DEBUG
 logging.basicConfig(
 	handlers=[logging.FileHandler(name+'.log', 'w', 'utf-8')], 
-	format='%(levelname)s: %(message)s',
+	format="[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s",
 	level=numeric_level
 )
 
