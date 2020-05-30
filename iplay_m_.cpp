@@ -339,7 +339,7 @@ loc_10006:
 	R(CALL(k_memfree_125da));	// 36 call	near ptr _memfree_125DA
 	R(POP(dx));	// 37 pop	dx
 	R(MOV(ax, 0x3D00));	// 38 mov	ax, 3D00h
-	R(INT(0x21));	// 39 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
+	R(_INT(0x21));	// 39 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
 	R(MOV(bx, seg_offset(seg003)));	// 43 mov	bx, seg003
 	R(MOV(ds, bx));	// 44 mov	ds, bx
 	R(MOV(m._savesp_245D0, esp));	// 46 mov	_savesp_245D0,	sp
@@ -388,7 +388,7 @@ __disp = (dw)(ax);
 loc_1006b:
 	R(MOV(bx, m._fhandle_module));	// 99 mov	bx, _fhandle_module
 	R(MOV(ah, 0x3E));	// 100 mov	ah, 3Eh
-	R(INT(0x21));	// 101 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
+	R(_INT(0x21));	// 101 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
 	R(ADC(m._word_24662, 0));	// 103 adc	_word_24662, 0
 	R(CALL(k_ems_restore_mapctx));	// 104 call	_ems_restore_mapctx
 loc_1007b:
@@ -416,7 +416,7 @@ _lfreaderr:
 	R(PUSH(dx));	// 136 push	dx
 	R(MOV(bx, m._fhandle_module));	// 137 mov	bx, _fhandle_module
 	R(MOV(ah, 0x3E));	// 138 mov	ah, 3Eh
-	R(INT(0x21));	// 139 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
+	R(_INT(0x21));	// 139 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
 	R(CALL(k_ems_restore_mapctx));	// 141 call	_ems_restore_mapctx
 	R(PUSH(cs));	// 142 push	cs
 	R(CALL(k_memfree_125da));	// 143 call	near ptr _memfree_125DA
@@ -441,7 +441,7 @@ _mod_n_t_module:
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 168 xor	cx, cx
 	R(MOV(bx, m._fhandle_module));	// 169 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 170 mov	ax, 4200h
-	R(INT(0x21));	// 171 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 171 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(ADC(m._word_24662, 0));	// 173 adc	_word_24662, 0
 		R(JMP(loc_101b7));	// 174 jmp	loc_101B7
 _mod_flt8_module:
@@ -525,7 +525,7 @@ loc_101b7:
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 274 xor	cx, cx
 	R(MOV(bx, m._fhandle_module));	// 275 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4202));	// 276 mov	ax, 4202h
-	R(INT(0x21));	// 277 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 277 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(SHL(edx, 0x10));	// 279 shl	edx, 10h
 	R(MOV(dx, ax));	// 280 mov	dx, ax
 	R(PUSH(edx));	// 281 push	edx
@@ -533,7 +533,7 @@ loc_101b7:
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 283 xor	cx, cx
 	R(MOV(bx, m._fhandle_module));	// 284 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 285 mov	ax, 4200h
-	R(INT(0x21));	// 286 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 286 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(POP(edx));	// 288 pop	edx
 	R(MOVZX(eax, m._word_245F2));	// 289 movzx	eax, _word_245F2
 	R(SHL(eax, 0x0B));	// 290 shl	eax, 0Bh
@@ -1658,7 +1658,7 @@ loc_10caa:
 	R(ADC(cx, 0));	// 1596 adc	cx, 0
 	R(MOV(bx, m._fhandle_module));	// 1597 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 1598 mov	ax, 4200h
-	R(INT(0x21));	// 1599 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 1599 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(ADC(m._word_24662, 0));	// 1601 adc	_word_24662, 0
 	R(CALL(k_mod_readfile_11f4e));	// 1602 call	near ptr _mod_readfile_11F4E
 		R(JC(loc_10099));	// 1603 jb	loc_10099
@@ -1756,7 +1756,7 @@ loc_10e19:
 	R(MOV(cx, m._word_30564));	// 1706 mov	cx, _word_30564
 	R(MOV(bx, m._fhandle_module));	// 1707 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 1708 mov	ax, 4200h
-	R(INT(0x21));	// 1709 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 1709 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(ADC(m._word_24662, 0));	// 1711 adc	_word_24662, 0
 	R(MOV(cx, m._word_245F2));	// 1712 mov	cx, _word_245F2
 loc_10e4c:
@@ -2122,7 +2122,7 @@ loc_11152:
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 2136 xor	cx, cx
 	R(MOV(bx, m._fhandle_module));	// 2137 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2138 mov	ax, 4201h
-	R(INT(0x21));	// 2139 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2139 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(POP(di));	// 2141 pop	di		; out
 	R(MOV(*(dw*)(raddr(ds,di+0x38)), ax));	// 2142 mov	[di+38h], ax
 	R(MOV(*(dw*)(raddr(ds,di+0x3A)), dx));	// 2143 mov	[di+3Ah], dx
@@ -2177,7 +2177,7 @@ loc_11204:
 	R(MOV(cx, *(dw*)(raddr(ds,si+0x22))));	// 2201 mov	cx, [si+22h]
 	R(MOV(bx, m._fhandle_module));	// 2202 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2203 mov	ax, 4201h
-	R(INT(0x21));	// 2204 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2204 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(POP(di));	// 2206 pop	di
 	R(POP(si));	// 2207 pop	si
 	R(POP(cx));	// 2208 pop	cx
@@ -2366,7 +2366,7 @@ loc_113ff:
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 2417 xor	cx, cx
 	R(MOV(bx, m._fhandle_module));	// 2418 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2419 mov	ax, 4201h
-	R(INT(0x21));	// 2420 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2420 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(MOV(*(dw*)(raddr(ds,si)), ax));	// 2422 mov	[si], ax
 	R(MOV(*(dw*)(raddr(ds,si+2)), dx));	// 2423 mov	[si+2],	dx
 	R(MOV(cx, m._word_245F2));	// 2424 mov	cx, _word_245F2
@@ -2400,7 +2400,7 @@ loc_11443:
 	R(MOV(cx, *(dw*)(raddr(ds,si+2))));	// 2456 mov	cx, [si+2]
 	R(MOV(bx, m._fhandle_module));	// 2457 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 2458 mov	ax, 4200h
-	R(INT(0x21));	// 2459 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2459 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(MOV(*(raddr(ds,offset(seg003,_word_3063B)+1)), 1));	// 2461 mov	byte ptr [_word_3063B+1], 1
 	R(MOV(cx, 0x40));	// 2462 mov	cx, 40h	; '@'
 loc_1145a:
@@ -2418,7 +2418,7 @@ loc_1145a:
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 2476 xor	cx, cx
 	R(MOV(bx, m._fhandle_module));	// 2477 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2478 mov	ax, 4201h
-	R(INT(0x21));	// 2479 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2479 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(MOV(*(dw*)(raddr(ds,si)), ax));	// 2481 mov	[si], ax
 	R(MOV(*(dw*)(raddr(ds,si+2)), dx));	// 2482 mov	[si+2],	dx
 	R(POP(cx));	// 2483 pop	cx
@@ -2569,7 +2569,7 @@ _inr_read_118b0:
 	R(MOV(bx, m._fhandle_module));	// 2696 mov	bx, _fhandle_module
 	R(MOV(dx, offset(seg003,_aInertiaSample)));	// 2697 mov	dx, offset _aInertiaSample ; "Inertia Sample: "
 	R(MOV(ah, 0x3F));	// 2698 mov	ah, 3Fh
-	R(INT(0x21));	// 2699 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 2699 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(bx));	// 2702 pop	bx
 		R(JC(loc_119b2));	// 2703 jb	loc_119B2
 	R(di = bx);	// 2704 lea	di, [bx]
@@ -2601,7 +2601,7 @@ loc_1191c:
 	R(MOV(cx, 8));	// 2730 mov	cx, 8
 	R(MOV(bx, m._fhandle_module));	// 2731 mov	bx, _fhandle_module
 	R(MOV(ah, 0x3F));	// 2732 mov	ah, 3Fh
-	R(INT(0x21));	// 2733 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 2733 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 		R(JC(loc_119b2));	// 2736 jb	loc_119B2
 	R(MOV(eax, m._myin));	// 2737 mov	eax, _myin
 	R(MOV(m._dword_257A0, eax));	// 2738 mov	_dword_257A0, eax
@@ -2609,7 +2609,7 @@ loc_1191c:
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 2740 xor	dx, dx
 	R(MOV(bx, m._fhandle_module));	// 2741 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2742 mov	ax, 4201h
-	R(INT(0x21));	// 2743 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2743 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(SHL(edx, 0x10));	// 2745 shl	edx, 10h
 	R(MOV(dx, ax));	// 2746 mov	dx, ax
 	R(ADD(m._dword_257A0, edx));	// 2747 add	_dword_257A0, edx
@@ -2627,14 +2627,14 @@ loc_11967:
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 2761 xor	dx, dx
 	R(MOV(bx, m._fhandle_module));	// 2762 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2763 mov	ax, 4201h
-	R(INT(0x21));	// 2764 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2764 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(MOV(dx, ax));	// 2766 mov	dx, ax
 	R(MOV(cx, dx));	// 2767 mov	cx, dx
 	R(SUB(dx, 8));	// 2768 sub	dx, 8
 	R(SUB(cx, 0));	// 2769 sub	cx, 0
 	R(MOV(bx, m._fhandle_module));	// 2770 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 2771 mov	ax, 4200h
-	R(INT(0x21));	// 2772 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2772 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 		R(JMP(loc_119af));	// 2774 jmp	short loc_119AF
 loc_11991:
 	R(CMP(eax, 0x53444E45));	// 2778 cmp	eax, 53444E45h	; ENDS
@@ -2644,7 +2644,7 @@ loc_11999:
 	R(MOV(cx, *(dw*)(raddr(ds,offset(seg003,_dword_257A0)+2))));	// 2784 mov	cx, word ptr [_dword_257A0+2]
 	R(MOV(bx, m._fhandle_module));	// 2785 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 2786 mov	ax, 4200h
-	R(INT(0x21));	// 2787 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2787 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 		R(JC(loc_119b2));	// 2789 jb	short loc_119B2
 		R(JMP(loc_1191c));	// 2790 jmp	loc_1191C
 loc_119af:
@@ -2661,7 +2661,7 @@ _inr_read_119b7:
 	R(MOV(bx, m._fhandle_module));	// 2815 mov	bx, _fhandle_module
 	R(MOV(dx, di));	// 2816 mov	dx, di
 	R(MOV(ah, 0x3F));	// 2817 mov	ah, 3Fh
-	R(INT(0x21));	// 2818 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 2818 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(RETN);	// 2821 retn
  // Procedure _inr_module() start
 _inr_module:
@@ -2706,7 +2706,7 @@ loc_11a39:
 	R(MOV(bx, m._fhandle_module));	// 2868 mov	bx, _fhandle_module
 	R(MOV(dx, offset(seg003,_chrin)));	// 2869 mov	dx, offset _chrin
 	R(MOV(ah, 0x3F));	// 2870 mov	ah, 3Fh
-	R(INT(0x21));	// 2871 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 2871 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 		R(JC(loc_11b3d));	// 2874 jb	loc_11B3D
 	R(MOV(eax, m._myin));	// 2875 mov	eax, _myin
 	R(MOV(m._dword_257A0, eax));	// 2876 mov	_dword_257A0, eax
@@ -2714,7 +2714,7 @@ loc_11a39:
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 2878 xor	dx, dx
 	R(MOV(bx, m._fhandle_module));	// 2879 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4201));	// 2880 mov	ax, 4201h
-	R(INT(0x21));	// 2881 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2881 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(ADD(*(dw*)&m._dword_257A0, ax));	// 2883 add	word ptr [_dword_257A0],	ax
 	R(ADC(*(dw*)(raddr(ds,offset(seg003,_dword_257A0)+2)), dx));	// 2884 adc	word ptr [_dword_257A0+2], dx
 	R(MOV(eax, m._chrin));	// 2885 mov	eax, _chrin
@@ -2761,7 +2761,7 @@ loc_11ac0:
 	R(PUSH(ds));	// 2933 push	ds
 	R(MOV(ds, ax));	// 2934 mov	ds, ax
 	R(MOV(ah, 0x3F));	// 2935 mov	ah, 3Fh
-	R(INT(0x21));	// 2936 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 2936 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(ds));	// 2939 pop	ds
 		R(JC(loc_11b3d));	// 2940 jb	short loc_11B3D
 		R(JMP(loc_11b28));	// 2941 jmp	short loc_11B28
@@ -2791,7 +2791,7 @@ loc_11b28:
 	R(MOV(cx, *(dw*)(raddr(ds,offset(seg003,_dword_257A0)+2))));	// 2973 mov	cx, word ptr [_dword_257A0+2]
 	R(MOV(bx, m._fhandle_module));	// 2974 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 2975 mov	ax, 4200h
-	R(INT(0x21));	// 2976 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 2976 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 		R(JNC(loc_11a39));	// 2978 jnb	loc_11A39
 loc_11b3d:
 	R(MOV(ax, 0x0FFFE));	// 2982 mov	ax, 0FFFEh
@@ -2808,7 +2808,7 @@ _dosseek:
 	R(MOV(cx, ax));	// 3001 mov	cx, ax
 	R(MOV(bx, m._fhandle_module));	// 3002 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 3003 mov	ax, 4200h
-	R(INT(0x21));	// 3004 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 3004 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 	R(POP(dx));	// 3006 pop	dx
 	R(POP(cx));	// 3007 pop	cx
 	R(MOV(ax, 0x0FFFC));	// 3008 mov	ax, 0FFFCh
@@ -2817,7 +2817,7 @@ _dosseek:
 _dosfread:
 	R(MOV(bx, m._fhandle_module));	// 3018 mov	bx, _fhandle_module
 	R(MOV(ah, 0x3F));	// 3019 mov	ah, 3Fh
-	R(INT(0x21));	// 3020 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 3020 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(MOV(cx, ax));	// 3023 mov	cx, ax
 	R(MOV(ax, 0x0FFFC));	// 3024 mov	ax, 0FFFCh
 		R(JC(_lfreaderr));	// 3025 jb	_lfreaderr	; 1 problem here
@@ -3045,13 +3045,13 @@ _ems_init:
 	R(CMP(*(dd*)(raddr(es,0x0E)), 0x30585858));	// 3306 cmp	dword ptr es:[0Eh], 30585858h ;	XXX0
 		R(JNZ(loc_11e00));	// 3307 jnz	short loc_11E00
 	R(MOV(ah, 0x40));	// 3308 mov	ah, 40h	; '@'
-	R(INT(0x67));	// 3309 int	67h		;  - LIM EMS - GET MANAGER STATUS
+	R(_INT(0x67));	// 3309 int	67h		;  - LIM EMS - GET MANAGER STATUS
 	R(MOV(bx, ax));	// 3311 mov	bx, ax
 	R(MOV(ax, 2));	// 3312 mov	ax, 2
 	R(OR(bh, bh));	// 3313 or	bh, bh
 		R(JNZ(loc_11e00));	// 3314 jnz	short loc_11E00
 	R(MOV(ah, 0x46));	// 3315 mov	ah, 46h	; 'F'
-	R(INT(0x67));	// 3316 int	67h		;  - LIM EMS - GET EMM VERSION
+	R(_INT(0x67));	// 3316 int	67h		;  - LIM EMS - GET EMM VERSION
 	R(MOV(bx, ax));	// 3318 mov	bx, ax
 	R(MOV(ax, 2));	// 3319 mov	ax, 2
 	R(OR(bh, bh));	// 3320 or	bh, bh
@@ -3060,14 +3060,14 @@ _ems_init:
 	R(CMP(bl, 0x40));	// 3323 cmp	bl, 40h	; '@'
 		R(JC(loc_11e00));	// 3324 jb	short loc_11E00
 	R(MOV(ah, 0x41));	// 3325 mov	ah, 41h	; 'A'
-	R(INT(0x67));	// 3326 int	67h		;  - LIM EMS - GET PAGE	FRAME SEGMENT
+	R(_INT(0x67));	// 3326 int	67h		;  - LIM EMS - GET PAGE	FRAME SEGMENT
 	R(CMP(ah, 0));	// 3329 cmp	ah, 0
 	R(MOV(ax, 2));	// 3330 mov	ax, 2
 		R(JNZ(loc_11e00));	// 3331 jnz	short loc_11E00
 	R(MOV(m._ems_pageframe, bx));	// 3332 mov	_ems_pageframe, bx
 	R(MOV(ah, 0x43));	// 3333 mov	ah, 43h	; 'C'
 	R(MOV(bx, 1));	// 3334 mov	bx, 1
-	R(INT(0x67));	// 3335 int	67h		;  - LIM EMS - GET HANDLE AND ALLOCATE MEMORY
+	R(_INT(0x67));	// 3335 int	67h		;  - LIM EMS - GET HANDLE AND ALLOCATE MEMORY
 	R(CMP(ah, 0));	// 3338 cmp	ah, 0
 	R(MOV(ax, 8));	// 3339 mov	ax, 8
 		R(JNZ(loc_11e00));	// 3340 jnz	short loc_11E00
@@ -3088,7 +3088,7 @@ _ems_release:
 	R(CALL(k_ems_mapmem));	// 3362 call	_ems_mapmem
 	R(MOV(dx, m._ems_handle));	// 3363 mov	dx, _ems_handle
 	R(MOV(ah, 0x45));	// 3364 mov	ah, 45h	; 'E'
-	R(INT(0x67));	// 3365 int	67h		;  - LIM EMS - RELEASE HANDLE AND MEMORY
+	R(_INT(0x67));	// 3365 int	67h		;  - LIM EMS - RELEASE HANDLE AND MEMORY
 	R(MOV(m._ems_log_pagenum, 0));	// 3368 mov	_ems_log_pagenum, 0
 locret_11e1d:
 	R(RETN);	// 3371 retn
@@ -3099,7 +3099,7 @@ _ems_realloc:
 	R(MOV(dx, m._ems_handle));	// 3381 mov	dx, _ems_handle
 	R(MOV(bx, 1));	// 3382 mov	bx, 1
 	R(MOV(ah, 0x51));	// 3383 mov	ah, 51h	; 'Q'
-	R(INT(0x67));	// 3384 int	67h		;  - LIM EMS 4.0 - REALLOCATE PAGES
+	R(_INT(0x67));	// 3384 int	67h		;  - LIM EMS 4.0 - REALLOCATE PAGES
 	R(MOV(m._ems_log_pagenum, 0));	// 3389 mov	_ems_log_pagenum, 0
 locret_11e36:
 	R(RETN);	// 3392 retn
@@ -3119,7 +3119,7 @@ _ems_save_mapctx:
 loc_11e51:
 	R(MOV(dx, m._ems_handle));	// 3420 mov	dx, _ems_handle
 	R(MOV(ax, 0x4700));	// 3421 mov	ax, 4700h
-	R(INT(0x67));	// 3422 int	67h		;  - LIM EMS - SAVE MAPPING CONTEXT
+	R(_INT(0x67));	// 3422 int	67h		;  - LIM EMS - SAVE MAPPING CONTEXT
 	R(CMP(ah, 0));	// 3425 cmp	ah, 0
 		R(JZ(locret_11e67));	// 3426 jz	short locret_11E67
 	R(DEC(cx));	// 3427 dec	cx
@@ -3137,7 +3137,7 @@ _ems_restore_mapctx:
 loc_11e79:
 	R(MOV(dx, m._ems_handle));	// 3449 mov	dx, _ems_handle
 	R(MOV(ax, 0x4800));	// 3450 mov	ax, 4800h
-	R(INT(0x67));	// 3451 int	67h		;  - LIM EMS - RESTORE MAPPING CONTEXT
+	R(_INT(0x67));	// 3451 int	67h		;  - LIM EMS - RESTORE MAPPING CONTEXT
 	R(CMP(ah, 0));	// 3454 cmp	ah, 0
 		R(JZ(locret_11e8a));	// 3455 jz	short locret_11E8A
 	R(DEC(cx));	// 3456 dec	cx
@@ -3157,7 +3157,7 @@ loc_11e9e:
 	R(MOV(dx, m._ems_handle));	// 3480 mov	dx, _ems_handle
 	R(PUSH(bx));	// 3481 push	bx
 	R(MOV(ax, 0x4400));	// 3482 mov	ax, 4400h
-	R(INT(0x67));	// 3483 int	67h		;  - LIM EMS - MAP MEMORY
+	R(_INT(0x67));	// 3483 int	67h		;  - LIM EMS - MAP MEMORY
 	R(POP(bx));	// 3487 pop	bx
 	R(INC(bx));	// 3488 inc	bx
 		R(JZ(loc_11eb3));	// 3489 jz	short loc_11EB3
@@ -3167,7 +3167,7 @@ loc_11eb3:
 	R(MOV(bx, 0x0FFFF));	// 3494 mov	bx, 0FFFFh
 loc_11eb6:
 	R(MOV(ax, 0x4401));	// 3497 mov	ax, 4401h
-	R(INT(0x67));	// 3498 int	67h		;  - LIM EMS - MAP MEMORY
+	R(_INT(0x67));	// 3498 int	67h		;  - LIM EMS - MAP MEMORY
 	R(CMP(ah, 0));	// 3502 cmp	ah, 0
 	R(POP(bx));	// 3503 pop	bx
 		R(JZ(locret_11ec4));	// 3504 jz	short locret_11EC4
@@ -3188,7 +3188,7 @@ loc_11ed8:
 	R(MOV(dx, m._ems_handle));	// 3529 mov	dx, _ems_handle
 	R(PUSH(bx));	// 3530 push	bx
 	R(MOV(ax, 0x4402));	// 3531 mov	ax, 4402h
-	R(INT(0x67));	// 3532 int	67h		;  - LIM EMS - MAP MEMORY
+	R(_INT(0x67));	// 3532 int	67h		;  - LIM EMS - MAP MEMORY
 	R(POP(bx));	// 3536 pop	bx
 	R(INC(bx));	// 3537 inc	bx
 		R(JZ(loc_11eed));	// 3538 jz	short loc_11EED
@@ -3198,7 +3198,7 @@ loc_11eed:
 	R(MOV(bx, 0x0FFFF));	// 3543 mov	bx, 0FFFFh
 loc_11ef0:
 	R(MOV(ax, 0x4403));	// 3546 mov	ax, 4403h
-	R(INT(0x67));	// 3547 int	67h		;  - LIM EMS - MAP MEMORY
+	R(_INT(0x67));	// 3547 int	67h		;  - LIM EMS - MAP MEMORY
 	R(CMP(ah, 0));	// 3551 cmp	ah, 0
 	R(POP(bx));	// 3552 pop	bx
 		R(JZ(locret_11efe));	// 3553 jz	short locret_11EFE
@@ -3221,7 +3221,7 @@ _ems_realloc2:
 	R(MOV(dx, m._ems_handle));	// 3577 mov	dx, _ems_handle
 	R(ADD(bx, m._ems_log_pagenum));	// 3578 add	bx, _ems_log_pagenum
 	R(PUSH(bx));	// 3579 push	bx
-	R(INT(0x67));	// 3580 int	67h		;  - LIM EMS 4.0 - REALLOCATE PAGES
+	R(_INT(0x67));	// 3580 int	67h		;  - LIM EMS 4.0 - REALLOCATE PAGES
 	R(POP(bx));	// 3585 pop	bx
 	R(CMP(ah, 0));	// 3586 cmp	ah, 0
 		R(JNZ(loc_11f3c));	// 3587 jnz	short loc_11F3C
@@ -3268,7 +3268,7 @@ loc_11f70:
 	R(MOV(cx, *(dw*)(raddr(ds,di+0x3A))));	// 3638 mov	cx, [di+3Ah]
 	R(MOV(bx, m._fhandle_module));	// 3639 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 3640 mov	ax, 4200h
-	R(INT(0x21));	// 3641 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 3641 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 loc_11fa9:
 	R(MOV(bx, m._fhandle_module));	// 3645 mov	bx, _fhandle_module
 	R(MOV(ecx, *(dd*)(raddr(ds,di+0x20))));	// 3646 mov	ecx, [di+20h]
@@ -3319,7 +3319,7 @@ loc_11ff7:
 	R(MOV(cx, *(dw*)(raddr(ds,di+0x3A))));	// 3700 mov	cx, [di+3Ah]
 	R(MOV(bx, m._fhandle_module));	// 3701 mov	bx, _fhandle_module
 	R(MOV(ax, 0x4200));	// 3702 mov	ax, 4200h
-	R(INT(0x21));	// 3703 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 3703 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 loc_12027:
 	R(TEST(*(raddr(ds,di+0x3C)), 4));	// 3707 test	byte ptr [di+3Ch], 4
 		R(JZ(loc_1206b));	// 3708 jz	short loc_1206B
@@ -3360,7 +3360,7 @@ loc_12075:
 	R(PUSH(di));	// 3749 push	di
 	R(PUSH(ds));	// 3750 push	ds
 	R(LDS(dx, m._dma_buf_pointer));	// 3751 lds	dx, _dma_buf_pointer
-	R(INT(0x21));	// 3752 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 3752 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(ds));	// 3755 pop	ds
 	R(POP(di));	// 3756 pop	di
 	R(ADC(m._word_24662, 0));	// 3757 adc	_word_24662, 0
@@ -3385,7 +3385,7 @@ loc_120c4:
 	R(PUSH(cx));	// 3780 push	cx
 	R(PUSH(ds));	// 3781 push	ds
 	R(LDS(dx, m._dma_buf_pointer));	// 3782 lds	dx, _dma_buf_pointer
-	R(INT(0x21));	// 3783 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 3783 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(ds));	// 3786 pop	ds
 	R(POP(cx));	// 3787 pop	cx
 	R(POP(di));	// 3788 pop	di
@@ -3562,7 +3562,7 @@ loc_12271:
 	R(PUSH(ds));	// 3993 push	ds
 	R(MOV(ds, bp));	// 3994 mov	ds, bp
 	R(MOV(ah, 0x3F));	// 3996 mov	ah, 3Fh
-	R(INT(0x21));	// 3997 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 3997 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(ds));	// 4000 pop	ds
 	R(PUSHF);	// 4002 pushf
 	R(PUSH(ax));	// 4003 push	ax
@@ -6686,7 +6686,7 @@ _vlm_141df:
 	R(MOV(bx, 0x5344));	// 8164 mov	bx, 5344h	; DS
 	R(MOV(cx, 0x4D50));	// 8165 mov	cx, 4D50h	; MP
 	R(MOV(ax, 0x60FF));	// 8166 mov	ax, 60FFh
-	R(INT(0x2F));	// 8167 int	2Fh		; IPLAY: get data seg
+	R(_INT(0x2F));	// 8167 int	2Fh		; IPLAY: get data seg
 	R(RETN);	// 8168 retn
  // Procedure _snd_initialze() start
 _snd_initialze:
@@ -12198,7 +12198,7 @@ _restore_intvector:
 _getint_vect:
 	R(PUSH(es));	// 15845 push	es
 	R(MOV(ah, 0x35));	// 15846 mov	ah, 35h
-	R(INT(0x21));	// 15847 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	R(_INT(0x21));	// 15847 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
 	R(MOV(dx, es));	// 15850 mov	dx, es
 	R(POP(es));	// 15851 pop	es
 	R(RETN);	// 15853 retn
@@ -12208,7 +12208,7 @@ _setint_vect:
 	R(MOV(ds, dx));	// 15863 mov	ds, dx
 	R(MOV(dx, bx));	// 15864 mov	dx, bx
 	R(MOV(ah, 0x25));	// 15865 mov	ah, 25h
-	R(INT(0x21));	// 15866 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 15866 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(POP(ds));	// 15869 pop	ds
 	R(RETN);	// 15870 retn
  // Procedure _memalloc() start
@@ -12218,7 +12218,7 @@ _memalloc:
 	R(CMP(ebx, 0x10000));	// 15882 cmp	ebx, 10000h
 		R(JNC(loc_18ad9));	// 15883 jnb	short loc_18AD9
 	R(MOV(ah, 0x48));	// 15884 mov	ah, 48h
-	R(INT(0x21));	// 15885 int	21h		; DOS -	2+ - ALLOCATE MEMORY
+	R(_INT(0x21));	// 15885 int	21h		; DOS -	2+ - ALLOCATE MEMORY
 	R(RETN);	// 15887 retn
 loc_18ad9:
 	R(MOV(ax, 8));	// 15891 mov	ax, 8
@@ -12229,7 +12229,7 @@ _memfree:
 	R(PUSH(es));	// 15902 push	es
 	R(MOV(es, ax));	// 15903 mov	es, ax
 	R(MOV(ah, 0x49));	// 15905 mov	ah, 49h
-	R(INT(0x21));	// 15906 int	21h		; DOS -	2+ - FREE MEMORY
+	R(_INT(0x21));	// 15906 int	21h		; DOS -	2+ - FREE MEMORY
 	R(POP(es));	// 15908 pop	es
 	R(RETN);	// 15909 retn
  // Procedure _memrealloc() start
@@ -12240,7 +12240,7 @@ _memrealloc:
 		R(JNC(loc_18aff));	// 15921 jnb	short loc_18AFF
 	R(MOV(es, ax));	// 15922 mov	es, ax
 	R(MOV(ah, 0x4A));	// 15923 mov	ah, 4Ah
-	R(INT(0x21));	// 15924 int	21h		; DOS -	2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+	R(_INT(0x21));	// 15924 int	21h		; DOS -	2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
 	R(RETN);	// 15927 retn
 loc_18aff:
 	R(MOV(ax, 8));	// 15931 mov	ax, 8
@@ -12251,19 +12251,19 @@ _setmemallocstrat:
 	R(PUSH(ax));	// 15942 push	ax
 	R(MOVZX(bx, al));	// 15943 movzx	bx, al
 	R(MOV(ax, 0x5801));	// 15944 mov	ax, 5801h
-	R(INT(0x21));	// 15945 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
+	R(_INT(0x21));	// 15945 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
 	R(POP(bx));	// 15947 pop	bx
 	R(SHR(bx, 8));	// 15948 shr	bx, 8
 	R(MOV(ax, 0x5803));	// 15949 mov	ax, 5803h
-	R(INT(0x21));	// 15950 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
+	R(_INT(0x21));	// 15950 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
 	R(RETN);	// 15952 retn
  // Procedure _getmemallocstrat() start
 _getmemallocstrat:
 	R(MOV(ax, 0x5800));	// 15961 mov	ax, 5800h
-	R(INT(0x21));	// 15962 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
+	R(_INT(0x21));	// 15962 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
 	R(PUSH(ax));	// 15964 push	ax
 	R(MOV(ax, 0x5802));	// 15965 mov	ax, 5802h
-	R(INT(0x21));	// 15966 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
+	R(_INT(0x21));	// 15966 int	21h		; DOS -	3+ - GET/SET MEMORY ALLOCATION STRATEGY
 	R(POP(bx));	// 15968 pop	bx
 	R(MOV(ah, al));	// 15969 mov	ah, al
 	R(MOV(al, bl));	// 15970 mov	al, bl
@@ -12381,7 +12381,7 @@ _sb16_sound_off:
  // Procedure _initclockfromrtc() start
 _initclockfromrtc:
 	R(MOV(ah, 2));	// 16150 mov	ah, 2
-	R(INT(0x1A));	// 16151 int	1Ah		; CLOCK	- READ REAL TIME CLOCK (AT,XT286,CONV,PS)
+	R(_INT(0x1A));	// 16151 int	1Ah		; CLOCK	- READ REAL TIME CLOCK (AT,XT286,CONV,PS)
 	eax = 0;AFFECT_ZF(0); AFFECT_SF(eax,0);	// 16155 xor	eax, eax
 	R(MOV(al, dh));	// 16156 mov	al, dh
 	R(MOV(ah, al));	// 16157 mov	ah, al
@@ -12660,7 +12660,7 @@ loc_19053:
 loc_19057:
 	R(MOV(dx, offset(dseg,_aCurrentSoundcard)));	// 16935 mov	dx, offset _aCurrentSoundcard
 	R(MOV(ah, 9));	// 16936 mov	ah, 9
-	R(INT(0x21));	// 16937 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 16937 int	21h		; DOS -	PRINT STRING
 	R(MOV(ax, ds));	// 16939 mov	ax, ds
 	R(MOV(es, ax));	// 16940 mov	es, ax
 	R(MOV(di, offset(dseg,_buffer_1)));	// 16942 mov	di, offset _buffer_1 ; 2800h
@@ -12669,23 +12669,23 @@ loc_19057:
 loc_1906e:
 	R(MOV(dx, offset(dseg,_buffer_1)));	// 16947 mov	dx, offset _buffer_1
 	R(MOV(ah, 9));	// 16948 mov	ah, 9
-	R(INT(0x21));	// 16949 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 16949 int	21h		; DOS -	PRINT STRING
 	R(MOV(dx, offset(dseg,_myendl)));	// 16951 mov	dx, offset _myendl ; "\r\n$"
 	R(MOV(ah, 9));	// 16952 mov	ah, 9
-	R(INT(0x21));	// 16953 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 16953 int	21h		; DOS -	PRINT STRING
 loc_1907c:
 	R(CALLF(k_deinit_125b9));	// 16957 call	_deinit_125B9
 	R(MOV(ax, 0x4C00));	// 16958 mov	ax, 4C00h
 loc_19084:
-	R(INT(0x21));	// 16961 int	21h		; AL = exit code
+	R(_INT(0x21));	// 16961 int	21h		; AL = exit code
 loc_19086:
 	R(MOV(dx, 0));	// 16965 mov	dx, 0
 	R(MOV(ah, 9));	// 16966 mov	ah, 9
-	R(INT(0x21));	// 16967 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 16967 int	21h		; DOS -	PRINT STRING
 loc_1908d:
 	R(MOV(ax, 0x4C00));	// 16971 mov	ax, 4C00h
 loc_19090:
-	R(INT(0x21));	// 16974 int	21h		; AL = exit code
+	R(_INT(0x21));	// 16974 int	21h		; AL = exit code
  // Procedure _start() start
 _start:
 	R(MOV(ax, seg_offset(dseg)));	// 16987 mov	ax, dseg
@@ -12702,7 +12702,7 @@ loc_190a2:
 	R(MOV(ax, es));	// 17001 mov	ax, es
 	R(SUB(bx, ax));	// 17002 sub	bx, ax
 	R(MOV(ah, 0x4A));	// 17003 mov	ah, 4Ah
-	R(INT(0x21));	// 17004 int	21h		; DOS -	2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+	R(_INT(0x21));	// 17004 int	21h		; DOS -	2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
 	R(CLD);	// 17007 cld
 loc_190b1:
 	dl = 0;AFFECT_ZF(0); AFFECT_SF(dl,0);	// 17010 xor	dl, dl
@@ -12710,17 +12710,17 @@ loc_190b1:
 	R(MOV(bx, 0x5344));	// 17012 mov	bx, 5344h	; DS
 	R(MOV(ax, 0x60FF));	// 17013 mov	ax, 60FFh
 loc_190bc:
-	R(INT(0x2F));	// 17016 int	2Fh
+	R(_INT(0x2F));	// 17016 int	2Fh
 	R(CMP(ax, 0x4F4B));	// 17017 cmp	ax, 4F4Bh	; 'KO' check for single instance
 		R(JNZ(loc_190d3));	// 17018 jnz	short loc_190D3
 	R(MOV(dx, offset(dseg,_aCriticalErrorT)));	// 17019 mov	dx, offset _aCriticalErrorT ; "\r\n\nCritical error: The	player jumped to"...
 	R(MOV(ah, 9));	// 17020 mov	ah, 9
-	R(INT(0x21));	// 17021 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 17021 int	21h		; DOS -	PRINT STRING
 	ah = 0;AFFECT_ZF(0); AFFECT_SF(ah,0);	// 17023 xor	ah, ah
-	R(INT(0x16));	// 17024 int	16h		; KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
+	R(_INT(0x16));	// 17024 int	16h		; KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
 loc_190ce:
 	R(MOV(ax, 0x4C02));	// 17028 mov	ax, 4C02h
-	R(INT(0x21));	// 17029 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
+	R(_INT(0x21));	// 17029 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
 loc_190d3:
 	R(CALL(k_loadcfg));	// 17034 call	_loadcfg
 	R(CALL(k_parse_cmdline));	// 17035 call	_parse_cmdline
@@ -12779,21 +12779,21 @@ loc_19161:
 loc_1917d:
 	R(MOV(m._videomempointer, 0x0B8000000));	// 17100 mov	_videomempointer, 0B8000000h
 	R(MOV(ax, 0x3508));	// 17101 mov	ax, 3508h
-	R(INT(0x21));	// 17102 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17102 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
 	R(MOV(m._oint8off_1DE14, bx));	// 17105 mov	_oint8off_1DE14, bx
 	R(MOV(m._oint8seg_1DE16, es));	// 17106 mov	_oint8seg_1DE16, es
 	R(MOV(ax, 0x3509));	// 17107 mov	ax, 3509h
-	R(INT(0x21));	// 17108 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17108 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint9_1C1A4))), bx));	// 17111 mov	word ptr cs:[_oint9_1C1A4], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint9_1C1A4)+2)), es));	// 17112 mov	word ptr cs:[_oint9_1C1A4+2], es
 loc_191a2:
 	R(MOV(ax, 0x3524));	// 17115 mov	ax, 3524h
 loc_191a5:
-	R(INT(0x21));	// 17118 int	21h		; AL = interrupt number
+	R(_INT(0x21));	// 17118 int	21h		; AL = interrupt number
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint24_1C1AC))), bx));	// 17120 mov	word ptr cs:[_oint24_1C1AC], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint24_1C1AC)+2)), es));	// 17121 mov	word ptr cs:[_oint24_1C1AC+2], es
 	R(MOV(ax, 0x352F));	// 17122 mov	ax, 352Fh
-	R(INT(0x21));	// 17123 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17123 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint2f_1C1B4))), bx));	// 17126 mov	word ptr cs:[_oint2f_1C1B4], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint2f_1C1B4)+2)), es));	// 17127 mov	word ptr cs:[_oint2f_1C1B4+2], es
 	R(PUSH(ds));	// 17128 push	ds
@@ -12801,23 +12801,23 @@ loc_191a5:
 	R(MOV(ds, ax));	// 17130 mov	ds, ax
 	R(MOV(dx, k_int9_keyb));	// 17132 mov	dx, offset _int9_keyb
 	R(MOV(ax, 0x2509));	// 17133 mov	ax, 2509h
-	R(INT(0x21));	// 17134 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17134 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(MOV(dx, k_int24));	// 17137 mov	dx, offset _int24
 	R(MOV(ax, 0x2524));	// 17138 mov	ax, 2524h
-	R(INT(0x21));	// 17139 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17139 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(MOV(dx, k_int2f_checkmyself));	// 17142 mov	dx, offset _int2f_checkmyself
 	R(MOV(ax, 0x252F));	// 17143 mov	ax, 252Fh
 loc_191db:
-	R(INT(0x21));	// 17146 int	21h		; AL = interrupt number
+	R(_INT(0x21));	// 17146 int	21h		; AL = interrupt number
 	R(POP(ds));	// 17148 pop	ds
 	R(MOV(ah, 0x34));	// 17150 mov	ah, 34h
-	R(INT(0x21));	// 17151 int	21h		; DOS -	2+ internal - RETURN CritSectFlag (InDOS) POINTER
+	R(_INT(0x21));	// 17151 int	21h		; DOS -	2+ internal - RETURN CritSectFlag (InDOS) POINTER
 	R(MOV(m._critsectpoint_off, bx));	// 17152 mov	_critsectpoint_off, bx
 	R(MOV(m._critsectpoint_seg, es));	// 17153 mov	_critsectpoint_seg, es
 loc_191ea:
 	R(PUSH(ds));	// 17156 push	ds
 	R(MOV(ax, 0x5D06));	// 17157 mov	ax, 5D06h
-	R(INT(0x21));	// 17158 int	21h		; DOS -	3.1+ internal -	GET ADDRESS OF DOS SWAPPABLE DATA AREA
+	R(_INT(0x21));	// 17158 int	21h		; DOS -	3.1+ internal -	GET ADDRESS OF DOS SWAPPABLE DATA AREA
 	R(MOV(ax, ds));	// 17160 mov	ax, ds
 	R(POP(ds));	// 17161 pop	ds
 	R(MOV(m._swapdata_off, si));	// 17162 mov	_swapdata_off,	si
@@ -12860,20 +12860,20 @@ loc_19256:
 	R(PUSH(ds));	// 17200 push	ds
 	R(LDS(dx, *(dd*)(raddr(cs,offset(seg001,_oint2f_1C1B4)))));	// 17201 lds	dx, cs:[_oint2f_1C1B4]
 	R(MOV(ax, 0x252F));	// 17202 mov	ax, 252Fh
-	R(INT(0x21));	// 17203 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17203 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(POP(ds));	// 17206 pop	ds
 	R(PUSH(ds));	// 17207 push	ds
 	R(LDS(dx, *(dd*)(raddr(cs,offset(seg001,_oint24_1C1AC)))));	// 17208 lds	dx, cs:[_oint24_1C1AC]
 	R(MOV(ax, 0x2524));	// 17209 mov	ax, 2524h
-	R(INT(0x21));	// 17210 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17210 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(POP(ds));	// 17213 pop	ds
 	R(PUSH(ds));	// 17214 push	ds
 	R(LDS(dx, *(dd*)(raddr(cs,offset(seg001,_oint9_1C1A4)))));	// 17215 lds	dx, cs:[_oint9_1C1A4]
 	R(MOV(ax, 0x2509));	// 17216 mov	ax, 2509h
-	R(INT(0x21));	// 17217 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 17217 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(POP(ds));	// 17220 pop	ds
 	R(MOV(ax, 3));	// 17221 mov	ax, 3
-	R(INT(0x10));	// 17222 int	10h		; - VIDEO - SET	VIDEO MODE
+	R(_INT(0x10));	// 17222 int	10h		; - VIDEO - SET	VIDEO MODE
 	R(CALL(k_txt_enableblink));	// 17224 call	_txt_enableblink
 	R(MOV(cx, 0));	// 17225 mov	cx, 0
 	R(MOV(dx, 0x124F));	// 17226 mov	dx, 124Fh
@@ -12887,23 +12887,23 @@ loc_19256:
 	R(MOV(dx, 0x1300));	// 17235 mov	dx, 1300h
 	bh = 0;AFFECT_ZF(0); AFFECT_SF(bh,0);	// 17236 xor	bh, bh
 	R(MOV(ah, 2));	// 17237 mov	ah, 2
-	R(INT(0x10));	// 17238 int	10h		; - VIDEO - SET	CURSOR POSITION
+	R(_INT(0x10));	// 17238 int	10h		; - VIDEO - SET	CURSOR POSITION
 	R(CMP(m._byte_1DE7E, 0));	// 17241 cmp	_byte_1DE7E, 0
 		R(JZ(loc_192c3));	// 17242 jz	short loc_192C3
 	R(MOV(dx, 0x1400));	// 17243 mov	dx, 1400h
 	bh = 0;AFFECT_ZF(0); AFFECT_SF(bh,0);	// 17244 xor	bh, bh
 	R(MOV(ah, 2));	// 17245 mov	ah, 2
-	R(INT(0x10));	// 17246 int	10h		; - VIDEO - SET	CURSOR POSITION
+	R(_INT(0x10));	// 17246 int	10h		; - VIDEO - SET	CURSOR POSITION
 loc_192b9:
 	R(PUSH(ds));	// 17251 push	ds
 	R(LDS(dx, m._messagepointer));	// 17252 lds	dx, _messagepointer
 	R(MOV(ah, 9));	// 17253 mov	ah, 9
-	R(INT(0x21));	// 17254 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 17254 int	21h		; DOS -	PRINT STRING
 	R(POP(ds));	// 17256 pop	ds
 loc_192c3:
 	R(MOV(ah, 0x4C));	// 17259 mov	ah, 4Ch	; 'L'
 	R(MOV(al, m._byte_1DE7E));	// 17260 mov	al, _byte_1DE7E
-	R(INT(0x21));	// 17261 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
+	R(_INT(0x21));	// 17261 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
 loc_192ca:
 	R(MOV(m._byte_1DE7E, 5));	// 17265 mov	_byte_1DE7E, 5
 	R(MOV(*(dw*)&m._messagepointer, offset(dseg,_aNotEnoughMemor)));	// 17266 mov	word ptr [_messagepointer], offset _aNotEnoughMemor ; "Not enough	memory.\r\n$"
@@ -12947,14 +12947,14 @@ loc_192ff:
 	R(MOV(ax, 0x7803));	// 17309 mov	ax, 7803h
 	R(CALL(k_draw_frame));	// 17310 call	_draw_frame
 	R(MOV(ah, 0x19));	// 17311 mov	ah, 19h
-	R(INT(0x21));	// 17312 int	21h		; DOS -	GET DEFAULT DISK NUMBER
+	R(_INT(0x21));	// 17312 int	21h		; DOS -	GET DEFAULT DISK NUMBER
 	R(MOV(edx, 0x5C3A41));	// 17313 mov	edx, 5C3A41h	; "A:\"
 	R(ADD(dl, al));	// 17314 add	dl, al
 	R(MOV(m._buffer_1DC6C, edx));	// 17315 mov	_buffer_1DC6C,	edx
 	R(MOV(si, offset(dseg,_buffer_1DC6C)+3));	// 17316 mov	si, (offset _buffer_1DC6C+3)
 	dl = 0;AFFECT_ZF(0); AFFECT_SF(dl,0);	// 17317 xor	dl, dl
 	R(MOV(ah, 0x47));	// 17318 mov	ah, 47h
-	R(INT(0x21));	// 17319 int	21h		; DOS -	2+ - GET CURRENT DIRECTORY
+	R(_INT(0x21));	// 17319 int	21h		; DOS -	2+ - GET CURRENT DIRECTORY
 	R(MOV(si, offset(dseg,_buffer_1DC6C)));	// 17322 mov	si, offset _buffer_1DC6C
 	R(CALL(k_mystrlen));	// 17323 call	_mystrlen
 	R(SHR(ax, 1));	// 17324 shr	ax, 1
@@ -13105,7 +13105,7 @@ loc_194eb:
 	R(MOV(m._byte_1DE7F, 1));	// 17484 mov	_byte_1DE7F, 1
 	R(MOV(dx, offset(dseg,_buffer_1DB6C)));	// 17485 mov	dx, offset _buffer_1DB6C
 	R(MOV(ah, 0x3B));	// 17486 mov	ah, 3Bh
-	R(INT(0x21));	// 17487 int	21h		; DOS -	2+ - CHANGE THE	CURRENT	DIRECTORY (CHDIR)
+	R(_INT(0x21));	// 17487 int	21h		; DOS -	2+ - CHANGE THE	CURRENT	DIRECTORY (CHDIR)
 	R(MOV(m._word_1DE62, 0));	// 17489 mov	_word_1DE62, 0
 	R(MOV(m._word_1DE5E, 0));	// 17490 mov	_word_1DE5E, 0
 		R(JMP(loc_192ff));	// 17491 jmp	loc_192FF
@@ -13120,10 +13120,10 @@ loc_19506:
 	R(INC(bl));	// 17502 inc	bl
 	R(PUSH(dx));	// 17503 push	dx
 	R(MOV(ax, 0x440F));	// 17504 mov	ax, 440Fh
-	R(INT(0x21));	// 17505 int	21h		; DOS -	2+ - IOCTL -
+	R(_INT(0x21));	// 17505 int	21h		; DOS -	2+ - IOCTL -
 	R(POP(dx));	// 17506 pop	dx
 	R(MOV(ah, 0x0E));	// 17507 mov	ah, 0Eh
-	R(INT(0x21));	// 17508 int	21h		; DOS -	SELECT DISK
+	R(_INT(0x21));	// 17508 int	21h		; DOS -	SELECT DISK
 	R(MOV(m._word_1DE62, 0));	// 17511 mov	_word_1DE62, 0
 	R(MOV(m._word_1DE5E, 0));	// 17512 mov	_word_1DE5E, 0
 		R(JMP(loc_192ff));	// 17513 jmp	loc_192FF
@@ -13295,7 +13295,7 @@ loc_196f1:
 	R(CALL(k_message_1be77));	// 17710 call	_message_1BE77
 	R(MOV(dx, offset(dseg,_aFile)));	// 17711 mov	dx, offset _aFile ; "File"
 	R(MOV(ah, 0x41));	// 17712 mov	ah, 41h
-	R(INT(0x21));	// 17713 int	21h		; DOS -	2+ - DELETE A FILE (UNLINK)
+	R(_INT(0x21));	// 17713 int	21h		; DOS -	2+ - DELETE A FILE (UNLINK)
 	R(POP(fs));	// 17715 pop	fs
 	R(POP(cx));	// 17716 pop	cx
 loc_19744:
@@ -13400,14 +13400,14 @@ loc_19880:
 _dosgetcurdir:
 	R(PUSH(si));	// 17850 push	si
 	R(MOV(ah, 0x19));	// 17851 mov	ah, 19h
-	R(INT(0x21));	// 17852 int	21h		; DOS -	GET DEFAULT DISK NUMBER
+	R(_INT(0x21));	// 17852 int	21h		; DOS -	GET DEFAULT DISK NUMBER
 	R(POP(si));	// 17853 pop	si
 	R(MOV(*(raddr(ds,si)), al));	// 17854 mov	[si], al
 	R(MOV(*(raddr(ds,si+1)), '\\'));	// 17855 mov	byte ptr [si+1], '\'
 	R(ADD(si, 2));	// 17856 add	si, 2
 	dl = 0;AFFECT_ZF(0); AFFECT_SF(dl,0);	// 17857 xor	dl, dl
 	R(MOV(ah, 0x47));	// 17858 mov	ah, 47h
-	R(INT(0x21));	// 17859 int	21h		; DOS -	2+ - GET CURRENT DIRECTORY
+	R(_INT(0x21));	// 17859 int	21h		; DOS -	2+ - GET CURRENT DIRECTORY
 	R(RETN);	// 17862 retn
  // Procedure _doschdir() start
 _doschdir:
@@ -13415,10 +13415,10 @@ _doschdir:
 	R(INC(si));	// 17872 inc	si
 	R(PUSH(si));	// 17873 push	si
 	R(MOV(ah, 0x0E));	// 17874 mov	ah, 0Eh
-	R(INT(0x21));	// 17875 int	21h		; DOS -	SELECT DISK
+	R(_INT(0x21));	// 17875 int	21h		; DOS -	SELECT DISK
 	R(POP(dx));	// 17878 pop	dx
 	R(MOV(ah, 0x3B));	// 17879 mov	ah, 3Bh
-	R(INT(0x21));	// 17880 int	21h		; DOS -	2+ - CHANGE THE	CURRENT	DIRECTORY (CHDIR)
+	R(_INT(0x21));	// 17880 int	21h		; DOS -	2+ - CHANGE THE	CURRENT	DIRECTORY (CHDIR)
 	R(RETN);	// 17882 retn
 _recolortxtx:
 	R(MOV(ax, m._word_1DE62));	// 17889 mov	ax, _word_1DE62
@@ -13630,11 +13630,11 @@ _modules_search:
 		R(JZ(loc_19a6e));	// 18141 jz	short loc_19A6E
 	R(MOV(es, m._word_1DE52));	// 18142 mov	es, _word_1DE52
 	R(MOV(ah, 0x49));	// 18144 mov	ah, 49h
-	R(INT(0x21));	// 18145 int	21h		; DOS -	2+ - FREE MEMORY
+	R(_INT(0x21));	// 18145 int	21h		; DOS -	2+ - FREE MEMORY
 loc_19a6e:
 	R(MOV(bx, 0x1000));	// 18149 mov	bx, 1000h
 	R(MOV(ah, 0x48));	// 18150 mov	ah, 48h
-	R(INT(0x21));	// 18151 int	21h		; DOS -	2+ - ALLOCATE MEMORY
+	R(_INT(0x21));	// 18151 int	21h		; DOS -	2+ - ALLOCATE MEMORY
 		R(JC(loc_19250));	// 18153 jb	loc_19250
 	R(MOV(m._word_1DE52, ax));	// 18154 mov	_word_1DE52, ax
 	R(MOV(es, ax));	// 18155 mov	es, ax
@@ -13756,7 +13756,7 @@ loc_19bdd:
 	R(TEST(m._configword, 0x20));	// 18286 test	byte ptr [_configword], 20h
 		R(JNZ(loc_19c80));	// 18287 jnz	loc_19C80
 	R(MOV(ax, 0x3D00));	// 18288 mov	ax, 3D00h
-	R(INT(0x21));	// 18289 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
+	R(_INT(0x21));	// 18289 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
 		R(JC(loc_19c86));	// 18293 jb	loc_19C86
 	R(MOV(bx, ax));	// 18294 mov	bx, ax
 	R(MOV(dx, offset(dseg,_buffer_1DC6C)));	// 18295 mov	dx, offset _buffer_1DC6C
@@ -13764,11 +13764,11 @@ loc_19bdd:
 	R(MOV(cx, 0x80));	// 18297 mov	cx, 80h	; 'À'
 	R(MOV(ah, 0x3F));	// 18298 mov	ah, 3Fh	; '?'
 	R(PUSH(bx));	// 18299 push	bx
-	R(INT(0x21));	// 18300 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 18300 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(bx));	// 18303 pop	bx
 	R(PUSHF);	// 18304 pushf
 	R(MOV(ah, 0x3E));	// 18305 mov	ah, 3Eh
-	R(INT(0x21));	// 18306 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
+	R(_INT(0x21));	// 18306 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
 	R(POPF);	// 18308 popf
 		R(JC(loc_19c86));	// 18309 jb	short loc_19C86
 	R(MOV(si, offset(dseg,_byte_1DC7C)));	// 18310 mov	si, offset _byte_1DC7C
@@ -13822,15 +13822,15 @@ loc_19c99:
 		R(JNC(loc_19b3c));	// 18368 jnb	loc_19B3C
 loc_19ca2:
 	R(MOV(ah, 0x19));	// 18372 mov	ah, 19h
-	R(INT(0x21));	// 18373 int	21h		; DOS -	GET DEFAULT DISK NUMBER
+	R(_INT(0x21));	// 18373 int	21h		; DOS -	GET DEFAULT DISK NUMBER
 	R(PUSH(ax));	// 18374 push	ax
 	dl = 0;AFFECT_ZF(0); AFFECT_SF(dl,0);	// 18375 xor	dl, dl
 loc_19ca9:
 	R(PUSH(dx));	// 18378 push	dx
 	R(MOV(ah, 0x0E));	// 18379 mov	ah, 0Eh
-	R(INT(0x21));	// 18380 int	21h		; DOS -	SELECT DISK
+	R(_INT(0x21));	// 18380 int	21h		; DOS -	SELECT DISK
 	R(MOV(ah, 0x19));	// 18383 mov	ah, 19h
-	R(INT(0x21));	// 18384 int	21h		; DOS -	GET DEFAULT DISK NUMBER
+	R(_INT(0x21));	// 18384 int	21h		; DOS -	GET DEFAULT DISK NUMBER
 	R(POP(dx));	// 18385 pop	dx
 	R(CMP(al, dl));	// 18386 cmp	al, dl
 		R(JNZ(loc_19cdf));	// 18387 jnz	short loc_19CDF
@@ -13851,14 +13851,14 @@ loc_19ce1:
 		R(JC(loc_19ca9));	// 18405 jb	short loc_19CA9
 	R(POP(dx));	// 18406 pop	dx
 	R(MOV(ah, 0x0E));	// 18407 mov	ah, 0Eh
-	R(INT(0x21));	// 18408 int	21h		; DOS -	SELECT DISK
+	R(_INT(0x21));	// 18408 int	21h		; DOS -	SELECT DISK
 	R(MOV(es, m._word_1DE52));	// 18411 mov	es, _word_1DE52
 	R(MOV(ax, m._word_1DE54));	// 18413 mov	ax, _word_1DE54
 	R(MOV(bx, ax));	// 18414 mov	bx, ax
 	R(SHL(ax, 1));	// 18415 shl	ax, 1
 	R(ADD(bx, ax));	// 18416 add	bx, ax
 	R(MOV(ah, 0x4A));	// 18417 mov	ah, 4Ah
-	R(INT(0x21));	// 18418 int	21h		; DOS -	2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+	R(_INT(0x21));	// 18418 int	21h		; DOS -	2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
 	R(CLC);	// 18421 clc
 	R(RETN);	// 18422 retn
  // Procedure _parse_cmdline() start
@@ -13948,7 +13948,7 @@ loc_19d94:
 	R(MOV(*(dw*)(raddr(ds,offset(dseg,_messagepointer)+2)), ds));	// 18543 mov	word ptr [_messagepointer+2], ds
 	R(MOV(dx, offset(dseg,_buffer_1DB6C)+1));	// 18544 mov	dx, (offset _buffer_1DB6C+1)
 	R(MOV(ax, 0x3D00));	// 18545 mov	ax, 3D00h
-	R(INT(0x21));	// 18546 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
+	R(_INT(0x21));	// 18546 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
 		R(JC(loc_19256));	// 18550 jb	loc_19256
 	R(PUSH(ax));	// 18551 push	ax
 	R(CALL(k_callsubx));	// 18552 call	_callsubx
@@ -13961,7 +13961,7 @@ loc_19dbb:
 	R(MOV(ah, 0x3F));	// 18561 mov	ah, 3Fh	; '?'
 	R(PUSH(bx));	// 18562 push	bx
 	R(PUSH(dx));	// 18563 push	dx
-	R(INT(0x21));	// 18564 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 18564 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(dx));	// 18567 pop	dx
 	R(POP(bx));	// 18568 pop	bx
 	R(MOV(di, dx));	// 18569 mov	di, dx
@@ -14632,18 +14632,18 @@ _setvideomode:
 		R(JNZ(loc_1a4d5));	// 19420 jnz	short loc_1A4D5
 	R(OR(al, 0x80));	// 19421 or	al, 80h
 loc_1a4d5:
-	R(INT(0x10));	// 19424 int	10h		; - VIDEO - SET	VIDEO MODE
+	R(_INT(0x10));	// 19424 int	10h		; - VIDEO - SET	VIDEO MODE
 	R(CALL(k_txt_blinkingoff));	// 19426 call	_txt_blinkingoff
 	R(CMP(m._byte_1DE86, 1));	// 19427 cmp	_byte_1DE86, 1
 		R(JZ(loc_1a4e8));	// 19428 jz	short loc_1A4E8
 	R(MOV(ax, 0x1111));	// 19429 mov	ax, 1111h
 	bl = 0;AFFECT_ZF(0); AFFECT_SF(bl,0);	// 19430 xor	bl, bl
-	R(INT(0x10));	// 19431 int	10h		; - VIDEO - TEXT-MODE CHARACTER	GENERATOR FUNCTIONS (PS, EGA, VGA)
+	R(_INT(0x10));	// 19431 int	10h		; - VIDEO - TEXT-MODE CHARACTER	GENERATOR FUNCTIONS (PS, EGA, VGA)
 loc_1a4e8:
 	R(MOV(dx, 0x1D00));	// 19438 mov	dx, 1D00h
 	bh = 0;AFFECT_ZF(0); AFFECT_SF(bh,0);	// 19439 xor	bh, bh
 	R(MOV(ah, 2));	// 19440 mov	ah, 2
-	R(INT(0x10));	// 19441 int	10h		; - VIDEO - SET	CURSOR POSITION
+	R(_INT(0x10));	// 19441 int	10h		; - VIDEO - SET	CURSOR POSITION
 locret_1a4f1:
 	R(RETN);	// 19447 retn
 loc_1a4f2:
@@ -14720,15 +14720,15 @@ loc_1a5ab:
 loc_1a5c3:
 	R(OR(al, 0x80));	// 19533 or	al, 80h
 loc_1a5c5:
-	R(INT(0x10));	// 19536 int	10h		; - VIDEO - SET	VIDEO MODE
+	R(_INT(0x10));	// 19536 int	10h		; - VIDEO - SET	VIDEO MODE
 	R(CALL(k_txt_blinkingoff));	// 19538 call	_txt_blinkingoff
 	R(MOV(ax, 0x1112));	// 19539 mov	ax, 1112h
 	bl = 0;AFFECT_ZF(0); AFFECT_SF(bl,0);	// 19540 xor	bl, bl
-	R(INT(0x10));	// 19541 int	10h		; - VIDEO - TEXT-MODE CHARACTER	GENERATOR FUNCTIONS (PS, EGA, VGA)
+	R(_INT(0x10));	// 19541 int	10h		; - VIDEO - TEXT-MODE CHARACTER	GENERATOR FUNCTIONS (PS, EGA, VGA)
 	R(MOV(dx, 0x3300));	// 19546 mov	dx, 3300h
 	bh = 0;AFFECT_ZF(0); AFFECT_SF(bh,0);	// 19547 xor	bh, bh
 	R(MOV(ah, 2));	// 19548 mov	ah, 2
-	R(INT(0x10));	// 19549 int	10h		; - VIDEO - SET	CURSOR POSITION
+	R(_INT(0x10));	// 19549 int	10h		; - VIDEO - SET	CURSOR POSITION
 	R(MOV(m._byte_1DE70, 2));	// 19552 mov	_byte_1DE70, 2
 	R(MOV(m._word_1DE6E, 0x20));	// 19553 mov	_word_1DE6E, 20h ; ' '
 	R(MOV(eax, m._videomempointer));	// 19554 mov	eax, _videomempointer
@@ -14852,7 +14852,7 @@ loc_1a6c2:
 	R(CALL(k_put_message));	// 19680 call	_put_message
 	R(MOV(bx, 0x0FFFF));	// 19681 mov	bx, 0FFFFh
 	R(MOV(ah, 0x48));	// 19682 mov	ah, 48h
-	R(INT(0x21));	// 19683 int	21h		; DOS -	2+ - ALLOCATE MEMORY
+	R(_INT(0x21));	// 19683 int	21h		; DOS -	2+ - ALLOCATE MEMORY
 	R(MOV(ax, bx));	// 19685 mov	ax, bx
 	R(SHR(ax, 6));	// 19686 shr	ax, 6
 	R(MOV(si, offset(dseg,_buffer_1DC6C)));	// 19687 mov	si, offset _buffer_1DC6C
@@ -15492,30 +15492,30 @@ _init_vga_waves:
 		R(JZ(loc_1aeb2));	// 20400 jz	loc_1AEB2
 	R(MOV(m._byte_1DE70, 3));	// 20401 mov	_byte_1DE70, 3
 	R(MOV(ax, 0x12));	// 20402 mov	ax, 12h		; VGA 640x480, 16-color; 80 bytes per line; 1 byte-8 pixels
-	R(INT(0x10));	// 20403 int	10h		; - VIDEO - SET	VIDEO MODE
+	R(_INT(0x10));	// 20403 int	10h		; - VIDEO - SET	VIDEO MODE
 	R(MOV(ax, ds));	// 20405 mov	ax, ds
 	R(MOV(es, ax));	// 20406 mov	es, ax
 	R(MOV(dx, offset(dseg,_palette_24404)));	// 20408 mov	dx, offset _palette_24404
 	R(MOV(ax, 0x1002));	// 20409 mov	ax, 1002h
-	R(INT(0x10));	// 20410 int	10h		; - VIDEO - SET	ALL PALETTE REGISTERS (Jr, PS, TANDY 1000, EGA,	VGA)
+	R(_INT(0x10));	// 20410 int	10h		; - VIDEO - SET	ALL PALETTE REGISTERS (Jr, PS, TANDY 1000, EGA,	VGA)
 	R(MOV(dx, offset(dseg,_vga_palette)));	// 20412 mov	dx, offset _vga_palette
 	R(MOV(cx, 0x10));	// 20413 mov	cx, 10h
 	bx = 0;AFFECT_ZF(0); AFFECT_SF(bx,0);	// 20414 xor	bx, bx
 	R(MOV(ax, 0x1012));	// 20415 mov	ax, 1012h
-	R(INT(0x10));	// 20416 int	10h		; - VIDEO - SET	BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)
+	R(_INT(0x10));	// 20416 int	10h		; - VIDEO - SET	BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)
 	R(MOV(si, offset(dseg,_buffer_1DC6C)));	// 20420 mov	si, offset _buffer_1DC6C
 	R(CALL(k_getexename));	// 20421 call	_getexename
 		R(JC(loc_1ae66));	// 20422 jb	loc_1AE66
 	R(MOV(dx, offset(dseg,_buffer_1DC6C)));	// 20423 mov	dx, offset _buffer_1DC6C
 	R(MOV(ax, 0x3D00));	// 20424 mov	ax, 3D00h
-	R(INT(0x21));	// 20425 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
+	R(_INT(0x21));	// 20425 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
 		R(JC(loc_1ae66));	// 20429 jb	loc_1AE66
 	R(MOV(m._fhandle_1DE68, ax));	// 20430 mov	_fhandle_1DE68, ax
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 20431 xor	dx, dx
 	cx = 0;AFFECT_ZF(0); AFFECT_SF(cx,0);	// 20432 xor	cx, cx
 	R(MOV(bx, m._fhandle_1DE68));	// 20433 mov	bx, _fhandle_1DE68
 	R(MOV(ax, 0x4202));	// 20434 mov	ax, 4202h	; get file size
-	R(INT(0x21));	// 20435 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 20435 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 		R(JC(loc_1ae5e));	// 20437 jb	loc_1AE5E
 	R(MOV(cx, dx));	// 20438 mov	cx, dx
 	R(MOV(dx, ax));	// 20439 mov	dx, ax
@@ -15523,13 +15523,13 @@ _init_vga_waves:
 	R(SBB(cx, 1));	// 20441 sbb	cx, 1
 	R(MOV(bx, m._fhandle_1DE68));	// 20442 mov	bx, _fhandle_1DE68
 	R(MOV(ax, 0x4200));	// 20443 mov	ax, 4200h
-	R(INT(0x21));	// 20444 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+	R(_INT(0x21));	// 20444 int	21h		; DOS -	2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
 		R(JC(loc_1ae5e));	// 20446 jb	loc_1AE5E
 	R(MOV(dx, offset(dseg,_buffer_1DC6C)));	// 20447 mov	dx, offset _buffer_1DC6C
 	R(MOV(cx, 2));	// 20448 mov	cx, 2
 	R(MOV(bx, m._fhandle_1DE68));	// 20449 mov	bx, _fhandle_1DE68
 	R(MOV(ah, 0x3F));	// 20450 mov	ah, 3Fh
-	R(INT(0x21));	// 20451 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 20451 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 		R(JC(loc_1ae5e));	// 20454 jb	loc_1AE5E
 	R(CMP(ax, 2));	// 20455 cmp	ax, 2
 		R(JNZ(loc_1ae5e));	// 20456 jnz	loc_1AE5E
@@ -15588,7 +15588,7 @@ _read2buffer:
 	R(MOV(cx, 0x5000));	// 20537 mov	cx, 5000h
 	R(MOV(bx, m._fhandle_1DE68));	// 20538 mov	bx, _fhandle_1DE68
 	R(MOV(ah, 0x3F));	// 20539 mov	ah, 3Fh
-	R(INT(0x21));	// 20540 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 20540 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POPA);	// 20543 popa
 	R(MOV(si, offset(dseg,_buffer_1)));	// 20544 mov	si, offset _buffer_1 ; 2800h
 	R(RETN);	// 20545 retn
@@ -15620,7 +15620,7 @@ loc_1ae46:
 loc_1ae5e:
 	R(MOV(bx, m._fhandle_1DE68));	// 20580 mov	bx, _fhandle_1DE68
 	R(MOV(ah, 0x3E));	// 20581 mov	ah, 3Eh
-	R(INT(0x21));	// 20582 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
+	R(_INT(0x21));	// 20582 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
 loc_1ae66:
 	R(PUSHF);	// 20587 pushf
 	R(CLI);	// 20588 cli
@@ -15795,7 +15795,7 @@ _init_f5_spectr:
 		R(JZ(locret_1b083));	// 20800 jz	locret_1B083
 	R(MOV(m._byte_1DE70, 4));	// 20801 mov	_byte_1DE70, 4
 	R(MOV(ax, 0x13));	// 20802 mov	ax, 13h
-	R(INT(0x10));	// 20803 int	10h		; - VIDEO - SET	VIDEO MODE
+	R(_INT(0x10));	// 20803 int	10h		; - VIDEO - SET	VIDEO MODE
 	R(CALL(k_set_egasequencer));	// 20805 call	_set_egasequencer
 	R(MOV(dx, 0x3C8));	// 20806 mov	dx, 3C8h
 	al = 0;AFFECT_ZF(0); AFFECT_SF(al,0);	// 20807 xor	al, al
@@ -17366,14 +17366,14 @@ LODSB;	// 22605 lodsb
 _loadcfg:
 	R(MOV(dx, offset(dseg,_sIplay_cfg)));	// 22630 mov	dx, offset _sIplay_cfg ;	"C:\\IPLAY.CFG"
 	R(MOV(ax, 0x3D00));	// 22631 mov	ax, 3D00h
-	R(INT(0x21));	// 22632 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
+	R(_INT(0x21));	// 22632 int	21h		; DOS -	2+ - OPEN DISK FILE WITH HANDLE
 		R(JC(loc_1bfe3));	// 22636 jb	short loc_1BFE3
 	R(MOV(bx, ax));	// 22637 mov	bx, ax
 	R(MOV(dx, offset(dseg,_cfg_buffer)));	// 22638 mov	dx, offset _cfg_buffer
 	R(MOV(cx, 4));	// 22639 mov	cx, 4
 	R(MOV(ah, 0x3F));	// 22640 mov	ah, 3Fh	; '?'
 	R(PUSH(bx));	// 22641 push	bx
-	R(INT(0x21));	// 22642 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 22642 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(bx));	// 22645 pop	bx
 		R(JC(loc_1bfc9));	// 22646 jb	short loc_1BFC9
 	R(MOV(eax, m._dword_1DCEC));	// 22647 mov	eax, _dword_1DCEC
@@ -17384,12 +17384,12 @@ _loadcfg:
 	R(MOV(cx, 0x0C));	// 22652 mov	cx, 0Ch
 	R(MOV(ah, 0x3F));	// 22653 mov	ah, 3Fh	; '?'
 	R(PUSH(bx));	// 22654 push	bx
-	R(INT(0x21));	// 22655 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
+	R(_INT(0x21));	// 22655 int	21h		; DOS -	2+ - READ FROM FILE WITH HANDLE
 	R(POP(bx));	// 22658 pop	bx
 loc_1bfc9:
 	R(PUSHF);	// 22661 pushf
 	R(MOV(ah, 0x3E));	// 22662 mov	ah, 3Eh
-	R(INT(0x21));	// 22663 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
+	R(_INT(0x21));	// 22663 int	21h		; DOS -	2+ - CLOSE A FILE WITH HANDLE
 	R(POPF);	// 22665 popf
 		R(JC(loc_1bfe3));	// 22666 jb	short loc_1BFE3
 	R(MOV(si, offset(dseg,_snd_card_type)));	// 22667 mov	si, offset _snd_card_type
@@ -17407,9 +17407,9 @@ loc_1bfe3:
 	R(MOV(ds, ax));	// 22682 mov	ds, ax
 	R(MOV(dx, offset(seg001,_aConfigFileNotF)));	// 22684 mov	dx, offset _aConfigFileNotF ; "Config file not found. Run ISETUP	first"...
 	R(MOV(ah, 9));	// 22685 mov	ah, 9
-	R(INT(0x21));	// 22686 int	21h		; DOS -	PRINT STRING
+	R(_INT(0x21));	// 22686 int	21h		; DOS -	PRINT STRING
 	R(MOV(ax, 0x4C01));	// 22688 mov	ax, 4C01h
-	R(INT(0x21));	// 22689 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
+	R(_INT(0x21));	// 22689 int	21h		; DOS -	2+ - QUIT WITH EXIT CODE (EXIT)
  // Procedure _getexename() start
 _getexename:
 	R(MOV(es, m._esseg_atstart));	// 22703 mov	es, _esseg_atstart
@@ -17610,7 +17610,7 @@ __disp = (dw)(*(dd*)(raddr(cs,offset(seg001,_int1Avect))));
  // Procedure _dosexec() start
 _dosexec:
 	R(MOV(ax, 3));	// 23043 mov	ax, 3
-	R(INT(0x10));	// 23044 int	10h		; - VIDEO - SET	VIDEO MODE
+	R(_INT(0x10));	// 23044 int	10h		; - VIDEO - SET	VIDEO MODE
 	R(CALL(k_txt_enableblink));	// 23046 call	_txt_enableblink
 	R(MOV(cx, 0));	// 23047 mov	cx, 0
 	R(MOV(dx, 0x94F));	// 23048 mov	dx, 94Fh
@@ -17624,11 +17624,11 @@ _dosexec:
 	R(MOV(dx, 0x0A00));	// 23056 mov	dx, 0A00h
 	bh = 0;AFFECT_ZF(0); AFFECT_SF(bh,0);	// 23057 xor	bh, bh
 	R(MOV(ah, 2));	// 23058 mov	ah, 2
-	R(INT(0x10));	// 23059 int	10h		; - VIDEO - SET	CURSOR POSITION
+	R(_INT(0x10));	// 23059 int	10h		; - VIDEO - SET	CURSOR POSITION
 	R(TEST(m._byte_1DE78, 2));	// 23062 test	_byte_1DE78, 2
 		R(JZ(loc_1c209));	// 23063 jz	short loc_1C209
 	R(MOV(ax, 0x351A));	// 23064 mov	ax, 351Ah
-	R(INT(0x21));	// 23065 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	R(_INT(0x21));	// 23065 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_int1Avect))), bx));	// 23068 mov	word ptr cs:[_int1Avect], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_int1Avect)+2)), es));	// 23069 mov	word ptr cs:[_int1Avect+2], es
 	R(PUSH(ds));	// 23070 push	ds
@@ -17636,7 +17636,7 @@ _dosexec:
 	R(MOV(ds, ax));	// 23072 mov	ds, ax
 	R(MOV(dx, k_int1a_timer));	// 23074 mov	dx, offset _int1a_timer
 	R(MOV(ax, 0x251A));	// 23075 mov	ax, 251Ah
-	R(INT(0x21));	// 23076 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 23076 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(POP(ds));	// 23079 pop	ds
 loc_1c209:
 	R(MOV(si, offset(dseg,_byte_1DD3F)));	// 23083 mov	si, offset _byte_1DD3F ;	str
@@ -17656,7 +17656,7 @@ loc_1c209:
 	R(MOV(bx, offset(dseg,_word_24445)));	// 23098 mov	bx, offset _word_24445
 	R(MOV(ds, m._word_24445));	// 23099 mov	ds, _word_24445
 	R(MOV(ax, 0x4B00));	// 23100 mov	ax, 4B00h
-	R(INT(0x21));	// 23101 int	21h		; DOS -	2+ - LOAD OR EXECUTE (EXEC)
+	R(_INT(0x21));	// 23101 int	21h		; DOS -	2+ - LOAD OR EXECUTE (EXEC)
 	R(POP(ds));	// 23105 pop	ds
 loc_1c23e:
 	R(MOV(al, 0));	// 23108 mov	al, 0
@@ -17667,7 +17667,7 @@ loc_1c23e:
 	R(PUSH(ds));	// 23113 push	ds
 	R(LDS(dx, *(dd*)(raddr(cs,offset(seg001,_int1Avect)))));	// 23114 lds	dx, cs:[_int1Avect]
 	R(MOV(ax, 0x251A));	// 23115 mov	ax, 251Ah
-	R(INT(0x21));	// 23116 int	21h		; DOS -	SET INTERRUPT VECTOR
+	R(_INT(0x21));	// 23116 int	21h		; DOS -	SET INTERRUPT VECTOR
 	R(POP(ds));	// 23119 pop	ds
 loc_1c25c:
 	R(MOV(si, offset(dseg,_byte_1DD3F)));	// 23122 mov	si, offset _byte_1DD3F ;	str
@@ -17728,11 +17728,11 @@ loc_1c2ca:
 	R(MOV(m._word_1DE4C, di));	// 23198 mov	_word_1DE4C, di
 	R(MOV(dx, offset(dseg,_buffer_1DBEC)));	// 23199 mov	dx, offset _buffer_1DBEC
 	R(MOV(ah, 0x1A));	// 23200 mov	ah, 1Ah
-	R(INT(0x21));	// 23201 int	21h		; DOS -	SET DISK TRANSFER AREA ADDRESS
+	R(_INT(0x21));	// 23201 int	21h		; DOS -	SET DISK TRANSFER AREA ADDRESS
 	R(MOV(dx, offset(dseg,_buffer_1DB6C)));	// 23203 mov	dx, offset _buffer_1DB6C
 	R(MOV(cx, m._word_1DE4E));	// 23204 mov	cx, _word_1DE4E
 	R(MOV(ah, 0x4E));	// 23205 mov	ah, 4Eh
-	R(INT(0x21));	// 23206 int	21h		; DOS -	2+ - FIND FIRST	ASCIZ (FINDFIRST)
+	R(_INT(0x21));	// 23206 int	21h		; DOS -	2+ - FIND FIRST	ASCIZ (FINDFIRST)
 		R(JNC(loc_1c309));	// 23210 jnb	short loc_1C309
 	R(MOV(si, offset(dseg,_a_mod_nst_669_s)));	// 23211 mov	si, offset _a_mod_nst_669_s ; ".MOD.NST.669.STM.S3M.MTM.PSM.WOW.INR.FA"...
 loc_1c2e7:
@@ -17746,7 +17746,7 @@ loc_1c2e7:
 	R(MOV(dx, offset(dseg,_buffer_1DB6C)));	// 23221 mov	dx, offset _buffer_1DB6C
 	R(MOV(cx, 2));	// 23222 mov	cx, 2
 	R(MOV(ah, 0x4E));	// 23223 mov	ah, 4Eh
-	R(INT(0x21));	// 23224 int	21h		; DOS -	2+ - FIND FIRST	ASCIZ (FINDFIRST)
+	R(_INT(0x21));	// 23224 int	21h		; DOS -	2+ - FIND FIRST	ASCIZ (FINDFIRST)
 		R(JC(loc_1c2e7));	// 23228 jb	short loc_1C2E7
 loc_1c309:
 	R(MOV(ax, ds));	// 23232 mov	ax, ds
@@ -17771,9 +17771,9 @@ loc_1c321:
 _dosfindnext:
 	R(MOV(dx, offset(dseg,_buffer_1DBEC)));	// 23260 mov	dx, offset _buffer_1DBEC
 	R(MOV(ah, 0x1A));	// 23261 mov	ah, 1Ah
-	R(INT(0x21));	// 23262 int	21h		; DOS -	SET DISK TRANSFER AREA ADDRESS
+	R(_INT(0x21));	// 23262 int	21h		; DOS -	SET DISK TRANSFER AREA ADDRESS
 	R(MOV(ah, 0x4F));	// 23264 mov	ah, 4Fh
-	R(INT(0x21));	// 23265 int	21h		; DOS -	2+ - FIND NEXT ASCIZ (FINDNEXT)
+	R(_INT(0x21));	// 23265 int	21h		; DOS -	2+ - FIND NEXT ASCIZ (FINDNEXT)
 		R(JNC(loc_1c309));	// 23268 jnb	short loc_1C309
 	R(RETN);	// 23269 retn
  // Procedure _video_prp_mtr_positn() start
@@ -17910,7 +17910,7 @@ locret_1c4a7:
  // Procedure _rereadrtc_settmr() start
 _rereadrtc_settmr:
 	R(MOV(ah, 2));	// 23437 mov	ah, 2
-	R(INT(0x1A));	// 23438 int	1Ah		; CLOCK	- READ REAL TIME CLOCK (AT,XT286,CONV,PS)
+	R(_INT(0x1A));	// 23438 int	1Ah		; CLOCK	- READ REAL TIME CLOCK (AT,XT286,CONV,PS)
 	eax = 0;AFFECT_ZF(0); AFFECT_SF(eax,0);	// 23442 xor	eax, eax
 	R(MOV(al, dh));	// 23443 mov	al, dh
 	R(MOV(ah, al));	// 23444 mov	ah, al
@@ -17963,13 +17963,13 @@ locret_1c521:
 _txt_blinkingoff:
 	bl = 0;AFFECT_ZF(0); AFFECT_SF(bl,0);	// 23507 xor	bl, bl
 	R(MOV(ax, 0x1003));	// 23508 mov	ax, 1003h
-	R(INT(0x10));	// 23509 int	10h		; - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
+	R(_INT(0x10));	// 23509 int	10h		; - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
 	R(RETN);	// 23512 retn
  // Procedure _txt_enableblink() start
 _txt_enableblink:
 	R(MOV(bl, 1));	// 23520 mov	bl, 1
 	R(MOV(ax, 0x1003));	// 23521 mov	ax, 1003h
-	R(INT(0x10));	// 23522 int	10h		; - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
+	R(_INT(0x10));	// 23522 int	10h		; - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
 	R(RETN);	// 23525 retn
  // Procedure _my_u32tox() start
 _my_u32tox:
@@ -18072,11 +18072,11 @@ _mouse_init:
 	R(CMP(*(dd*)(raddr(es,0x0CC)), 0));	// 23756 cmp	dword ptr es:[0CCh], 0
 		R(JZ(loc_1c708));	// 23757 jz	short loc_1C708
 	R(MOV(ax, 0x21));	// 23758 mov	ax, 21h	; '!'
-	R(INT(0x33));	// 23759 int	33h		; - MS MOUSE - SOFTWARE	RESET
+	R(_INT(0x33));	// 23759 int	33h		; - MS MOUSE - SOFTWARE	RESET
 	R(CMP(ax, 0x0FFFF));	// 23763 cmp	ax, 0FFFFh
 		R(JZ(loc_1c6ef));	// 23764 jz	short loc_1C6EF
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 23765 xor	ax, ax
-	R(INT(0x33));	// 23766 int	33h		; - MS MOUSE - RESET DRIVER AND	READ STATUS
+	R(_INT(0x33));	// 23766 int	33h		; - MS MOUSE - RESET DRIVER AND	READ STATUS
 	R(TEST(ax, ax));	// 23769 test	ax, ax
 		R(JZ(loc_1c708));	// 23770 jz	short loc_1C708
 	R(CMP(ax, 0x0FFFF));	// 23771 cmp	ax, 0FFFFh
@@ -18089,7 +18089,7 @@ loc_1c6ef:
 	R(MOV(dx, kmouse_handler));	// 23780 mov	dx, offset mouse_handler
 	R(MOV(cx, 0x1F));	// 23781 mov	cx, 1Fh
 	R(MOV(ax, 0x0C));	// 23782 mov	ax, 0Ch
-	R(INT(0x33));	// 23783 int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
+	R(_INT(0x33));	// 23783 int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
 	R(POP(es));	// 23785 pop	es
 	R(CLC);	// 23787 clc
 	R(RETN);	// 23788 retn
@@ -18107,7 +18107,7 @@ _mouse_deinit:
 	R(MOV(es, dx));	// 23809 mov	es, dx
 	R(MOV(cx, dx));	// 23811 mov	cx, dx
 	R(MOV(ax, 0x0C));	// 23812 mov	ax, 0Ch
-	R(INT(0x33));	// 23813 int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
+	R(_INT(0x33));	// 23813 int	33h		; - MS MOUSE - DEFINE INTERRUPT	SUBROUTINE PARAMETERS
 locret_1c72b:
 	R(RETN);	// 23817 retn
 mouse_handler:
@@ -18146,7 +18146,7 @@ _mouse_getpos:
 	R(CMP(m._mouse_exist_flag, 1));	// 23873 cmp	_mouse_exist_flag, 1
 		R(JNZ(loc_1c783));	// 23874 jnz	short loc_1C783
 	R(MOV(ax, 3));	// 23875 mov	ax, 3
-	R(INT(0x33));	// 23876 int	33h		; - MS MOUSE - RETURN POSITION AND BUTTON STATUS
+	R(_INT(0x33));	// 23876 int	33h		; - MS MOUSE - RETURN POSITION AND BUTTON STATUS
 	R(MOV(m._mousecolumn, cx));	// 23878 mov	_mousecolumn, cx
 	R(MOV(m._mouserow, dx));	// 23879 mov	_mouserow, dx
 	R(CLC);	// 23880 clc
@@ -18162,7 +18162,7 @@ _mouse_showcur:
 	R(CMP(m._mouse_exist_flag, 1));	// 23897 cmp	_mouse_exist_flag, 1
 		R(JNZ(loc_1c7a7));	// 23898 jnz	short loc_1C7A7
 	R(MOV(ax, 1));	// 23899 mov	ax, 1
-	R(INT(0x33));	// 23900 int	33h		; - MS MOUSE - SHOW MOUSE CURSOR
+	R(_INT(0x33));	// 23900 int	33h		; - MS MOUSE - SHOW MOUSE CURSOR
 	R(CLC);	// 23902 clc
 	R(RETN);	// 23903 retn
  // Procedure _mouse_hide2() start
@@ -18170,7 +18170,7 @@ _mouse_hide2:
 	R(CMP(m._mouse_exist_flag, 1));	// 23911 cmp	_mouse_exist_flag, 1
 		R(JNZ(loc_1c7a7));	// 23912 jnz	short loc_1C7A7
 	R(MOV(ax, 2));	// 23913 mov	ax, 2
-	R(INT(0x33));	// 23914 int	33h		; - MS MOUSE - HIDE MOUSE CURSOR
+	R(_INT(0x33));	// 23914 int	33h		; - MS MOUSE - HIDE MOUSE CURSOR
 	R(CLC);	// 23916 clc
 	R(RETN);	// 23917 retn
 loc_1c7a7:

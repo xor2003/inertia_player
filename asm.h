@@ -1,6 +1,8 @@
 #ifndef __asm_h__
 #define __asm_h__
 
+
+
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -46,13 +48,13 @@ typedef uint64_t dq;
  #define HEAP_SIZE 1024
 #else
  #define STACK_SIZE (1024*64-16)
- #define HEAP_SIZE (1024*1024 - 16 - STACK_SIZE)
+ #define HEAP_SIZE 1024*1024 - 16 - STACK_SIZE
 #endif
 
 #define NB_SELECTORS 128
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
@@ -80,8 +82,10 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 #define realAddress(offset, segment) raddr(segment,offset)
 
 #if _BITS == 32
+ typedef dd MWORDSIZE;
  #define offset(segment,name) ((dd)(db*)&m.name)
 #else
+ typedef dw MWORDSIZE;
  #define offset(segment,name) offsetof(struct Memory,name)-offsetof(struct Memory,segment)
 #endif
 
@@ -493,13 +497,14 @@ typedef union registry16Bits
 
 #define JNA(label) if (CF || ZF) GOTOLABEL(label)
 #define JBE(label) JNA(label)
-
+/*
 #if DEBUG >= 3
  #define MOV(dest,src) {log_debug("%s := %x\n",#dest, src); dest = src;}
 #else
  #define MOV(dest,src) {dest = src;}
 #endif
-/*
+*/
+
 #if DEBUG >= 3
 #define MOV(dest,src) {log_debug("%x := (%x)\n",&dest, src); MOV_(&dest,src);}
 #else
@@ -508,7 +513,7 @@ typedef union registry16Bits
 template <class D, class S>
 void MOV_(D* dest, const S& src)
 { *dest = static_cast<D>(src); }
-*/
+
 #define LFS(dest,src) {dest = src; fs= *(dw*)((db*)&(src) + sizeof(dest));}
 #define LES(dest,src) {dest = src; es = *(dw*)((db*)&(src) + sizeof(dest));}
 #define LGS(dest,src) {dest = src; gs = *(dw*)((db*)&(src) + sizeof(dest));}
@@ -589,18 +594,18 @@ void MOV_(D* dest, const S& src)
 #define GOTOLABEL(a) {_source=__LINE__;goto a;}
 
 
-#define CLD DF=0
-#define STD DF=1
+#define CLD {DF=0;}
+#define STD {DF=1;}
 
-#define STC CF=1 //TODO
-#define CLC CF=0 //TODO
-#define CMC CF ^= 1 //TODO
+#define STC {CF=1;} //TODO
+#define CLC {CF=0;} //TODO
+#define CMC {CF ^= 1;} //TODO
 
 //struct _STATE;
 
 // directjeu nosetjmp,2
 // directmenu
-#define INT(a) asm2C_INT(_state,a); TESTJUMPTOBACKGROUND
+#define _INT(a) {asm2C_INT(_state,a); TESTJUMPTOBACKGROUND;}
 
 #define TESTJUMPTOBACKGROUND  //if (jumpToBackGround) CALL(moveToBackGround);
 
@@ -651,30 +656,30 @@ int8_t asm2C_IN(int16_t data);
 */
 #if DEBUG
  #define CALL(label) \
-	{ dw tt='xy'; PUSH(tt); \
+	{ MWORDSIZE tt='xy'; PUSH(tt); \
 	  log_debug("after call %x\n",stackPointer); \
 	  ++_state->_indent;_state->_str=log_spaces(_state->_indent);\
 	  mainproc(label, _state); \
 	}
 
- #define RET {log_debug("before ret %x\n",stackPointer); dw tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
+ #define RET {log_debug("before ret %x\n",stackPointer); MWORDSIZE tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
 	log_debug("after ret %x\n",stackPointer); \
 	--_state->_indent;_state->_str=log_spaces(_state->_indent);return;}
 
- #define RETF {log_debug("before retf %x\n",stackPointer); dw tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
+ #define RETF {log_debug("before retf %x\n",stackPointer); MWORDSIZE tt=0; POP(tt); if (tt!='xy') {log_error("Stack corrupted.\n");exit(1);} \
 	dw tmpp;POP(tmpp); \
 	log_debug("after retf %x\n",stackPointer); \
 	--_state->_indent;_state->_str=log_spaces(_state->_indent);return;}
 #else
  #define CALL(label) \
-	{ dw tt='xy'; PUSH(tt); \
+	{ MWORDSIZE tt='xy'; PUSH(tt); \
 	  mainproc(label, _state); \
 	}
 
- #define RET {dw tt=0; POP(tt);  \
+ #define RET {MWORDSIZE tt=0; POP(tt);  \
 	return;}
 
- #define RETF {dw tt=0; POP(tt); \
+ #define RETF {MWORDSIZE tt=0; POP(tt); \
 	dw tmpp;POP(tmpp); \
 	return;}
 #endif
@@ -954,7 +959,7 @@ extern db vgaPalette[256*3];
 #include "memmgr.h"
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

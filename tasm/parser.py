@@ -27,10 +27,11 @@ from builtins import str
 from builtins import chr
 from builtins import range
 from builtins import object
+import re, string, os
 from . import op
-import re, string
 from .proc import proc
 from . import lex
+
 
 import traceback
 import sys
@@ -155,7 +156,7 @@ class parser(object):
         def expr_callback(self, match):
                 name = match.group(1).lower()
                 g = self.get_global(name)
-                if isinstance(g, op.const):
+                if isinstance(g, op.equ) or isinstance(g, op.assignment):
                         return g.value
                 else:
                         return "0x%04x" %g.offset
@@ -261,7 +262,7 @@ class parser(object):
                                         logging.info("convert_data(%s)" %v)
                                         g = self.get_global(v)
                                         logging.debug(g)
-                                        if isinstance(g, op.const):
+                                        if isinstance(g, op.equ) or isinstance(g, op.assignment):
                                                 v = int(g.value)
                                                 if v < 0: # negative values
                                                         v += base
@@ -276,7 +277,7 @@ class parser(object):
 
         def convert_data_to_c(self, label, width, data):
                 """ Generate C formated data """
-                logging.info("convert_data_to_c %s %d %s" %(label, width, data))
+                logging.debug("convert_data_to_c %s %d %s" %(label, width, data))
                 first = True
                 is_string = False
                 elements = 0
@@ -291,7 +292,7 @@ class parser(object):
                                         raise Exception("invalid string %s" %v)
                                 if width > 1:
                                         raise Exception("string with data width more than 1") #we could allow it :)
-                                v = str.replace(v, "''", "'")
+                                v.replace("''", "'")
                                 for i in range(1, len(v) - 1):
                                         r.append(v[i])
 
@@ -354,7 +355,8 @@ class parser(object):
 
                                 logging.debug("global/expr: ~%s~" %v)
                                 try:
-                                        v = str.replace(v, 'offset ', '')
+                                        v.replace('offset ', '')
+                                        v.replace('seg ', '')
                                         v = re.sub(r'@', "arb", v)
                                         v = self.convert_data(v,base)
                                 except KeyError:
@@ -456,7 +458,7 @@ class parser(object):
                                                         #print "aaa"
                                                         r[i] = "\\" + r[i]
                                                 elif ord(r[i]) > 127: # \
-                                                        r[i] = hex(ord(r[i]))
+                                                        r[i] = hex(ord(r[i].encode('cp437', 'backslashreplace')))
                                                         r[i]='\\' + r[i][1:]
                                                 vv += "'" + r[i] + "'"
                                             if i != len(r)-1:
@@ -489,7 +491,7 @@ class parser(object):
 
                 logging.debug(r)
                 logging.debug(rh)
-                logging.info("returning") 
+                logging.debug("returning") 
                 self.prev_data_type = cur_data_type
                 self.prev_data_ctype = data_ctype
                 self.data_started = True
@@ -564,29 +566,38 @@ class parser(object):
 
         def parse(self, fname):
                 logging.info("opening file %s..." %(fname))
+                if sys.version_info >= (3, 0):
+                   fd = open(fname, 'rt', encoding="cp437")
+                else:
+                   fd = open(fname, 'rt')
+
+                self.parse_(fd, fname)
+
+                fd.close()
+
+                return self
+
+        def parse_(self, fd, fname):
                 self.line_number = 0
                 skipping_binary_data = False
-
                 num = 0x1000
                 if num:
-                                                l = [ '0' ] * num
-                                                self.binary_data += l
+                        l = ['0'] * num
+                        self.binary_data += l
 
-                                                self.dummy_enum += 1
-                                                labell = "dummy" + str(self.dummy_enum)
+                        self.dummy_enum += 1
+                        labell = "dummy" + str(self.dummy_enum)
 
-                                                self.c_data.append("{0}, // padding\n")
-                                                self.h_data.append(" db " + labell + "["+ str(num) + "]; // protective\n")
-
-                fd = open(fname, 'rt', encoding="cp1251")
+                        self.c_data.append("{0}, // padding\n")
+                        self.h_data.append(" db " + labell + "[" + str(num) + "]; // protective\n")
                 for line in fd:
                         self.line_number += 1
-                        #line = line.decode("cp1251")
+                        # line = line.decode("cp1251")
                         line = line.strip()
                         if len(line) == 0 or line[0] == ';' or line[0] == chr(0x1a):
                                 continue
 
-                        logging.debug("%d:      %s" %(self.line_number, line))
+                        logging.debug("%d:      %s" % (self.line_number, line))
 
                         m = re.match('([@\w]+)\s*::?', line)
                         if m is not None:
@@ -598,11 +609,17 @@ class parser(object):
                         cmd = line.split()
                         if len(cmd) == 0:
                                 continue
-                        
+
                         cmd0 = str(cmd[0])
                         cmd0l = cmd0.lower()
 
-                        m = re.match('(\.\d86[pr]?)', line)
+                        m = re.match('(\.\d86[prc]?)', line)
+                        if m is not None:
+                                line = m.group(1).strip()
+                                logging.debug(line)
+                                continue
+
+                        m = re.match('(\.model)', line)
                         if m is not None:
                                 line = m.group(1).strip()
                                 logging.debug(line)
@@ -619,20 +636,20 @@ class parser(object):
                                 continue
                         elif cmd0l == 'align':
                                 continue
-                        
+
                         if not self.visible():
                                 continue
 
                         if cmd0l in ['db', 'dw', 'dd', 'dq']:
                                 arg = line[len(cmd0):].strip()
                                 if not skipping_binary_data:
-                                        logging.debug("%d:1: %s" %(self.cur_seg_offset, arg)) #fixme: COPYPASTE
+                                        logging.debug("%d:1: %s" % (self.cur_seg_offset, arg))  # fixme: COPYPASTE
                                         cmd0 = cmd0.lower()
                                         binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8}[cmd0[1]]
                                         b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
                                         self.binary_data += b
                                         self.cur_seg_offset += len(b)
-                                        
+
                                         c, h, elements = self.convert_data_to_c("", binary_width, lex.parse_args(arg))
                                         self.c_data += c
                                         self.h_data += h
@@ -644,13 +661,13 @@ class parser(object):
                                 self.proc = self.get_global('mainproc')
                                 continue
                         elif cmd0l == 'ends':
-                                logging.debug("segement %s ends" %(self.segment))
+                                logging.debug("segement %s ends" % (self.segment))
                                 self.segment = "default_seg"
                                 continue
                         elif cmd0l == 'assume':
-                                logging.info("skipping: %s" %line)
+                                logging.info("skipping: %s" % line)
                                 continue
-                        elif cmd0l in ['rep','repe','repne']:
+                        elif cmd0l in ['rep', 'repe', 'repne']:
                                 self.proc.add(cmd0l)
                                 self.proc.add(" ".join(cmd[1:]))
                                 continue
@@ -658,14 +675,20 @@ class parser(object):
                                 if len(cmd) >= 2:
                                         self.entry_point = cmd[1].lower()
                                 continue
-                        
+                        elif cmd0l == '.code' or cmd0l == '.data' or cmd0l == '.stack':
+                                name = cmd0l[1:]
+                                self.segment = name
+
+                                self.create_segment(name)
+                                continue
+
                         if len(cmd) >= 2:
                                 cmd1l = cmd[1].lower()
                                 if cmd1l == 'proc':
                                         cmd2l = ""
                                         if len(cmd) >= 3:
                                                 cmd2l = cmd[2].lower()
-                                        logging.info("procedure name %s" %cmd0l)
+                                        logging.info("procedure name %s" % cmd0l)
                                         '''
                                         name = cmd0l
                                         self.proc = proc(name)
@@ -673,7 +696,7 @@ class parser(object):
                                         self.proc_list.append(name)
                                         self.set_global(name, self.proc)
                                         '''
-                                        self.add_label(cmd0l, far=cmd2l, isproc = True)
+                                        self.add_label(cmd0l, far=cmd2l, isproc=True)
                                         continue
                                 elif cmd1l == 'segment':
                                         name = cmd0l
@@ -682,20 +705,20 @@ class parser(object):
                                         continue
 
                                 elif cmd1l == 'ends':
-                                        logging.debug("segment %s ends" %(self.segment))
+                                        logging.debug("segment %s ends" % (self.segment))
                                         self.segment = ""
                                         continue
 
                         if len(cmd) >= 3:
                                 cmd1l = cmd[1].lower()
-                                if cmd1l in ['equ','=']:
+                                if cmd1l in ['equ', '=']:
                                         if not (cmd0.lower() in self.skip_binary_data):
                                                 v = " ".join(cmd[2:])
-                                                logging.debug("value1 %s" %v)
+                                                logging.debug("value1 %s" % v)
                                                 vv = self.fix_dollar(v)
                                                 vv = " ".join(lex.parse_args(vv))
                                                 vv = vv.strip()
-                                                logging.debug("value2 %s" %vv)
+                                                logging.debug("value2 %s" % vv)
 
                                                 size = 0
                                                 m = re.match(r'byte\s+ptr\s+(.*)', vv)
@@ -716,35 +739,39 @@ class parser(object):
                                                 vv = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', vv)
 
                                                 if cmd1l == 'equ':
-                                                        self.set_global(cmd0, op.const(vv, size=size))
+                                                        # self.set_global(cmd0, op.equ(cmd0.lower(), size=size))
+                                                        self.get_global("mainproc").add_equ(cmd0, vv,
+                                                                                            line_number=self.line_number)
                                                 elif cmd1l == '=':
-                                                        self.reset_global(cmd0, op.const(vv, size=size))
-                                                
-                                                #if self.proc is not None:
-                                                self.proc.add_equ(cmd0, vv, line_number=self.line_number)
+                                                        # self.reset_global(cmd0, op.assignment(cmd0.lower(), size=size))
+                                                        self.proc.add_assignment(cmd0, vv, line_number=self.line_number)
+
+                                                # if self.proc is not None:
                                         else:
                                                 logging.info("skipping binary data for %s" % (cmd0,))
                                                 skipping_binary_data = True
                                         continue
-                                elif cmd1l  in ['db', 'dw', 'dd', 'dq']:
+                                elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
                                         if not (cmd0.lower() in self.skip_binary_data):
                                                 name = cmd0
                                                 name = re.sub(r'@', "arb", name)
-                                                binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8}[cmd1l[1]]
+                                                binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[cmd1l[1]]
                                                 offset = self.cur_seg_offset
                                                 arg = line[len(cmd0l):].strip()
                                                 arg = arg[len(cmd1l):].strip()
-                                                logging.debug("%d: %s" %(offset, arg))
+                                                logging.debug("data value %s offset %d" % (arg, offset))
                                                 b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
                                                 self.binary_data += b
                                                 self.cur_seg_offset += len(b)
 
-                                                c, h, elements = self.convert_data_to_c(name, binary_width, lex.parse_args(arg))
+                                                c, h, elements = self.convert_data_to_c(name, binary_width,
+                                                                                        lex.parse_args(arg))
                                                 self.c_data += c
                                                 self.h_data += h
-                                                
-                                                logging.debug("~size %d elements %d" %(binary_width, elements))
-                                                self.set_global(name, op.var(binary_width, offset, name=name,segment=self.segment), elements)
+
+                                                logging.debug("~size %d elements %d" % (binary_width, elements))
+                                                self.set_global(name, op.var(binary_width, offset, name=name,
+                                                                             segment=self.segment), elements)
                                                 skipping_binary_data = False
                                         else:
                                                 logging.info("skipping binary data for %s" % (cmd0l,))
@@ -754,23 +781,18 @@ class parser(object):
                         if (self.proc):
                                 self.proc.add(line, line_number=self.line_number)
                         else:
-                                #print line
+                                # print line
                                 pass
-                        
-                fd.close()
-
                 num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
                 if num:
-                                                l = [ '0' ] * num
-                                                self.binary_data += l
+                        l = ['0'] * num
+                        self.binary_data += l
 
-                                                self.dummy_enum += 1
-                                                labell = "dummy" + str(self.dummy_enum)
+                        self.dummy_enum += 1
+                        labell = "dummy" + str(self.dummy_enum)
 
-                                                self.c_data.append("{"+ ",".join(l) +"}, // padding\n")
-                                                self.h_data.append(" db " + labell + "["+ str(num) + "]; // padding\n")
-
-                return self
+                        self.c_data.append("{" + ",".join(l) + "}, // padding\n")
+                        self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
 
         def link(self):
                 logging.debug("link()")

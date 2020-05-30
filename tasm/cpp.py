@@ -25,7 +25,9 @@ from builtins import hex
 from builtins import str
 from builtins import range
 from builtins import object
-from . import op, proc
+from . import op
+from . import proc
+
 import traceback, re, string, logging, sys
 from copy import copy
 proc_module = proc
@@ -40,31 +42,17 @@ def parse_bin(s):
         return v
 
 class cpp(object):
-        def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, skip_addr_constants = False, header_omit_blacklisted = False, function_name_remapping = { }):
+        def __init__(self, context, outfile = "", skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, skip_addr_constants = False, header_omit_blacklisted = False, function_name_remapping = { }):
                 FORMAT = "%(filename)s:%(lineno)d %(message)s"
                 logging.basicConfig(format=FORMAT)
                 self.logger = logging.getLogger('cpp')
-                self.logger.info('Protocol problem: %s', 'connection reset')
+                #self.logger.info('Protocol problem: %s', 'connection reset')
 
-                self.namespace = namespace
-                fname = namespace.lower() + ".cpp"
-                header = namespace.lower() + ".h"
+                self.namespace = outfile
                 self.indirection = 0
                 self.current_size = 0
                 self.seg_prefix = ""
-                banner = """/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
-
-/* 
- *
- */
-"""
-                self.fd = open(fname, "wt", encoding="cp1251")
-                self.hd = open(header, "wt", encoding="cp1251")
-                hid = "TASMRECOVER_%s_STUBS_H__" %namespace.upper()
-                self.hd.write("""#ifndef %s
-#define %s
-
-%s""" %(hid, hid, banner))
+                self.codeset = 'cp437'
                 self.context = context
                 self.data_seg = context.binary_data
                 self.cdata_seg = context.c_data
@@ -80,18 +68,12 @@ class cpp(object):
                 self.skip_addr_constants = skip_addr_constants
                 self.header_omit_blacklisted = header_omit_blacklisted
                 self.function_name_remapping = function_name_remapping
-                self.translated = []
+                self.translated = list() #[]
                 self.proc_addr = []
                 self.used_data_offsets = set()
                 self.methods = []
                 self.pointer_flag = False
                 self.lea = False
-                self.fd.write("""%s
-#include \"%s\"
-#include <curses.h>
-
-//namespace %s {
-""" %(banner, header, namespace))
                 self.expr_size = 0
 
         def expand_cb(self, match):
@@ -124,10 +106,16 @@ class cpp(object):
                         return name_original
                         
                 #print g
-                if isinstance(g, op.const):
-                        logging.debug("it is const")
-                        value = self.expand_equ(g.value)
-                        logging.debug("equ: %s -> %s" %(name, self.expand_equ(g.value)))
+                if isinstance(g, op.equ):
+                        logging.debug("it is equ")
+                        value = name.upper()
+                        #value = self.expand_equ(g.value)
+                        logging.debug("equ: %s -> %s" %(name, value))
+                elif isinstance(g, op.assignment):
+                        logging.debug("it is assignment")
+                        value = name.upper()
+                        #value = self.expand_equ(g.value)
+                        logging.debug("assignment %s = %s" %(name, value))
                 elif isinstance(g, proc.proc):
                         logging.debug("it is proc")
                         if self.indirection != -1:
@@ -196,6 +184,7 @@ class cpp(object):
 
         def get_size(self, expr):
                 expr = expr.strip()
+                origexpr = expr
                 logging.debug('get_size("%s")' %expr)
 
                 try:
@@ -249,14 +238,18 @@ class cpp(object):
                         logging.debug('name = %s' %name)
                         try:
                                 g = self.context.get_global(name)
-                                if isinstance(g, op.const):
+                                if isinstance(g, op.equ) or isinstance(g, op.assignment):
+                                      if g.value != origexpr: # prevent loop
                                         return self.get_size(g.value)
+                                      else:
+                                         return 0
                                 logging.debug('get_size res %d' %g.size)
                                 return g.size
                         except:
                                 pass
 
-                ex = str.replace(expr, "\\\\", "\\")
+                ex = expr
+                ex.replace("\\\\", "\\")
                 m = re.match(r'\'(.+)\'$', ex)  # char constants
                 if m is not None:
                         return len(m.group(1))
@@ -269,7 +262,7 @@ class cpp(object):
                 logging.debug("expand_equ_cb %s" %name)
                 try:
                         g = self.context.get_global(name)
-                        if isinstance(g, op.const):
+                        if isinstance(g, op.equ) or isinstance(g, op.assignment):
                                 return g.value
                         return str(g.offset)
                 except:
@@ -291,6 +284,7 @@ class cpp(object):
                 self.seg_prefix=""
 
                 expr = expr.strip()
+                origexpr = expr
 
                 expr = re.sub(r'^\(\s*(.*?)\s*\)$', '\\1', expr) # (expr)
                 logging.debug("wo curls "+expr)
@@ -302,6 +296,20 @@ class cpp(object):
                 indirection = 0
                 seg = None
                 reg = True
+
+                ex = expr
+                ex.replace("\\\\", "\\")
+                m = re.match(r'\'(.+)\'$', ex)  # char constants
+                if m is not None:
+                        ex = m.group(1)
+                        if len(ex) == 4:
+                            expr = '0x'
+                            for i in range(0,4):
+                                #logging.debug("constant %s %d" %(ex,i))
+                                ss = str(hex(ord(ex[i])))
+                                #logging.debug("constant %s" %ss)
+                                expr += ss[2:]
+                        return expr
 
                 try:
                         g = self.context.get_global(expr)
@@ -317,10 +325,15 @@ class cpp(object):
                                         else:
                                                 s = {1: "*(db*)", 2: "*(dw*)", 4: "*(dd*)"}[size]
                                                 return s+"&m." + expr
+                        if isinstance(g, op.equ) or isinstance(g, op.assignment):
+                                logging.debug("it is equ")
+                                return self.expand(g.value)
+
                 except:
                         pass
 
-                ex = str.replace(expr, "\\\\", "\\")
+                ex = expr
+                ex.replace("\\\\", "\\")
                 m = re.match(r'\'(.+)\'$', ex)  # char constants
                 if m is not None:
                         return expr
@@ -333,7 +346,7 @@ class cpp(object):
 
                 m = re.match(r'seg\s+(.*?)$', expr)
                 if m is not None:
-                        return "data"
+                        return m.group(1)
 
                 expr = re.sub(r'\b([0-9][a-fA-F0-9]*)[Hh]', '0x\\1', expr) # convert hex
                 expr = re.sub(r'\b([0-1]+)[Bb]', parse_bin, expr) # convert binary
@@ -1006,7 +1019,11 @@ else goto __dispatch_call;
                 return "uint%d_t" %(width * 8)
 
         def write_stubs(self, fname, procs):
-                fd = open(fname, "wt", encoding="cp1251")
+                if sys.version_info >= (3, 0):
+                    fd = open(fname, "wt", encoding=self.codeset)
+                else:
+                    fd = open(fname, "wt")
+
                 fd.write("//namespace %s {\n" %self.namespace)
                 for p in procs:
                         if p in self.function_name_remapping:
@@ -1020,6 +1037,32 @@ else goto __dispatch_call;
         def generate(self, start):
                 #print self.prologue()
                 #print context
+                fname = self.namespace.lower() + ".cpp"
+                header = self.namespace.lower() + ".h"
+                banner = """/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
+
+/* 
+ *
+ */
+"""
+                if sys.version_info >= (3, 0):
+                   self.fd = open(fname, "wt", encoding=self.codeset)
+                   self.hd = open(header, "wt", encoding=self.codeset)
+                else:
+                   self.fd = open(fname, "wt")
+                   self.hd = open(header, "wt")
+                hid = "TASMRECOVER_%s_STUBS_H__" %self.namespace.upper().replace('-','_')
+                self.hd.write("""#ifndef %s
+#define %s
+
+%s""" %(hid, hid, banner))
+                self.fd.write("""%s
+#include \"%s\"
+#include <curses.h>
+
+//namespace %s {
+""" %(banner, header, self.namespace))
+
                 self.proc_queue.append(start)
                 while len(self.proc_queue):
                         name = self.proc_queue.pop()
@@ -1041,7 +1084,7 @@ else goto __dispatch_call;
                 self.fd.write("\n")
                 self.fd.write("\n".join(self.translated))
                 self.fd.write("\n")
-                logging.info("%d ok, %d failed of %d, %.02g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed)))
+                logging.info("%d ok, %d failed of %d, %3g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed)))
                 logging.info("\n".join(self.failed))
                 data_bin = self.data_seg
                 cdata_bin = self.cdata_seg
@@ -1110,7 +1153,7 @@ else goto __dispatch_call;
                         k = re.sub(r'[^A-Za-z0-9_]', '_', k)
                         if isinstance(v, op.var):
                                 pass #offsets.append((k.capitalize(), hex(v.offset)))
-                        elif isinstance(v, op.const):
+                        elif isinstance(v, op.equ) or isinstance(v, op.assignment):
                                 offsets.append((k.capitalize(), self.expand_equ(v.value))) #fixme: try to save all constants here
                         #elif isinstance(v, op.label):
                         #       offsets.append((k.capitalize(), hex(v.line_number)))
@@ -1128,7 +1171,7 @@ else goto __dispatch_call;
                         k = re.sub(r'[^A-Za-z0-9_]', '_', k)
                         if isinstance(v, op.var):
                                 pass #offsets.append((k.capitalize(), hex(v.offset)))
-                        elif isinstance(v, op.const):
+                        elif isinstance(v, op.equ) or isinstance(v, op.assignment):
                                 pass #offsets.append((k.capitalize(), self.expand_equ(v.value))) #fixme: try to save all constants here
                         elif isinstance(v, op.label):
                                 offsets.append((k.lower(), hex(v.line_number)))
@@ -1136,7 +1179,7 @@ else goto __dispatch_call;
                 offsets = sorted(offsets, key=lambda t: t[1])
                 self.hd.write("#define kbegin 0x1001\n")
                 for o in offsets:
-                        self.hd.write("#define k%s %s\n" %o)
+                        self.hd.write(("#define k%s %s\n" %o))
                 #self.hd.write("};\n")
 
 
@@ -1323,7 +1366,7 @@ else goto __dispatch_call;
 
         def _int(self, dst):
                 dst = self.expand(dst)
-                self.body += "\tR(INT(%s));\n" %(dst)
+                self.body += "\tR(_INT(%s));\n" %(dst)
 
         def _not(self, dst):
                 dst = self.expand(dst)
@@ -1349,5 +1392,8 @@ else goto __dispatch_call;
                 self.c = self.expand(c)
                 self.body += "\tR(%s(%s, %s, %s));\n" %(cmd.upper(), self.a, self.b, self.c)
 
+        def _assignment(self, dst, src):
+                self.body += "#undef %s\n#define %s %s\n" %(dst.upper(), dst.upper(), self.expand(src))
+
         def _equ(self, dst, src):
-                self.body += "#undef %s\n#define %s %s\n" %(dst, dst, src)
+                self.body += "#define %s %s\n" %(dst.upper(), src)

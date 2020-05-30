@@ -42,7 +42,7 @@ typedef short int int16_t;
 typedef unsigned char uint8_t;
 #endif
 
-typedef char BYTE;
+typedef unsigned char BYTE;
 typedef uint16_t UWORD;
 
 #ifdef MAIN

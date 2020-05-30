@@ -187,50 +187,81 @@ class proc(object):
 
                 if len(stmt) == 0:
                         return
-                
-                #s = stmt.split(None)
-                s = [stmt.replace("\x00", " ") for stmt in re.sub('["\'].+?["\']', lambda m: m.group(0).replace(" ", "\x00"), stmt).split()]
 
+                o = self.add_(command, line_number, stmt)
+                self.stmts.append(o)
+
+        def add_(self, command, line_number, stmt):
+                # s = stmt.split(None)
+                s = [stmt.replace("\x00", " ") for stmt in
+                     re.sub('["\'].+?["\']', lambda m: m.group(0).replace(" ", "\x00"), stmt).split()]
                 cmd = s[0]
                 try:
                         cl = getattr(op, '_' + cmd.lower())
                 except AttributeError:
-                        logging.info(cmd)
-                        if re.match(r"ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde|cwd|cdq|sti|cmc|pushf|popf|nop|pushad|popad|popa|pusha|das|aaa|aas|aam|finit|fsin|fldz", cmd.lower()) is not None:
-                                cl = getattr(op, '_instruction0')
-                        elif re.match(r"dec|inc|pop|push|int|neg|div|idiv|mul|set[a-z]+|not|lods|cmpxchg8b|bswap|fistp|fmul|fadd", cmd.lower()) is not None:
-                                cl = getattr(op, '_instruction1')
-                        elif re.match(r"j[a-z]+|loop.*", cmd.lower()) is not None:
-                                cl = getattr(op, '_jump')
-                        elif re.match(r"xchg|cmp|movsx|movzx|mov|or|xor|and|add|adc|sbb|rol|ror|sub|shl|shr|test|in|out|lea|lds|les|lfs|lgs|sar|btr|bts|btc|bt|movs|xadd|cmov[a-z]+", cmd.lower()) is not None:
-                                cl = getattr(op, '_instruction2')
-                        elif re.match(r"shrd|shld", cmd.lower()) is not None:
-                                cl = getattr(op, '_instruction3')
-                        else:
-                                raise Exception("unknown command: "+cmd.lower())
-                        
-                #print "args %s" %s[1:]
+                        cl = self.add__(cl, cmd)
+                # print "args %s" %s[1:]
                 arg = " ".join(s[1:]) if len(s) > 1 else str()
                 o = cl(arg)
-                #o.comments = comments
+                # o.comments = comments
                 o.command = str(line_number) + " " + command
                 o.cmd = cmd.lower()
-                #o.line_number = line_number
-#               logging.info "~~~" + o.command + o.comments
-                self.stmts.append(o)
+                o.line_number = line_number
+                #               logging.info "~~~" + o.command + o.comments
+                return o
+
+        def add__(self, cl, cmd):
+                logging.info(cmd)
+                if re.match(
+                        r"ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde|cwd|cdq|sti|cmc|pushf|popf|nop|pushad|popad|popa|pusha|das|aaa|aas|aam|finit|fsin|fldz",
+                        cmd.lower()) is not None:
+                        cl = getattr(op, '_instruction0')
+                elif re.match(
+                        r"dec|inc|pop|push|int|neg|div|idiv|mul|set[a-z]+|not|lods|cmpxchg8b|bswap|fistp|fmul|fadd",
+                        cmd.lower()) is not None:
+                        cl = getattr(op, '_instruction1')
+                elif re.match(r"j[a-z]+|loop.*", cmd.lower()) is not None:
+                        cl = getattr(op, '_jump')
+                elif re.match(
+                        r"xchg|cmp|movsx|movzx|mov|or|xor|and|add|adc|sbb|rol|ror|sub|shl|shr|test|in|out|lea|lds|les|lfs|lgs|sar|btr|bts|btc|bt|movs|xadd|cmov[a-z]+",
+                        cmd.lower()) is not None:
+                        cl = getattr(op, '_instruction2')
+                elif re.match(r"shrd|shld", cmd.lower()) is not None:
+                        cl = getattr(op, '_instruction3')
+                else:
+                        raise Exception("unknown command: " + cmd.lower())
+                return cl
 
         def add_equ(self, label, value, line_number=0):
-                
                 cl = getattr(op, '_equ')
-                        
-                #print "args %s" %s[1:]
+                o = self.add_equ_(cl, label, line_number, value)
+                self.stmts.append(o)
+
+        def add_equ_(self, cl, label, line_number, value):
+                # print "args %s" %s[1:]
+                value = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', value)
+                o1 = cl(label, value)
+                o1.command = str(line_number) + " " + label + " equ " + value
+                o1.cmd = o1.command
+                #               logging.info "~~~" + o.command + o.comments
+                o = o1
+                return o
+
+        def add_assignment(self, label, value, line_number=0):
+                cl = getattr(op, '_assignment')
+
+                o = self.add_assignment_(cl, label, line_number, value)
+                self.stmts.append(o)
+
+        def add_assignment_(self, cl, label, line_number, value):
+                # print "args %s" %s[1:]
                 value = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', value)
                 o = cl(label, value)
-                o.command = str(line_number) + " " + label + " equ " + value
+                o.command = str(line_number) + " " + label + " = " + value
                 o.cmd = o.command
-#               logging.info "~~~" + o.command + o.comments
-                self.stmts.append(o)
-        
+                #               logging.info "~~~" + o.command + o.comments
+                return o
+
         def __str__(self):
                 r = []
                 for i in self.stmts:

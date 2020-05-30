@@ -1,0 +1,1300 @@
+bsrw       A=00000000 R=12345678 1
+bsrw       A=12340128 R=12340008 0
+bsrw       A=ffffffff R=1234000f 0
+bsrw       A=ffff7fff R=1234000e 0
+bsfw       A=00000000 R=12345678 1
+bsfw       A=12340128 R=12340003 0
+bsfw       A=ffffffff R=12340000 0
+bsfw       A=fffffff7 R=12340000 0
+bsrl       A=00000000 R=12345678 1
+bsrl       A=00340128 R=00000015 0
+bsrl       A=ffffffff R=0000001f 0
+bsrl       A=7fffffff R=0000001e 0
+bsfl       A=00000000 R=12345678 1
+bsfl       A=00340128 R=00000003 0
+bsfl       A=ffffffff R=00000000 0
+bsfl       A=fffffff7 R=00000000 0
+imulb      A=1234561d B=00000004 R=12340074 CC=0000
+imulb      A=00000003 B=fffffffc R=0000fff4 CC=0000
+imulb      A=00000080 B=00000080 R=00004000 CC=0801
+imulb      A=00000010 B=00000010 R=00000100 CC=0801
+imulw      AH=00000000 AL=1234001d B=0000002d RH=00000000 RL=12340519 CC=0000
+imulw      AH=00000000 AL=00000017 B=ffffffd3 RH=0000ffff RL=0000fbf5 CC=0000
+imulw      AH=00000000 AL=00008000 B=00008000 RH=00004000 RL=00000000 CC=0801
+imulw      AH=00000000 AL=00000100 B=00000100 RH=00000001 RL=00000000 CC=0801
+imull      AH=00000000 AL=1234001d B=0000002d RH=00000003 RL=33240519 CC=0801
+imull      AH=00000000 AL=00000017 B=ffffffd3 RH=ffffffff RL=fffffbf5 CC=0000
+imull      AH=00000000 AL=80000000 B=80000000 RH=40000000 RL=00000000 CC=0801
+imull      AH=00000000 AL=00010000 B=00010000 RH=00000001 RL=00000000 CC=0801
+mulb       A=1234561d B=00000004 R=12340074 CC=0000
+mulb       A=00000003 B=fffffffc R=000002f4 CC=0801
+mulb       A=00000080 B=00000080 R=00004000 CC=0801
+mulb       A=00000010 B=00000010 R=00000100 CC=0801
+mulw       AH=00000000 AL=1234001d B=0000002d RH=00000000 RL=12340519 CC=0000
+mulw       AH=00000000 AL=00000017 B=ffffffd3 RH=00000016 RL=0000fbf5 CC=0801
+mulw       AH=00000000 AL=00008000 B=00008000 RH=00004000 RL=00000000 CC=0801
+mulw       AH=00000000 AL=00000100 B=00000100 RH=00000001 RL=00000000 CC=0801
+mull       AH=00000000 AL=1234001d B=0000002d RH=00000003 RL=33240519 CC=0801
+mull       AH=00000000 AL=00000017 B=ffffffd3 RH=00000016 RL=fffffbf5 CC=0801
+mull       AH=00000000 AL=80000000 B=80000000 RH=40000000 RL=00000000 CC=0801
+mull       AH=00000000 AL=00010000 B=00010000 RH=00000001 RL=00000000 CC=0801
+mull       AH=00000000 AL=ffffffff B=ffffffff RH=fffffffe RL=00000001 CC=0801
+mull       AH=00000000 AL=fffffffe B=ffffffff RH=fffffffd RL=00000002 CC=0801
+mull       AH=00000000 AL=ffffffff B=fffffffe RH=fffffffd RL=00000002 CC=0801
+mull       AH=00000000 AL=ffffffff B=00000000 RH=00000000 RL=00000000 CC=0000
+mull       AH=00000000 AL=ffffffff B=00000001 RH=00000000 RL=ffffffff CC=0000
+mull       AH=00000000 AL=ffffffff B=00000002 RH=00000001 RL=fffffffe CC=0801
+mull       AH=00000000 AL=ffffffff B=00000003 RH=00000002 RL=fffffffd CC=0801
+mull       AH=00000000 AL=00000000 B=ffffffff RH=00000000 RL=00000000 CC=0000
+mull       AH=00000000 AL=00000001 B=ffffffff RH=00000000 RL=ffffffff CC=0000
+mull       AH=00000000 AL=00000002 B=ffffffff RH=00000001 RL=fffffffe CC=0801
+mull       AH=00000000 AL=00000003 B=ffffffff RH=00000002 RL=fffffffd CC=0801
+imulw      A=1234001d B=0000002d R=12340519 CC=0000
+imulw      A=00000017 B=ffffffd3 R=0000fbf5 CC=0000
+imulw      A=00008000 B=00008000 R=00000000 CC=0801
+imulw      A=00000100 B=00000100 R=00000000 CC=0801
+imull      A=1234001d B=0000002d R=33240519 CC=0801
+imull      A=00000017 B=ffffffd3 R=fffffbf5 CC=0000
+imull      A=80000000 B=80000000 R=00000000 CC=0801
+imull      A=00010000 B=00010000 R=00000000 CC=0801
+imulw im   A=0000002d B=00001234 R=00003324 CC=0000
+imulw im   A=ffffffd3 B=00000017 R=0000fbf5 CC=0000
+imulw im   A=00008000 B=80000000 R=00000000 CC=0000
+imulw im   A=00007fff B=00001000 R=0000f000 CC=0000
+imull im   A=0000002d B=00001234 R=00033324 CC=0000
+imull im   A=ffffffd3 B=00000017 R=fffffbf5 CC=0000
+imull im   A=00008000 B=80000000 R=00000000 CC=0000
+imull im   A=00007fff B=00001000 R=07fff000 CC=0000
+idivb      A=12341678 B=0000127e R=1234522d CC=0000
+idivb      A=43210123 B=fffffffb R=432101c6 CC=0000
+idivb      A=12340004 B=ffffffff R=123400fc CC=0000
+idivb      A=ffffffec B=00000003 R=fffffefa CC=0000
+idivb      A=00000014 B=fffffffd R=000002fa CC=0000
+idivb      A=ffffffec B=fffffffd R=fffffe06 CC=0000
+idivw      AH=00000000 AL=12345678 B=0000303b RH=0000263d RL=12340001 CC=0000
+idivw      AH=00000000 AL=ffffa549 B=ffffffd3 RH=0000000d RL=fffffc54 CC=0000
+idivw      AH=00000000 AL=12348000 B=ffffffff RH=00000000 RL=12348000 CC=0000
+idivw      AH=00012343 AL=12345678 B=81238567 RH=000120a6 RL=1234b65e CC=0000
+idivw      AH=ffffffec AL=00000000 B=0000012c RH=ffffffec RL=0000eeef CC=0000
+idivw      AH=00000014 AL=00000000 B=fffffed4 RH=00000014 RL=0000eeef CC=0000
+idivw      AH=ffffffec AL=00000000 B=fffffed4 RH=ffffffec RL=00001111 CC=0000
+idivl      AH=00000000 AL=12345678 B=0000303b RH=00001198 RL=000060a0 CC=0000
+idivl      AH=00000000 AL=fffc70f9 B=ffffffd3 RH=0000002b RL=fa4fb93a CC=0000
+idivl      AH=00000000 AL=80000000 B=ffffffff RH=00000000 RL=80000000 CC=0000
+idivl      AH=00012343 AL=12345678 B=81234567 RH=4ba84b51 RL=fffdb441 CC=0000
+divb       A=12341678 B=0000127e R=1234522d CC=0000
+divb       A=43210123 B=fffffffb R=43212801 CC=0000
+divb       A=12340004 B=ffffffff R=12340400 CC=0000
+divw       AH=00000000 AL=12345678 B=0000303b RH=0000263d RL=12340001 CC=0000
+divw       AH=00000000 AL=ffffa549 B=ffffffd3 RH=0000a549 RL=ffff0000 CC=0000
+divw       AH=00000000 AL=12348000 B=ffffffff RH=00008000 RL=12340000 CC=0000
+divw       AH=00012343 AL=12345678 B=81238567 RH=000145ab RL=123443ab CC=0000
+divl       AH=00000000 AL=12345678 B=0000303b RH=00001198 RL=000060a0 CC=0000
+divl       AH=00000000 AL=fffc70f9 B=ffffffd3 RH=fffc70f9 RL=00000000 CC=0000
+divl       AH=00000000 AL=80000000 B=ffffffff RH=80000000 RL=00000000 CC=0000
+divl       AH=00012343 AL=12345678 B=81234567 RH=2100133c RL=00024164 CC=0000
+divl       AH=fffffffe AL=ffffffff B=ffffffff RH=fffffffe RL=ffffffff CC=0000
+divl       AH=0ffffffe AL=ffffffff B=0fffffff RH=0ffffffe RL=ffffffff CC=0000
+divl       AH=00fffffe AL=ffffffff B=00ffffff RH=00fffffe RL=ffffffff CC=0000
+divl       AH=000ffffe AL=ffffffff B=000fffff RH=000ffffe RL=ffffffff CC=0000
+divl       AH=0000fffe AL=ffffffff B=0000ffff RH=0000fffe RL=ffffffff CC=0000
+divl       AH=00000ffe AL=ffffffff B=00000fff RH=00000ffe RL=ffffffff CC=0000
+divl       AH=000000fe AL=ffffffff B=000000ff RH=000000fe RL=ffffffff CC=0000
+divl       AH=0000000e AL=ffffffff B=0000000f RH=0000000e RL=ffffffff CC=0000
+divl       AH=7ffffffe AL=ffffffff B=7fffffff RH=7ffffffe RL=ffffffff CC=0000
+divl       AH=07fffffe AL=ffffffff B=07ffffff RH=07fffffe RL=ffffffff CC=0000
+divl       AH=007ffffe AL=ffffffff B=007fffff RH=007ffffe RL=ffffffff CC=0000
+divl       AH=0007fffe AL=ffffffff B=0007ffff RH=0007fffe RL=ffffffff CC=0000
+divl       AH=00007ffe AL=ffffffff B=00007fff RH=00007ffe RL=ffffffff CC=0000
+divl       AH=000007fe AL=ffffffff B=000007ff RH=000007fe RL=ffffffff CC=0000
+divl       AH=0000007e AL=ffffffff B=0000007f RH=0000007e RL=ffffffff CC=0000
+divl       AH=3ffffffe AL=ffffffff B=3fffffff RH=3ffffffe RL=ffffffff CC=0000
+divl       AH=03fffffe AL=ffffffff B=03ffffff RH=03fffffe RL=ffffffff CC=0000
+divl       AH=003ffffe AL=ffffffff B=003fffff RH=003ffffe RL=ffffffff CC=0000
+divl       AH=0003fffe AL=ffffffff B=0003ffff RH=0003fffe RL=ffffffff CC=0000
+divl       AH=00003ffe AL=ffffffff B=00003fff RH=00003ffe RL=ffffffff CC=0000
+divl       AH=000003fe AL=ffffffff B=000003ff RH=000003fe RL=ffffffff CC=0000
+divl       AH=0000003e AL=ffffffff B=0000003f RH=0000003e RL=ffffffff CC=0000
+divl       AH=1ffffffe AL=ffffffff B=1fffffff RH=1ffffffe RL=ffffffff CC=0000
+divl       AH=01fffffe AL=ffffffff B=01ffffff RH=01fffffe RL=ffffffff CC=0000
+divl       AH=001ffffe AL=ffffffff B=001fffff RH=001ffffe RL=ffffffff CC=0000
+divl       AH=0001fffe AL=ffffffff B=0001ffff RH=0001fffe RL=ffffffff CC=0000
+divl       AH=00001ffe AL=ffffffff B=00001fff RH=00001ffe RL=ffffffff CC=0000
+divl       AH=000001fe AL=ffffffff B=000001ff RH=000001fe RL=ffffffff CC=0000
+divl       AH=0000001e AL=ffffffff B=0000001f RH=0000001e RL=ffffffff CC=0000
+divl       AH=00000000 AL=fffffffe B=00000001 RH=00000000 RL=fffffffe CC=0000
+divl       AH=00000000 AL=ffffffff B=00000001 RH=00000000 RL=ffffffff CC=0000
+divl       AH=00000001 AL=fffffffe B=00000002 RH=00000000 RL=ffffffff CC=0000
+divl       AH=00000001 AL=ffffffff B=00000002 RH=00000001 RL=ffffffff CC=0000
+divl       AH=00000002 AL=fffffffe B=00000003 RH=00000001 RL=ffffffff CC=0000
+divl       AH=00000002 AL=ffffffff B=00000003 RH=00000002 RL=ffffffff CC=0000
+divl       AH=00000003 AL=fffffffe B=00000004 RH=00000002 RL=ffffffff CC=0000
+divl       AH=00000003 AL=ffffffff B=00000004 RH=00000003 RL=ffffffff CC=0000
+divl       AH=00000004 AL=fffffffe B=00000005 RH=00000003 RL=ffffffff CC=0000
+divl       AH=00000004 AL=ffffffff B=00000005 RH=00000004 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=00000000 B=fffffffe RH=fffffffc RL=fffffffe CC=0000
+divl       AH=fffffffd AL=fffffff0 B=fffffffe RH=ffffffee RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000000 B=ffffffff RH=fffffffe RL=fffffffe CC=0000
+divl       AH=fffffffe AL=fffffff0 B=ffffffff RH=ffffffef RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000000 B=fffffffa RH=00000000 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000000 B=fffffffb RH=00000000 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000000 B=fffffffc RH=00000000 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000000 B=fffffffd RH=00000000 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000000 B=fffffffe RH=00000000 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000000 B=ffffffff RH=00000000 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000001 RH=00000000 RL=00000001 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000001 RH=00000000 RL=ffffffff CC=0000
+idivl      AH=00000000 AL=00000001 B=ffffffff RH=00000000 RL=ffffffff CC=0000
+idivl      AH=ffffffff AL=ffffffff B=ffffffff RH=00000000 RL=00000001 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000001 RH=00000000 RL=7fffffff CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000001 RH=00000000 RL=80000001 CC=0000
+idivl      AH=00000000 AL=7fffffff B=ffffffff RH=00000000 RL=80000001 CC=0000
+idivl      AH=ffffffff AL=80000001 B=ffffffff RH=00000000 RL=7fffffff CC=0000
+divl       AH=00000000 AL=fffffffe B=00000002 RH=00000000 RL=7fffffff CC=0000
+divl       AH=00000000 AL=ffffffff B=00000002 RH=00000001 RL=7fffffff CC=0000
+divl       AH=00000001 AL=fffffffe B=00000003 RH=00000000 RL=aaaaaaaa CC=0000
+divl       AH=00000001 AL=ffffffff B=00000003 RH=00000001 RL=aaaaaaaa CC=0000
+divl       AH=00000002 AL=fffffffe B=00000004 RH=00000002 RL=bfffffff CC=0000
+divl       AH=00000002 AL=ffffffff B=00000004 RH=00000003 RL=bfffffff CC=0000
+divl       AH=00000003 AL=fffffffe B=00000005 RH=00000002 RL=cccccccc CC=0000
+divl       AH=00000003 AL=ffffffff B=00000005 RH=00000003 RL=cccccccc CC=0000
+divl       AH=00000004 AL=fffffffe B=00000006 RH=00000000 RL=d5555555 CC=0000
+divl       AH=00000004 AL=ffffffff B=00000006 RH=00000001 RL=d5555555 CC=0000
+divl       AH=fffffffd AL=00000001 B=fffffffe RH=fffffffd RL=fffffffe CC=0000
+divl       AH=fffffffd AL=fffffff1 B=fffffffe RH=ffffffef RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000001 B=ffffffff RH=00000000 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff1 B=ffffffff RH=fffffff0 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000001 B=fffffffa RH=00000001 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000001 B=fffffffb RH=00000001 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000001 B=fffffffc RH=00000001 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000001 B=fffffffd RH=00000001 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000001 B=fffffffe RH=00000001 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000001 B=ffffffff RH=00000001 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000002 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000002 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffffe RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffffe RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000002 RH=00000001 RL=3fffffff CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000002 RH=ffffffff RL=c0000001 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffffe RH=00000001 RL=c0000001 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffffe RH=ffffffff RL=3fffffff CC=0000
+divl       AH=00000000 AL=fffffffe B=00000003 RH=00000002 RL=55555554 CC=0000
+divl       AH=00000000 AL=ffffffff B=00000003 RH=00000000 RL=55555555 CC=0000
+divl       AH=00000001 AL=fffffffe B=00000004 RH=00000002 RL=7fffffff CC=0000
+divl       AH=00000001 AL=ffffffff B=00000004 RH=00000003 RL=7fffffff CC=0000
+divl       AH=00000002 AL=fffffffe B=00000005 RH=00000001 RL=99999999 CC=0000
+divl       AH=00000002 AL=ffffffff B=00000005 RH=00000002 RL=99999999 CC=0000
+divl       AH=00000003 AL=fffffffe B=00000006 RH=00000002 RL=aaaaaaaa CC=0000
+divl       AH=00000003 AL=ffffffff B=00000006 RH=00000003 RL=aaaaaaaa CC=0000
+divl       AH=00000004 AL=fffffffe B=00000007 RH=00000004 RL=b6db6db6 CC=0000
+divl       AH=00000004 AL=ffffffff B=00000007 RH=00000005 RL=b6db6db6 CC=0000
+divl       AH=fffffffd AL=00000002 B=fffffffe RH=00000000 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff2 B=fffffffe RH=fffffff0 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000002 B=ffffffff RH=00000001 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff2 B=ffffffff RH=fffffff1 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000002 B=fffffffa RH=00000002 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000002 B=fffffffb RH=00000002 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000002 B=fffffffc RH=00000002 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000002 B=fffffffd RH=00000002 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000002 B=fffffffe RH=00000002 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000002 B=ffffffff RH=00000002 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000003 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000003 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffffd RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffffd RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000003 RH=00000001 RL=2aaaaaaa CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000003 RH=ffffffff RL=d5555556 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffffd RH=00000001 RL=d5555556 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffffd RH=ffffffff RL=2aaaaaaa CC=0000
+divl       AH=00000000 AL=fffffffe B=00000004 RH=00000002 RL=3fffffff CC=0000
+divl       AH=00000000 AL=ffffffff B=00000004 RH=00000003 RL=3fffffff CC=0000
+divl       AH=00000001 AL=fffffffe B=00000005 RH=00000000 RL=66666666 CC=0000
+divl       AH=00000001 AL=ffffffff B=00000005 RH=00000001 RL=66666666 CC=0000
+divl       AH=00000002 AL=fffffffe B=00000006 RH=00000004 RL=7fffffff CC=0000
+divl       AH=00000002 AL=ffffffff B=00000006 RH=00000005 RL=7fffffff CC=0000
+divl       AH=00000003 AL=fffffffe B=00000007 RH=00000000 RL=92492492 CC=0000
+divl       AH=00000003 AL=ffffffff B=00000007 RH=00000001 RL=92492492 CC=0000
+divl       AH=00000004 AL=fffffffe B=00000008 RH=00000006 RL=9fffffff CC=0000
+divl       AH=00000004 AL=ffffffff B=00000008 RH=00000007 RL=9fffffff CC=0000
+divl       AH=fffffffd AL=00000003 B=fffffffe RH=00000001 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff3 B=fffffffe RH=fffffff1 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000003 B=ffffffff RH=00000002 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff3 B=ffffffff RH=fffffff2 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000003 B=fffffffa RH=00000003 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000003 B=fffffffb RH=00000003 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000003 B=fffffffc RH=00000003 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000003 B=fffffffd RH=00000003 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000003 B=fffffffe RH=00000003 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000003 B=ffffffff RH=00000003 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000004 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000004 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffffc RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffffc RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000004 RH=00000003 RL=1fffffff CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000004 RH=fffffffd RL=e0000001 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffffc RH=00000003 RL=e0000001 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffffc RH=fffffffd RL=1fffffff CC=0000
+divl       AH=00000000 AL=fffffffe B=00000005 RH=00000004 RL=33333332 CC=0000
+divl       AH=00000000 AL=ffffffff B=00000005 RH=00000000 RL=33333333 CC=0000
+divl       AH=00000001 AL=fffffffe B=00000006 RH=00000000 RL=55555555 CC=0000
+divl       AH=00000001 AL=ffffffff B=00000006 RH=00000001 RL=55555555 CC=0000
+divl       AH=00000002 AL=fffffffe B=00000007 RH=00000003 RL=6db6db6d CC=0000
+divl       AH=00000002 AL=ffffffff B=00000007 RH=00000004 RL=6db6db6d CC=0000
+divl       AH=00000003 AL=fffffffe B=00000008 RH=00000006 RL=7fffffff CC=0000
+divl       AH=00000003 AL=ffffffff B=00000008 RH=00000007 RL=7fffffff CC=0000
+divl       AH=00000004 AL=fffffffe B=00000009 RH=00000000 RL=8e38e38e CC=0000
+divl       AH=00000004 AL=ffffffff B=00000009 RH=00000001 RL=8e38e38e CC=0000
+divl       AH=fffffffd AL=00000004 B=fffffffe RH=00000002 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff4 B=fffffffe RH=fffffff2 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000004 B=ffffffff RH=00000003 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff4 B=ffffffff RH=fffffff3 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000004 B=fffffffa RH=00000004 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000004 B=fffffffb RH=00000004 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000004 B=fffffffc RH=00000004 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000004 B=fffffffd RH=00000004 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000004 B=fffffffe RH=00000004 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000004 B=ffffffff RH=00000004 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000005 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000005 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffffb RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffffb RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000005 RH=00000002 RL=19999999 CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000005 RH=fffffffe RL=e6666667 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffffb RH=00000002 RL=e6666667 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffffb RH=fffffffe RL=19999999 CC=0000
+divl       AH=00000000 AL=fffffffe B=00000006 RH=00000002 RL=2aaaaaaa CC=0000
+divl       AH=00000000 AL=ffffffff B=00000006 RH=00000003 RL=2aaaaaaa CC=0000
+divl       AH=00000001 AL=fffffffe B=00000007 RH=00000006 RL=49249248 CC=0000
+divl       AH=00000001 AL=ffffffff B=00000007 RH=00000000 RL=49249249 CC=0000
+divl       AH=00000002 AL=fffffffe B=00000008 RH=00000006 RL=5fffffff CC=0000
+divl       AH=00000002 AL=ffffffff B=00000008 RH=00000007 RL=5fffffff CC=0000
+divl       AH=00000003 AL=fffffffe B=00000009 RH=00000005 RL=71c71c71 CC=0000
+divl       AH=00000003 AL=ffffffff B=00000009 RH=00000006 RL=71c71c71 CC=0000
+divl       AH=00000004 AL=fffffffe B=0000000a RH=00000008 RL=7fffffff CC=0000
+divl       AH=00000004 AL=ffffffff B=0000000a RH=00000009 RL=7fffffff CC=0000
+divl       AH=fffffffd AL=00000005 B=fffffffe RH=00000003 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff5 B=fffffffe RH=fffffff3 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000005 B=ffffffff RH=00000004 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff5 B=ffffffff RH=fffffff4 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000005 B=fffffffa RH=00000005 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000005 B=fffffffb RH=00000005 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000005 B=fffffffc RH=00000005 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000005 B=fffffffd RH=00000005 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000005 B=fffffffe RH=00000005 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000005 B=ffffffff RH=00000005 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000006 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000006 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffffa RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffffa RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000006 RH=00000001 RL=15555555 CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000006 RH=ffffffff RL=eaaaaaab CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffffa RH=00000001 RL=eaaaaaab CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffffa RH=ffffffff RL=15555555 CC=0000
+divl       AH=00000000 AL=fffffffe B=00000007 RH=00000002 RL=24924924 CC=0000
+divl       AH=00000000 AL=ffffffff B=00000007 RH=00000003 RL=24924924 CC=0000
+divl       AH=00000001 AL=fffffffe B=00000008 RH=00000006 RL=3fffffff CC=0000
+divl       AH=00000001 AL=ffffffff B=00000008 RH=00000007 RL=3fffffff CC=0000
+divl       AH=00000002 AL=fffffffe B=00000009 RH=00000001 RL=55555555 CC=0000
+divl       AH=00000002 AL=ffffffff B=00000009 RH=00000002 RL=55555555 CC=0000
+divl       AH=00000003 AL=fffffffe B=0000000a RH=00000002 RL=66666666 CC=0000
+divl       AH=00000003 AL=ffffffff B=0000000a RH=00000003 RL=66666666 CC=0000
+divl       AH=00000004 AL=fffffffe B=0000000b RH=00000007 RL=745d1745 CC=0000
+divl       AH=00000004 AL=ffffffff B=0000000b RH=00000008 RL=745d1745 CC=0000
+divl       AH=fffffffd AL=00000006 B=fffffffe RH=00000004 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff6 B=fffffffe RH=fffffff4 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000006 B=ffffffff RH=00000005 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff6 B=ffffffff RH=fffffff5 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000006 B=fffffffa RH=00000006 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000006 B=fffffffb RH=00000006 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000006 B=fffffffc RH=00000006 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000006 B=fffffffd RH=00000006 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000006 B=fffffffe RH=00000006 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000006 B=ffffffff RH=00000006 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000007 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000007 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff9 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff9 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000007 RH=00000001 RL=12492492 CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000007 RH=ffffffff RL=edb6db6e CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff9 RH=00000001 RL=edb6db6e CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff9 RH=ffffffff RL=12492492 CC=0000
+divl       AH=00000000 AL=fffffffe B=00000008 RH=00000006 RL=1fffffff CC=0000
+divl       AH=00000000 AL=ffffffff B=00000008 RH=00000007 RL=1fffffff CC=0000
+divl       AH=00000001 AL=fffffffe B=00000009 RH=00000006 RL=38e38e38 CC=0000
+divl       AH=00000001 AL=ffffffff B=00000009 RH=00000007 RL=38e38e38 CC=0000
+divl       AH=00000002 AL=fffffffe B=0000000a RH=00000006 RL=4ccccccc CC=0000
+divl       AH=00000002 AL=ffffffff B=0000000a RH=00000007 RL=4ccccccc CC=0000
+divl       AH=00000003 AL=fffffffe B=0000000b RH=00000003 RL=5d1745d1 CC=0000
+divl       AH=00000003 AL=ffffffff B=0000000b RH=00000004 RL=5d1745d1 CC=0000
+divl       AH=00000004 AL=fffffffe B=0000000c RH=00000006 RL=6aaaaaaa CC=0000
+divl       AH=00000004 AL=ffffffff B=0000000c RH=00000007 RL=6aaaaaaa CC=0000
+divl       AH=fffffffd AL=00000007 B=fffffffe RH=00000005 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff7 B=fffffffe RH=fffffff5 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000007 B=ffffffff RH=00000006 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff7 B=ffffffff RH=fffffff6 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000007 B=fffffffa RH=00000007 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000007 B=fffffffb RH=00000007 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000007 B=fffffffc RH=00000007 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000007 B=fffffffd RH=00000007 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000007 B=fffffffe RH=00000007 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000007 B=ffffffff RH=00000007 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000008 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000008 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff8 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff8 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000008 RH=00000007 RL=0fffffff CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000008 RH=fffffff9 RL=f0000001 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff8 RH=00000007 RL=f0000001 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff8 RH=fffffff9 RL=0fffffff CC=0000
+divl       AH=00000000 AL=fffffffe B=00000009 RH=00000002 RL=1c71c71c CC=0000
+divl       AH=00000000 AL=ffffffff B=00000009 RH=00000003 RL=1c71c71c CC=0000
+divl       AH=00000001 AL=fffffffe B=0000000a RH=00000000 RL=33333333 CC=0000
+divl       AH=00000001 AL=ffffffff B=0000000a RH=00000001 RL=33333333 CC=0000
+divl       AH=00000002 AL=fffffffe B=0000000b RH=0000000a RL=45d1745c CC=0000
+divl       AH=00000002 AL=ffffffff B=0000000b RH=00000000 RL=45d1745d CC=0000
+divl       AH=00000003 AL=fffffffe B=0000000c RH=00000002 RL=55555555 CC=0000
+divl       AH=00000003 AL=ffffffff B=0000000c RH=00000003 RL=55555555 CC=0000
+divl       AH=00000004 AL=fffffffe B=0000000d RH=00000004 RL=62762762 CC=0000
+divl       AH=00000004 AL=ffffffff B=0000000d RH=00000005 RL=62762762 CC=0000
+divl       AH=fffffffd AL=00000008 B=fffffffe RH=00000006 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff8 B=fffffffe RH=fffffff6 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000008 B=ffffffff RH=00000007 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff8 B=ffffffff RH=fffffff7 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000008 B=fffffffa RH=00000008 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000008 B=fffffffb RH=00000008 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000008 B=fffffffc RH=00000008 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000008 B=fffffffd RH=00000008 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000008 B=fffffffe RH=00000008 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000008 B=ffffffff RH=00000008 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000009 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000009 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff7 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff7 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000009 RH=00000001 RL=0e38e38e CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000009 RH=ffffffff RL=f1c71c72 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff7 RH=00000001 RL=f1c71c72 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff7 RH=ffffffff RL=0e38e38e CC=0000
+divl       AH=00000000 AL=fffffffe B=0000000a RH=00000004 RL=19999999 CC=0000
+divl       AH=00000000 AL=ffffffff B=0000000a RH=00000005 RL=19999999 CC=0000
+divl       AH=00000001 AL=fffffffe B=0000000b RH=00000006 RL=2e8ba2e8 CC=0000
+divl       AH=00000001 AL=ffffffff B=0000000b RH=00000007 RL=2e8ba2e8 CC=0000
+divl       AH=00000002 AL=fffffffe B=0000000c RH=0000000a RL=3fffffff CC=0000
+divl       AH=00000002 AL=ffffffff B=0000000c RH=0000000b RL=3fffffff CC=0000
+divl       AH=00000003 AL=fffffffe B=0000000d RH=00000008 RL=4ec4ec4e CC=0000
+divl       AH=00000003 AL=ffffffff B=0000000d RH=00000009 RL=4ec4ec4e CC=0000
+divl       AH=00000004 AL=fffffffe B=0000000e RH=00000004 RL=5b6db6db CC=0000
+divl       AH=00000004 AL=ffffffff B=0000000e RH=00000005 RL=5b6db6db CC=0000
+divl       AH=fffffffd AL=00000009 B=fffffffe RH=00000007 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffff9 B=fffffffe RH=fffffff7 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=00000009 B=ffffffff RH=00000008 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffff9 B=ffffffff RH=fffffff8 RL=ffffffff CC=0000
+divl       AH=00000000 AL=00000009 B=fffffffa RH=00000009 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000009 B=fffffffb RH=00000009 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000009 B=fffffffc RH=00000009 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000009 B=fffffffd RH=00000009 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000009 B=fffffffe RH=00000009 RL=00000000 CC=0000
+divl       AH=00000000 AL=00000009 B=ffffffff RH=00000009 RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=0000000a RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=0000000a RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff6 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff6 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=0000000a RH=00000007 RL=0ccccccc CC=0000
+idivl      AH=ffffffff AL=80000001 B=0000000a RH=fffffff9 RL=f3333334 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff6 RH=00000007 RL=f3333334 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff6 RH=fffffff9 RL=0ccccccc CC=0000
+divl       AH=00000000 AL=fffffffe B=0000000b RH=00000002 RL=1745d174 CC=0000
+divl       AH=00000000 AL=ffffffff B=0000000b RH=00000003 RL=1745d174 CC=0000
+divl       AH=00000001 AL=fffffffe B=0000000c RH=00000006 RL=2aaaaaaa CC=0000
+divl       AH=00000001 AL=ffffffff B=0000000c RH=00000007 RL=2aaaaaaa CC=0000
+divl       AH=00000002 AL=fffffffe B=0000000d RH=0000000c RL=3b13b13a CC=0000
+divl       AH=00000002 AL=ffffffff B=0000000d RH=00000000 RL=3b13b13b CC=0000
+divl       AH=00000003 AL=fffffffe B=0000000e RH=00000000 RL=49249249 CC=0000
+divl       AH=00000003 AL=ffffffff B=0000000e RH=00000001 RL=49249249 CC=0000
+divl       AH=00000004 AL=fffffffe B=0000000f RH=00000003 RL=55555555 CC=0000
+divl       AH=00000004 AL=ffffffff B=0000000f RH=00000004 RL=55555555 CC=0000
+divl       AH=fffffffd AL=0000000a B=fffffffe RH=00000008 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffffa B=fffffffe RH=fffffff8 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=0000000a B=ffffffff RH=00000009 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffffa B=ffffffff RH=fffffff9 RL=ffffffff CC=0000
+divl       AH=00000000 AL=0000000a B=fffffffa RH=0000000a RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000a B=fffffffb RH=0000000a RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000a B=fffffffc RH=0000000a RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000a B=fffffffd RH=0000000a RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000a B=fffffffe RH=0000000a RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000a B=ffffffff RH=0000000a RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=0000000b RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=0000000b RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff5 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff5 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=0000000b RH=00000001 RL=0ba2e8ba CC=0000
+idivl      AH=ffffffff AL=80000001 B=0000000b RH=ffffffff RL=f45d1746 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff5 RH=00000001 RL=f45d1746 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff5 RH=ffffffff RL=0ba2e8ba CC=0000
+divl       AH=00000000 AL=fffffffe B=0000000c RH=00000002 RL=15555555 CC=0000
+divl       AH=00000000 AL=ffffffff B=0000000c RH=00000003 RL=15555555 CC=0000
+divl       AH=00000001 AL=fffffffe B=0000000d RH=00000003 RL=27627627 CC=0000
+divl       AH=00000001 AL=ffffffff B=0000000d RH=00000004 RL=27627627 CC=0000
+divl       AH=00000002 AL=fffffffe B=0000000e RH=0000000a RL=36db6db6 CC=0000
+divl       AH=00000002 AL=ffffffff B=0000000e RH=0000000b RL=36db6db6 CC=0000
+divl       AH=00000003 AL=fffffffe B=0000000f RH=00000002 RL=44444444 CC=0000
+divl       AH=00000003 AL=ffffffff B=0000000f RH=00000003 RL=44444444 CC=0000
+divl       AH=00000004 AL=fffffffe B=00000010 RH=0000000e RL=4fffffff CC=0000
+divl       AH=00000004 AL=ffffffff B=00000010 RH=0000000f RL=4fffffff CC=0000
+divl       AH=fffffffd AL=0000000b B=fffffffe RH=00000009 RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffffb B=fffffffe RH=fffffff9 RL=ffffffff CC=0000
+divl       AH=fffffffe AL=0000000b B=ffffffff RH=0000000a RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffffb B=ffffffff RH=fffffffa RL=ffffffff CC=0000
+divl       AH=00000000 AL=0000000b B=fffffffa RH=0000000b RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000b B=fffffffb RH=0000000b RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000b B=fffffffc RH=0000000b RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000b B=fffffffd RH=0000000b RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000b B=fffffffe RH=0000000b RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000b B=ffffffff RH=0000000b RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=0000000c RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=0000000c RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff4 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff4 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=0000000c RH=00000007 RL=0aaaaaaa CC=0000
+idivl      AH=ffffffff AL=80000001 B=0000000c RH=fffffff9 RL=f5555556 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff4 RH=00000007 RL=f5555556 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff4 RH=fffffff9 RL=0aaaaaaa CC=0000
+divl       AH=00000000 AL=fffffffe B=0000000d RH=00000007 RL=13b13b13 CC=0000
+divl       AH=00000000 AL=ffffffff B=0000000d RH=00000008 RL=13b13b13 CC=0000
+divl       AH=00000001 AL=fffffffe B=0000000e RH=00000006 RL=24924924 CC=0000
+divl       AH=00000001 AL=ffffffff B=0000000e RH=00000007 RL=24924924 CC=0000
+divl       AH=00000002 AL=fffffffe B=0000000f RH=00000001 RL=33333333 CC=0000
+divl       AH=00000002 AL=ffffffff B=0000000f RH=00000002 RL=33333333 CC=0000
+divl       AH=00000003 AL=fffffffe B=00000010 RH=0000000e RL=3fffffff CC=0000
+divl       AH=00000003 AL=ffffffff B=00000010 RH=0000000f RL=3fffffff CC=0000
+divl       AH=00000004 AL=fffffffe B=00000011 RH=00000003 RL=4b4b4b4b CC=0000
+divl       AH=00000004 AL=ffffffff B=00000011 RH=00000004 RL=4b4b4b4b CC=0000
+divl       AH=fffffffd AL=0000000c B=fffffffe RH=0000000a RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffffc B=fffffffe RH=fffffffa RL=ffffffff CC=0000
+divl       AH=fffffffe AL=0000000c B=ffffffff RH=0000000b RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffffc B=ffffffff RH=fffffffb RL=ffffffff CC=0000
+divl       AH=00000000 AL=0000000c B=fffffffa RH=0000000c RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000c B=fffffffb RH=0000000c RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000c B=fffffffc RH=0000000c RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000c B=fffffffd RH=0000000c RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000c B=fffffffe RH=0000000c RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000c B=ffffffff RH=0000000c RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=0000000d RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=0000000d RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff3 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff3 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=0000000d RH=0000000a RL=09d89d89 CC=0000
+idivl      AH=ffffffff AL=80000001 B=0000000d RH=fffffff6 RL=f6276277 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff3 RH=0000000a RL=f6276277 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff3 RH=fffffff6 RL=09d89d89 CC=0000
+divl       AH=00000000 AL=fffffffe B=0000000e RH=00000002 RL=12492492 CC=0000
+divl       AH=00000000 AL=ffffffff B=0000000e RH=00000003 RL=12492492 CC=0000
+divl       AH=00000001 AL=fffffffe B=0000000f RH=00000000 RL=22222222 CC=0000
+divl       AH=00000001 AL=ffffffff B=0000000f RH=00000001 RL=22222222 CC=0000
+divl       AH=00000002 AL=fffffffe B=00000010 RH=0000000e RL=2fffffff CC=0000
+divl       AH=00000002 AL=ffffffff B=00000010 RH=0000000f RL=2fffffff CC=0000
+divl       AH=00000003 AL=fffffffe B=00000011 RH=00000002 RL=3c3c3c3c CC=0000
+divl       AH=00000003 AL=ffffffff B=00000011 RH=00000003 RL=3c3c3c3c CC=0000
+divl       AH=00000004 AL=fffffffe B=00000012 RH=00000000 RL=471c71c7 CC=0000
+divl       AH=00000004 AL=ffffffff B=00000012 RH=00000001 RL=471c71c7 CC=0000
+divl       AH=fffffffd AL=0000000d B=fffffffe RH=0000000b RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffffd B=fffffffe RH=fffffffb RL=ffffffff CC=0000
+divl       AH=fffffffe AL=0000000d B=ffffffff RH=0000000c RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffffd B=ffffffff RH=fffffffc RL=ffffffff CC=0000
+divl       AH=00000000 AL=0000000d B=fffffffa RH=0000000d RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000d B=fffffffb RH=0000000d RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000d B=fffffffc RH=0000000d RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000d B=fffffffd RH=0000000d RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000d B=fffffffe RH=0000000d RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000d B=ffffffff RH=0000000d RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=0000000e RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=0000000e RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff2 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff2 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=0000000e RH=00000001 RL=09249249 CC=0000
+idivl      AH=ffffffff AL=80000001 B=0000000e RH=ffffffff RL=f6db6db7 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff2 RH=00000001 RL=f6db6db7 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff2 RH=ffffffff RL=09249249 CC=0000
+divl       AH=00000000 AL=fffffffe B=0000000f RH=0000000e RL=11111110 CC=0000
+divl       AH=00000000 AL=ffffffff B=0000000f RH=00000000 RL=11111111 CC=0000
+divl       AH=00000001 AL=fffffffe B=00000010 RH=0000000e RL=1fffffff CC=0000
+divl       AH=00000001 AL=ffffffff B=00000010 RH=0000000f RL=1fffffff CC=0000
+divl       AH=00000002 AL=fffffffe B=00000011 RH=00000001 RL=2d2d2d2d CC=0000
+divl       AH=00000002 AL=ffffffff B=00000011 RH=00000002 RL=2d2d2d2d CC=0000
+divl       AH=00000003 AL=fffffffe B=00000012 RH=0000000e RL=38e38e38 CC=0000
+divl       AH=00000003 AL=ffffffff B=00000012 RH=0000000f RL=38e38e38 CC=0000
+divl       AH=00000004 AL=fffffffe B=00000013 RH=00000009 RL=435e50d7 CC=0000
+divl       AH=00000004 AL=ffffffff B=00000013 RH=0000000a RL=435e50d7 CC=0000
+divl       AH=fffffffd AL=0000000e B=fffffffe RH=0000000c RL=ffffffff CC=0000
+divl       AH=fffffffd AL=fffffffe B=fffffffe RH=fffffffc RL=ffffffff CC=0000
+divl       AH=fffffffe AL=0000000e B=ffffffff RH=0000000d RL=ffffffff CC=0000
+divl       AH=fffffffe AL=fffffffe B=ffffffff RH=fffffffd RL=ffffffff CC=0000
+divl       AH=00000000 AL=0000000e B=fffffffa RH=0000000e RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000e B=fffffffb RH=0000000e RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000e B=fffffffc RH=0000000e RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000e B=fffffffd RH=0000000e RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000e B=fffffffe RH=0000000e RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000e B=ffffffff RH=0000000e RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=0000000f RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=0000000f RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff1 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff1 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=0000000f RH=00000007 RL=08888888 CC=0000
+idivl      AH=ffffffff AL=80000001 B=0000000f RH=fffffff9 RL=f7777778 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff1 RH=00000007 RL=f7777778 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff1 RH=fffffff9 RL=08888888 CC=0000
+divl       AH=00000000 AL=fffffffe B=00000010 RH=0000000e RL=0fffffff CC=0000
+divl       AH=00000000 AL=ffffffff B=00000010 RH=0000000f RL=0fffffff CC=0000
+divl       AH=00000001 AL=fffffffe B=00000011 RH=00000000 RL=1e1e1e1e CC=0000
+divl       AH=00000001 AL=ffffffff B=00000011 RH=00000001 RL=1e1e1e1e CC=0000
+divl       AH=00000002 AL=fffffffe B=00000012 RH=0000000a RL=2aaaaaaa CC=0000
+divl       AH=00000002 AL=ffffffff B=00000012 RH=0000000b RL=2aaaaaaa CC=0000
+divl       AH=00000003 AL=fffffffe B=00000013 RH=00000003 RL=35e50d79 CC=0000
+divl       AH=00000003 AL=ffffffff B=00000013 RH=00000004 RL=35e50d79 CC=0000
+divl       AH=00000004 AL=fffffffe B=00000014 RH=00000012 RL=3fffffff CC=0000
+divl       AH=00000004 AL=ffffffff B=00000014 RH=00000013 RL=3fffffff CC=0000
+divl       AH=fffffffd AL=0000000f B=fffffffe RH=0000000d RL=ffffffff CC=0000
+divl       AH=fffffffd AL=ffffffff B=fffffffe RH=fffffffd RL=ffffffff CC=0000
+divl       AH=fffffffe AL=0000000f B=ffffffff RH=0000000e RL=ffffffff CC=0000
+divl       AH=fffffffe AL=ffffffff B=ffffffff RH=fffffffe RL=ffffffff CC=0000
+divl       AH=00000000 AL=0000000f B=fffffffa RH=0000000f RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000f B=fffffffb RH=0000000f RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000f B=fffffffc RH=0000000f RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000f B=fffffffd RH=0000000f RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000f B=fffffffe RH=0000000f RL=00000000 CC=0000
+divl       AH=00000000 AL=0000000f B=ffffffff RH=0000000f RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=00000010 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=00000010 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=00000001 B=fffffff0 RH=00000001 RL=00000000 CC=0000
+idivl      AH=ffffffff AL=ffffffff B=fffffff0 RH=ffffffff RL=00000000 CC=0000
+idivl      AH=00000000 AL=7fffffff B=00000010 RH=0000000f RL=07ffffff CC=0000
+idivl      AH=ffffffff AL=80000001 B=00000010 RH=fffffff1 RL=f8000001 CC=0000
+idivl      AH=00000000 AL=7fffffff B=fffffff0 RH=0000000f RL=f8000001 CC=0000
+idivl      AH=ffffffff AL=80000001 B=fffffff0 RH=fffffff1 RL=07ffffff CC=0000
+jne        0
+setne      0
+cmovnel    R=12345678
+cmovnew    R=12345678
+jne        1
+setne      1
+cmovnel    R=12345678
+cmovnew    R=12345678
+je         1
+sete       1
+cmovel     R=12345678
+cmovew     R=12345678
+je         0
+sete       0
+cmovel     R=12345678
+cmovew     R=12345678
+jl         0
+setl       0
+cmovll     R=12345678
+cmovlw     R=12345678
+jl         0
+setl       0
+cmovll     R=12345678
+cmovlw     R=12345678
+jl         0
+setl       0
+cmovll     R=12345678
+cmovlw     R=12345678
+jle        1
+setle      1
+cmovlel    R=12345678
+cmovlew    R=12345678
+jle        0
+setle      0
+cmovlel    R=12345678
+cmovlew    R=12345678
+jle        0
+setle      0
+cmovlel    R=12345678
+cmovlew    R=12345678
+jge        1
+setge      1
+cmovgel    R=12345678
+cmovgew    R=12345678
+jge        1
+setge      1
+cmovgel    R=12345678
+cmovgew    R=12345678
+jge        0
+setge      0
+cmovgel    R=12345678
+cmovgew    R=12345678
+jg         0
+setg       0
+cmovgl     R=12345678
+cmovgw     R=12345678
+jg         1
+setg       1
+cmovgl     R=12345678
+cmovgw     R=12345678
+jg         1
+setg       1
+cmovgl     R=12345678
+cmovgw     R=12345678
+jb         0
+setb       0
+cmovbl     R=12345678
+cmovbw     R=12345678
+jb         0
+setb       0
+cmovbl     R=12345678
+cmovbw     R=12345678
+jb         1
+setb       1
+cmovbl     R=12345678
+cmovbw     R=12345678
+jbe        1
+setbe      1
+cmovbel    R=12345678
+cmovbew    R=12345678
+jbe        0
+setbe      0
+cmovbel    R=12345678
+cmovbew    R=12345678
+jbe        1
+setbe      1
+cmovbel    R=12345678
+cmovbew    R=12345678
+jae        1
+setae      1
+cmovael    R=12345678
+cmovaew    R=12345678
+jae        1
+setae      1
+cmovael    R=12345678
+cmovaew    R=12345678
+jae        0
+setae      0
+cmovael    R=12345678
+cmovaew    R=12345678
+ja         0
+seta       0
+cmoval     R=12345678
+cmovaw     R=12345678
+ja         1
+seta       1
+cmoval     R=12345678
+cmovaw     R=12345678
+ja         0
+seta       0
+cmoval     R=12345678
+cmovaw     R=12345678
+jp         1
+setp       1
+cmovpl     R=12345678
+cmovpw     R=12345678
+jp         0
+setp       0
+cmovpl     R=12345678
+cmovpw     R=12345678
+jnp        0
+setnp      0
+cmovnpl    R=12345678
+cmovnpw    R=12345678
+jnp        1
+setnp      1
+cmovnpl    R=12345678
+cmovnpw    R=12345678
+jo         0
+seto       0
+cmovol     R=12345678
+cmovow     R=12345678
+jo         1
+seto       1
+cmovol     R=12345678
+cmovow     R=12345678
+jno        1
+setno      1
+cmovnol    R=12345678
+cmovnow    R=12345678
+jno        0
+setno      0
+cmovnol    R=12345678
+cmovnow    R=12345678
+js         1
+sets       1
+cmovsl     R=12345678
+cmovsw     R=12345678
+js         0
+sets       0
+cmovsl     R=12345678
+cmovsw     R=12345678
+js         0
+sets       0
+cmovsl     R=12345678
+cmovsw     R=12345678
+jns        0
+setns      0
+cmovnsl    R=12345678
+cmovnsw    R=12345678
+jns        1
+setns      1
+cmovnsl    R=12345678
+cmovnsw    R=12345678
+jns        1
+setns      1
+cmovnsl    R=12345678
+cmovnsw    R=12345678
+jcxz       ECX=00000000 ZF=0 r=1
+jcxz       ECX=00000000 ZF=1 r=1
+jcxz       ECX=00000001 ZF=0 r=0
+jcxz       ECX=00000001 ZF=1 r=0
+jcxz       ECX=00010000 ZF=0 r=1
+jcxz       ECX=00010000 ZF=1 r=1
+jcxz       ECX=00010001 ZF=0 r=0
+jcxz       ECX=00010001 ZF=1 r=0
+loopw      ECX=0000ffff ZF=0 r=1
+loopw      ECX=0000fffe ZF=1 r=1
+loopw      ECX=00000000 ZF=0 r=0
+loopw      ECX=0000ffff ZF=1 r=1
+loopw      ECX=0001ffff ZF=0 r=1
+loopw      ECX=0001fffe ZF=1 r=1
+loopw      ECX=00010000 ZF=0 r=0
+loopw      ECX=0001ffff ZF=1 r=1
+loopzw     ECX=0000ffff ZF=0 r=0
+loopzw     ECX=0000fffe ZF=1 r=1
+loopzw     ECX=00000000 ZF=0 r=0
+loopzw     ECX=0000ffff ZF=1 r=1
+loopzw     ECX=0001ffff ZF=0 r=0
+loopzw     ECX=0001fffe ZF=1 r=1
+loopzw     ECX=00010000 ZF=0 r=0
+loopzw     ECX=0001ffff ZF=1 r=1
+loopnzw    ECX=0000ffff ZF=0 r=1
+loopnzw    ECX=0000fffe ZF=1 r=0
+loopnzw    ECX=00000000 ZF=0 r=0
+loopnzw    ECX=0000ffff ZF=1 r=0
+loopnzw    ECX=0001ffff ZF=0 r=1
+loopnzw    ECX=0001fffe ZF=1 r=0
+loopnzw    ECX=00010000 ZF=0 r=0
+loopnzw    ECX=0001ffff ZF=1 r=0
+jecxz      ECX=00000000 ZF=0 r=1
+jecxz      ECX=00000000 ZF=1 r=1
+jecxz      ECX=00000001 ZF=0 r=0
+jecxz      ECX=00000001 ZF=1 r=0
+jecxz      ECX=00010000 ZF=0 r=0
+jecxz      ECX=00010000 ZF=1 r=0
+jecxz      ECX=00010001 ZF=0 r=0
+jecxz      ECX=00010001 ZF=1 r=0
+loopl      ECX=ffffffff ZF=0 r=1
+loopl      ECX=fffffffe ZF=1 r=1
+loopl      ECX=00000000 ZF=0 r=0
+loopl      ECX=ffffffff ZF=1 r=1
+loopl      ECX=0000ffff ZF=0 r=1
+loopl      ECX=0000fffe ZF=1 r=1
+loopl      ECX=00010000 ZF=0 r=1
+loopl      ECX=0000ffff ZF=1 r=1
+loopzl     ECX=ffffffff ZF=0 r=0
+loopzl     ECX=fffffffe ZF=1 r=1
+loopzl     ECX=00000000 ZF=0 r=0
+loopzl     ECX=ffffffff ZF=1 r=1
+loopzl     ECX=0000ffff ZF=0 r=0
+loopzl     ECX=0000fffe ZF=1 r=1
+loopzl     ECX=00010000 ZF=0 r=0
+loopzl     ECX=0000ffff ZF=1 r=1
+loopnzl    ECX=ffffffff ZF=0 r=1
+loopnzl    ECX=fffffffe ZF=1 r=0
+loopnzl    ECX=00000000 ZF=0 r=0
+loopnzl    ECX=ffffffff ZF=1 r=0
+loopnzl    ECX=0000ffff ZF=0 r=1
+loopnzl    ECX=0000fffe ZF=1 r=0
+loopnzl    ECX=00010000 ZF=0 r=1
+loopnzl    ECX=0000ffff ZF=1 r=0
+a=2.000000 b=3.000000 a+b=5.000000
+a=2.000000 b=3.000000 a-b=-1.000000
+a=2.000000 b=3.000000 a*b=6.000000
+a=2.000000 b=3.000000 a/b=0.666667
+a=2.000000 b=3.000000 =-0.379813
+a=2.000000 b=3.000000 fmod(a, b)=2.000000
+a=2.000000 copysign(a,b)=2.000000
+a=2.000000 sqrt(a)=1.414214
+a=2.000000 exp(a)=7.389056
+a=1.400000 b=-5.000000 a+b=-3.600000
+a=1.400000 b=-5.000000 a-b=6.400000
+a=1.400000 b=-5.000000 a*b=-7.000000
+a=1.400000 b=-5.000000 a/b=-0.280000
+a=1.400000 b=-5.000000 =39.052937
+a=1.400000 b=-5.000000 fmod(a, b)=1.400000
+a=1.400000 copysign(a,b)=-1.400000
+a=1.400000 sqrt(a)=1.183216
+a=1.400000 exp(a)=4.055200
+a=-20.500000 b=128.000000 a+b=107.500000
+a=-20.500000 b=128.000000 a-b=-148.500000
+a=-20.500000 b=128.000000 a*b=-2624.000000
+a=-20.500000 b=128.000000 a/b=-0.160156
+a=-20.500000 b=128.000000 =63.737379
+a=-20.500000 b=128.000000 fmod(a, b)=-20.500000
+a=-20.500000 copysign(a,b)=20.500000
+a=-20.500000 sqrt(a)=-nan
+a=-20.500000 exp(a)=0.000000
+a=-0.500000 b=-4.000000 a+b=-4.500000
+a=-0.500000 b=-4.000000 a-b=3.500000
+a=-0.500000 b=-4.000000 a*b=2.000000
+a=-0.500000 b=-4.000000 a/b=0.125000
+a=-0.500000 b=-4.000000 =-88.494318
+a=-0.500000 b=-4.000000 fmod(a, b)=-0.500000
+a=-0.500000 copysign(a,b)=-0.500000
+a=-0.500000 sqrt(a)=-nan
+a=-0.500000 exp(a)=0.606531
+fcom(2.000000 -1.000000)=0000
+fucom(2.000000 -1.000000)=0000
+fcomi(2.000000 -1.000000)=0000 00
+fucomi(2.000000 -1.000000)=0000 00
+fxam(2.000000)=0400
+fcom(2.000000 2.000000)=4000
+fucom(2.000000 2.000000)=4000
+fcomi(2.000000 2.000000)=0000 04
+fucomi(2.000000 2.000000)=0000 04
+fxam(2.000000)=0400
+fcom(2.000000 3.000000)=0100
+fucom(2.000000 3.000000)=0100
+fcomi(2.000000 3.000000)=0000 00
+fucomi(2.000000 3.000000)=0000 00
+fxam(2.000000)=0400
+fcom(2.000000 -nan)=4500
+fucom(2.000000 -nan)=4500
+fcomi(2.000000 -nan)=0000 04
+fucomi(2.000000 -nan)=0000 04
+fxam(2.000000)=0400
+fcom(-nan -1.000000)=4500
+fucom(-nan -1.000000)=4500
+fcomi(-nan -1.000000)=0000 00
+fucomi(-nan -1.000000)=0000 00
+fxam(-nan)=0300
+fcom(-inf -1.000000)=0100
+fucom(-inf -1.000000)=0100
+fcomi(-inf -1.000000)=0000 04
+fucomi(-inf -1.000000)=0000 04
+fxam(-inf)=0700
+fcom(inf -1.000000)=0000
+fucom(inf -1.000000)=0000
+fcomi(inf -1.000000)=0000 00
+fucomi(inf -1.000000)=0000 00
+fxam(inf)=0500
+(float)0.500000 = 0.500000
+(long double)0.500000 = 0.500000
+a=3fe0000000000000
+la=8000000000000000 3ffe
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = 0.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = 0.000000
+(short)a = 1
+(int)a = 1
+(int64_t)a = 0000000000000001
+rint(a) = 1.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = 0.000000
+(float)-0.500000 = -0.500000
+(long double)-0.500000 = -0.500000
+a=bfe0000000000000
+la=8000000000000000 bffe
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = -0.000000
+(short)a = -1
+(int)a = -1
+(int64_t)a = ffffffffffffffff
+rint(a) = -1.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = -0.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = -0.000000
+(float)0.142857 = 0.142857
+(long double)0.142857 = 0.142857
+a=3fc2492492492492
+la=9249249249249000 3ffc
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = 0.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = 0.000000
+(short)a = 1
+(int)a = 1
+(int64_t)a = 0000000000000001
+rint(a) = 1.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = 0.000000
+(float)-0.111111 = -0.111111
+(long double)-0.111111 = -0.111111
+a=bfbc71c71c71c71c
+la=e38e38e38e38e000 bffb
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = -0.000000
+(short)a = -1
+(int)a = -1
+(int64_t)a = ffffffffffffffff
+rint(a) = -1.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = -0.000000
+(short)a = 0
+(int)a = 0
+(int64_t)a = 0000000000000000
+rint(a) = -0.000000
+(float)32768.000000 = 32768.000000
+(long double)32768.000000 = 32768.000000
+a=40e0000000000000
+la=8000000000000000 400e
+(short)a = -32768
+(int)a = 32768
+(int64_t)a = 0000000000008000
+rint(a) = 32768.000000
+(short)a = -32768
+(int)a = 32768
+(int64_t)a = 0000000000008000
+rint(a) = 32768.000000
+(short)a = -32768
+(int)a = 32768
+(int64_t)a = 0000000000008000
+rint(a) = 32768.000000
+(short)a = -32768
+(int)a = 32768
+(int64_t)a = 0000000000008000
+rint(a) = 32768.000000
+(float)-100000000000000000000.000000 = -100000002004087734270.000000
+(long double)-100000000000000000000.000000 = -100000000000000000000.000000
+a=c415af1d78b58c40
+la=ad78ebc5ac620000 c041
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -100000000000000000000.000000
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -100000000000000000000.000000
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -100000000000000000000.000000
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -100000000000000000000.000000
+(float)-inf = -inf
+(long double)-inf = -inf
+a=fff0000000000000
+la=8000000000000000 ffff
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -inf
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -inf
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -inf
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -inf
+(float)inf = inf
+(long double)inf = inf
+a=7ff0000000000000
+la=8000000000000000 7fff
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = inf
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = inf
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = inf
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = inf
+(float)-nan = -nan
+(long double)-nan = -nan
+a=fff8000000000000
+la=c000000000000000 ffff
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -nan
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -nan
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -nan
+(short)a = -32768
+(int)a = -2147483648
+(int64_t)a = 8000000000000000
+rint(a) = -nan
+fld1= 1.000000
+fldl2t= 3.321928
+fldl2e= 1.442695
+fldpi= 3.141593
+fldlg2= 0.301030
+fldln2= 0.693147
+fldz= 0.000000
+res[0]=5.000000
+res[1]=4.000000
+res[2]=3.000000
+res[3]=2.000000
+res[4]=1.000000
+fpuc=033f fpus=5800 fptag=003f
+res[0]=5.000000
+res[1]=4.000000
+res[2]=3.000000
+res[3]=2.000000
+res[4]=1.000000
+fpuc=033f fpus=5800 fptag=003f
+fptag=0c3f
+fcmovb eflags=0x0000-> 1.000000
+fcmove eflags=0x0000-> 2.000000
+fcmovbe eflags=0x0000-> 2.000000
+fcmovnb eflags=0x0000-> 1.000000
+fcmovne eflags=0x0000-> 1.000000
+fcmovnbe eflags=0x0000-> 1.000000
+fcmovb eflags=0x0001-> 1.000000
+fcmove eflags=0x0001-> 2.000000
+fcmovbe eflags=0x0001-> 2.000000
+fcmovnb eflags=0x0001-> 1.000000
+fcmovne eflags=0x0001-> 1.000000
+fcmovnbe eflags=0x0001-> 1.000000
+fcmovb eflags=0x0040-> 1.000000
+fcmove eflags=0x0040-> 2.000000
+fcmovbe eflags=0x0040-> 2.000000
+fcmovnb eflags=0x0040-> 1.000000
+fcmovne eflags=0x0040-> 1.000000
+fcmovnbe eflags=0x0040-> 1.000000
+fcmovb eflags=0x0041-> 1.000000
+fcmove eflags=0x0041-> 2.000000
+fcmovbe eflags=0x0041-> 2.000000
+fcmovnb eflags=0x0041-> 1.000000
+fcmovne eflags=0x0041-> 1.000000
+fcmovnbe eflags=0x0041-> 1.000000
+fcmovu eflags=0x0000-> 2.000000
+fcmovu eflags=0x0004-> 2.000000
+fcmovnu eflags=0x0000-> 1.000000
+fcmovnu eflags=0x0004-> 1.000000
+daa        A=12340503 R=12340509 CCIN=0010 CC=0014
+daa        A=12340506 R=1234050c CCIN=0010 CC=0014
+daa        A=12340507 R=1234050d CCIN=0010 CC=0010
+daa        A=12340559 R=1234055f CCIN=0010 CC=0014
+daa        A=12340560 R=12340566 CCIN=0010 CC=0014
+daa        A=1234059f R=12340505 CCIN=0010 CC=0015
+daa        A=123405a0 R=12340506 CCIN=0010 CC=0015
+daa        A=12340503 R=12340503 CCIN=0000 CC=0004
+daa        A=12340506 R=12340506 CCIN=0000 CC=0004
+daa        A=12340503 R=12340563 CCIN=0001 CC=0005
+daa        A=12340506 R=12340566 CCIN=0001 CC=0005
+daa        A=12340503 R=12340569 CCIN=0011 CC=0015
+daa        A=12340506 R=1234056c CCIN=0011 CC=0015
+das        A=12340503 R=123405fd CCIN=0010 CC=0091
+das        A=12340506 R=12340500 CCIN=0010 CC=0054
+das        A=12340507 R=12340501 CCIN=0010 CC=0010
+das        A=12340559 R=12340553 CCIN=0010 CC=0014
+das        A=12340560 R=1234055a CCIN=0010 CC=0014
+das        A=1234059f R=12340539 CCIN=0010 CC=0015
+das        A=123405a0 R=1234053a CCIN=0010 CC=0015
+das        A=12340503 R=12340503 CCIN=0000 CC=0004
+das        A=12340506 R=12340506 CCIN=0000 CC=0004
+das        A=12340503 R=123405a3 CCIN=0001 CC=0085
+das        A=12340506 R=123405a6 CCIN=0001 CC=0085
+das        A=12340503 R=1234059d CCIN=0011 CC=0091
+das        A=12340506 R=123405a0 CCIN=0011 CC=0095
+aaa        A=12340205 R=1234030b CCIN=0010 CC=0011
+aaa        A=12340306 R=1234040c CCIN=0010 CC=0011
+aaa        A=1234040a R=12340500 CCIN=0010 CC=0011
+aaa        A=123405fa R=12340700 CCIN=0010 CC=0011
+aaa        A=12340205 R=12340205 CCIN=0000 CC=0000
+aaa        A=12340306 R=12340306 CCIN=0000 CC=0000
+aaa        A=1234040a R=12340500 CCIN=0000 CC=0011
+aaa        A=123405fa R=12340700 CCIN=0000 CC=0011
+aas        A=12340205 R=1234000f CCIN=0010 CC=0011
+aas        A=12340306 R=12340200 CCIN=0010 CC=0011
+aas        A=1234040a R=12340304 CCIN=0010 CC=0011
+aas        A=123405fa R=12340404 CCIN=0010 CC=0011
+aas        A=12340205 R=12340205 CCIN=0000 CC=0000
+aas        A=12340306 R=12340306 CCIN=0000 CC=0000
+aas        A=1234040a R=12340304 CCIN=0000 CC=0011
+aas        A=123405fa R=12340404 CCIN=0000 CC=0011
+aam        A=12340547 R=12340701 CCIN=0010 CC=0000
+aad        A=12340407 R=1234002f CCIN=0010 CC=0000
+xchgl      A=fbca7654 B=12345678
+xchgw      A=12347654 B=fbca5678
+xchgb      A=12345654 B=fbca7678
+xchgl      A=fbca7654 B=12345678
+xchgw      A=12347654 B=fbca5678
+xchgb      A=12345654 B=fbca7678
+xaddl      A=fbca7654 B=0dfecccc
+xaddw      A=12347654 B=fbcacccc
+xaddb      A=12345654 B=fbca76cc
+xaddl same res=2468acf0
+xaddl      A=fbca7654 B=0dfecccc
+xaddw      A=12347654 B=fbcacccc
+xaddb      A=12345654 B=fbca76cc
+cmpxchgl   EAX=fbca7654 A=12345678 C=12345678 CC=44
+cmpxchgw   EAX=fbca7654 A=12345678 C=fbca5678 CC=40
+cmpxchgb   EAX=fbca7654 A=12345678 C=fbca7678 CC=40
+cmpxchgl   EAX=fffefdfc A=12345678 C=fbca7654 CC=00
+cmpxchgw   EAX=fffefdfc A=12345678 C=fbca7654 CC=00
+cmpxchgb   EAX=fffefdfc A=12345678 C=fbca7654 CC=00
+cmpxchgl   EAX=fbca7654 A=12345678 C=12345678 CC=44
+cmpxchgw   EAX=fbca7654 A=12345678 C=fbca5678 CC=44
+cmpxchgb   EAX=fbca7654 A=12345678 C=fbca7678 CC=44
+cmpxchgl   EAX=fffefdfc A=12345678 C=fbca7654 CC=04
+cmpxchgw   EAX=fffefdfc A=12345678 C=fbcafdfc CC=04
+cmpxchgb   EAX=fffefdfc A=12345678 C=fbca7654 CC=04
+stosb      ESI=0002a150 EDI=0002a161 EAX=12345678 ECX=00000011 EFL=0000
+stosw      ESI=0002a150 EDI=0002a162 EAX=12345678 ECX=00000011 EFL=0000
+stosl      ESI=0002a150 EDI=0002a164 EAX=12345678 ECX=00000011 EFL=0000
+stosb      ESI=0002a150 EDI=0002a15f EAX=12345678 ECX=00000011 EFL=0000
+stosw      ESI=0002a150 EDI=0002a15e EAX=12345678 ECX=00000011 EFL=0000
+stosl      ESI=0002a150 EDI=0002a15c EAX=12345678 ECX=00000011 EFL=0000
+rep stosb  ESI=0002a150 EDI=0002a171 EAX=12345678 ECX=00000000 EFL=0000
+rep stosw  ESI=0002a150 EDI=0002a182 EAX=12345678 ECX=00000000 EFL=0000
+rep stosl  ESI=0002a150 EDI=0002a1a4 EAX=12345678 ECX=00000000 EFL=0000
+rep stosb  ESI=0002a150 EDI=0002a14f EAX=12345678 ECX=00000000 EFL=0000
+rep stosw  ESI=0002a150 EDI=0002a13e EAX=12345678 ECX=00000000 EFL=0000
+rep stosl  ESI=0002a150 EDI=0002a11c EAX=12345678 ECX=00000000 EFL=0000
+lodsb      ESI=0002a151 EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsw      ESI=0002a152 EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsl      ESI=0002a154 EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsb      ESI=0002a14f EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsw      ESI=0002a14e EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsl      ESI=0002a14c EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+rep lodsb  ESI=0002a161 EDI=0002a160 EAX=12345678 ECX=00000000 EFL=0000
+rep lodsw  ESI=0002a172 EDI=0002a160 EAX=12345678 ECX=00000000 EFL=0000
+rep lodsl  ESI=0002a194 EDI=0002a160 EAX=12345678 ECX=00000000 EFL=0000
+rep lodsb  ESI=0002a13f EDI=0002a160 EAX=12345678 ECX=00000000 EFL=0000
+rep lodsw  ESI=0002a12e EDI=0002a160 EAX=12345678 ECX=00000000 EFL=0000
+rep lodsl  ESI=0002a10c EDI=0002a160 EAX=19181716 ECX=00000000 EFL=0000
+movsb      ESI=0002a151 EDI=0002a161 EAX=12345678 ECX=00000011 EFL=0000
+movsw      ESI=0002a152 EDI=0002a162 EAX=12345678 ECX=00000011 EFL=0000
+movsl      ESI=0002a154 EDI=0002a164 EAX=12345678 ECX=00000011 EFL=0000
+movsb      ESI=0002a14f EDI=0002a15f EAX=12345678 ECX=00000011 EFL=0000
+movsw      ESI=0002a14e EDI=0002a15e EAX=12345678 ECX=00000011 EFL=0000
+movsl      ESI=0002a14c EDI=0002a15c EAX=12345678 ECX=00000011 EFL=0000
+rep movsb  ESI=0002a161 EDI=0002a171 EAX=12345678 ECX=00000000 EFL=0000
+rep movsw  ESI=0002a172 EDI=0002a182 EAX=12345678 ECX=00000000 EFL=0000
+rep movsl  ESI=0002a194 EDI=0002a1a4 EAX=12345678 ECX=00000000 EFL=0000
+rep movsb  ESI=0002a13f EDI=0002a14f EAX=12345678 ECX=00000000 EFL=0000
+rep movsw  ESI=0002a12e EDI=0002a13e EAX=12345678 ECX=00000000 EFL=0000
+rep movsl  ESI=0002a10c EDI=0002a11c EAX=12345678 ECX=00000000 EFL=0000
+lodsb      ESI=0002a151 EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsw      ESI=0002a152 EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsl      ESI=0002a154 EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsb      ESI=0002a14f EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsw      ESI=0002a14e EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+lodsl      ESI=0002a14c EDI=0002a160 EAX=12345678 ECX=00000011 EFL=0000
+scasb      ESI=0002a150 EDI=0002a161 EAX=12345678 ECX=00000011 EFL=0044
+scasw      ESI=0002a150 EDI=0002a162 EAX=12345678 ECX=00000011 EFL=0044
+scasl      ESI=0002a150 EDI=0002a164 EAX=12345678 ECX=00000011 EFL=0044
+scasb      ESI=0002a150 EDI=0002a15f EAX=12345678 ECX=00000011 EFL=0044
+scasw      ESI=0002a150 EDI=0002a15e EAX=12345678 ECX=00000011 EFL=0044
+scasl      ESI=0002a150 EDI=0002a15c EAX=12345678 ECX=00000011 EFL=0044
+repz scasb ESI=0002a150 EDI=0002a162 EAX=12345678 ECX=0000000f EFL=0004
+repz scasw ESI=0002a150 EDI=0002a164 EAX=12345678 ECX=0000000f EFL=0004
+repz scasl ESI=0002a150 EDI=0002a1a4 EAX=12345678 ECX=00000000 EFL=0044
+repz scasb ESI=0002a150 EDI=0002a15e EAX=12345678 ECX=0000000f EFL=0004
+repz scasw ESI=0002a150 EDI=0002a15c EAX=12345678 ECX=0000000f EFL=0004
+repz scasl ESI=0002a150 EDI=0002a128 EAX=12345678 ECX=00000003 EFL=0085
+repnz scasb ESI=0002a150 EDI=0002a161 EAX=12345678 ECX=00000010 EFL=0044
+repnz scasw ESI=0002a150 EDI=0002a162 EAX=12345678 ECX=00000010 EFL=0044
+repnz scasl ESI=0002a150 EDI=0002a164 EAX=12345678 ECX=00000010 EFL=0044
+repnz scasb ESI=0002a150 EDI=0002a15f EAX=12345678 ECX=00000010 EFL=0044
+repnz scasw ESI=0002a150 EDI=0002a15e EAX=12345678 ECX=00000010 EFL=0044
+repnz scasl ESI=0002a150 EDI=0002a15c EAX=12345678 ECX=00000010 EFL=0044
+cmpsb      ESI=0002a151 EDI=0002a161 EAX=12345678 ECX=00000011 EFL=0044
+cmpsw      ESI=0002a152 EDI=0002a162 EAX=12345678 ECX=00000011 EFL=0044
+cmpsl      ESI=0002a154 EDI=0002a164 EAX=12345678 ECX=00000011 EFL=0044
+cmpsb      ESI=0002a14f EDI=0002a15f EAX=12345678 ECX=00000011 EFL=0044
+cmpsw      ESI=0002a14e EDI=0002a15e EAX=12345678 ECX=00000011 EFL=0044
+cmpsl      ESI=0002a14c EDI=0002a15c EAX=12345678 ECX=00000011 EFL=0044
+repz cmpsb ESI=0002a161 EDI=0002a171 EAX=12345678 ECX=00000000 EFL=0044
+repz cmpsw ESI=0002a172 EDI=0002a182 EAX=12345678 ECX=00000000 EFL=0044
+repz cmpsl ESI=0002a194 EDI=0002a1a4 EAX=12345678 ECX=00000000 EFL=0044
+repz cmpsb ESI=0002a13f EDI=0002a14f EAX=12345678 ECX=00000000 EFL=0044
+repz cmpsw ESI=0002a12e EDI=0002a13e EAX=12345678 ECX=00000000 EFL=0044
+repz cmpsl ESI=0002a128 EDI=0002a138 EAX=12345678 ECX=00000007 EFL=0014
+repnz cmpsb ESI=0002a151 EDI=0002a161 EAX=12345678 ECX=00000010 EFL=0044
+repnz cmpsw ESI=0002a152 EDI=0002a162 EAX=12345678 ECX=00000010 EFL=0044
+repnz cmpsl ESI=0002a154 EDI=0002a164 EAX=12345678 ECX=00000010 EFL=0044
+repnz cmpsb ESI=0002a14f EDI=0002a15f EAX=12345678 ECX=00000010 EFL=0044
+repnz cmpsw ESI=0002a14e EDI=0002a15e EAX=12345678 ECX=00000010 EFL=0044
+repnz cmpsl ESI=0002a14c EDI=0002a15c EAX=12345678 ECX=00000010 EFL=0044
+xlat: EAX=12345688
+popl esp=09abcdef
+popw esp=00bc6058
+lea 0x4000 = 00004000
+lea (%%eax) = 00000001
+lea (%%ebx) = 00000002
+lea (%%ecx) = 00000004
+lea (%%edx) = 00000008
+lea (%%esi) = 00000010
+lea (%%edi) = 00000020
+lea 0x40(%%eax) = 00000041
+lea 0x40(%%ebx) = 00000042
+lea 0x40(%%ecx) = 00000044
+lea 0x40(%%edx) = 00000048
+lea 0x40(%%esi) = 00000050
+lea 0x40(%%edi) = 00000060
+lea 0x4000(%%eax) = 00004001
+lea 0x4000(%%ebx) = 00004002
+lea 0x4000(%%ecx) = 00004004
+lea 0x4000(%%edx) = 00004008
+lea 0x4000(%%esi) = 00004010
+lea 0x4000(%%edi) = 00004020
+lea (%%eax, %%ecx) = 00000005
+lea (%%ebx, %%edx) = 0000000a
+lea (%%ecx, %%ecx) = 00000008
+lea (%%edx, %%ecx) = 0000000c
+lea (%%esi, %%ecx) = 00000014
+lea (%%edi, %%ecx) = 00000024
+lea 0x40(%%eax, %%ecx) = 00000045
+lea 0x4000(%%ebx, %%edx) = 0000400a
+lea (%%ecx, %%ecx, 2) = 0000000c
+lea (%%edx, %%ecx, 4) = 00000018
+lea (%%esi, %%ecx, 8) = 00000030
+lea (,%%eax, 2) = 00000002
+lea (,%%ebx, 4) = 00000008
+lea (,%%ecx, 8) = 00000020
+lea 0x40(,%%eax, 2) = 00000042
+lea 0x40(,%%ebx, 4) = 00000048
+lea 0x40(,%%ecx, 8) = 00000060
+lea -10(%%ecx, %%ecx, 2) = 00000002
+lea -10(%%edx, %%ecx, 4) = 0000000e
+lea -10(%%esi, %%ecx, 8) = 00000026
+lea 0x4000(%%ecx, %%ecx, 2) = 0000400c
+lea 0x4000(%%edx, %%ecx, 4) = 00004018
+lea 0x4000(%%esi, %%ecx, 8) = 00004030
+cbw        A=8234a6f8 R=8234fff8
+cwde       A=8234a6f8 R=ffffa6f8
+cwd        A=8234a6f8 R=8234a6f8:8345ffff
+cdq        A=8234a6f8 R=8234a6f8:ffffffff
+bswapl    : A=12345678 R=78563412

@@ -40,7 +40,13 @@ class var(object):
                 self.segment = segment
                 self.issegment = issegment
 
-class const(object):
+class equ(object):
+        def __init__(self, value, size=0):
+                self.value = value
+                if size:
+                        self.size = size
+
+class assignment(object):
         def __init__(self, value, size=0):
                 self.value = value
                 if size:
@@ -893,3 +899,10 @@ class _equ(baseop):
                 self.dst, self.src = dst, src
         def visit(self, visitor):
                 visitor._equ(self.dst, self.src)
+
+class _assignment(baseop):
+        def __init__(self, dst, src):
+                self.dst, self.src = dst, src
+        def visit(self, visitor):
+                logging.debug("~ %s = %s" %(self.dst, self.src))
+                visitor._assignment(self.dst, self.src)

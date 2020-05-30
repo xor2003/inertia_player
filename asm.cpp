@@ -1392,6 +1392,17 @@ From: "The MS-DOS Encyclopaedia" (also Duncan) - talking about .EXE files. There
 int init(struct _STATE* state);
 void mainproc(_offsets _i, struct _STATE* state);
 
+#include <windows.h>
+
+int  WinMain(
+  HINSTANCE hInstance,
+  HINSTANCE hPrevInstance,
+  LPSTR     lpCmdLine,
+  int       nShowCmd
+)
+{main(0,0);
+}
+
 int main(int argc, char *argv[])
 {
   struct _STATE state;

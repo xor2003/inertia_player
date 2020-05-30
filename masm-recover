@@ -51,63 +51,81 @@ def valid(params):
     #if not outf:
     #    return False
 
-#sys.settrace(tracefunc)
+def main():
+  #sys.settrace(tracefunc)
 
-sys.stdout.reconfigure(encoding='utf-8')
-# assuming loglevel is bound to the string value obtained from the
-# command line argument. Convert to upper case to allow the user to
-# specify --log=DEBUG or --log=debug
-name = sys.argv[1] #arguments['<in>']
-m = re.match(r'.*?([A-Za-z90-9_\.-]+)\.asm', name.lower())
-outname=""
-if m is not None:
-	outname = m.group(1).strip()
+  if sys.version_info[0] >= 3:
+     sys.stdout.reconfigure(encoding='utf-8')
+  # assuming loglevel is bound to the string value obtained from the
+  # command line argument. Convert to upper case to allow the user to
+  # specify --log=DEBUG or --log=debug
+  for i in sys.argv[1:]:
+     process(i)
 
-'''
-numeric_level = getattr(logging, loglevel.upper(), None)
-if not isinstance(numeric_level, int):
-'''
-numeric_level = logging.DEBUG
-logging.basicConfig(
-	handlers=[logging.FileHandler(name+'.log', 'w', 'utf-8')], 
-	format="[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s",
-	level=numeric_level
-)
+def process(i):
+  name = i
+  m = re.match(r'.*?([A-Za-z90-9_\.-]+)\.asm', name.lower())
+  outname=""
+  if m is not None:
+     outname = m.group(1).strip()
 
-root = logging.getLogger()
-#root.setLevel(logging.DEBUG)
+  '''
+  numeric_level = getattr(logging, loglevel.upper(), None)
+  if not isinstance(numeric_level, int):
+  '''
+  numeric_level = logging.DEBUG
+  logging.basicConfig(
+     handlers=[logging.FileHandler(name+'.log', 'w', 'utf-8')], 
+     format="[%(filename)s:%(lineno)s - %(funcName)20s()] %(message)s",
+     level=numeric_level
+  )
 
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.ERROR)
-#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#handler.setFormatter(formatter)
-root.addHandler(handler)
+  root = logging.getLogger()
+  #root.setLevel(logging.DEBUG)
 
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#handler.setFormatter(formatter)
-root.addHandler(handler)
+  handler = logging.StreamHandler(sys.stderr)
+  handler.setLevel(logging.ERROR)
+  #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+  #handler.setFormatter(formatter)
+  root.addHandler(handler)
 
-p = parser(skip_binary_data = [
-	# These data blobs are not output
-	# dreamweb.asm
-#	'characterset1',
-	])
-p.strip_path = 3
-context = p.parse(name)
-p.link()
+  handler = logging.StreamHandler(sys.stdout)
+  handler.setLevel(logging.INFO)
+  #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+  #handler.setFormatter(formatter)
+  root.addHandler(handler)
 
-generator = cpp(context, outname, blacklist = [
-	# These functions are not processed
+  p = parser(skip_binary_data = [
+      # These data blobs are not output
+      # dreamweb.asm
+      #	'characterset1',
+   ])
+  p.strip_path = 3
+  context = p.parse(name)
+  p.link()
 
-#	'aboutturn',
-	], skip_output = [
-	# These functions are processed but not output
-	], skip_dispatch_call = True, skip_addr_constants = True,
-	header_omit_blacklisted = True,
-	function_name_remapping = {
-	# This remaps the function naming at output for readability
-#	'_moduleread' : '_moduleread',
-	})
-generator.generate('mainproc') #start routine
+  generator = cpp(context, outfile = outname, blacklist = [
+      # These functions are not processed
+
+      #	'aboutturn',
+      ], skip_output = [
+      # These functions are processed but not output
+      ], skip_dispatch_call = True, skip_addr_constants = True,
+      header_omit_blacklisted = True,
+      function_name_remapping = {
+      # This remaps the function naming at output for readability
+      #	'_moduleread' : '_moduleread',
+      })
+  generator.generate('mainproc') #start routine
+
+#main()
+
+import auger
+from tasm import op
+import re, string
+from tasm import proc
+from tasm import lex
+
+if __name__ == "__main__":
+  with auger.magic([parser, lex, op, cpp, proc]):   # this is the new line and invokes Auger
+    main()

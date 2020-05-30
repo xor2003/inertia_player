@@ -1,5 +1,6 @@
 ; printf1.asm   call printf by replacing real stack with emulated stack
 ; Assemble:	nasm -f coff -g -l iprintf.lst  iprintf.asm
+; uasm64 -coff -Fl   iprintf.asm 
 ; Link:		gcc -o printf1  printf1.o
 ; Run:		printf1
 ; Output:	a=5, eax=7
@@ -16,14 +17,15 @@
 
 ; Declare some external functions
 ;
-        extern	_printf		; the C function, to be called
+.386
+EXTRN _printf:dword		; the C function, to be called
                 
-        SECTION .text                   ; Code section.
+;        SECTION .text                   ; Code section.
 
-        global _iiprintf		; the standard gcc entry point
+        public _iiprintf		; the standard gcc entry point
 ;extern stackPointer
-
-_iiprintf:				; the program label for the entry point
+code segment use32
+_iiprintf proc				; the program label for the entry point
         push    ebp		; set up stack frame
         mov     ebp,esp
 
@@ -38,3 +40,6 @@ _iiprintf:				; the program label for the entry point
 
 ;	mov	eax,0		;  normal, no error, return value
 	ret			; return
+_iiprintf endp
+code ends
+end
