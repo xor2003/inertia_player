@@ -23,7 +23,6 @@ from __future__ import absolute_import
 import logging
 from builtins import str
 from builtins import object
-import re
 from . import lex
 
 #import traceback

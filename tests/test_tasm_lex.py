@@ -1,87 +1,13 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from tasm import parser
-from tasm import cpp
-from tasm import op
-from tasm import proc
 from tasm import lex
 
-from builtins import chr
-from builtins import hex
-from builtins import object
-from builtins import range
-from builtins import str
-from copy import copy
-import encodings
-from encodings import CodecRegistryError
-import future.types
-from future.types import Integral
-import future.types.newobject
-from future.types.newobject import newobject
-import future.types.newrange
-from future.types.newrange import newrange
-import future.types.newstr
-from future.types.newstr import BaseNewStr
-from future.types.newstr import newstr
-import logging
-from logging import BufferingFormatter
-from mock import patch
-import ntpath
-import re
-from re import Scanner
-import re, string, os
-import sys
 import tasm.cpp
-from tasm.cpp import cpp
 import tasm.lex
 import tasm.op
-from tasm.op import _aad
-from tasm.op import _adc
-from tasm.op import _add
-from tasm.op import _and
-from tasm.op import _assignment
-from tasm.op import _call
-from tasm.op import _cld
-from tasm.op import _cmp
-from tasm.op import _cmpsb
-from tasm.op import _dec
-from tasm.op import _equ
-from tasm.op import _inc
-from tasm.op import _int
-from tasm.op import _ja
-from tasm.op import _jb
-from tasm.op import _jbe
-from tasm.op import _je
-from tasm.op import _jmp
-from tasm.op import _jna
-from tasm.op import _jnc
-from tasm.op import _jne
-from tasm.op import _jnz
-from tasm.op import _jz
-from tasm.op import _lea
-from tasm.op import _mov
-from tasm.op import _movzx
-from tasm.op import _pop
-from tasm.op import _popad
-from tasm.op import _push
-from tasm.op import _pushad
-from tasm.op import _repe
-from tasm.op import _ret
-from tasm.op import _retf
-from tasm.op import _shr
-from tasm.op import _stc
-from tasm.op import _sti
-from tasm.op import _sub
-from tasm.op import _xor
-from tasm.op import label
-from tasm.op import var
 import tasm.parser
-from tasm.parser import parser
 import tasm.proc
-from tasm.proc import proc
-import traceback
-import traceback, re, string, logging, sys
 import unittest
 
 class LexTest(unittest.TestCase):
