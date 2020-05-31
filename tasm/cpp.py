@@ -1,4 +1,18 @@
 from __future__ import print_function
+from __future__ import division 
+
+import logging
+import re
+import sys
+from builtins import hex
+from builtins import object
+from builtins import range
+from builtins import str
+from copy import copy
+
+from tasm import op
+import tasm.proc as proc_module
+
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -19,18 +33,7 @@ from __future__ import print_function
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-
-import logging
-from builtins import hex
-from builtins import str
-from builtins import range
-from builtins import object
-from . import op
-from . import proc
-
-import traceback, re, string, logging, sys
-from copy import copy
-proc_module = proc
+#proc_module = proc
 
 class CrossJump(Exception):
         pass
@@ -41,7 +44,12 @@ def parse_bin(s):
         #print "BINARY: %s -> %s" %(b, v)
         return v
 
-class cpp(object):
+def convert_number(expr):
+        expr = re.sub(r'\b([0-9][0-9A-Fa-f]*)[Hh]', '0x\\1', expr)
+        expr = re.sub(r'\b([0-1]+)[Bb]', parse_bin, expr) # convert binary
+        return expr
+
+class Cpp(object):
         def __init__(self, context, outfile = "", skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, skip_addr_constants = False, header_omit_blacklisted = False, function_name_remapping = { }):
                 FORMAT = "%(filename)s:%(lineno)d %(message)s"
                 logging.basicConfig(format=FORMAT)
@@ -116,10 +124,10 @@ class cpp(object):
                         value = name.upper()
                         #value = self.expand_equ(g.value)
                         logging.debug("assignment %s = %s" %(name, value))
-                elif isinstance(g, proc.proc):
+                elif isinstance(g, proc_module.Proc):
                         logging.debug("it is proc")
                         if self.indirection != -1:
-                                logging.error("proc %s offset %s" %(str(proc.proc), str(g.offset)))
+                                logging.error("proc %s offset %s" % (str(proc_module.Proc), str(g.offset)))
                                 raise Exception("invalid proc label usage")
                         value = str(g.offset)
                         self.indirection = 0
@@ -203,17 +211,25 @@ class cpp(object):
                 except:
                         pass
 
-                if re.match(r'byte\s+ptr\s', expr) is not None:
+                if re.match(r'\bbyte\s+ptr\s', expr) is not None:
                         logging.debug('get_size res 1')
                         return 1
 
-                if re.match(r'word\s+ptr\s', expr) is not None:
+                if re.match(r'\bword\s+ptr\s', expr) is not None:
                         logging.debug('get_size res 2')
                         return 2
 
-                if re.match(r'dword\s+ptr\s', expr) is not None:
+                if re.match(r'\bdword\s+ptr\s', expr) is not None:
                         logging.debug('get_size res 4')
                         return 4
+
+                if re.match(r'\bqword\s+ptr\s', expr) is not None:
+                        logging.debug('get_size res 4')
+                        return 8
+
+                if re.match(r'\btword\s+ptr\s', expr) is not None:
+                        logging.debug('get_size res 4')
+                        return 10
 
                 size = self.is_register(expr)
                 if size:
@@ -276,7 +292,7 @@ class cpp(object):
                 #       expr, n = re.subn(r'\b[a-zA-Z_][a-zA-Z0-9_]+\b', self.expand_equ_cb, expr)
                 #while n > 0:
                 expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', self.expand_equ_cb, expr)
-                expr = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', expr)
+                expr = convert_number(expr)
                 return "(%s)" %expr
 
         def expand(self, expr, def_size = 0, destination = False):
@@ -348,8 +364,7 @@ class cpp(object):
                 if m is not None:
                         return m.group(1)
 
-                expr = re.sub(r'\b([0-9][a-fA-F0-9]*)[Hh]', '0x\\1', expr) # convert hex
-                expr = re.sub(r'\b([0-1]+)[Bb]', parse_bin, expr) # convert binary
+                expr = convert_number(expr) # convert hex
 
                 match_id = True
                 #print "is it offset ~%s~" %expr
@@ -425,9 +440,9 @@ class cpp(object):
                 expr = re.sub(r'\]', '', expr) # name[bs+si]
 
                 if match_id:
-                        expr = re.sub(r'byte\s+ptr\s*', '', expr)
-                        expr = re.sub(r'dword\s+ptr\s*', '', expr)
-                        expr = re.sub(r'word\s+ptr\s*', '', expr)
+                        expr = re.sub(r'\bbyte\s+ptr\s*', '', expr)
+                        expr = re.sub(r'\b[dqt]word\s+ptr\s*', '', expr)
+                        expr = re.sub(r'\bword\s+ptr\s*', '', expr)
 
                         logging.debug("EXPAND() BEFORE: %d %s" %(indirection, expr))
                         self.indirection = indirection
@@ -493,7 +508,7 @@ class cpp(object):
                                         return name
 
                                 pos = 0
-                                if not isinstance(proc, proc_module.proc):
+                                if not isinstance(proc, proc_module.Proc):
                                         raise CrossJump("cross-procedure jump to non label and non procedure %s" %(name))
                         self.proc.labels.add(name)
                         for i in range(0, len(self.unbounded)):
@@ -525,7 +540,7 @@ class cpp(object):
                 if self.context.has_global(name):
                         hasglobal = True
                         g = self.context.get_global(name)
-                        if isinstance(g, proc_module.proc):
+                        if isinstance(g, proc_module.Proc):
                                 jump_proc = True
 
                 if jump_proc:
@@ -898,7 +913,7 @@ class cpp(object):
                                 logging.debug("No procedure named %s, trying label" %name)
                                 off, src_proc, skip = self.context.get_offset(name)
 
-                                self.proc = proc_module.proc(name)
+                                self.proc = proc_module.Proc(name)
                                 self.proc.stmts = copy(src_proc.stmts)
                                 self.proc.labels = copy(src_proc.labels)
                                 self.proc.retlabels = copy(src_proc.retlabels)

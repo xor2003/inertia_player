@@ -1,5 +1,14 @@
-from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import print_function
+
+import logging
+import re
+from builtins import object
+from builtins import range
+from builtins import str
+
+from tasm import op
+
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -21,14 +30,7 @@ from __future__ import absolute_import
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-import logging
-from builtins import str
-from builtins import range
-from builtins import object
-import re
-from . import op
-
-class proc(object):
+class Proc(object):
         last_addr = 0xc000
         
         def __init__(self, name, line_number=0, far=False):
@@ -38,8 +40,8 @@ class proc(object):
                 self.labels = set()
                 self.retlabels = set()
                 self.__label_re = re.compile(r'^([\S@]+)::?(.*)$')
-                self.offset = proc.last_addr
-                proc.last_addr += 4
+                self.offset = Proc.last_addr
+                Proc.last_addr += 4
                 self.line_number = 0
                 self.line_number = line_number
                 self.far = far
@@ -199,7 +201,7 @@ class proc(object):
                 try:
                         cl = getattr(op, '_' + cmd.lower())
                 except AttributeError:
-                        cl = self.add__(cl, cmd)
+                        cl = self.find_op_class(cmd)
                 # print "args %s" %s[1:]
                 arg = " ".join(s[1:]) if len(s) > 1 else str()
                 o = cl(arg)
@@ -207,10 +209,10 @@ class proc(object):
                 o.command = str(line_number) + " " + command
                 o.cmd = cmd.lower()
                 o.line_number = line_number
-                #               logging.info "~~~" + o.command + o.comments
+                #logging.info("~1~2~ " + o.command + " ~ " + o.cmd)
                 return o
 
-        def add__(self, cl, cmd):
+        def find_op_class(self, cmd):
                 logging.info(cmd)
                 if re.match(
                         r"ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde|cwd|cdq|sti|cmc|pushf|popf|nop|pushad|popad|popa|pusha|das|aaa|aas|aam|finit|fsin|fldz",
@@ -233,30 +235,29 @@ class proc(object):
                 return cl
 
         def add_equ(self, label, value, line_number=0):
-                cl = getattr(op, '_equ')
-                o = self.add_equ_(cl, label, line_number, value)
+                o = self.add_equ_(label, line_number, value)
                 self.stmts.append(o)
 
-        def add_equ_(self, cl, label, line_number, value):
+        def add_equ_(self, label, line_number, value):
+                import tasm.cpp
+                o1 = op._equ(label, value)
                 # print "args %s" %s[1:]
-                value = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', value)
-                o1 = cl(label, value)
+                value = tasm.cpp.convert_number(value)
+                #o1 = cl(label, value)
                 o1.command = str(line_number) + " " + label + " equ " + value
                 o1.cmd = o1.command
                 #               logging.info "~~~" + o.command + o.comments
-                o = o1
-                return o
+                return o1
 
         def add_assignment(self, label, value, line_number=0):
-                cl = getattr(op, '_assignment')
-
-                o = self.add_assignment_(cl, label, line_number, value)
+                o = self.add_assignment_(label, line_number, value)
                 self.stmts.append(o)
 
-        def add_assignment_(self, cl, label, line_number, value):
+        def add_assignment_(self, label, line_number, value):
+                import tasm.cpp
                 # print "args %s" %s[1:]
-                value = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', value)
-                o = cl(label, value)
+                value = tasm.cpp.convert_number(value)
+                o = op._assignment(label, value)
                 o.command = str(line_number) + " " + label + " = " + value
                 o.cmd = o.command
                 #               logging.info "~~~" + o.command + o.comments
@@ -275,6 +276,4 @@ class proc(object):
                                 visitor.body = visitor.body[:-1] + "\t// " + self.stmts[i].command + "\n"
                         except AttributeError:
                                 pass
-
-
 

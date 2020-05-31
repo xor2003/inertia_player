@@ -30,8 +30,8 @@ Usage:
 
 
 from __future__ import print_function
-from tasm.parser import parser
-from tasm.cpp import cpp
+from tasm.parser import Parser
+from tasm.cpp import Cpp
 import sys, re, logging
 
 def tracefunc(frame, event, arg, indent=[0]):
@@ -95,7 +95,7 @@ def process(i):
   #handler.setFormatter(formatter)
   root.addHandler(handler)
 
-  p = parser(skip_binary_data = [
+  p = Parser(skip_binary_data = [
       # These data blobs are not output
       # dreamweb.asm
       #	'characterset1',
@@ -104,28 +104,32 @@ def process(i):
   context = p.parse(name)
   p.link()
 
-  generator = cpp(context, outfile = outname, blacklist = [
+  generator = Cpp(context, outfile = outname, blacklist = [
       # These functions are not processed
 
       #	'aboutturn',
       ], skip_output = [
       # These functions are processed but not output
       ], skip_dispatch_call = True, skip_addr_constants = True,
-      header_omit_blacklisted = True,
-      function_name_remapping = {
+                  header_omit_blacklisted = True,
+                  function_name_remapping = {
       # This remaps the function naming at output for readability
       #	'_moduleread' : '_moduleread',
       })
   generator.generate('mainproc') #start routine
 
-#main()
-
-import auger
 from tasm import op
-import re, string
 from tasm import proc
 from tasm import lex
+from tasm import parser
+from tasm import cpp
+
+main()
+'''
+import auger
+import re
 
 if __name__ == "__main__":
   with auger.magic([parser, lex, op, cpp, proc]):   # this is the new line and invokes Auger
     main()
+'''

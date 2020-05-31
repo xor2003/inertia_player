@@ -27,16 +27,16 @@ from builtins import str
 from builtins import chr
 from builtins import range
 from builtins import object
-import re, string, os
-from . import op
-from .proc import proc
-from . import lex
+import re, os
 
+from tasm import op
+import tasm.proc
+from tasm import lex
+import tasm.cpp
 
-import traceback
 import sys
 
-class parser(object):
+class Parser(object):
         def __init__(self, skip_binary_data = []):
                 self.skip_binary_data = skip_binary_data
                 self.strip_path = 0
@@ -50,7 +50,7 @@ class parser(object):
 
                 #self.proc = None
                 nname = "mainproc"
-                self.proc = proc(nname)
+                self.proc = tasm.proc.Proc(nname)
                 self.proc_list.append(nname)
                 self.set_global(nname, self.proc)
 
@@ -196,14 +196,13 @@ class parser(object):
                 if re.match(r'[01]+[Bb]$', v):
                         v = int(v[:-1], 2)
                         #print "~2~ %i" %v
-                if re.match(r'[\+-]?[0-9a-fA-F]+[Hh]$', v):
+                if re.match(r'[+-]?[0-9A-Fa-f]+[Hh]$', v):
                         v = int(v[:-1], 16)
 #                       v = hex(int(v[:-1], 16))
                         #print "~3~ %i" %v
                 #print "~4~ %s" %v
                 return int(v)
-#               return v
-        
+
         def convert_data_to_blob(self, width, data):
                 """ Generate blob data """
                 #print "COMPACTING %d %s" %(width, data)
@@ -520,7 +519,7 @@ class parser(object):
                                                         farb = False
                                                         if far == 'far':
                                                                 farb = True
-                                                        self.set_global(name, op.label(name, proc, line_number=self.offset_id, far=farb))
+                                                        self.set_global(name, op.label(name, tasm.proc.Proc, line_number=self.offset_id, far=farb))
                                                         self.offset_id += 1
                                                 else:
                                                         logging.error("!!! Label %s is outside the procedure" %name)
@@ -590,6 +589,20 @@ class parser(object):
 
                         self.c_data.append("{0}, // padding\n")
                         self.h_data.append(" db " + labell + "[" + str(num) + "]; // protective\n")
+                self.parse_file_lines(fd, fname, skipping_binary_data)
+
+                num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
+                if num:
+                        l = ['0'] * num
+                        self.binary_data += l
+
+                        self.dummy_enum += 1
+                        labell = "dummy" + str(self.dummy_enum)
+
+                        self.c_data.append("{" + ",".join(l) + "}, // padding\n")
+                        self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
+
+        def parse_file_lines(self, fd, fname, skipping_binary_data):
                 for line in fd:
                         self.line_number += 1
                         # line = line.decode("cp1251")
@@ -645,7 +658,7 @@ class parser(object):
                                 if not skipping_binary_data:
                                         logging.debug("%d:1: %s" % (self.cur_seg_offset, arg))  # fixme: COPYPASTE
                                         cmd0 = cmd0.lower()
-                                        binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8}[cmd0[1]]
+                                        binary_width = self.calculate_data_size(cmd0[1])
                                         b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
                                         self.binary_data += b
                                         self.cur_seg_offset += len(b)
@@ -681,7 +694,6 @@ class parser(object):
 
                                 self.create_segment(name)
                                 continue
-
                         if len(cmd) >= 2:
                                 cmd1l = cmd[1].lower()
                                 if cmd1l == 'proc':
@@ -703,7 +715,6 @@ class parser(object):
                                         self.segment = name
                                         self.create_segment(name)
                                         continue
-
                                 elif cmd1l == 'ends':
                                         logging.debug("segment %s ends" % (self.segment))
                                         self.segment = ""
@@ -713,30 +724,7 @@ class parser(object):
                                 cmd1l = cmd[1].lower()
                                 if cmd1l in ['equ', '=']:
                                         if not (cmd0.lower() in self.skip_binary_data):
-                                                v = " ".join(cmd[2:])
-                                                logging.debug("value1 %s" % v)
-                                                vv = self.fix_dollar(v)
-                                                vv = " ".join(lex.parse_args(vv))
-                                                vv = vv.strip()
-                                                logging.debug("value2 %s" % vv)
-
-                                                size = 0
-                                                m = re.match(r'byte\s+ptr\s+(.*)', vv)
-                                                if m is not None:
-                                                        vv = m.group(1).strip()
-                                                        size = 1
-
-                                                m = re.match(r'[dq]word\s+ptr\s+(.*)', vv)
-                                                if m is not None:
-                                                        vv = m.group(1).strip()
-                                                        size = 4
-
-                                                m = re.match(r'word\s+ptr\s+(.*)', vv)
-                                                if m is not None:
-                                                        vv = m.group(1).strip()
-                                                        size = 2
-
-                                                vv = re.sub(r'\b([0-9][a-fA-F0-9]*)h', '0x\\1', vv)
+                                                vv = self.parse_equ_line(cmd)
 
                                                 if cmd1l == 'equ':
                                                         # self.set_global(cmd0, op.equ(cmd0.lower(), size=size))
@@ -755,7 +743,7 @@ class parser(object):
                                         if not (cmd0.lower() in self.skip_binary_data):
                                                 name = cmd0
                                                 name = re.sub(r'@', "arb", name)
-                                                binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[cmd1l[1]]
+                                                binary_width = self.calculate_data_size(cmd1l[1])
                                                 offset = self.cur_seg_offset
                                                 arg = line[len(cmd0l):].strip()
                                                 arg = arg[len(cmd1l):].strip()
@@ -783,16 +771,41 @@ class parser(object):
                         else:
                                 # print line
                                 pass
-                num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
-                if num:
-                        l = ['0'] * num
-                        self.binary_data += l
 
-                        self.dummy_enum += 1
-                        labell = "dummy" + str(self.dummy_enum)
+        def calculate_data_size(self, cmd0):
+                binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[cmd0]
+                return binary_width
 
-                        self.c_data.append("{" + ",".join(l) + "}, // padding\n")
-                        self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
+        def parse_equ_line(self, cmd):
+                v = " ".join(cmd[2:])
+                logging.debug("value1 %s" % v)
+                vv = self.fix_dollar(v)
+                vv = " ".join(lex.parse_args(vv))
+                vv = vv.strip()
+                logging.debug("value2 %s" % vv)
+                size = 0
+                m = re.match(r'\bbyte\s+ptr\s+(.*)', vv)
+                if m is not None:
+                        vv = m.group(1).strip()
+                        size = 1
+                m = re.match(r'\bdword\s+ptr\s+(.*)', vv)
+                if m is not None:
+                        vv = m.group(1).strip()
+                        size = 4
+                m = re.match(r'\bqword\s+ptr\s+(.*)', vv)
+                if m is not None:
+                        vv = m.group(1).strip()
+                        size = 8
+                m = re.match(r'\btword\s+ptr\s+(.*)', vv)
+                if m is not None:
+                        vv = m.group(1).strip()
+                        size = 10
+                m = re.match(r'\bword\s+ptr\s+(.*)', vv)
+                if m is not None:
+                        vv = m.group(1).strip()
+                        size = 2
+                vv = tasm.cpp.convert_number(vv)
+                return vv
 
         def link(self):
                 logging.debug("link()")

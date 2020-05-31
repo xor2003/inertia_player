@@ -23,7 +23,8 @@ from __future__ import absolute_import
 import logging
 from builtins import str
 from builtins import object
-from . import lex
+
+from tasm import lex
 
 #import traceback
 #import sys
@@ -84,6 +85,13 @@ class segment(object):
                 return "<segment %s>" %self.name
 
 class baseop(object):
+        cmd = ""
+        command = ""
+        line_number = 0
+
+        def __str__(self):
+                return self.cmd+" "+self.command+" "+str(self.line_number)
+
         def parse_arg(self, arg):
                 args = self.split(arg)
                 if len(args)>0:
