@@ -32,6 +32,7 @@ from tasm import op
 
 class Proc(object):
         last_addr = 0xc000
+        elements = 1 # how many
         
         def __init__(self, name, line_number=0, far=False):
                 self.name = name

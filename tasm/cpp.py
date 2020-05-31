@@ -33,7 +33,7 @@ import tasm.proc as proc_module
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#proc_module = proc
+
 
 class CrossJump(Exception):
         pass
@@ -83,6 +83,7 @@ class Cpp(object):
                 self.pointer_flag = False
                 self.lea = False
                 self.expr_size = 0
+                self.far = False
 
         def expand_cb(self, match):
                 name_original = match.group(0)
@@ -417,7 +418,7 @@ class Cpp(object):
                         indirection += 1
                         expr = m.group(1).strip()
 
-                m = re.match(r'(\[?e?([abcd][xhl])|si|di|bp|sp)([\+-\]].*)?$', expr) # var[bx+]
+                m = re.match(r'(\[?e?([abcd][xhl])|si|di|bp|sp)([+-\]].*)?$', expr) # var[bx+]
                 if m is not None:
                         reg = m.group(1)
                         plus = m.group(3)
@@ -435,7 +436,7 @@ class Cpp(object):
                 expr = re.sub(r'"(.)"', '\'\\1\'', expr) # convert string
                 expr = re.sub(r'\[((0x)?[0-9][a-fA-F0-9]*)\]', '+\\1', expr) # convert [num]
 
-                expr = re.sub(r'\[(((e?([abcd][xhl])|si|di|bp|sp)|([\+-]))+)\]', '+\\1', expr) # name[bs+si]
+                expr = re.sub(r'\[(((e?([abcd][xhl])|si|di|bp|sp)|([+-]))+)\]', '+\\1', expr) # name[bs+si]
                 expr = re.sub(r'\[(e?([abcd][xhl])|si|di|bp|sp)', '+\\1', expr) # name[bs+si]
                 expr = re.sub(r'\]', '', expr) # name[bs+si]
 
@@ -556,7 +557,7 @@ class Cpp(object):
                         if not hasglobal:
                                 name = self.expand(name, destination = True)
                                 self.body += "__disp = (dw)(" + name + ");\n"
-                                name = "__dispatch_call";
+                                name = "__dispatch_call"
                         else:
                                 if isinstance(g, op.label) and g.far:
                                         self.far = True # make far calls to far procs
@@ -830,7 +831,7 @@ class Cpp(object):
                 self.body += "\tR(XCHG(%s, %s));\n" %self.parse2(dst, src)
 
         def _push(self, regs):
-                p = str();
+                p = str()
                 for r in regs:
                         if self.get_size(r):
                                 r = self.expand(r)
@@ -838,7 +839,7 @@ class Cpp(object):
                 self.body += p
 
         def _pop(self, regs):
-                p = str();
+                p = str()
                 for r in regs:
                         self.temps_count -= 1
                         i = self.temps_count
@@ -934,7 +935,7 @@ class Cpp(object):
                                 self.body += "void %sContext::%s() {\n" %(self.namespace, name);
                         '''
                         if name in self.function_name_remapping:
-                                self.body += "int %s() {\ngoto %s;\n" %(self.function_name_remapping[name], self.context.entry_point);
+                                self.body += "int %s() {\ngoto %s;\n" %(self.function_name_remapping[name], self.context.entry_point)
                         else:
                                 self.body += """
 int init(struct _STATE* _state)
@@ -983,7 +984,7 @@ X86_REGREF
 __disp=_i;
 if (__disp==kbegin) goto %s;
 else goto __dispatch_call;
-""" %(name, self.context.entry_point);
+""" %(name, self.context.entry_point)
 
                         logging.info(name)
                         self.proc.optimize()
@@ -1022,7 +1023,7 @@ else goto __dispatch_call;
                                 self.translated.insert(0, self.body)
                         self.proc = None
                         if self.temps_count > 0:
-                                raise Exception("temps count == %d at the exit of proc" %self.temps_count);
+                                raise Exception("temps count == %d at the exit of proc" %self.temps_count)
                         return True
                 except (CrossJump, op.Unsupported) as e:
                         logging.error("%s: ERROR: %s" %(name, e))
@@ -1207,7 +1208,7 @@ else goto __dispatch_call;
                 data_head += '''
                         db stack[STACK_SIZE];
                         db heap[HEAP_SIZE];
-                ''';
+                '''
 
                 data_head += "};\n"
                 self.hd.write(data_head)
@@ -1313,10 +1314,6 @@ else goto __dispatch_call;
 
         def _rol(self, dst, src):
                 self.body += "\tR(ROL(%s, %s));\n" %self.parse2(dst, src)
-
-
-        def _sar(self, dst, src):
-                self.body += "\tR(SAR(%s, %s));\n" %self.parse2(dst, src)
 
         def _repe(self,arg):
                 self.body += "\tREPE\n"

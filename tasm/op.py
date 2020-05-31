@@ -33,6 +33,8 @@ class Unsupported(Exception):
         pass
 
 class var(object):
+        elements = 1
+
         def __init__(self, size, offset, name="", segment="", issegment = False):
                 self.size = size
                 self.offset = offset
@@ -89,8 +91,8 @@ class baseop(object):
         command = ""
         line_number = 0
 
-        def __str__(self):
-                return self.cmd+" "+self.command+" "+str(self.line_number)
+        #def __str__(self):
+        #        return self.cmd+" "+self.command+" "+str(self.line_number)
 
         def parse_arg(self, arg):
                 args = self.split(arg)
@@ -548,6 +550,8 @@ class _clc(baseop):
                 visitor._clc()
 
 class label(baseop):
+        elements = 1
+
         def __init__(self, name, proc, line_number=0, far=False):
                 self.name = name
                 self.line_number = line_number

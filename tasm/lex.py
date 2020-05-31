@@ -28,7 +28,7 @@ def parse_args(text):
         string = False
         result = []
         token = str()
-        value = 0;
+        #value = 0
         for c in text:
                 #print "[%s]%s: %s: %s" %(token, c, escape, string)
                 if c == '\\':
@@ -39,7 +39,7 @@ def parse_args(text):
 
                 if escape:
                         if not string:
-                                raise SyntaxError("escape found in no string: %s" %text);
+                                raise SyntaxError("escape found in no string: %s" %text)
         
                         logging.debug("escaping[%s]" %c)
                         escape = False
@@ -73,6 +73,6 @@ def parse_args(text):
         #print result
         return result
 
-def compile(width, data):
-        logging.debug(data)
-        return data
+#def compile(width, data):
+#        logging.debug(data)
+#        return data

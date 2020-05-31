@@ -64,7 +64,7 @@ def main():
 
 def process(i):
   name = i
-  m = re.match(r'.*?([A-Za-z90-9_\.-]+)\.asm', name.lower())
+  m = re.match(r'.*?([A-Za-z90-9_.-]+)\.asm', name.lower())
   outname=""
   if m is not None:
      outname = m.group(1).strip()

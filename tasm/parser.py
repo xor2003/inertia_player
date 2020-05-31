@@ -66,6 +66,7 @@ class Parser(object):
                 self.data_started = False
                 self.prev_data_type = 0
                 self.prev_data_ctype = 0
+                self.line_number = 0
 
         def visible(self):
                 for i in self.__stack:
@@ -167,11 +168,12 @@ class Parser(object):
                         expr, n = re.subn(r'\b([a-zA-Z_]+[a-zA-Z0-9_]*)', self.expr_callback, expr)
                 #print "~%s~" %(expr)
                 expr = expr.strip()
-                exprr = expr.lower()
-                if exprr[-1] == 'h':
-                        logging.debug("eval_expr: %s" %(expr))
-                        expr = '0x'.expr[0:len(expr)-1]
-                        logging.debug("eval_expr: %s" %(expr))
+                #exprr = expr.lower()
+                expr = cpp.convert_number(expr)
+                #if exprr[-1] == 'h':
+                #        logging.debug("eval_expr: %s" %(expr))
+                #        expr = '0x'.expr[0:len(expr)-1]
+                logging.debug("eval_expr: %s" %(expr))
 
                 if expr == '?':
                         return 0
@@ -232,7 +234,7 @@ class Parser(object):
                                 for i in range(0, n):
                                         v = value
                                         for b in range(0, width):
-                                                r.append(v & 0xff);
+                                                r.append(v & 0xff)
                                                 v >>= 8
                                 continue
                         
@@ -252,7 +254,7 @@ class Parser(object):
                                         v = 0
                 
                         for b in range(0, width):
-                                r.append(v & 0xff);
+                                r.append(v & 0xff)
                                 v >>= 8
                 #print r
                 return r
@@ -318,7 +320,7 @@ class Parser(object):
 
                                 for i in range(0, n):
                                         v = value
-                                        r.append(v);
+                                        r.append(v)
                                 elements += n
                                 first = False
                                 continue
@@ -366,7 +368,7 @@ class Parser(object):
                                         self.link_later.append((len(self.c_data) + len(r), v))
                                         v = 0
                 
-                        r.append(v);
+                        r.append(v)
 
                         first = False
 
