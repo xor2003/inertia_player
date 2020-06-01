@@ -22,57 +22,58 @@ from __future__ import print_function
 import logging
 from builtins import str
 
+
 def parse_args(text):
-        #print "parsing: [%s]" %text
-        escape = False
-        string = False
-        result = []
-        token = str()
-        #value = 0
-        for c in text:
-                #print "[%s]%s: %s: %s" %(token, c, escape, string)
-                if c == '\\':
-                        token += c
-#               if c == '\\':
-#                       escape = True
-#                       continue
+    # print "parsing: [%s]" %text
+    escape = False
+    string = False
+    result = []
+    token = str()
+    # value = 0
+    for c in text:
+        # print "[%s]%s: %s: %s" %(token, c, escape, string)
+        if c == '\\':
+            token += c
+        #               if c == '\\':
+        #                       escape = True
+        #                       continue
 
-                if escape:
-                        if not string:
-                                raise SyntaxError("escape found in no string: %s" %text)
-        
-                        logging.debug("escaping[%s]" %c)
-                        escape = False
-                        token += c
-                        continue
+        if escape:
+            if not string:
+                raise SyntaxError("escape found in no string: %s" % text)
 
-                if string:
-                        if c == '\'' or c == '"':
-                                string = False
+            logging.debug("escaping[%s]" % c)
+            escape = False
+            token += c
+            continue
 
-                        token += c
-                        continue
-                
-                if c == '\'' or c == '"':
-                        string = True
-                        token += c
-                        continue
+        if string:
+            if c == '\'' or c == '"':
+                string = False
 
-                if c == ',':
-                        result.append(token.strip())
-                        token = str()
-                        continue
+            token += c
+            continue
 
-                if c == ';': #comment, bailing out
-                        break
-                
-                token += c
-        token = token.strip()
-        if len(token):
-                result.append(token)
-        #print result
-        return result
+        if c == '\'' or c == '"':
+            string = True
+            token += c
+            continue
 
-#def compile(width, data):
+        if c == ',':
+            result.append(token.strip())
+            token = str()
+            continue
+
+        if c == ';':  # comment, bailing out
+            break
+
+        token += c
+    token = token.strip()
+    if len(token):
+        result.append(token)
+    # print result
+    return result
+
+# def compile(width, data):
 #        logging.debug(data)
 #        return data

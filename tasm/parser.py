@@ -554,7 +554,7 @@ class Parser(object):
                                         self.c_data.append("{"+ ",".join(l) +"}, // segment " + name + "\n")
                                         self.h_data.append(" db " + name + "["+ str(num) + "]; // segment " + name + "\n")
 
-                                        self.set_global(name, op.var(binary_width, offset, issegment = True))
+                                        self.set_global(name, op.var(binary_width, offset, issegment=True))
                                         '''
                                         if self.proc == None:
                                                 name = "mainproc"
