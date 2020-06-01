@@ -282,10 +282,10 @@ class Parser(object):
                 first = True
                 is_string = False
                 elements = 0
-                data_ctype = {1: 'db', 2: 'dw', 4: 'dd', 8: 'dq'}[width]
+                data_ctype = {1: 'db', 2: 'dw', 4: 'dd', 8: 'dq', 10: 'dt'}[width]
                 r = [""]
                 rh = []
-                base = {1: 0x100, 2: 0x10000, 4: 0x100000000, 8: 0x10000000000000000}[width]
+                base = {1: 0x100, 2: 0x10000, 4: 0x100000000, 8: 0x10000000000000000, 8: 0x100000000000000000000}[width]
                 for v in data:
                         v = v.strip()
                         if width == 1 and (v[0] in ["'", '"']):

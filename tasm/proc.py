@@ -274,7 +274,10 @@ class Proc(object):
                 for i in range(skip, len(self.stmts)):
                         self.stmts[i].visit(visitor)
                         try: # trying to add command and comment
-                                visitor.body = visitor.body[:-1] + "\t// " + self.stmts[i].command + "\n"
+                                if self.stmts[i].command:
+                                    visitor.body = visitor.body[:-1] + "\t// " + self.stmts[i].command + "\n"
+                                else:
+                                    visitor.body = visitor.body[:-1] + "\n"
                         except AttributeError:
                                 pass
 
