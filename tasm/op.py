@@ -104,8 +104,9 @@ class segment(object):
 
 class baseop(object):
     cmd = ""
-    command = ""
+    line = ""
     line_number = 0
+    elements = 1
 
     # def __str__(self):
     #        return self.cmd+" "+self.command+" "+str(self.line_number)
@@ -137,7 +138,7 @@ class _call(baseop):
         self.name = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._call(self.name)
+        return visitor._call(self.name)
 
     def __str__(self):
         return "call(%s)" % self.name
@@ -148,7 +149,7 @@ class _rep(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._rep(self.arg)
+        return visitor._rep(self.arg)
 
 
 class _mov(baseop):
@@ -158,7 +159,7 @@ class _mov(baseop):
         # print self.dst, self.src
 
     def visit(self, visitor):
-        visitor._mov(self.dst, self.src)
+        return visitor._mov(self.dst, self.src)
 
     def __str__(self):
         return "mov(%s, %s)" % (self.dst, self.src)
@@ -178,7 +179,7 @@ class _shr(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._shr(self.dst, self.src)
+        return visitor._shr(self.dst, self.src)
 
 
 class _shl(baseop):
@@ -186,7 +187,7 @@ class _shl(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._shl(self.dst, self.src)
+        return visitor._shl(self.dst, self.src)
 
 
 class _ror(baseop):
@@ -194,7 +195,7 @@ class _ror(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._ror(self.dst, self.src)
+        return visitor._ror(self.dst, self.src)
 
 
 class _rol(baseop):
@@ -202,7 +203,7 @@ class _rol(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._rol(self.dst, self.src)
+        return visitor._rol(self.dst, self.src)
 
 
 class _sar(baseop):
@@ -210,7 +211,7 @@ class _sar(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._sar(self.dst, self.src)
+        return visitor._sar(self.dst, self.src)
 
 
 class _sal(baseop):
@@ -218,7 +219,7 @@ class _sal(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._sal(self.dst, self.src)
+        return visitor._sal(self.dst, self.src)
 
 
 class _rcl(baseop):
@@ -226,7 +227,7 @@ class _rcl(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._rcl(self.dst, self.src)
+        return visitor._rcl(self.dst, self.src)
 
 
 class _rcr(baseop):
@@ -234,7 +235,7 @@ class _rcr(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._rcr(self.dst, self.src)
+        return visitor._rcr(self.dst, self.src)
 
 
 class _neg(baseop):
@@ -242,7 +243,7 @@ class _neg(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._neg(self.arg)
+        return visitor._neg(self.arg)
 
 
 class _dec(baseop):
@@ -250,7 +251,7 @@ class _dec(baseop):
         self.dst = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._dec(self.dst)
+        return visitor._dec(self.dst)
 
 
 class _inc(baseop):
@@ -258,7 +259,7 @@ class _inc(baseop):
         self.dst = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._inc(self.dst)
+        return visitor._inc(self.dst)
 
 
 class _add(baseop):
@@ -266,7 +267,7 @@ class _add(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._add(self.dst, self.src)
+        return visitor._add(self.dst, self.src)
 
 
 class _sub(baseop):
@@ -274,7 +275,7 @@ class _sub(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._sub(self.dst, self.src)
+        return visitor._sub(self.dst, self.src)
 
 
 class _mul(baseop):
@@ -282,7 +283,7 @@ class _mul(baseop):
         self.arg = self.split(arg)
 
     def visit(self, visitor):
-        visitor._mul(self.arg)
+        return visitor._mul(self.arg)
 
 
 class _div(baseop):
@@ -290,7 +291,7 @@ class _div(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._div(self.arg)
+        return visitor._div(self.arg)
 
 
 class _and(baseop):
@@ -298,7 +299,7 @@ class _and(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._and(self.dst, self.src)
+        return visitor._and(self.dst, self.src)
 
 
 class _xor(baseop):
@@ -306,7 +307,7 @@ class _xor(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._xor(self.dst, self.src)
+        return visitor._xor(self.dst, self.src)
 
 
 class _or(baseop):
@@ -314,7 +315,7 @@ class _or(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._or(self.dst, self.src)
+        return visitor._or(self.dst, self.src)
 
 
 class _cmp(baseop):
@@ -322,7 +323,7 @@ class _cmp(baseop):
         self.a, self.b = self.split(arg)
 
     def visit(self, visitor):
-        visitor._cmp(self.a, self.b)
+        return visitor._cmp(self.a, self.b)
 
 
 class _test(baseop):
@@ -330,7 +331,7 @@ class _test(baseop):
         self.a, self.b = self.split(arg)
 
     def visit(self, visitor):
-        visitor._test(self.a, self.b)
+        return visitor._test(self.a, self.b)
 
 
 class _xchg(baseop):
@@ -338,7 +339,7 @@ class _xchg(baseop):
         self.a, self.b = self.split(arg)
 
     def visit(self, visitor):
-        visitor._xchg(self.a, self.b)
+        return visitor._xchg(self.a, self.b)
 
 
 class _jnz(basejmp):
@@ -346,7 +347,7 @@ class _jnz(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jnz(self.label)
+        return visitor._jnz(self.label)
 
 
 class _jne(basejmp):
@@ -354,7 +355,7 @@ class _jne(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jnz(self.label)
+        return visitor._jnz(self.label)
 
 
 class _jz(basejmp):
@@ -362,7 +363,7 @@ class _jz(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jz(self.label)
+        return visitor._jz(self.label)
 
 
 class _je(basejmp):
@@ -370,7 +371,7 @@ class _je(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jz(self.label)
+        return visitor._jz(self.label)
 
 
 class _jc(basejmp):
@@ -378,7 +379,7 @@ class _jc(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jc(self.label)
+        return visitor._jc(self.label)
 
 
 class _jb(basejmp):
@@ -386,7 +387,7 @@ class _jb(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jc(self.label)
+        return visitor._jc(self.label)
 
 
 class _jnc(basejmp):
@@ -394,7 +395,7 @@ class _jnc(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jnc(self.label)
+        return visitor._jnc(self.label)
 
 
 class _jae(basejmp):
@@ -402,7 +403,7 @@ class _jae(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jnc(self.label)
+        return visitor._jnc(self.label)
 
 
 class _jnb(basejmp):
@@ -410,7 +411,7 @@ class _jnb(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jnc(self.label)
+        return visitor._jnc(self.label)
 
 
 class _js(basejmp):
@@ -418,7 +419,7 @@ class _js(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._js(self.label)
+        return visitor._js(self.label)
 
 
 class _jns(basejmp):
@@ -426,7 +427,7 @@ class _jns(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jns(self.label)
+        return visitor._jns(self.label)
 
 
 class _jl(basejmp):
@@ -434,7 +435,7 @@ class _jl(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jl(self.label)
+        return visitor._jl(self.label)
 
 
 class _jg(basejmp):
@@ -442,7 +443,7 @@ class _jg(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jg(self.label)
+        return visitor._jg(self.label)
 
 
 class _jle(basejmp):
@@ -450,7 +451,7 @@ class _jle(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jle(self.label)
+        return visitor._jle(self.label)
 
 
 class _jge(basejmp):
@@ -458,7 +459,7 @@ class _jge(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jge(self.label)
+        return visitor._jge(self.label)
 
 
 class _jmp(basejmp):
@@ -466,7 +467,7 @@ class _jmp(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jmp(self.label)
+        return visitor._jmp(self.label)
 
 
 class _loop(basejmp):
@@ -474,7 +475,7 @@ class _loop(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._loop(self.label)
+        return visitor._loop(self.label)
 
 
 class _push(baseop):
@@ -484,7 +485,7 @@ class _push(baseop):
             self.regs.append(self.parse_arg(r))
 
     def visit(self, visitor):
-        visitor._push(self.regs)
+        return visitor._push(self.regs)
 
 
 class _pop(baseop):
@@ -494,7 +495,7 @@ class _pop(baseop):
             self.regs.append(self.parse_arg(r))
 
     def visit(self, visitor):
-        visitor._pop(self.regs)
+        return visitor._pop(self.regs)
 
 
 class _ret(baseop):
@@ -502,7 +503,7 @@ class _ret(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._ret()
+        return visitor._ret()
 
 
 class _retf(baseop):
@@ -510,7 +511,7 @@ class _retf(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._retf()
+        return visitor._retf()
 
 
 class _retn(baseop):
@@ -518,7 +519,7 @@ class _retn(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._ret()
+        return visitor._ret()
 
 
 class _lodsb(baseop):
@@ -526,7 +527,7 @@ class _lodsb(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._lodsb()
+        return visitor._lodsb()
 
 
 class _scasb(baseop):
@@ -534,7 +535,7 @@ class _scasb(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._scasb()
+        return visitor._scasb()
 
 
 class _cmpsb(baseop):
@@ -542,7 +543,7 @@ class _cmpsb(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cmpsb()
+        return visitor._cmpsb()
 
 
 class _lodsw(baseop):
@@ -550,7 +551,7 @@ class _lodsw(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._lodsw()
+        return visitor._lodsw()
 
 
 class _lodsd(baseop):
@@ -558,7 +559,7 @@ class _lodsd(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._lodsd()
+        return visitor._lodsd()
 
 
 class _stosd(baseop):
@@ -567,7 +568,7 @@ class _stosd(baseop):
         self.clear_cx = False
 
     def visit(self, visitor):
-        visitor._stosd(self.repeat, self.clear_cx)
+        return visitor._stosd(self.repeat, self.clear_cx)
 
 
 class _stosw(baseop):
@@ -576,7 +577,7 @@ class _stosw(baseop):
         self.clear_cx = False
 
     def visit(self, visitor):
-        visitor._stosw(self.repeat, self.clear_cx)
+        return visitor._stosw(self.repeat, self.clear_cx)
 
 
 class _stosb(baseop):
@@ -585,7 +586,7 @@ class _stosb(baseop):
         self.clear_cx = False
 
     def visit(self, visitor):
-        visitor._stosb(self.repeat, self.clear_cx)
+        return visitor._stosb(self.repeat, self.clear_cx)
 
 
 class _movsw(baseop):
@@ -594,7 +595,7 @@ class _movsw(baseop):
         self.clear_cx = False
 
     def visit(self, visitor):
-        visitor._movsw(self.repeat, self.clear_cx)
+        return visitor._movsw(self.repeat, self.clear_cx)
 
 
 class _movsd(baseop):
@@ -603,7 +604,7 @@ class _movsd(baseop):
         self.clear_cx = False
 
     def visit(self, visitor):
-        visitor._movsd(self.repeat, self.clear_cx)
+        return visitor._movsd(self.repeat, self.clear_cx)
 
 
 class _movsb(baseop):
@@ -612,7 +613,7 @@ class _movsb(baseop):
         self.clear_cx = False
 
     def visit(self, visitor):
-        visitor._movsb(self.repeat, self.clear_cx)
+        return visitor._movsb(self.repeat, self.clear_cx)
 
 
 class _in(baseop):
@@ -620,7 +621,7 @@ class _in(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._in(self.dst, self.src)
+        return visitor._in(self.dst, self.src)
 
 
 #               raise Unsupported("input from port: %s" %self.arg)
@@ -630,7 +631,7 @@ class _out(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._out(self.dst, self.src)
+        return visitor._out(self.dst, self.src)
 
 
 #               raise Unsupported("out to port: %s" %self.arg)
@@ -640,7 +641,7 @@ class _cli(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cli()
+        return visitor._cli()
 
 
 #               raise Unsupported("cli")
@@ -650,7 +651,7 @@ class _sti(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._sti()
+        return visitor._sti()
 
 
 #               raise Unsupported("sli")
@@ -660,7 +661,7 @@ class _int(baseop):
         self.dst = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._int(self.dst)
+        return visitor._int(self.dst)
 
 
 #               raise Unsupported("interrupt: %s" %self.arg)
@@ -670,7 +671,7 @@ class _iret(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._iret()
+        return visitor._iret()
 
 
 #               raise Unsupported("interrupt return")
@@ -680,7 +681,7 @@ class _cbw(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cbw()
+        return visitor._cbw()
 
 
 class _nop(baseop):
@@ -696,7 +697,7 @@ class _stc(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._stc()
+        return visitor._stc()
 
 
 class _xlat(baseop):
@@ -704,7 +705,7 @@ class _xlat(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._xlat()
+        return visitor._xlat()
 
 
 class _clc(baseop):
@@ -712,11 +713,10 @@ class _clc(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._clc()
+        return visitor._clc()
 
 
 class label(baseop):
-    elements = 1
 
     def __init__(self, name, proc, line_number=0, far=False):
         self.name = name
@@ -725,7 +725,7 @@ class label(baseop):
         self.proc = proc
 
     def visit(self, visitor):
-        visitor._label(self.name, self.proc)
+        return visitor._label(self.name, self.proc)
 
 
 class _cld(baseop):
@@ -733,7 +733,7 @@ class _cld(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cld()
+        return visitor._cld()
 
 
 class _std(baseop):
@@ -741,7 +741,7 @@ class _std(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._std()
+        return visitor._std()
 
 
 class _movzx(baseop):
@@ -749,7 +749,7 @@ class _movzx(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._movzx(self.dst, self.src)
+        return visitor._movzx(self.dst, self.src)
 
     def __str__(self):
         return "MOVZX(%s, %s)" % (self.dst, self.src)
@@ -760,7 +760,7 @@ class _movsx(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._movsx(self.dst, self.src)
+        return visitor._movsx(self.dst, self.src)
 
     def __str__(self):
         return "MOVSX(%s, %s)" % (self.dst, self.src)
@@ -771,7 +771,7 @@ class _lea(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._lea(self.dst, self.src)
+        return visitor._lea(self.dst, self.src)
 
     def __str__(self):
         return "%s = %s" % (self.dst, self.src)
@@ -782,7 +782,7 @@ class _lds(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._lds(self.dst, self.src)
+        return visitor._lds(self.dst, self.src)
 
     def __str__(self):
         return "LDS(%s, %s)" % (self.dst, self.src)
@@ -793,7 +793,7 @@ class _les(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._les(self.dst, self.src)
+        return visitor._les(self.dst, self.src)
 
     def __str__(self):
         return "LES(%s, %s)" % (self.dst, self.src)
@@ -804,7 +804,7 @@ class _lfs(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._lfs(self.dst, self.src)
+        return visitor._lfs(self.dst, self.src)
 
     def __str__(self):
         return "LFS(%s, %s)" % (self.dst, self.src)
@@ -815,7 +815,7 @@ class _lgs(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._lgs(self.dst, self.src)
+        return visitor._lgs(self.dst, self.src)
 
     def __str__(self):
         return "LGS(%s, %s)" % (self.dst, self.src)
@@ -826,7 +826,7 @@ class _repe(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._repe(self.arg)
+        return visitor._repe(self.arg)
 
 
 class _repne(baseop):
@@ -834,7 +834,7 @@ class _repne(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._repne(self.arg)
+        return visitor._repne(self.arg)
 
 
 class _adc(baseop):
@@ -842,7 +842,7 @@ class _adc(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._adc(self.dst, self.src)
+        return visitor._adc(self.dst, self.src)
 
 
 class _jbe(basejmp):
@@ -850,7 +850,7 @@ class _jbe(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jbe(self.label)
+        return visitor._jbe(self.label)
 
 
 class _jna(basejmp):
@@ -858,7 +858,7 @@ class _jna(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jbe(self.label)
+        return visitor._jbe(self.label)
 
 
 class _ja(basejmp):
@@ -866,7 +866,7 @@ class _ja(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._ja(self.label)
+        return visitor._ja(self.label)
 
 
 class _jnbe(basejmp):
@@ -874,7 +874,7 @@ class _jnbe(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._ja(self.label)
+        return visitor._ja(self.label)
 
 
 class _imul(baseop):
@@ -882,7 +882,7 @@ class _imul(baseop):
         self.arg = self.split(arg)
 
     def visit(self, visitor):
-        visitor._imul(self.arg)
+        return visitor._imul(self.arg)
 
 
 class _cmc(baseop):
@@ -890,7 +890,7 @@ class _cmc(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cmc()
+        return visitor._cmc()
 
 
 class _shrd(baseop):
@@ -898,7 +898,7 @@ class _shrd(baseop):
         self.dst, self.src, self.c = lex.parse_args(arg)
 
     def visit(self, visitor):
-        visitor._shrd(self.dst, self.src, self.c)
+        return visitor._shrd(self.dst, self.src, self.c)
 
 
 class _shld(baseop):
@@ -906,7 +906,7 @@ class _shld(baseop):
         self.dst, self.src, self.c = lex.parse_args(arg)
 
     def visit(self, visitor):
-        visitor._shld(self.dst, self.src, self.c)
+        return visitor._shld(self.dst, self.src, self.c)
 
 
 class _loope(basejmp):
@@ -914,7 +914,7 @@ class _loope(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._loope(self.label)
+        return visitor._loope(self.label)
 
 
 class _loopne(basejmp):
@@ -922,7 +922,7 @@ class _loopne(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._loopne(self.label)
+        return visitor._loopne(self.label)
 
 
 class _jcxz(basejmp):
@@ -930,7 +930,7 @@ class _jcxz(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jcxz(self.label)
+        return visitor._jcxz(self.label)
 
 
 class _jecxz(basejmp):
@@ -938,7 +938,7 @@ class _jecxz(basejmp):
         self.label = self.parse_arg(label)
 
     def visit(self, visitor):
-        visitor._jecxz(self.label)
+        return visitor._jecxz(self.label)
 
 
 class _pushf(baseop):
@@ -946,7 +946,7 @@ class _pushf(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._pushf()
+        return visitor._pushf()
 
 
 class _popf(baseop):
@@ -954,7 +954,7 @@ class _popf(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._popf()
+        return visitor._popf()
 
 
 class _movs(baseop):
@@ -962,7 +962,7 @@ class _movs(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._movs(self.dst, self.src)
+        return visitor._movs(self.dst, self.src)
 
 
 class _lods(baseop):
@@ -970,7 +970,7 @@ class _lods(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._lods(self.arg)
+        return visitor._lods(self.arg)
 
 
 class _setnz(baseop):
@@ -978,7 +978,7 @@ class _setnz(baseop):
         self.dst = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._setnz(self.dst)
+        return visitor._setnz(self.dst)
 
 
 class _setz(baseop):
@@ -986,7 +986,7 @@ class _setz(baseop):
         self.dst = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._setz(self.dst)
+        return visitor._setz(self.dst)
 
 
 class _setb(baseop):
@@ -994,7 +994,7 @@ class _setb(baseop):
         self.dst = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._setb(self.dst)
+        return visitor._setb(self.dst)
 
 
 class _sbb(baseop):
@@ -1002,7 +1002,7 @@ class _sbb(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._sbb(self.dst, self.src)
+        return visitor._sbb(self.dst, self.src)
 
 
 class _bt(baseop):
@@ -1010,7 +1010,7 @@ class _bt(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._bt(self.dst, self.src)
+        return visitor._bt(self.dst, self.src)
 
 
 class _btc(baseop):
@@ -1018,7 +1018,7 @@ class _btc(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._btc(self.dst, self.src)
+        return visitor._btc(self.dst, self.src)
 
 
 class _btr(baseop):
@@ -1026,7 +1026,7 @@ class _btr(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._btr(self.dst, self.src)
+        return visitor._btr(self.dst, self.src)
 
 
 class _bts(baseop):
@@ -1034,7 +1034,7 @@ class _bts(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._bts(self.dst, self.src)
+        return visitor._bts(self.dst, self.src)
 
 
 class _bsr(baseop):
@@ -1042,7 +1042,7 @@ class _bsr(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._bsr(self.dst, self.src)
+        return visitor._bsr(self.dst, self.src)
 
 
 class _bsf(baseop):
@@ -1050,7 +1050,7 @@ class _bsf(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._bsr(self.dst, self.src)
+        return visitor._bsr(self.dst, self.src)
 
 
 class _pushad(baseop):
@@ -1058,7 +1058,7 @@ class _pushad(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._pushad()
+        return visitor._pushad()
 
 
 class _popad(baseop):
@@ -1066,7 +1066,7 @@ class _popad(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._popad()
+        return visitor._popad()
 
 
 class _pusha(baseop):
@@ -1074,7 +1074,7 @@ class _pusha(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._pusha()
+        return visitor._pusha()
 
 
 class _popa(baseop):
@@ -1082,7 +1082,7 @@ class _popa(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._popa()
+        return visitor._popa()
 
 
 class _aad(baseop):
@@ -1090,7 +1090,7 @@ class _aad(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._aad()
+        return visitor._aad()
 
 
 class _daa(baseop):
@@ -1098,7 +1098,7 @@ class _daa(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._daa()
+        return visitor._daa()
 
 
 class _cwde(baseop):
@@ -1106,7 +1106,7 @@ class _cwde(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cwde()
+        return visitor._cwde()
 
 
 class _cwd(baseop):
@@ -1114,7 +1114,7 @@ class _cwd(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._cwd()
+        return visitor._cwd()
 
 
 class _leave(baseop):
@@ -1122,7 +1122,7 @@ class _leave(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._leave()
+        return visitor._leave()
 
 
 class _enter(baseop):
@@ -1130,7 +1130,7 @@ class _enter(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._enter(self.arg)
+        return visitor._enter(self.arg)
 
 
 class _idiv(baseop):
@@ -1138,7 +1138,7 @@ class _idiv(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._idiv(self.arg)
+        return visitor._idiv(self.arg)
 
 
 class _not(baseop):
@@ -1146,7 +1146,7 @@ class _not(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._not(self.arg)
+        return visitor._not(self.arg)
 
 
 class _instruction0(baseop):
@@ -1154,7 +1154,7 @@ class _instruction0(baseop):
         pass
 
     def visit(self, visitor):
-        visitor._instruction0(self.cmd)
+        return visitor._instruction0(self.cmd)
 
 
 class _instruction1(baseop):
@@ -1162,7 +1162,7 @@ class _instruction1(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._instruction1(self.cmd, self.arg)
+        return visitor._instruction1(self.cmd, self.arg)
 
 
 class _jump(baseop):
@@ -1170,7 +1170,7 @@ class _jump(baseop):
         self.arg = self.parse_arg(arg)
 
     def visit(self, visitor):
-        visitor._jump(self.cmd, self.arg)
+        return visitor._jump(self.cmd, self.arg)
 
 
 class _instruction2(baseop):
@@ -1178,7 +1178,7 @@ class _instruction2(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        visitor._instruction2(self.cmd, self.dst, self.src)
+        return visitor._instruction2(self.cmd, self.dst, self.src)
 
 
 class _instruction3(baseop):
@@ -1186,7 +1186,7 @@ class _instruction3(baseop):
         self.dst, self.src, self.c = lex.parse_args(arg)
 
     def visit(self, visitor):
-        visitor._instruction3(self.cmd, self.dst, self.src, self.c)
+        return visitor._instruction3(self.cmd, self.dst, self.src, self.c)
 
 
 class _equ(baseop):
@@ -1194,7 +1194,7 @@ class _equ(baseop):
         self.dst, self.src = dst, src
 
     def visit(self, visitor):
-        visitor._equ(self.dst, self.src)
+        return visitor._equ(self.dst, self.src)
 
 
 class _assignment(baseop):
@@ -1203,4 +1203,4 @@ class _assignment(baseop):
 
     def visit(self, visitor):
         logging.debug("~ %s = %s" % (self.dst, self.src))
-        visitor._assignment(self.dst, self.src)
+        return visitor._assignment(self.dst, self.src)

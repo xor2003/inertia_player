@@ -178,42 +178,50 @@ class Proc(object):
                 #if comment >= 0:
                 #       comments = stmt[comment:]
                 stmt = stmt.strip()
-                command = stmt
+                line = stmt
 
-                r = self.__label_re.search(stmt)
-                if r is not None:
-                        logging.info("add label %s" %r.group(1))
-                        #label
-                        self.add_label(r.group(1).lower())
-                        #print "remains: %s" %r.group(2)
-                        stmt = r.group(2).strip()
+                stmt = self.parse_extract_label(stmt)
 
                 if len(stmt) == 0:
                         return
 
-                o = self.add_(command, line_number, stmt)
+                o = self.add_(line, line_number, stmt)
                 self.stmts.append(o)
 
-        def add_(self, command, line_number, stmt):
+        def parse_extract_label(self, stmt):
+                r = self.__label_re.search(stmt)
+                if r is not None:
+                        logging.info("add label %s" % r.group(1))
+                        # label
+                        self.add_label(r.group(1).lower())
+                        # print "remains: %s" %r.group(2)
+                        stmt = r.group(2).strip()
+                return stmt
+
+        def add_(self, line, line_number, stmt):
                 # s = stmt.split(None)
                 s = [stmt.replace("\x00", " ") for stmt in
                      re.sub('["\'].+?["\']', lambda m: m.group(0).replace(" ", "\x00"), stmt).split()]
                 cmd = s[0]
-                try:
-                        cl = getattr(op, '_' + cmd.lower())
-                except AttributeError:
-                        cl = self.find_op_class(cmd)
+                cl = self.find_op_class(cmd)
                 # print "args %s" %s[1:]
-                arg = " ".join(s[1:]) if len(s) > 1 else str()
+                arg = " ".join(s[1:]) if len(s) > 1 else ""
                 o = cl(arg)
                 # o.comments = comments
-                o.command = str(line_number) + " " + command
+                o.line = line
                 o.cmd = cmd.lower()
                 o.line_number = line_number
                 #logging.info("~1~2~ " + o.command + " ~ " + o.cmd)
                 return o
 
         def find_op_class(self, cmd):
+                try:
+                        cl = getattr(op, '_' + cmd.lower())
+                except AttributeError:
+                        cl = self.find_op_common_class(cmd)
+                return cl
+
+        def find_op_common_class(self, cmd):
                 logging.info(cmd)
                 if re.match(
                         r"ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde|cwd|cdq|sti|cmc|pushf|popf|nop|pushad|popad|popa|pusha|das|aaa|aas|aam|finit|fsin|fldz",
@@ -245,8 +253,8 @@ class Proc(object):
                 # print "args %s" %s[1:]
                 value = tasm.cpp.convert_number_to_c(value)
                 #o1 = cl(label, value)
-                o1.command = str(line_number) + " " + label + " equ " + value
-                o1.cmd = o1.command
+                o1.line = str(line_number) + " " + label + " equ " + value
+                o1.cmd = o1.line
                 #               logging.info "~~~" + o.command + o.comments
                 return o1
 
@@ -259,8 +267,8 @@ class Proc(object):
                 # print "args %s" %s[1:]
                 value = tasm.cpp.convert_number_to_c(value)
                 o = op._assignment(label, value)
-                o.command = str(line_number) + " " + label + " = " + value
-                o.cmd = o.command
+                o.line = str(line_number) + " " + label + " = " + value
+                o.cmd = o.line
                 #               logging.info "~~~" + o.command + o.comments
                 return o
 
@@ -272,12 +280,15 @@ class Proc(object):
         
         def visit(self, visitor, skip = 0):
                 for i in range(skip, len(self.stmts)):
-                        self.stmts[i].visit(visitor)
+                        stmt = self.stmts[i]
+                        visitor.body += self.generate_c_cmd(visitor, stmt.line, stmt)
                         try: # trying to add command and comment
-                                if self.stmts[i].command:
-                                    visitor.body = visitor.body[:-1] + "\t// " + self.stmts[i].command + "\n"
-                                else:
-                                    visitor.body = visitor.body[:-1] + "\n"
+                                if stmt.line or stmt.line_number != 0:
+                                    visitor.body = visitor.body[:-1] + "\t// " + str(stmt.line_number) \
+                                                   + " " + stmt.line + "\n"
                         except AttributeError:
                                 pass
 
+        def generate_c_cmd(self, visitor, line, stmt):
+                s = stmt.visit(visitor)
+                return s

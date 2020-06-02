@@ -200,8 +200,15 @@ class Parser(object):
                         #print "~2~ %i" %v
                 if re.match(r'^[+-]?[0-9][0-9A-Fa-f]*[Hh]$', v):
                         v = int(v[:-1], 16)
-#                       v = hex(int(v[:-1], 16))
                         #print "~3~ %i" %v
+
+                '''
+                try:
+                        vv=eval(v)
+                        v=vv
+                except:
+                        pass
+                '''
                 #print "~4~ %s" %v
                 return int(v)
 
@@ -554,7 +561,7 @@ class Parser(object):
                                         self.c_data.append("{"+ ",".join(l) +"}, // segment " + name + "\n")
                                         self.h_data.append(" db " + name + "["+ str(num) + "]; // segment " + name + "\n")
 
-                                        self.set_global(name, op.var(binary_width, offset, issegment=True))
+                                        self.set_global(name, op.var(binary_width, offset, name, issegment=True))
                                         '''
                                         if self.proc == None:
                                                 name = "mainproc"
@@ -656,18 +663,11 @@ class Parser(object):
                                 continue
 
                         if cmd0l in ['db', 'dw', 'dd', 'dq']:
-                                arg = line[len(cmd0):].strip()
                                 if not skipping_binary_data:
-                                        logging.debug("%d:1: %s" % (self.cur_seg_offset, arg))  # fixme: COPYPASTE
                                         cmd0 = cmd0.lower()
-                                        binary_width = self.calculate_data_size(cmd0[1])
-                                        b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
-                                        self.binary_data += b
-                                        self.cur_seg_offset += len(b)
-
-                                        c, h, elements = self.convert_data_to_c("", binary_width, lex.parse_args(arg))
-                                        self.c_data += c
-                                        self.h_data += h
+                                        arg = line[len(cmd0):].strip()
+                                        logging.debug("%d:1: %s" % (self.cur_seg_offset, arg))
+                                        self.parse_data("", cmd0, arg)
                                 continue
                         elif cmd0l == 'include':
                                 self.include(os.path.dirname(fname), cmd[1])
@@ -745,19 +745,11 @@ class Parser(object):
                                         if not (cmd0.lower() in self.skip_binary_data):
                                                 name = cmd0
                                                 name = re.sub(r'@', "arb", name)
-                                                binary_width = self.calculate_data_size(cmd1l[1])
                                                 offset = self.cur_seg_offset
                                                 arg = line[len(cmd0l):].strip()
                                                 arg = arg[len(cmd1l):].strip()
                                                 logging.debug("data value %s offset %d" % (arg, offset))
-                                                b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
-                                                self.binary_data += b
-                                                self.cur_seg_offset += len(b)
-
-                                                c, h, elements = self.convert_data_to_c(name, binary_width,
-                                                                                        lex.parse_args(arg))
-                                                self.c_data += c
-                                                self.h_data += h
+                                                binary_width, elements = self.parse_data(name, cmd1l, arg)
 
                                                 logging.debug("~size %d elements %d" % (binary_width, elements))
                                                 self.set_global(name, op.var(binary_width, offset, name=name,
@@ -773,6 +765,17 @@ class Parser(object):
                         else:
                                 # print line
                                 pass
+
+        def parse_data(self, name, directive, arg):
+                binary_width = self.calculate_data_size(directive[1])
+                b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
+                self.binary_data += b
+                self.cur_seg_offset += len(b)
+                c, h, elements = self.convert_data_to_c(name, binary_width,
+                                                        lex.parse_args(arg))
+                self.c_data += c
+                self.h_data += h
+                return binary_width, elements
 
         def calculate_data_size(self, cmd0):
                 binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[cmd0]
