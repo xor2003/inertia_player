@@ -92,6 +92,9 @@ class Cpp(object):
 
     def expand_cb(self, match):
         name_original = match.group(0)
+        return self.expand_cb_(name_original)
+
+    def expand_cb_(self, name_original):
         name = name_original.lower()
         logging.debug("expand_cb name = %s indirection = %u" % (name, self.indirection))
         if len(name) == 2 and \
