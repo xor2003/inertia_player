@@ -47,7 +47,7 @@ def parse_bin(s):
     return v
 
 
-def convert_number(expr):
+def convert_number_to_c(expr):
     expr = re.sub(r'\b([0-9][0-9A-Fa-f]*)[Hh]', '0x\\1', expr)
     expr = re.sub(r'\b([0-1]+)[Bb]', parse_bin, expr)  # convert binary
     return expr
@@ -303,7 +303,7 @@ class Cpp(object):
         #       expr, n = re.subn(r'\b[a-zA-Z_][a-zA-Z0-9_]+\b', self.expand_equ_cb, expr)
         # while n > 0:
         expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', self.expand_equ_cb, expr)
-        expr = convert_number(expr)
+        expr = convert_number_to_c(expr)
         return "(%s)" % expr
 
     def expand(self, expr, def_size=0, destination=False):
@@ -375,7 +375,7 @@ class Cpp(object):
         if m is not None:
             return m.group(1)
 
-        expr = convert_number(expr)  # convert hex
+        expr = convert_number_to_c(expr)  # convert hex
 
         match_id = True
         # print "is it offset ~%s~" %expr

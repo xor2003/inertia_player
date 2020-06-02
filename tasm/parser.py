@@ -169,7 +169,7 @@ class Parser(object):
                 #print "~%s~" %(expr)
                 expr = expr.strip()
                 #exprr = expr.lower()
-                expr = cpp.convert_number(expr)
+                expr = cpp.convert_number_to_c(expr)
                 #if exprr[-1] == 'h':
                 #        logging.debug("eval_expr: %s" %(expr))
                 #        expr = '0x'.expr[0:len(expr)-1]
@@ -195,10 +195,10 @@ class Parser(object):
                 #print "~1~ %s" %v
                 v = v.strip()
                 #print "~2~ %s" %v
-                if re.match(r'[01]+[Bb]$', v):
+                if re.match(r'^[01]+[Bb]$', v):
                         v = int(v[:-1], 2)
                         #print "~2~ %i" %v
-                if re.match(r'[+-]?[0-9A-Fa-f]+[Hh]$', v):
+                if re.match(r'^[+-]?[0-9][0-9A-Fa-f]*[Hh]$', v):
                         v = int(v[:-1], 16)
 #                       v = hex(int(v[:-1], 16))
                         #print "~3~ %i" %v
@@ -806,7 +806,7 @@ class Parser(object):
                 if m is not None:
                         vv = m.group(1).strip()
                         size = 2
-                vv = tasm.cpp.convert_number(vv)
+                vv = tasm.cpp.convert_number_to_c(vv)
                 return vv
 
         def link(self):

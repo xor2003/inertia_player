@@ -243,7 +243,7 @@ class Proc(object):
                 import tasm.cpp
                 o1 = op._equ(label, value)
                 # print "args %s" %s[1:]
-                value = tasm.cpp.convert_number(value)
+                value = tasm.cpp.convert_number_to_c(value)
                 #o1 = cl(label, value)
                 o1.command = str(line_number) + " " + label + " equ " + value
                 o1.cmd = o1.command
@@ -257,7 +257,7 @@ class Proc(object):
         def add_assignment_(self, label, line_number, value):
                 import tasm.cpp
                 # print "args %s" %s[1:]
-                value = tasm.cpp.convert_number(value)
+                value = tasm.cpp.convert_number_to_c(value)
                 o = op._assignment(label, value)
                 o.command = str(line_number) + " " + label + " = " + value
                 o.cmd = o.command

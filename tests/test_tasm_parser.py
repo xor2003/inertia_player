@@ -510,7 +510,8 @@ class ParserTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             parser_instance.parse_int(v=u'3*4')
 
-        self.assertEqual(parser_instance.parse_int(v=u'ah'),10)
+        with self.assertRaises(ValueError):
+            parser_instance.parse_int(v=u'ah')
 
         self.assertEqual(parser_instance.parse_int(v=u'-1'),-1)
         self.assertEqual(parser_instance.parse_int(v=u'-11'),-11)
