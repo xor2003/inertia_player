@@ -85,10 +85,13 @@ class Cpp(object):
         self.proc_addr = []
         self.used_data_offsets = set()
         self.methods = []
+        self.temps_count = 0
         self.pointer_flag = False
         self.lea = False
         self.expr_size = 0
         self.far = False
+        self.body = ""
+        self.unbounded = []
 
     def expand_cb(self, match):
         name_original = match.group(0)
@@ -121,7 +124,7 @@ class Cpp(object):
         try:
             g = self.context.get_global(name)
         except:
-            logging.warning("expand_cb exception on name = %s" % name)
+            logging.warning("expand_cb() global '%s' is missing" % name)
             return name_original
 
         # print g
@@ -849,6 +852,7 @@ class Cpp(object):
         p = ""
         for r in regs:
             if self.get_size(r):
+                self.temps_count += 1
                 r = self.expand(r)
                 p += "\tR(PUSH(%s));\n" % (r)
         return p
@@ -857,7 +861,6 @@ class Cpp(object):
         p = ""
         for r in regs:
             self.temps_count -= 1
-            i = self.temps_count
             r = self.expand(r)
             p += "\tR(POP(%s));\n" % r
         return p
