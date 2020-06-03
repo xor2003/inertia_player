@@ -87,22 +87,35 @@ class Parser(object):
                 #print "endif"
                 return self.__stack.pop()
 
-        def set_global(self, name, value, elements = 1):
+        def set_global(self, name, value):
                 if len(name) == 0:
                         raise Exception("empty name is not allowed")
+                value.original_name = name
                 name = name.lower()
-                logging.debug("adding global %s -> %s" %(name, value))
+
+                stuff = self.dump_object(value)
+                logging.debug("set_global(name='%s',value=%s)" %(name, stuff))
                 if name in self.__globals:
                         raise Exception("global %s was already defined", name)
-                value.elements = elements
                 self.__globals[name] = value
 
-        def reset_global(self, name, value, elements = 1):
+        def dump_object(self, value):
+                stuff = str(value.__dict__)
+                replacements = [
+                        (r'\n', ' '),
+                        (r'[{}]', ''),
+                        (r"'([A-Za-z_0-9]+)'\s*:\s*", '\g<1>=')
+                ]
+                for old, new in replacements:
+                        stuff = re.sub(old, new, stuff)
+                stuff = value.__class__.__name__ + "(" + stuff + ")"
+                return stuff
+
+        def reset_global(self, name, value):
                 if len(name) == 0:
                         raise Exception("empty name is not allowed")
                 name = name.lower()
                 logging.debug("adding global %s -> %s" %(name, value))
-                value.elements = elements
                 self.__globals[name] = value
 
         def get_global(self, name):
@@ -753,7 +766,7 @@ class Parser(object):
 
                                                 logging.debug("~size %d elements %d" % (binary_width, elements))
                                                 self.set_global(name, op.var(binary_width, offset, name=name,
-                                                                             segment=self.segment), elements)
+                                                                             segment=self.segment, elements=elements))
                                                 skipping_binary_data = False
                                         else:
                                                 logging.info("skipping binary data for %s" % (cmd0l,))

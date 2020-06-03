@@ -28,7 +28,7 @@ def parse_args(text):
     escape = False
     string = False
     result = []
-    token = str()
+    token = ""
     # value = 0
     for c in text:
         # print "[%s]%s: %s: %s" %(token, c, escape, string)
@@ -61,7 +61,7 @@ def parse_args(text):
 
         if c == ',':
             result.append(token.strip())
-            token = str()
+            token = ""
             continue
 
         if c == ';':  # comment, bailing out

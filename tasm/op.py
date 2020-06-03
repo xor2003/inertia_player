@@ -35,14 +35,16 @@ class Unsupported(Exception):
 
 
 class var(object):
-    elements = 1
 
-    def __init__(self, size, offset, name="", segment="", issegment=False):
+    def __init__(self, size, offset, name="", segment="", issegment=False, elements=1):
+        #logging.debug("op.var(%d, %d, %s, %s, %s, %d)" %(size, offset, name, segment, issegment, elements))
         self.size = size
         self.offset = offset
         self.name = name
         self.segment = segment
         self.issegment = issegment
+        self.elements = elements
+        #logging.debug("op.var(%s)" %(str(self.__dict__).replace('\n',' ')))
 
 
 class equ(object):
