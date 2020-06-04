@@ -281,7 +281,8 @@ class Proc(object):
         def visit(self, visitor, skip = 0):
                 for i in range(skip, len(self.stmts)):
                         stmt = self.stmts[i]
-                        visitor.body += self.generate_c_cmd(visitor, stmt.line, stmt)
+                        s = self.generate_c_cmd(visitor, stmt.line, stmt)
+                        visitor.body += s
                         try: # trying to add command and comment
                                 if stmt.line or stmt.line_number != 0:
                                     visitor.body = visitor.body[:-1] + "\t// " + str(stmt.line_number) \

@@ -521,7 +521,7 @@ class Cpp(object):
                 try:
                     proc = self.context.get_global(name)
                 except:
-                    logging.warning("resolve_label exception")
+                    logging.warning("resolve_label exception "+name)
                     return name
 
                 pos = 0
@@ -778,9 +778,10 @@ class Cpp(object):
         return "\t\tR(JNS(%s));\n" % label
 
     def _jz(self, label):
-        if re.match('.*?(\$\+2)', label) is None:
+        if re.match('.*?(\$\+2)', label) is None: # skip jz $+2
             label = self.jump_to_label(label)
             return "\t\tR(JZ(%s));\n" % label
+        return "\n"
 
     def _jnz(self, label):
         label = self.jump_to_label(label)
@@ -1048,7 +1049,7 @@ else goto __dispatch_call;
                 self.translated.insert(0, self.body)
             self.proc = None
             if self.temps_count > 0:
-                raise Exception("temps count == %d at the exit of proc" % self.temps_count)
+                logging.warning("temps count == %d at the exit of proc" % self.temps_count)
             return True
         except (CrossJump, op.Unsupported) as e:
             logging.error("%s: ERROR: %s" % (name, e))
@@ -1415,8 +1416,10 @@ else goto __dispatch_call;
         return "\tR(%s(%s));\n" % (cmd.upper(), dst)
 
     def _jump(self, cmd, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
+        if re.match('.*?(\$\+2)', label) is None: # skip j* $+2
+           label = self.jump_to_label(label)
+           return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
+        return "\n"
 
     def _instruction2(self, cmd, dst, src):
         self.a, self.b = self.parse2(dst, src)
