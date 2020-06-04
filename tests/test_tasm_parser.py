@@ -555,6 +555,9 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.parse_int(v=u'6'),6)
         self.assertEqual(parser_instance.parse_int(v=u'64000'),64000)
         self.assertEqual(parser_instance.parse_int(v=u'7'),7)
+        self.assertEqual(parser_instance.parse_int(v=u'0h'),0)
+        self.assertEqual(parser_instance.parse_int(v=u'0b'),0)
+
 
     def test_calculate_data_size(self):
         parser_instance = Parser([])
@@ -562,9 +565,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.calculate_data_size(cmd0='d'),4)
         self.assertEqual(parser_instance.calculate_data_size(cmd0='q'),8)
         self.assertEqual(parser_instance.calculate_data_size(cmd0='w'),2)
-        self.assertEqual(parser_instance.calculate_data_size(cmd0=u'b'),1)
-        self.assertEqual(parser_instance.calculate_data_size(cmd0=u'd'),4)
-        self.assertEqual(parser_instance.calculate_data_size(cmd0=u'w'),2)
+        self.assertEqual(parser_instance.calculate_data_size(cmd0='t'),10)
         
 if __name__ == "__main__":
     unittest.main()

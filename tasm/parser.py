@@ -208,12 +208,12 @@ class Parser(object):
                 #print "~1~ %s" %v
                 v = v.strip()
                 #print "~2~ %s" %v
-                if re.match(r'^[01]+[Bb]$', v):
-                        v = int(v[:-1], 2)
-                        #print "~2~ %i" %v
                 if re.match(r'^[+-]?[0-9][0-9A-Fa-f]*[Hh]$', v):
                         v = int(v[:-1], 16)
                         #print "~3~ %i" %v
+                elif re.match(r'^[01]+[Bb]$', v):
+                        v = int(v[:-1], 2)
+                        #print "~2~ %i" %v
 
                 '''
                 try:
