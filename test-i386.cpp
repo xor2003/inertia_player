@@ -26,8 +26,8 @@ X86_REGREF
 
 _state->_indent=0;
 ecx=0;
-printf("Starting\n");
-printf("Starting%d\n",1);
+//printf("Starting\n");
+//printf("Starting%d\n",1);
 logDebug=fopen("test-i386.log","w");
 
 /*
