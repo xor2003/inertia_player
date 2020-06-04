@@ -974,6 +974,12 @@ class _lods(baseop):
     def visit(self, visitor):
         return visitor._lods(self.arg)
 
+class _scas(baseop):
+    def __init__(self, arg):
+        self.arg = self.parse_arg(arg)
+
+    def visit(self, visitor):
+        return visitor._scas(self.arg)
 
 class _setnz(baseop):
     def __init__(self, arg):
@@ -1052,7 +1058,7 @@ class _bsf(baseop):
         self.dst, self.src = self.split(arg)
 
     def visit(self, visitor):
-        return visitor._bsr(self.dst, self.src)
+        return visitor._bsf(self.dst, self.src)
 
 
 class _pushad(baseop):
@@ -1126,13 +1132,6 @@ class _leave(baseop):
     def visit(self, visitor):
         return visitor._leave()
 
-
-class _enter(baseop):
-    def __init__(self, arg):
-        self.arg = self.parse_arg(arg)
-
-    def visit(self, visitor):
-        return visitor._enter(self.arg)
 
 
 class _idiv(baseop):

@@ -124,7 +124,7 @@ class Cpp(object):
         try:
             g = self.context.get_global(name)
         except:
-            logging.warning("expand_cb() global '%s' is missing" % name)
+            #logging.warning("expand_cb() global '%s' is missing" % name)
             return name_original
 
         # print g
@@ -238,11 +238,11 @@ class Cpp(object):
             return 4
 
         if re.match(r'\bqword\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 4')
+            logging.debug('get_size res 8')
             return 8
 
         if re.match(r'\btword\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 4')
+            logging.debug('get_size res 10')
             return 10
 
         size = self.is_register(expr)
@@ -252,14 +252,17 @@ class Cpp(object):
         m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
         if m is not None:
             expr = m.group(2).strip()
+            logging.debug('segment name removed '+expr)
 
         m = re.match(r'\[([a-zA-Z_]\w*)\]', expr)
         if m is not None:
             expr = m.group(1).strip()
+            logging.debug('square braces removed '+expr)
 
         m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
         if m is not None:
             expr = m.group(2).strip()
+            logging.debug('segment name removed '+expr)
 
         m = re.match(r'[a-zA-Z_]\w*', expr)
         if m is not None:
@@ -906,6 +909,11 @@ class Cpp(object):
 
     def _scasb(self):
         return "\tR(SCASB);\n"
+
+    def _scas(self, src):
+        size = self.get_size(src)
+        src = self.expand(src)
+        return "\tR(SCAS(%s,%d));\n" % (src, size)
 
     def _clc(self):
         return "\tR(CLC);\n"
