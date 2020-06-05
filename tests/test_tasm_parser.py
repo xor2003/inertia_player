@@ -31,7 +31,6 @@ import re, string, os
 import sys
 import tasm.lex
 import tasm.op
-from tasm.op import _aad
 from tasm.op import label
 from tasm.op import var
 import tasm.parser

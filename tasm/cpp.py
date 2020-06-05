@@ -631,12 +631,6 @@ class Cpp(object):
     def _ret(self):
         return "\tR(RETN);\n"
 
-    def _iret(self):
-        return "\tR(IRET);\n"
-
-    def _retf(self):
-        return "\tR(RETF);\n"
-
     def parse2(self, dst, src):
         dst_size, src_size = self.get_size(dst), self.get_size(src)
         if dst_size == 0:
@@ -651,18 +645,6 @@ class Cpp(object):
         src = self.expand(src, src_size)
         return dst, src
 
-    def _mov(self, dst, src):
-        return "\tR(MOV(%s, %s));\n" % self.parse2(dst, src)
-
-    def _movsx(self, dst, src):
-        return "\tR(MOVSX(%s, %s));\n" % (self.expand(dst), self.expand(src))
-
-    def _movzx(self, dst, src):
-        return "\tR(MOVZX(%s, %s));\n" % (self.expand(dst), self.expand(src))
-
-    def _add(self, dst, src):
-        return "\tR(ADD(%s, %s));\n" % self.parse2(dst, src)
-
     def _sub(self, dst, src):
         self.d, self.s = self.parse2(dst, src)
         if self.d == self.s:
@@ -670,52 +652,12 @@ class Cpp(object):
         else:
             return "\tR(SUB(%s, %s));\n" % (self.d, self.s)
 
-    def _and(self, dst, src):
-        return "\tR(AND(%s, %s));\n" % self.parse2(dst, src)
-
-    def _or(self, dst, src):
-        return "\tR(OR(%s, %s));\n" % self.parse2(dst, src)
-
     def _xor(self, dst, src):
         self.d, self.s = self.parse2(dst, src)
         if self.d == self.s:
             return "\t%s = 0;AFFECT_ZF(0); AFFECT_SF(%s,0);\n" % (self.d, self.d)
         else:
             return "\tR(XOR(%s, %s));\n" % (self.d, self.s)
-
-    def _neg(self, dst):
-        dst = self.expand(dst)
-        return "\tR(NEG(%s));\n" % (dst)
-
-    def _cbw(self):
-        return "\tR(CBW);\n"
-
-    def _daa(self):
-        return "\tR(DAA);\n"
-
-    def _shr(self, dst, src):
-        return "\tR(SHR(%s, %s));\n" % self.parse2(dst, src)
-
-    def _shl(self, dst, src):
-        return "\tR(SHL(%s, %s));\n" % self.parse2(dst, src)
-
-    def _sar(self, dst, src):
-        return "\tR(SAR(%s, %s));\n" % self.parse2(dst, src)
-
-    def _sal(self, dst, src):
-        return "\tR(SAL(%s, %s));\n" % self.parse2(dst, src)
-
-    def _rcl(self, dst, src):
-        return "\tR(RCL(%s, %s));\n" % self.parse2(dst, src)
-
-    def _rcr(self, dst, src):
-        return "\tR(RCR(%s, %s));\n" % self.parse2(dst, src)
-
-    def _bsr(self, dst, src):
-        return "\tR(BSR(%s, %s));\n" % self.parse2(dst, src)
-
-    def _bsf(self, dst, src):
-        return "\tR(BSF(%s, %s));\n" % self.parse2(dst, src)
 
     def _mul(self, src):
         res = []
@@ -755,28 +697,6 @@ class Cpp(object):
         src = self.expand(src)
         return "\tR(IDIV%d(%s));\n" % (size, src)
 
-    def _inc(self, dst):
-        dst = self.expand(dst)
-        return "\tR(INC(%s));\n" % (dst)
-
-    def _dec(self, dst):
-        dst = self.expand(dst)
-        return "\tR(DEC(%s));\n" % (dst)
-
-    def _cmp(self, a, b):
-        return "\tR(CMP(%s, %s));\n" % self.parse2(a, b)
-
-    def _test(self, a, b):
-        return "\tR(TEST(%s, %s));\n" % self.parse2(a, b)
-
-    def _js(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JS(%s));\n" % label
-
-    def _jns(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JNS(%s));\n" % label
-
     def _jz(self, label):
         if re.match('.*?(\$\+2)', label) is None: # skip jz $+2
             label = self.jump_to_label(label)
@@ -786,22 +706,6 @@ class Cpp(object):
     def _jnz(self, label):
         label = self.jump_to_label(label)
         return "\t\tR(JNZ(%s));\n" % label
-
-    def _jl(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JL(%s));\n" % label
-
-    def _jg(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JG(%s));\n" % label
-
-    def _jle(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JLE(%s));\n" % label
-
-    def _jge(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JGE(%s));\n" % label
 
     def _jbe(self, label):
         label = self.jump_to_label(label)
@@ -815,42 +719,9 @@ class Cpp(object):
         label = self.jump_to_label(label)
         return "\t\tR(JC(%s));\n" % label
 
-    def _jb(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JB(%s));\n" % label
-
     def _jnc(self, label):
         label = self.jump_to_label(label)
         return "\t\tR(JNC(%s));\n" % label
-
-    def _jmp(self, label):
-        if re.match('.*?(\$\+2)', label) is None:
-            label = self.jump_to_label(label)
-            return "\t\tR(JMP(%s));\n" % label
-        return ""
-
-    def _loop(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(LOOP(%s));\n" % label
-
-    def _jcxz(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JCXZ(%s));\n" % label
-
-    def _jecxz(self, label):
-        label = self.jump_to_label(label)
-        return "\t\tR(JECXZ(%s));\n" % label
-
-    def _loope(self, label):
-        label = self.jump_to_label(label)
-        return "\tR(LOOPE(%s));\n" % label
-
-    def _loopne(self, label):
-        label = self.jump_to_label(label)
-        return "\tR(LOOPNE(%s));\n" % label
-
-    def _xchg(self, dst, src):
-        return "\tR(XCHG(%s, %s));\n" % self.parse2(dst, src)
 
     def _push(self, regs):
         p = ""
@@ -902,12 +773,6 @@ class Cpp(object):
     def _movsd(self, n, clear_cx):
         return "MOVSD;\n"  # %("" if n == 1 else n, ", true" if clear_cx else "")
 
-    def _xlat(self):
-        return "\tR(XLAT);\n"
-
-    def _stc(self):
-        return "\tR(STC);\n"
-
     def _scasb(self):
         return "\tR(SCASB);\n"
 
@@ -915,18 +780,6 @@ class Cpp(object):
         size = self.get_size(src)
         src = self.expand(src)
         return "\tR(SCAS(%s,%d));\n" % (src, size)
-
-    def _clc(self):
-        return "\tR(CLC);\n"
-
-    def _cld(self):
-        return "\tR(CLD);\n"
-
-    def _std(self):
-        return "\tR(STD);\n"
-
-    def _cmc(self):
-        return "\tR(CMC);\n"
 
     def __proc(self, name, def_skip=0):
         logging.debug("cpp::__proc(%s)" % name)
@@ -1283,59 +1136,10 @@ else goto __dispatch_call;
         self.lea = False
         return r
 
-    def _lds(self, dst, src):
-        return "\tR(LDS(%s, %s));\n" % self.parse2(dst, src)
-
-    def _lgs(self, dst, src):
-        return "\tR(LGS(%s, %s));\n" % self.parse2(dst, src)
-
-    def _lfs(self, dst, src):
-        return "\tR(LFS(%s, %s));\n" % self.parse2(dst, src)
-
-    def _les(self, dst, src):
-        return "\tR(LES(%s, %s));\n" % self.parse2(dst, src)
-
-    def _adc(self, dst, src):
-        return "\tR(ADC(%s, %s));\n" % self.parse2(dst, src)
-
-    def _setnz(self, dst):
-        dst = self.expand(dst)
-        return "\tR(SETNZ(%s))\n" % (dst)
-
-    def _setz(self, dst):
-        dst = self.expand(dst)
-        return "\tR(SETZ(%s))\n" % (dst)
-
-    def _setb(self, dst):
-        dst = self.expand(dst)
-        return "\tR(SETB(%s))\n" % (dst)
-
-    def _sbb(self, dst, src):
-        return "\tR(SBB(%s, %s));\n" % self.parse2(dst, src)
-
     def _movs(self, dst, src):
         size = self.get_size(dst)
         a, b = self.parse2(dst, src)
         return "MOVS(%s, %s, %d);\n" % (a, b, size)
-
-    def _bt(self, dst, src):
-        return "\tR(BT(%s, %s));\n" % self.parse2(dst, src)
-
-    def _btc(self, dst, src):
-        return "\tR(BTC(%s, %s));\n" % self.parse2(dst, src)
-
-    def _btr(self, dst, src):
-        return "\tR(BTR(%s, %s));\n" % self.parse2(dst, src)
-
-    def _bts(self, dst, src):
-        self.a, self.b = self.parse2(dst, src)
-        return "\tR(BTS(%s, %s));\n" % (self.a, self.b)
-
-    def _ror(self, dst, src):
-        return "\tR(ROR(%s, %s));\n" % self.parse2(dst, src)
-
-    def _rol(self, dst, src):
-        return "\tR(ROL(%s, %s));\n" % self.parse2(dst, src)
 
     def _repe(self, arg):
         return "\tREPE\n"
@@ -1343,70 +1147,17 @@ else goto __dispatch_call;
     def _repne(self, arg):
         return "\tREPNE\n"
 
-    def _shrd(self, dst, src, c):
-        r = "\tR(SHRD(%s, %s, " % self.parse2(dst, src)
-        r += "%s));\n" % self.expand(c)
-        return r
-
-    def _shld(self, dst, src, c):
-        r = "\tR(SHLD(%s, %s, " % self.parse2(dst, src)
-        r += "%s));\n" % self.expand(c)
-        return r
-
-    def _pushf(self):
-        return "\tR(PUSHF);\n"
-
-    def _popf(self):
-        return "\tR(POPF);\n"
-
-    def _pushad(self):
-        return "\tR(PUSHAD);\n"
-
-    def _pusha(self):
-        return "\tR(PUSHA);\n"
-
-    def _popad(self):
-        return "\tR(POPAD);\n"
-
-    def _popa(self):
-        return "\tR(POPA);\n"
-
-    def _aad(self):
-        return "\tR(AAD);\n"
-
-    def _cwde(self):
-        return "\tR(CWDE);\n"
-
-    def _cwd(self):
-        return "\tR(CWD);\n"
-
     def _lods(self, src):
         size = self.get_size(src)
         src = self.expand(src)
         return "\tR(LODS(%s,%d));\n" % (src, size)
 
-    def _cli(self):
-        return "\tR(CLI);\n"
-
-    def _sti(self):
-        return "\tR(STI);\n"
-
     def _leave(self):
         return "\tR(MOV(esp, ebp));\nR(POP(ebp));\n"
-
-    def _in(self, dst, src):
-        return "\tR(IN(%s, %s));\n" % self.parse2(dst, src)
-
-    def _out(self, dst, src):
-        return "\tR(OUT(%s, %s));\n" % self.parse2(dst, src)
 
     def _int(self, dst):
         dst = self.expand(dst)
         return "\tR(_INT(%s));\n" % (dst)
-
-    def _not(self, dst):
-        dst = self.expand(dst)
-        return "\tR(NOT(%s));\n" % (dst)
 
     def _instruction0(self, cmd):
         return "\tR(%s);\n" % (cmd.upper())

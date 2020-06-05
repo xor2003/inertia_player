@@ -224,7 +224,7 @@ class Proc(object):
         def find_op_common_class(self, cmd):
                 logging.info(cmd)
                 if re.match(
-                        r"^(ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde|cwd|cdq|sti|cmc|pushf|popf|nop|pushad|popad|popa|pusha|das|aaa|aas|aam|finit|fsin|fldz|hlt)$",
+                        r"^(ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde?|cdq|sti|cmc|pushf|popf|nop|pushad?|popad?|da[as]|aa[adsm]|finit|fsin|fldz|hlt|ret[nf]?|iret|leave)$",
                         cmd.lower()) is not None:
                         cl = getattr(op, '_instruction0')
                 elif re.match(
@@ -234,7 +234,7 @@ class Proc(object):
                 elif re.match(r"^(j[a-z]+|loop[a-z]*)$", cmd.lower()) is not None:
                         cl = getattr(op, '_jump')
                 elif re.match(
-                        r"^(xchg|cmp|cmpxchg|movsx|movzx|mov|or|xor|and|add|adc|sbb|rol|ror|sub|shl|shr|test|in|out|lea|lds|les|lfs|lgs|sar|btr|bts|btc|bt|movs|xadd|cmov[a-z]+|enter)$",
+                        r"^(xchg|cmp|cmpxchg|mov[sz]x|mov|or|xor|and|ad[cd]|sbb|r[oc][lr]|sub|sh[lr]|test|in|out|lea|l[defg]s|sa[rl]|bt[rsc]?|movs|xadd|cmov[a-z]+|enter|bs[rf])$",
                         cmd.lower()) is not None:
                         cl = getattr(op, '_instruction2')
                 elif re.match(r"^(shrd|shld)$", cmd.lower()) is not None:
