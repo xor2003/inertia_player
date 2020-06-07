@@ -1,5 +1,5 @@
 echo on
-set OPT=-Og -mno-ms-bitfields -Wno-multichar -I/MinGW/include/ -L/MinGW/lib -I. -L. C:\MinGW\lib\pdcurses.a  -ggdb3 -lSDL -lSDLmain
+set OPT=-Og -mno-ms-bitfields -Wno-multichar -Wno-address-of-packed-member -I/MinGW/include/ -L/MinGW/lib -I. -L. C:\MinGW\lib\pdcurses.a  -ggdb3 -lSDL -lSDLmain
 rem  -mconsole -DSDL_MAIN_HANDLED
 rem   -DDEBUG=3
 set CC="C:\MinGW\bin\g++.exe"
