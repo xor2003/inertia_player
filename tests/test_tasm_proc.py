@@ -4838,10 +4838,10 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,u'nop')), None)
 
         #error:
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,'lods	[byte ptr fs:si]')), u'\tR(LODS(*(dw*)(raddr(ds,fs:si)),0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,'scas	[word ptr fs:si]')), u'\tR(SCAS(*(dw*)(raddr(ds,fs:si)),0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,'movs [dword ptr es:di], [dword ptr fs:si]')), u'MOVS(*(dw*)(raddr(ds,es:di)), *(dw*)(raddr(ds,fs:si)), 0);\n')
-        #self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,"mov al, 'Z' - 'A' +1")), u"\tR(MOV(al, 'Z' - 'A' +1));\n")
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,'lods	[byte ptr fs:si]')), u'\tR(LODS(*(raddr(ds,fs:si)),1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,'scas	[word ptr fs:si]')), u'\tR(SCAS(*(dw*)(raddr(ds,fs:si)),2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,'movs [dword ptr es:di], [dword ptr fs:si]')), u'MOVS(*(dd*)(raddr(ds,es:di)), *(dd*)(raddr(ds,fs:si)), 4);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add_("",0,"mov al, 'Z' - 'A' +1")), u"\tR(MOV(al, 'Z' - 'A' +1));\n")
 
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, '', proc_instance.add_("", 0, 'mov     [esp+8], eax')), '\tR(MOV(*(dd*)(raddr(ds,esp+8)), eax));\n')

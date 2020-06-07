@@ -225,23 +225,23 @@ class Cpp(object):
         except:
             pass
 
-        if re.match(r'\bbyte\s+ptr\s', expr) is not None:
+        if re.search(r'byte\s+ptr\s', expr) is not None:
             logging.debug('get_size res 1')
             return 1
 
-        if re.match(r'\bword\s+ptr\s', expr) is not None:
+        if re.search(r'\bword\s+ptr\s', expr) is not None:
             logging.debug('get_size res 2')
             return 2
 
-        if re.match(r'\bdword\s+ptr\s', expr) is not None:
+        if re.search(r'dword\s+ptr\s', expr) is not None:
             logging.debug('get_size res 4')
             return 4
 
-        if re.match(r'\bqword\s+ptr\s', expr) is not None:
+        if re.search(r'qword\s+ptr\s', expr) is not None:
             logging.debug('get_size res 8')
             return 8
 
-        if re.match(r'\btword\s+ptr\s', expr) is not None:
+        if re.search(r'tword\s+ptr\s', expr) is not None:
             logging.debug('get_size res 10')
             return 10
 
@@ -465,7 +465,7 @@ class Cpp(object):
             self.indirection = indirection
             self.pointer_flag = False
             self.current_size = 0
-            expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', self.expand_cb, expr)  # parse each item
+            expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
             if size == 0 and self.current_size != 0:
                 size = self.current_size
                 self.expr_size = size
