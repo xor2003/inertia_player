@@ -110,14 +110,14 @@ class Parser(object):
                         stuff = re.sub(old, new, stuff)
                 stuff = value.__class__.__name__ + "(" + stuff + ")"
                 return stuff
-
+        '''
         def reset_global(self, name, value):
                 if len(name) == 0:
                         raise Exception("empty name is not allowed")
                 name = name.lower()
                 logging.debug("adding global %s -> %s" %(name, value))
                 self.__globals[name] = value
-
+        '''
         def get_global(self, name):
                 name = name.lower()
                 logging.debug("get_global(%s)" %name)
@@ -746,8 +746,16 @@ class Parser(object):
                                                         self.get_global("mainproc").add_equ(cmd0, vv,
                                                                                             line_number=self.line_number)
                                                 elif cmd1l == '=':
+                                                        name = cmd0
                                                         # self.reset_global(cmd0, op.assignment(cmd0.lower(), size=size))
-                                                        self.proc.add_assignment(cmd0, vv, line_number=self.line_number)
+                                                        has_global = False
+                                                        if self.has_global(name):
+                                                                has_global = True
+                                                                name = self.get_global(name).original_name
+                                                        o = self.proc.add_assignment(name, vv, line_number=self.line_number)
+                                                        if has_global == False:
+                                                                self.set_global(cmd0, o)
+                                                        self.proc.stmts.append(o)
 
                                                 # if self.proc is not None:
                                         else:
@@ -796,11 +804,11 @@ class Parser(object):
 
         def parse_equ_line(self, cmd):
                 v = " ".join(cmd[2:])
-                logging.debug("value1 %s" % v)
+                logging.debug("%s" % v)
                 vv = self.fix_dollar(v)
                 vv = " ".join(lex.parse_args(vv))
                 vv = vv.strip()
-                logging.debug("value2 %s" % vv)
+                logging.debug("%s" % vv)
                 size = 0
                 m = re.match(r'\bbyte\s+ptr\s+(.*)', vv)
                 if m is not None:

@@ -100,14 +100,7 @@ class Cpp(object):
     def expand_cb_(self, name_original):
         name = name_original.lower()
         logging.debug("expand_cb name = %s indirection = %u" % (name, self.indirection))
-        if len(name) == 2 and \
-                ((name[0] in ['a', 'b', 'c', 'd'] and name[1] in ['x', 'h', 'l']) or name in ['si', 'di', 'bp', 'es',
-                                                                                              'ds', 'cs', 'fs', 'gs',
-                                                                                              'ss']):
-            return name
-
-        elif len(name) == 3 and \
-                (name in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'ebp', 'esp', 'eip']):
+        if self.is_register(name) != 0:
             return name
 
         if self.indirection == -1:
@@ -133,9 +126,9 @@ class Cpp(object):
             value = name.upper()
             # value = self.expand_equ(g.value)
             logging.debug("equ: %s -> %s" % (name, value))
-        elif isinstance(g, op.assignment):
+        elif isinstance(g, op._assignment):
             logging.debug("it is assignment")
-            value = name.upper()
+            value = g.original_name
             # value = self.expand_equ(g.value)
             logging.debug("assignment %s = %s" % (name, value))
         elif isinstance(g, proc_module.Proc):
@@ -1182,7 +1175,7 @@ else goto __dispatch_call;
         return "\tR(%s(%s, %s, %s));\n" % (cmd.upper(), self.a, self.b, self.c)
 
     def _assignment(self, dst, src):
-        return "#undef %s\n#define %s %s\n" % (dst.upper(), dst.upper(), self.expand(src))
+        return "#undef %s\n#define %s %s\n" % (dst, dst, self.expand(src))
 
     def _equ(self, dst, src):
         return "#define %s %s\n" % (dst.upper(), src)

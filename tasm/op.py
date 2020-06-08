@@ -142,10 +142,6 @@ class _call(baseop):
     def visit(self, visitor):
         return visitor._call(self.name)
 
-    def __str__(self):
-        return "call(%s)" % self.name
-
-
 class _rep(baseop):
     def __init__(self, arg):
         self.arg = self.parse_arg(arg)

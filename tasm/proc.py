@@ -259,16 +259,14 @@ class Proc(object):
                 return o1
 
         def add_assignment(self, label, value, line_number=0):
-                o = self.add_assignment_(label, line_number, value)
-                self.stmts.append(o)
-
-        def add_assignment_(self, label, line_number, value):
                 import tasm.cpp
                 # print "args %s" %s[1:]
+                logging.info(label + " " + value)
                 value = tasm.cpp.convert_number_to_c(value)
                 o = op._assignment(label, value)
                 o.line = str(line_number) + " " + label + " = " + value
                 o.cmd = o.line
+
                 #               logging.info "~~~" + o.command + o.comments
                 return o
 
