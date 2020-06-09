@@ -1558,7 +1558,7 @@ void exec_shldl(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nshldl %%cl, %k5, %k0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "c" (s1), "0" (res), "1" (flags), "r" (s2));;
+    PUSH(iflags);POPF;SHLD(*(dd*)&res, (dd)s2, (dd)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1571,7 +1571,7 @@ void exec_shldw(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nshldw %%cl, %w5, %w0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "c" (s1), "0" (res), "1" (flags), "r" (s2));;
+    PUSH(iflags);POPF;SHLD(*(dw*)&res, (dw)s2, (dw)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1619,7 +1619,7 @@ void exec_shrdl(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nshrdl %%cl, %k5, %k0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "c" (s1), "0" (res), "1" (flags), "r" (s2));;
+    PUSH(iflags);POPF;SHRD(*(dd*)&res, (dd)s2, (dd)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1632,7 +1632,7 @@ void exec_shrdw(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nshrdw %%cl, %w5, %w0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "c" (s1), "0" (res), "1" (flags), "r" (s2));;
+    PUSH(iflags);POPF;SHRD(*(dw*)&res, (dw)s2, (dw)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1683,7 +1683,7 @@ void exec_btl(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtl %k2, %k0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BT(*(dd*)&res, (dd)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1696,7 +1696,7 @@ void exec_btw(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtw %w2, %w0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BT(*(dw*)&res, (dw)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1745,7 +1745,7 @@ void exec_btsl(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtsl %k2, %k0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BTS(*(dd*)&res, (dd)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1758,7 +1758,7 @@ void exec_btsw(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtsw %w2, %w0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BTS(*(dw*)&res, (dw)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1807,7 +1807,7 @@ void exec_btrl(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtrl %k2, %k0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BTR(*(dd*)&res, (dd)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1820,7 +1820,7 @@ void exec_btrw(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtrw %w2, %w0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BTR(*(dw*)&res, (dw)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1869,7 +1869,7 @@ void exec_btcl(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtcl %k2, %k0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BTC(*(dd*)&res, (dd)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -1882,7 +1882,7 @@ void exec_btcw(long s2, long s0, long s1, long iflags)
     long res, flags;
     res = s0;
     flags = iflags;
-    // asm ("push %4\npopf\nbtcw %w2, %w0\npushf\npop %1\n" : "=g" (res), "=g" (flags) : "r" (s1), "0" (res), "1" (flags));;
+    PUSH(iflags);POPF;BTC(*(dw*)&res, (dw)s1);PUSHF;POP(flags);
 
     if (s1 != 1)
       flags &= ~0x0800;
@@ -2278,7 +2278,7 @@ void test_mulb(long op0, long op1)
          : "=a" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
     printf("%-10s A=" "%08lx B=%08lx R=%08lx CC=%04lx\n",
-           "mulb", s0, s1, res, flags & (0x0800 | 0x0001));
+           "mulb", s0, s1, res, flags & (0x0001));
 }
 
 void test_mulw(long op0h, long op0, long op1)
@@ -2296,7 +2296,7 @@ void test_mulw(long op0h, long op0, long op1)
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
     printf("%-10s AH=" "%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
-           "mulw", op0h, op0, s1, resh, res, flags & (0x0800 | 0x0001));
+           "mulw", op0h, op0, s1, resh, res, flags & (0x0001));
 }
 
 void test_mull(long op0h, long op0, long op1)
@@ -2314,7 +2314,7 @@ void test_mull(long op0h, long op0, long op1)
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
     printf("%-10s AH=" "%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
-           "mull", op0h, op0, s1, resh, res, flags & (0x0800 | 0x0001));
+           "mull", op0h, op0, s1, resh, res, flags & (0x0001));
 }
 
 
@@ -2336,7 +2336,7 @@ void test_imulb(long op0, long op1)
          : "=a" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
     printf("%-10s A=" "%08lx B=%08lx R=%08lx CC=%04lx\n",
-           "imulb", s0, s1, res, flags & (0x0800 | 0x0001));
+           "imulb", s0, s1, res, flags & (0x0001));
 }
 
 void test_imulw(long op0h, long op0, long op1)
@@ -2354,7 +2354,7 @@ void test_imulw(long op0h, long op0, long op1)
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
     printf("%-10s AH=" "%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
-           "imulw", op0h, op0, s1, resh, res, flags & (0x0800 | 0x0001));
+           "imulw", op0h, op0, s1, resh, res, flags & (0x0001));
 }
 
 void test_imull(long op0h, long op0, long op1)
@@ -2372,7 +2372,7 @@ void test_imull(long op0h, long op0, long op1)
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
     printf("%-10s AH=" "%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
-           "imull", op0h, op0, s1, resh, res, flags & (0x0800 | 0x0001));
+           "imull", op0h, op0, s1, resh, res, flags & (0x0001));
 }
 
 
@@ -2391,7 +2391,7 @@ void test_imulw2(long op0, long op1)
          : "=q" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
     printf("%-10s A=" "%08lx B=%08lx R=%08lx CC=%04lx\n",
-           "imulw", s0, s1, res, flags & (0x0800 | 0x0001));
+           "imulw", s0, s1, res, flags & (0x0001));
 }
 
 void test_imull2(long op0, long op1)
@@ -2409,7 +2409,7 @@ void test_imull2(long op0, long op1)
          : "=q" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
     printf("%-10s A=" "%08lx B=%08lx R=%08lx CC=%04lx\n",
-           "imull", s0, s1, res, flags & (0x0800 | 0x0001));
+           "imull", s0, s1, res, flags & (0x0001));
 }
 
 
@@ -2635,11 +2635,6 @@ asm("xor %1, %1\nmov $0x12345678, %0\n" "bsrl %k2, %k0 ; setz %b1" : "=&r" (res)
 asm("xor %1, %1\nmov $0x12345678, %0\n" "bsfl %k2, %k0 ; setz %b1" : "=&r" (res), "=&q" (resz) : "r" (val)); printf("%-10s A=" "%08lx R=%08lx %ld\n", "bsfl", val, res, resz);};
     { long res, val, resz; val = 0x00340128;
 asm("xor %1, %1\nmov $0x12345678, %0\n" "bsfl %k2, %k0 ; setz %b1" : "=&r" (res), "=&q" (resz) : "r" (val)); printf("%-10s A=" "%08lx R=%08lx %ld\n", "bsfl", val, res, resz);};
-
-
-
-
-
 
 }
 
@@ -2937,97 +2932,141 @@ void test_floats(void)
 void test_bcd(void)
 {
     { int res, flags; res = 0x12340503; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340506; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340507; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340507, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340507, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340559; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340559, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340559, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340560; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340560, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340560, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x1234059f; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x1234059f, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x1234059f, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x123405a0; flags = 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x123405a0, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x123405a0, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340503; flags = 0;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340506; flags = 0;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340503; flags = 0x0001;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0x0001, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0x0001, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340506; flags = 0x0001;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0x0001, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
-    { int res, flags; res = 0x12340503; flags = 0x0001 | 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
-    { int res, flags; res = 0x12340506; flags = 0x0001 | 0x0010;
-asm ("push %3\npopf\ndaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0x0001, flags & (0x0001 | 0x0040 | 0x0080));};
+    { int res, flags; res = 0x12340503; flags = 0x0001;
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340503, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
+    { int res, flags; res = 0x12340506; flags = 0x0001;
+    eax=res;PUSH(flags);POPF;DAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "daa", 0x12340506, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
 
     { int res, flags; res = 0x12340503; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340506; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340507; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340507, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340507, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340559; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340559, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340559, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340560; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340560, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340560, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x1234059f; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x1234059f, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x1234059f, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x123405a0; flags = 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x123405a0, res, 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x123405a0, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340503; flags = 0;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340506; flags = 0;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340503; flags = 0x0001;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0x0001, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0x0001, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340506; flags = 0x0001;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0x0001, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
-    { int res, flags; res = 0x12340503; flags = 0x0001 | 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
-    { int res, flags; res = 0x12340506; flags = 0x0001 | 0x0010;
-asm ("push %3\npopf\ndas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0004 | 0x0040 | 0x0080 | 0x0010));};
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0x0001, flags & (0x0001 | 0x0040 | 0x0080));};
+    { int res, flags; res = 0x12340503; flags = 0x0001;
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340503, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
+    { int res, flags; res = 0x12340506; flags = 0x0001;
+    eax=res;PUSH(flags);POPF;DAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "das", 0x12340506, res, 0x0001 | 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
 
     { int res, flags; res = 0x12340205; flags = 0x0010;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340205, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340205, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x12340306; flags = 0x0010;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340306, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340306, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x1234040a; flags = 0x0010;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x1234040a, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x1234040a, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x123405fa; flags = 0x0010;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x123405fa, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x123405fa, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x12340205; flags = 0;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340205, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340205, res, 0, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x12340306; flags = 0;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340306, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x12340306, res, 0, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x1234040a; flags = 0;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x1234040a, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x1234040a, res, 0, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x123405fa; flags = 0;
-asm ("push %3\npopf\naaa\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x123405fa, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAA;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aaa", 0x123405fa, res, 0, flags & (0x0001 | 0x0010));};
 
     { int res, flags; res = 0x12340205; flags = 0x0010;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340205, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340205, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x12340306; flags = 0x0010;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340306, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340306, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x1234040a; flags = 0x0010;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x1234040a, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x1234040a, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x123405fa; flags = 0x0010;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x123405fa, res, 0x0010, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x123405fa, res, 0x0010, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x12340205; flags = 0;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340205, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340205, res, 0, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x12340306; flags = 0;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340306, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x12340306, res, 0, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x1234040a; flags = 0;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x1234040a, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x1234040a, res, 0, flags & (0x0001 | 0x0010));};
     { int res, flags; res = 0x123405fa; flags = 0;
-asm ("push %3\npopf\naas\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x123405fa, res, 0, flags & (0x0001 | 0x0010));};
+    eax=res;PUSH(flags);POPF;AAS;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aas", 0x123405fa, res, 0, flags & (0x0001 | 0x0010));};
 
     { int res, flags; res = 0x12340547; flags = 0x0010;
-asm ("push %3\npopf\naam\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aam", 0x12340547, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
+    eax=res;PUSH(flags);POPF;AAM;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aam", 0x12340547, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
     { int res, flags; res = 0x12340407; flags = 0x0010;
-asm ("push %3\npopf\naad\npushf\npop %1\n" : "=a" (res), "=g" (flags) : "0" (res), "1" (flags)); printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aad", 0x12340407, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
+    eax=res;PUSH(flags);POPF;AAD;PUSHF;POP(flags);res=eax;
+printf("%-10s A=%08x R=%08x CCIN=%04x CC=%04x\n", "aad", 0x12340407, res, 0x0010, flags & (0x0001 | 0x0040 | 0x0080));};
 }
 
 void test_xchg(void)

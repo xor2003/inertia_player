@@ -58,6 +58,11 @@ typedef uint64_t dq;
 #endif
 
 static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
+#define bitsizeof(dest) (8*sizeof(dest))
+#define shiftmodule(dest,shiftbit) (shiftbit&(bitsizeof(dest)-1))
+#define nthbit(dest,bit) (1 << shiftmodule(dest,bit))
+#define LSB(a) ((a)&1)
+#define MSB(a) (( (a)>>( bitsizeof(a)-1) )&1)
 
 #if defined(_WIN32) || defined(__INTEL_COMPILER)
  #define INLINE __inline
@@ -318,8 +323,8 @@ typedef union registry16Bits
 #define AFFECT_CF(a) {CF=(a);}
 //#define ISNEGATIVE(a) (a & (1 << (sizeof(a)*8-1)))
 //#define AFFECT_SF(a) {SF=ISNEGATIVE(a);}
-#define AFFECT_SF(f, a) {SF=( (a)&(1 << sizeof(f)*8 - 1) );}
-#define ISNEGATIVE(f,a) ( (a) & (1 << (sizeof(f)*8-1)) )
+#define ISNEGATIVE(f,a) ( (a) & (1 << (bitsizeof(f)-1)) )
+#define AFFECT_SF(f, a) {SF=ISNEGATIVE(f,a);}
 
 #define CMP(a,b) {dd t=(a-b)& MASK[sizeof(a)]; \
 		AFFECT_CF((t)>(a)); \
@@ -355,27 +360,60 @@ typedef union registry16Bits
 		AFFECT_ZF(a);\
 		AFFECT_SF(a,a)}}
 
-#define SHL(a,b) {if (b) {CF=(a) & (1 << (sizeof(a)*8-b));\
+#define SHL(a,b) {if (b) {CF=(a) & (1 << (bitsizeof(a)-b));\
 		a=a<<b;\
 		AFFECT_ZF(a);\
 		AFFECT_SF(a,a)}}
 
-#define ROR(a,b) {CF=((a)>>(shiftmodule(a,b)-1))&1;\
-		a=((a)>>(shiftmodule(a,b)) | a<<(sizeof(a)*8-(shiftmodule(a,b))));}
+#define ROR(a,b) {if (b) {CF=((a)>>(shiftmodule(a,b)-1))&1;\
+		a=((a)>>(shiftmodule(a,b)) | a<<(bitsizeof(a)-(shiftmodule(a,b))));}}
 
-#define ROL(a,b) {CF=((a)>>(sizeof(a)*8-(shiftmodule(a,b))))&1;\
-		a=(((a)<<(shiftmodule(a,b))) | (a)>>(sizeof(a)*8-(shiftmodule(a,b))));}
+#define ROL(a,b) {if (b) {a=(((a)<<(shiftmodule(a,b))) | (a)>>(bitsizeof(a)-(shiftmodule(a,b))));\
+		AFFECT_CF(LSB(a));}}
 
-#define SHRD(a,b,c) {/*TODO CF=(a) & (1 << (sizeof(f)*8-b));*/ \
+#define RCL(a, b) RCL_(a, b, CF)
+template <class D, class C>
+void RCL_(D& Destination, C Count, bool& CF_)
+{ 
+		int TemporaryCount = Count % (bitsizeof(Destination) + 1);
+			while(TemporaryCount) {
+				bool TemporaryCF = MSB(Destination);
+				Destination = (Destination << 1) + CF_;
+				CF_ = TemporaryCF;
+				--TemporaryCount;
+			}
+}
+
+#define RCR(a, b) RCR_(a, b, CF)
+template <class D, class C>
+void RCR_(D& Destination, C Count, bool& CF_)
+{ 
+		int TemporaryCount = Count % (bitsizeof(Destination) + 1);
+			while(TemporaryCount != 0) {
+				bool TemporaryCF = LSB(Destination);
+				Destination = (Destination >> 1) + (CF_ << (bitsizeof(Destination)-1));
+				CF_ = TemporaryCF;
+				--TemporaryCount;
+			}
+}
+
+#define SHRD(a,b,c) {if(c) {/*TODO CF=(a) & (1 << (sizeof(f)*8-b));*/ \
 			int shift = c&(2*bitsizeof(a)-1); \
 			dd a1=a>>shift; \
 			a=a1 | ( (b& ((1<<shift)-1) ) << (bitsizeof(a)-shift) ); \
-		AFFECT_ZF(a);\
-		AFFECT_SF(a,a)} //TODO optimize
+		AFFECT_ZF(a|b);\
+		AFFECT_SF(a,a);}} //TODO optimize
 
-#define SAR(a,b) {bool sign = (a & (1 << (sizeof(a)*8-1)))!=0; int shift = (bitsizeof(a)-b);shift = shift>0?shift:0;\
-	dd sigg=shift<(bitsizeof(a))?( (sign?-1:0)<<shift):0; a = b>bitsizeof(a)?0:a; a=sigg | (a >> b);}  // TODO optimize
-//#define SAR(a,b) { a= ((int32_t)a)>>b;}  // TODO optimize
+#define SAR(a,b) {if (b) {bool sign = MSB(a);\
+	 int shift = (bitsizeof(a)-b);\
+         shift = shift>0?shift:0;\
+	 dd sigg=shift<(bitsizeof(a))?( (sign?-1:0)<<shift):0;\
+         a = b>bitsizeof(a)?0:a;\
+	 AFFECT_CF((a >> (b-1))&1);\
+	 a=sigg | (a >> b);\
+		AFFECT_ZF(a);\
+		AFFECT_SF(a,a);}} // TODO optimize
+
 
 #define READDDp(a) ((dd *) &m.a)
 #define READDWp(a) ((dw *) &m.a)
@@ -460,9 +498,35 @@ typedef union registry16Bits
 #define DIV4(a) {uint64_t t=((((dq)edx)<<32)|eax);eax=t/(a);edx=t%(a);}
 
 #define NOT(a) a= ~(a);// AFFECT_ZF(a) //TODO
-#define SETNZ(a) a= (!ZF)&1; //TODO
-#define SETZ(a) a= (ZF)&1; //TODO
-#define SETB(a) a= (CF)&1; //TODO
+
+#define SETA(a) a=CF==0 && ZF==0;
+#define SETNBE(a) a=CF==0 && ZF==0;
+#define SETAE(a) a=CF==0;
+#define SETNB(a) a=CF==0;
+#define SETNC(a) a=CF==0;
+#define SETBE(a) a=CF || ZF;
+#define SETNA(a) a=CF || ZF;
+#define SETB(a) a=CF;
+#define SETNAE(a) a=CF;
+#define SETC(a) a=CF;
+#define SETL(a) a=SF!=OF;
+#define SETNGE(a) a=SF!=OF;
+#define SETNS(a) a=SF==0;
+#define SETS(a) a=SF;
+#define SETGE(a) a=SF=OF;
+#define SETNL(a) a=SF=OF;
+#define SETG(a) a=ZF==0 && SF=OF;
+#define SETNLE(a) a=ZF==0 && SF=OF;
+#define SETNE(a) a=ZF==0;
+#define SETNZ(a) a=ZF==0;
+#define SETLE(a) a=ZF || SF!=OF;
+#define SETNG(a) a=ZF || SF!=OF;
+#define SETE(a) a=ZF;
+#define SETZ(a) a=ZF;
+#define SETNO(x) a=!OF;
+#define SETNP(x) a=!PF;
+#define SETO(x) a=OF;
+#define SETP(x) a=PF;
 
 
 #define JE(label) if (ZF) GOTOLABEL(label)
@@ -526,11 +590,8 @@ void MOV_(D* dest, const S& src)
 #define LDS(dest,src) {dest = src; ds = *(dw*)((db*)&(src) + sizeof(dest));}
 
 #define MOVZX(dest,src) dest = src
-#define MOVSX(dest,src) {if (ISNEGATIVE(src,src)) { dest = ((-1 ^ (( 1 << (sizeof(src)*8) )-1)) | src ); } else { dest = src; }}
+#define MOVSX(dest,src) {if (ISNEGATIVE(src,src)) { dest = ((-1 ^ (( 1 << (bitsizeof(src)) )-1)) | src ); } else { dest = src; }}
 
-#define bitsizeof(dest) (8*sizeof(dest))
-#define shiftmodule(dest,bit) (bit&(bitsizeof(dest)-1))
-#define nthbit(dest,bit) (1 << shiftmodule(dest,bit))
 #define BT(dest,src) {CF = dest & nthbit(dest,src);} //TODO
 #define BTS(dest,src) {CF = dest & nthbit(dest,src); dest |= nthbit(dest,src);}
 #define BTC(dest,src) {CF = dest & nthbit(dest,src); dest ^= nthbit(dest,src);}
@@ -694,64 +755,6 @@ int8_t asm2C_IN(int16_t data);
 #define IRET RETF
 //#define RETF {dw tt=0; POP(tt); RET;}
 
-// ---------unimplemented
-#define AAA log_debug("unimplemented\n");
-#define AAM log_debug("unimplemented\n");
-#define AAS log_debug("unimplemented\n");
-#define BSR(a,b) log_debug("unimplemented\n");
-#define BSWAP(a) log_debug("unimplemented\n");
-#define CDQ log_debug("unimplemented\n");
-#define CMPSD log_debug("unimplemented\n");
-#define CMPSW log_debug("unimplemented\n");
-#define CMPXCHG log_debug("unimplemented\n");
-#define CMPXCHG8B(a) log_debug("unimplemented\n"); // not in dosbox
-#define DAA log_debug("unimplemented\n");
-#define DAS log_debug("unimplemented\n");
-#define RCL(a,b) log_debug("unimplemented\n");
-#define RCR(a,b) log_debug("unimplemented\n");
-#define SCASD log_debug("unimplemented\n");
-#define SCASW log_debug("unimplemented\n");
-#define SHLD(a,b,c) log_debug("unimplemented\n");
-#define XADD(a,b) log_debug("unimplemented\n");
-
-#define CMOVA(a,b) log_debug("unimplemented\n"); // not in dosbox
-#define CMOVB(a,b) log_debug("unimplemented\n");
-#define CMOVBE(a,b) log_debug("unimplemented\n");
-#define CMOVG(a,b) log_debug("unimplemented\n");
-#define CMOVGE(a,b) log_debug("unimplemented\n");
-#define CMOVL(a,b) log_debug("unimplemented\n");
-#define CMOVLE(a,b) log_debug("unimplemented\n");
-#define CMOVNB(a,b) log_debug("unimplemented\n");
-#define CMOVNO(a,b) log_debug("unimplemented\n");
-#define CMOVNP(a,b) log_debug("unimplemented\n");
-#define CMOVNS(a,b) log_debug("unimplemented\n");
-#define CMOVNZ(a,b) log_debug("unimplemented\n");
-#define CMOVO(a,b) log_debug("unimplemented\n");
-#define CMOVP(a,b) log_debug("unimplemented\n");
-#define CMOVS(a,b) log_debug("unimplemented\n");
-#define CMOVZ(a,b) log_debug("unimplemented\n");
-
-#define JNO(x) log_debug("unimplemented\n");
-#define JNP(x) log_debug("unimplemented\n");
-#define JO(x) log_debug("unimplemented\n");
-#define JP(x) log_debug("unimplemented\n");
-#define LOOPW(x) log_debug("unimplemented\n");
-#define LOOPWE(x) log_debug("unimplemented\n");
-#define LOOPWNE(x) log_debug("unimplemented\n");
-#define SETBE(x) log_debug("unimplemented\n");
-#define SETL(x) log_debug("unimplemented\n");
-#define SETLE(x) log_debug("unimplemented\n");
-#define SETNB(x) log_debug("unimplemented\n");
-#define SETNBE(x) log_debug("unimplemented\n");
-#define SETNL(x) log_debug("unimplemented\n");
-#define SETNLE(x) log_debug("unimplemented\n");
-#define SETNO(x) log_debug("unimplemented\n");
-#define SETNP(x) log_debug("unimplemented\n");
-#define SETNS(x) log_debug("unimplemented\n");
-#define SETO(x) log_debug("unimplemented\n");
-#define SETP(x) log_debug("unimplemented\n");
-#define SETS(x) log_debug("unimplemented\n");
-// ---------
 
 #ifdef __LIBSDL2__
 #include <SDL2/SDL.h>
@@ -968,4 +971,49 @@ extern db vgaPalette[256*3];
 //}
 #endif
 
+// ---------unimplemented
+#define CMPXCHG8B(a) log_debug("unimplemented\n"); // not in dosbox
+#define CMOVA(a,b) log_debug("unimplemented\n"); // not in dosbox
+#define CMOVB(a,b) log_debug("unimplemented\n");
+#define CMOVBE(a,b) log_debug("unimplemented\n");
+#define CMOVG(a,b) log_debug("unimplemented\n");
+#define CMOVGE(a,b) log_debug("unimplemented\n");
+#define CMOVL(a,b) log_debug("unimplemented\n");
+#define CMOVLE(a,b) log_debug("unimplemented\n");
+#define CMOVNB(a,b) log_debug("unimplemented\n");
+#define CMOVNO(a,b) log_debug("unimplemented\n");
+#define CMOVNP(a,b) log_debug("unimplemented\n");
+#define CMOVNS(a,b) log_debug("unimplemented\n");
+#define CMOVNZ(a,b) log_debug("unimplemented\n");
+#define CMOVO(a,b) log_debug("unimplemented\n");
+#define CMOVP(a,b) log_debug("unimplemented\n");
+#define CMOVS(a,b) log_debug("unimplemented\n");
+#define CMOVZ(a,b) log_debug("unimplemented\n");
+#define JNO(x) log_debug("unimplemented\n");
+#define JNP(x) log_debug("unimplemented\n");
+#define JO(x) log_debug("unimplemented\n");
+#define JP(x) log_debug("unimplemented\n");
+
+#define AAA log_debug("unimplemented\n");
+#define AAM log_debug("unimplemented\n");
+#define AAS log_debug("unimplemented\n");
+#define BSR(a,b) log_debug("unimplemented\n");
+#define BSWAP(a) log_debug("unimplemented\n");
+#define CDQ log_debug("unimplemented\n");
+#define CMPSD log_debug("unimplemented\n");
+#define CMPSW log_debug("unimplemented\n");
+#define CMPXCHG log_debug("unimplemented\n");
+#define DAA log_debug("unimplemented\n");
+#define DAS log_debug("unimplemented\n");
+#define SCASD log_debug("unimplemented\n");
+#define SCASW log_debug("unimplemented\n");
+#define SHLD(a,b,c) log_debug("unimplemented\n");
+#define XADD(a,b) log_debug("unimplemented\n");
+
+#define LOOPW(x) log_debug("unimplemented\n");
+#define LOOPWE(x) log_debug("unimplemented\n");
+#define LOOPWNE(x) log_debug("unimplemented\n");
+// ---------
+
 #endif
+
