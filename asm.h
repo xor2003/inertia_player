@@ -60,7 +60,9 @@ typedef uint64_t dq;
 static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 #define bitsizeof(dest) (8*sizeof(dest))
 #define shiftmodule(dest,shiftbit) (shiftbit&(bitsizeof(dest)-1))
-#define nthbit(dest,bit) (1 << shiftmodule(dest,bit))
+#define bitget(dest,bit) ((bit>=0)?(( (dest) >> bit)&1):0)
+#define nthbitone(dest,bit) ( (dq)1 << shiftmodule(dest,bit))
+#define bitset(dest,src,bit) {dest=(bit>=0)?(( (dest) & (~nthbitone(dest,bit))) | ((src&1) << bit)):dest;}
 #define LSB(a) ((a)&1)
 #define MSB(a) (( (a)>>( bitsizeof(a)-1) )&1)
 
@@ -113,14 +115,24 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
  #define XLAT {al = *raddr(ds,ebx+al);}
  #define CMPS(a) \
 	{  \
-			void * dest;void * src;src=realAddress(esi,ds); dest=realAddress(edi,es); \
-			AFFECT_ZF( (*(char*)dest-*(char*)src) ); edi+=a; esi+=a; \
+			db* src=realAddress(esi,ds); db* dest=realAddress(edi,es); \
+			CMP(*dest, *src) ); edi+=a; esi+=a; \
 	}
 
  #define SCASB \
 	{  \
-			void * dest;dest=realAddress(edi,es); \
-			AFFECT_ZF( ( (*(char*)dest)-al) ); edi+=1; \
+			db* dest=realAddress(edi,es); \
+			CMP(*dest, al); edi+=(DF==0)?1:-1; \
+	}
+ #define SCASW \
+	{  \
+			dw* dest=realAddress(edi,es); \
+			CMP(*dest, ax); edi+=(DF==0)?2:-2; \
+	}
+ #define SCASD \
+	{  \
+			dd* dest=realAddress(edi,es); \
+			CMP(*dest, eax); edi+=(DF==0)?4:-4; \
 	}
 
  #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; esi+=s;} // TODO not always si!!!
@@ -159,8 +171,18 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 
  #define SCASB \
 	{  \
-			void * dest;dest=realAddress(di,es); \
-			AFFECT_ZF( ( (*(char*)dest)-al) ); di+=1; \
+			db* dest=realAddress(di,es); \
+			CMP(*dest, al); edi+=(DF==0)?1:-1; \
+	}
+ #define SCASW \
+	{  \
+			dw* dest=realAddress(di,es); \
+			CMP(*dest, ax); edi+=(DF==0)?2:-2; \
+	}
+ #define SCASD \
+	{  \
+			dd* dest=realAddress(di,es); \
+			CMP(*dest, eax); edi+=(DF==0)?4:-4; \
 	}
 
  #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; si+=s;} // TODO not always si!!!
@@ -326,22 +348,22 @@ typedef union registry16Bits
 #define ISNEGATIVE(f,a) ( (a) & (1 << (bitsizeof(f)-1)) )
 #define AFFECT_SF(f, a) {SF=ISNEGATIVE(f,a);}
 
-#define CMP(a,b) {dd t=(a-b)& MASK[sizeof(a)]; \
+#define CMP(a,b) {dd t=((a)-(b))& MASK[sizeof(a)]; \
 		AFFECT_CF((t)>(a)); \
 		AFFECT_ZF(t); \
 		AFFECT_SF(a,t);}
 
-#define OR(a,b) {a=a|b; \
+#define OR(a,b) {a=(a)|(b); \
 		AFFECT_ZF(a); \
 		AFFECT_SF(a,a); \
 		AFFECT_CF(0);}
 
-#define XOR(a,b) {a=a^b; \
+#define XOR(a,b) {a=(a)^(b); \
 		AFFECT_ZF(a); \
 		AFFECT_SF(a,a) \
 		AFFECT_CF(0);}
 
-#define AND(a,b) {a=a&b; \
+#define AND(a,b) {a=(a)&(b); \
 		AFFECT_ZF(a); \
 		AFFECT_SF(a,a) \
 		AFFECT_CF(0);}
@@ -360,7 +382,7 @@ typedef union registry16Bits
 		AFFECT_ZF(a);\
 		AFFECT_SF(a,a)}}
 
-#define SHL(a,b) {if (b) {CF=(a) & (1 << (bitsizeof(a)-b));\
+#define SHL(a,b) {if (b) {CF=(a) & (1 << (bitsizeof(a)-(b)));\
 		a=a<<b;\
 		AFFECT_ZF(a);\
 		AFFECT_SF(a,a)}}
@@ -397,12 +419,52 @@ void RCR_(D& Destination, C Count, bool& CF_)
 			}
 }
 
-#define SHRD(a,b,c) {if(c) {/*TODO CF=(a) & (1 << (sizeof(f)*8-b));*/ \
+template <class D>
+void SHLD_(D& Destination, D Source, int Count, bool& CF_);
+
+template <class D>
+void SHRD_(D& Destination, D Source, int Count, bool& CF_)
+{ 
+ if(Count != 0) {
+int TCount = Count&(2*bitsizeof(D)-1);
+
+if (TCount>bitsizeof(D)) {SHLD_(Destination, Source, 2*bitsizeof(D)-TCount, CF_);} 
+else
+{
+		CF_ = bitget(Destination,TCount-1); Destination>>=TCount;
+		for(int i = bitsizeof(D) - TCount; i <= bitsizeof(D) - 1; ++i) 
+			if (i>=0) {bitset(Destination,bitget(Source,i + TCount - bitsizeof(D)),i);}
+		if (bitsizeof(D) - TCount<0)	 {CF_ = bitget(Source,TCount-bitsizeof(D)-1);}
+}
+ }
+}
+
+template <class D>
+void SHLD_(D& Destination, D Source, int Count, bool& CF_)
+{ 
+ if(Count != 0) {
+int TCount = Count&(2*bitsizeof(D)-1);
+if (TCount>bitsizeof(D)) {SHRD_(Destination, Source, 2*bitsizeof(D)-TCount, CF_);} 
+else
+{
+		CF_ = bitget(Destination,bitsizeof(D)-TCount); Destination<<=TCount;
+		for(int i = 0; i < TCount; ++i) 
+			if (i>=0) {bitset(Destination,bitget(Source,bitsizeof(D) - TCount + i),i);}
+}
+ }
+}
+
+#define SHRD(a, b, c) {SHRD_(a, b, c, CF);if (c) {AFFECT_ZF(a);AFFECT_SF(a,a);}}
+#define SHLD(a, b, c) {SHLD_(a, b, c, CF);if (c) {AFFECT_ZF(a);AFFECT_SF(a,a);}}
+/*
+ //TODO CF=(a) & (1 << (sizeof(f)*8-b));
+#define SHRD(a,b,c) {if(c) {\
 			int shift = c&(2*bitsizeof(a)-1); \
 			dd a1=a>>shift; \
 			a=a1 | ( (b& ((1<<shift)-1) ) << (bitsizeof(a)-shift) ); \
 		AFFECT_ZF(a|b);\
 		AFFECT_SF(a,a);}} //TODO optimize
+*/
 
 #define SAR(a,b) {if (b) {bool sign = MSB(a);\
 	 int shift = (bitsizeof(a)-b);\
@@ -513,10 +575,10 @@ void RCR_(D& Destination, C Count, bool& CF_)
 #define SETNGE(a) a=SF!=OF;
 #define SETNS(a) a=SF==0;
 #define SETS(a) a=SF;
-#define SETGE(a) a=SF=OF;
-#define SETNL(a) a=SF=OF;
-#define SETG(a) a=ZF==0 && SF=OF;
-#define SETNLE(a) a=ZF==0 && SF=OF;
+#define SETGE(a) a=SF==OF;
+#define SETNL(a) a=SF==OF;
+#define SETG(a) a=ZF==0 && SF==OF;
+#define SETNLE(a) a=ZF==0 && SF==OF;
 #define SETNE(a) a=ZF==0;
 #define SETNZ(a) a=ZF==0;
 #define SETLE(a) a=ZF || SF!=OF;
@@ -592,10 +654,10 @@ void MOV_(D* dest, const S& src)
 #define MOVZX(dest,src) dest = src
 #define MOVSX(dest,src) {if (ISNEGATIVE(src,src)) { dest = ((-1 ^ (( 1 << (bitsizeof(src)) )-1)) | src ); } else { dest = src; }}
 
-#define BT(dest,src) {CF = dest & nthbit(dest,src);} //TODO
-#define BTS(dest,src) {CF = dest & nthbit(dest,src); dest |= nthbit(dest,src);}
-#define BTC(dest,src) {CF = dest & nthbit(dest,src); dest ^= nthbit(dest,src);}
-#define BTR(dest,src) {CF = dest & nthbit(dest,src); dest &= ~(nthbit(dest,src));}
+#define BT(dest,src) {CF = dest & nthbitone(dest,src);} //TODO
+#define BTS(dest,src) {CF = dest & nthbitone(dest,src); dest |= nthbitone(dest,src);}
+#define BTC(dest,src) {CF = dest & nthbitone(dest,src); dest ^= nthbitone(dest,src);}
+#define BTR(dest,src) {CF = dest & nthbitone(dest,src); dest &= ~(nthbitone(dest,src));}
 
 // LEA - Load Effective Address
 #define LEA(dest,src) dest = src
@@ -989,6 +1051,7 @@ extern db vgaPalette[256*3];
 #define CMOVP(a,b) log_debug("unimplemented\n");
 #define CMOVS(a,b) log_debug("unimplemented\n");
 #define CMOVZ(a,b) log_debug("unimplemented\n");
+
 #define JNO(x) log_debug("unimplemented\n");
 #define JNP(x) log_debug("unimplemented\n");
 #define JO(x) log_debug("unimplemented\n");
@@ -1007,7 +1070,7 @@ extern db vgaPalette[256*3];
 #define DAS log_debug("unimplemented\n");
 #define SCASD log_debug("unimplemented\n");
 #define SCASW log_debug("unimplemented\n");
-#define SHLD(a,b,c) log_debug("unimplemented\n");
+//#define SHLD(a,b,c) log_debug("unimplemented\n");
 #define XADD(a,b) log_debug("unimplemented\n");
 
 #define LOOPW(x) log_debug("unimplemented\n");
