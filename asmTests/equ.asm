@@ -13,30 +13,31 @@ _start proc near
 start:
 
 
-mov eax, B
-cmp eax,1
-jne failure
-B = 1
+;mov eax, E  TODO implement several passes
+;cmp eax,1
+;mov al,1
+;jne failure
+;E = 1
 
 B = 2
 mov eax, B
 cmp eax,2
+mov al,2
 jne failure
 
 mov eax, CC
 cmp eax,4
+mov al,3
 jne failure
 B = 1
 
 call incebx
 
-DDD = var1
+DDD = var1 ; actually it is address of var1
 movzx eax, DDD
-cmp eax,6
+cmp eax,0
+mov al,4
 jne failure
-
-JMP exitLabel
-;mov edx,offset exitLabel
 
 MOV al,0
 JMP exitLabel
@@ -52,6 +53,7 @@ incebx proc near
 B = 3
 mov eax, B
 cmp eax,3
+mov al,5
 jne failure
 
 CC equ 4

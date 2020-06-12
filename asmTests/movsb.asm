@@ -22,22 +22,26 @@ _start proc near
 
 start: ;IGNORE
 
+mov ds, _DATA
 push ds
 pop es
 
-jmp finTest
-
+cld
+;jmp finTest
 mov esi,offset var1
 mov edi,offset var4
 movsb
 cmp [var4],2
+mov al,1
 jne failure
 
 
 
 cmp esi,offset var1+1
+mov al,2
 jne failure
 cmp edi,offset var4+1
+mov al,3
 jne failure
 
 
@@ -46,14 +50,18 @@ mov edi,offset var4
 mov ecx,t
 rep movsb
 cmp dword ptr var4,11
+mov al,4
 jne failure
 cmp [var4+t],1
+mov al,5
 jne failure
 
 
 cmp esi,offset var3+4
+mov al,6
 jne failure
 cmp edi,offset var4+4
+mov al,7
 jne failure
 
 ;mov edx,offset var1             ; DS:EDX -> $ Terminated String
@@ -67,12 +75,14 @@ mov esi,offset str1
 mov edi,offset str2
 mov ecx,5
 repe cmpsb
+mov al,8
 jnz failure
 
 mov esi,offset str1
 mov edi,offset str3
 mov ecx,5
 repe cmpsb
+mov al,9
 jz failure
 
 finTest:
@@ -83,10 +93,12 @@ mov ecx,10
 rep movsb
 lea edi,testOVerlap
 cmp byte ptr [testOVerlap+1],1
+mov al,10
 jne failure
 
 mov byte ptr [var1+1],5
 cmp byte ptr [var1+1],5
+mov al,11
 jne failure
 
 mov esi,offset var1
@@ -96,12 +108,13 @@ mov ecx,10
 rep movsb
 lea edi,var1
 cmp byte ptr [var1+2],5
+mov al,12
 je failure ; http://blog.rewolf.pl/blog/?p=177
 
 MOV al,0
 JMP exitLabel
 failure:
-mov al,1
+;mov al,1
 exitLabel:
 mov ah,4ch                    ; AH=4Ch - Exit To DOS
 int 21h

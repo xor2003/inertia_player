@@ -16,26 +16,34 @@ assume  cs:_TEXT,ds:_DATA
 
 _start proc near
 start: ;IGNORE
+mov ds,_DATA
 
 cmp [var],5
+mov al,1
 jne failure
 cmp [var2],0
+mov al,2
 jne failure
 cmp [var+3],5
+mov al,3
 jne failure
 cmp [var+4],0
+mov al,4
 jne failure
 cmp [var2-1],5
+mov al,5
 jne failure
 cmp [var0+5],0
+mov al,6
 jne failure
 cmp [var-1],0
+mov al,7
 jne failure
 
 MOV al,0
 JMP exitLabel
 failure:
-mov al,1
+;mov al,1
 exitLabel:
 mov ah,4ch                    ; AH=4Ch - Exit To DOS
 int 21h                       ; DOS INT 21h

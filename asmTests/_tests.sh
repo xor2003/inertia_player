@@ -4,5 +4,5 @@ ls *.asm | \
 while read name;
 do 
   n=$(echo $name| perl -pe 's!\.asm!!');
-(./_singletest.sh $n)|| echo "$n failed" | tee -a _result.log
+  (./_singletest.sh $n)|| echo "$n failed"
 done

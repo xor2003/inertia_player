@@ -283,10 +283,8 @@ class Parser(object):
                                         logging.info("convert_data(%s)" %v)
                                         g = self.get_global(v)
                                         logging.debug(g)
-                                        if isinstance(g, op.equ) or isinstance(g, op.assignment):
-                                                v = int(g.value)
-                                                if v < 0: # negative values
-                                                        v += base
+                                        if isinstance(g, op._equ) or isinstance(g, op._assignment):
+                                                return g.original_name
                                         elif isinstance(g, op.var):
                                                 v = "offset(%s,%s)" %(g.segment, g.name)
                                         elif isinstance(g, op.label):
@@ -742,9 +740,12 @@ class Parser(object):
                                                 vv = self.parse_equ_line(cmd)
 
                                                 if cmd1l == 'equ':
-                                                        # self.set_global(cmd0, op.equ(cmd0.lower(), size=size))
-                                                        self.get_global("mainproc").add_equ(cmd0, vv,
-                                                                                            line_number=self.line_number)
+                                                        name = cmd0
+                                                        proc = self.get_global("mainproc")
+                                                        o = proc.add_equ_(name, vv, line_number=self.line_number)
+                                                        self.set_global(name, o)
+                                                        proc.stmts.insert(0, o)
+
                                                 elif cmd1l == '=':
                                                         name = cmd0
                                                         # self.reset_global(cmd0, op.assignment(cmd0.lower(), size=size))

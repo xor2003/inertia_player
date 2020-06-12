@@ -11,6 +11,8 @@ assume  cs:_TEXT,ds:_DATA
 start proc near
 _start: ;IGNORE
 
+mov ds,_DATA
+
 mov ebp,32
 mov ax,4
 jmp [cs:table+ax]

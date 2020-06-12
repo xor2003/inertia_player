@@ -244,10 +244,10 @@ class Proc(object):
                 return cl
 
         def add_equ(self, label, value, line_number=0):
-                o = self.add_equ_(label, line_number, value)
-                self.stmts.append(o)
+                o = self.add_equ_(label, value, line_number)
+                #self.stmts.append(o)
 
-        def add_equ_(self, label, line_number, value):
+        def add_equ_(self, label, value, line_number):  # TODO Move it to parser
                 import tasm.cpp
                 o1 = op._equ(label, value)
                 # print "args %s" %s[1:]

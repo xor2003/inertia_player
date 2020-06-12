@@ -121,9 +121,9 @@ class Cpp(object):
             return name_original
 
         # print g
-        if isinstance(g, op.equ):
+        if isinstance(g, op._equ):
             logging.debug("it is equ")
-            value = name.upper()
+            value = g.original_name
             # value = self.expand_equ(g.value)
             logging.debug("equ: %s -> %s" % (name, value))
         elif isinstance(g, op._assignment):
@@ -264,7 +264,7 @@ class Cpp(object):
             logging.debug('name = %s' % name)
             try:
                 g = self.context.get_global(name)
-                if isinstance(g, op.equ) or isinstance(g, op.assignment):
+                if isinstance(g, op._equ) or isinstance(g, op._assignment):
                     if g.value != origexpr:  # prevent loop
                         return self.get_size(g.value)
                     else:
@@ -1178,4 +1178,4 @@ else goto __dispatch_call;
         return "#undef %s\n#define %s %s\n" % (dst, dst, self.expand(src))
 
     def _equ(self, dst, src):
-        return "#define %s %s\n" % (dst.upper(), src)
+        return "#define %s %s\n" % (dst, src)

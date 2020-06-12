@@ -133,8 +133,9 @@ static inline long i2l(long v)
 #define OP1
 #include "test-i386.h"
 
-//#undef CC_MASK
+#undef CC_MASK
 //#define CC_MASK (CC_C | CC_P | CC_Z | CC_S | CC_O)
+#define CC_MASK (CC_C | CC_Z | CC_S)
 
 #define OP shl
 #include "test-i386-shift.h"
@@ -501,14 +502,14 @@ void test_loop(void)
     TEST_LOOP("loopzl");
     TEST_LOOP("loopnzl");
 }
-/*
+
 #undef CC_MASK
 #ifdef TEST_P4_FLAGS
 #define CC_MASK (CC_C | CC_P | CC_Z | CC_S | CC_O | CC_A)
 #else
 #define CC_MASK (CC_O | CC_C)
 #endif
-*/
+
 #define OP mul
 #include "test-i386-muldiv.h"
 
@@ -1438,9 +1439,11 @@ void test_misc(void)
 }
 
 uint8_t str_buffer[4096];
+#undef CC_MASK
+#define CC_MASK (CC_C | CC_Z | CC_S)
 
 #define TEST_STRING1(OP, size, DF, REP)\
-{\
+ print_buffer(); {\
     long esi, edi, eax, ecx, eflags;\
 \
     esi = (long)(str_buffer + sizeof(str_buffer) / 2);\
@@ -1472,6 +1475,9 @@ uint8_t str_buffer[4096];
     TEST_STRING1(OP, "l", "std", REP);\
     X86_64_ONLY(TEST_STRING1(OP, "q", "std", REP))
 
+void print_buffer(void) { /*for(int j = 0; j < sizeof(str_buffer); j++) printf("%02X", str_buffer[j]);*/ }
+void print_buf(uint8_t* p, int s) { for(int j = 0; j < s; j++) printf("%02X", *(p+j)); }
+
 void test_string(void)
 {
     int i;
@@ -1490,6 +1496,8 @@ void test_string(void)
    TEST_STRING(scas, "repz ");
    TEST_STRING(scas, "repnz ");
    TEST_STRING(cmps, "");
+print_buf((str_buffer + sizeof(str_buffer) / 2)-17*4, 18*4);printf("~");
+print_buf((str_buffer + sizeof(str_buffer) / 2)-17*4+16, 18*4);
    TEST_STRING(cmps, "repz ");
    TEST_STRING(cmps, "repnz ");
 }

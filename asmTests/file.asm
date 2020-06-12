@@ -2,7 +2,7 @@
 
 _DATA   segment use32 dword public 'DATA' ;IGNORE
 load_handle dd 0
-fileName db 'file.txt',0
+fileName db 'file1.txt',0
 buffer db 64000 dup(0)
 _DATA   ends ;IGNORE
 
@@ -10,6 +10,7 @@ _TEXT   segment use32 dword public 'CODE' ;IGNORE
 assume  cs:_TEXT,ds:_DATA
 _start proc near
 start: ;IGNORE
+mov ds,_DATA
 
 mov edx,0
 mov ecx,2

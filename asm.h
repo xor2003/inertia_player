@@ -12,12 +12,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#ifndef __BORLANDC__
- #include <stdint.h>
- #include <stdbool.h>
- #define MYPACKED __attribute__((__packed__))
- #define MYINT_ENUM : int
-#else
+#ifdef __BORLANDC__
  typedef unsigned long uint32_t;
  typedef long int32_t;
  typedef unsigned short int uint16_t;
@@ -32,6 +27,11 @@
 
  #define MYPACKED
  #define MYINT_ENUM
+#else
+ #include <stdint.h>
+ #include <stdbool.h>
+ #define MYPACKED __attribute__((__packed__))
+ #define MYINT_ENUM : int
 #endif
 //#include <pthread.h>
 
@@ -106,49 +106,60 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 
 #if _BITS == 32
  #define MOVSS(a) {void * dest;void * src;src=realAddress(esi,ds); dest=realAddress(edi,es); \
-		memmove(dest,src,a); edi+=a; esi+=a; }
- #define STOS(a,b) {memcpy (realAddress(edi,es), ((db *)&eax)+b, a); edi+=a;}
+		memmove(dest,src,a); edi+=(DF==0)?a:-a; esi+=(DF==0)?a:-a; }
+ #define STOS(a,b) {memcpy (realAddress(edi,es), ((db *)&eax)+b, a); edi+=(DF==0)?a:-a;}
 
  #define REP ecx++;while (--ecx != 0)
  #define REPE AFFECT_ZF(0);ecx++;while (--ecx != 0 && ZF)
  #define REPNE AFFECT_ZF(1);ecx++;while (--ecx != 0 && !ZF)
  #define XLAT {al = *raddr(ds,ebx+al);}
- #define CMPS(a) \
+ #define CMPSB \
 	{  \
 			db* src=realAddress(esi,ds); db* dest=realAddress(edi,es); \
-			CMP(*dest, *src) ); edi+=a; esi+=a; \
+			CMP(*dest, *src); edi+=(DF==0)?1:-1; esi+=(DF==0)?1:-1; \
 	}
-
+ #define CMPSW \
+	{  \
+			dw* src=(dw*)realAddress(esi,ds); dw* dest=(dw*)realAddress(edi,es); \
+			CMP(*dest, *src); edi+=(DF==0)?2:-2; esi+=(DF==0)?2:-2; \
+	}
+ #define CMPSD \
+	{  printf("~%08X_",*(dd*)realAddress(esi,ds)); printf("%08X~",*(dd*)realAddress(edi,es)); \
+			dd* src=(dd*)realAddress(esi,ds); dd* dest=(dd*)realAddress(edi,es); \
+			CMP(*dest, *src); edi+=(DF==0)?4:-4; esi+=(DF==0)?4:-4; \
+	}
+//printf("~%02X",al);printf("%02X~",*realAddress(edi,es));
  #define SCASB \
 	{  \
-			db* dest=realAddress(edi,es); \
-			CMP(*dest, al); edi+=(DF==0)?1:-1; \
+			CMP(al, *(db*)realAddress(edi,es)); edi+=(DF==0)?1:-1; \
 	}
  #define SCASW \
 	{  \
-			dw* dest=realAddress(edi,es); \
-			CMP(*dest, ax); edi+=(DF==0)?2:-2; \
+			CMP(ax, *(dw*)realAddress(edi,es)); edi+=(DF==0)?2:-2; \
 	}
  #define SCASD \
 	{  \
-			dd* dest=realAddress(edi,es); \
-			CMP(*dest, eax); edi+=(DF==0)?4:-4; \
+			CMP(eax, *(dd*)realAddress(edi,es)); edi+=(DF==0)?4:-4; \
 	}
 
- #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; esi+=s;} // TODO not always si!!!
- #define LODSS(a,b) {memcpy (((db *)&eax)+b, realAddress(esi,ds), a); esi+=a;}
+ #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; esi+=(DF==0)?s:-s;} // TODO not always si!!!
+ #define LODSS(a,b) {memcpy (((db *)&eax)+b, realAddress(esi,ds), a); esi+=(DF==0)?a:-a;}
 
  #ifdef MSB_FIRST
   #define STOSB STOS(1,3)
   #define STOSW STOS(2,2)
  #else
   #define STOSB STOS(1,0)
-  #define STOSW {if (es>=0xB800) {STOS(2,0);} else {attron(COLOR_PAIR(ah)); mvaddch(edi/160, (edi/2)%80, al); /*attroff(COLOR_PAIR(ah))*/;edi+=2;refresh();}}
-  #define STOSD STOS(4,0)
+   #ifdef A_NORMAL
+    #define STOSW {if (es>=0xB800) {STOS(2,0);} else {attron(COLOR_PAIR(ah)); mvaddch(edi/160, (edi/2)%80, al); /*attroff(COLOR_PAIR(ah))*/;edi+=(DF==0)?2:-2;refresh();}}
+   #else
+    #define STOSW STOS(2,0);
+   #endif
  #endif
+ #define STOSD STOS(4,0)
 
- #define INSB {db a = asm2C_IN(dx);*realAddress(edi,es)=a;edi+=1;}
- #define INSW {dw a = asm2C_INW(dx);*realAddress(edi,es)=a;edi+=2;}
+ #define INSB {db a = asm2C_IN(dx);*realAddress(edi,es)=a;edi+=(DF==0)?1:-1;}
+ #define INSW {dw a = asm2C_INW(dx);*realAddress(edi,es)=a;edi+=(DF==0)?2:-2;}
 
  #define LOOP(label) DEC(ecx); JNZ(label)
  #define LOOPE(label) --ecx; if (ecx!=0 && ZF) GOTOLABEL(label) //TODO
@@ -156,37 +167,44 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 
 #else // 16 bit
  #define MOVSS(a) {void * dest;void * src;src=realAddress(si,ds); dest=realAddress(di,es); \
-		memmove(dest,src,a); di+=a; si+=a; }
- #define STOS(a,b) {memcpy (realAddress(di,es), ((db *)&eax)+b, a); di+=a;}
+		memmove(dest,src,a); di+=(DF==0)?a:-a; si+=(DF==0)?a:-a; }
+ #define STOS(a,b) {memcpy (realAddress(di,es), ((db *)&eax)+b, a); di+=(DF==0)?a:-a;}
 
  #define REP cx++;while (--cx != 0)
  #define REPE AFFECT_ZF(0);cx++;while (--cx != 0 && ZF)
  #define REPNE AFFECT_ZF(1);cx++;while (--cx != 0 && !ZF)
  #define XLAT {al = *raddr(ds,bx+al);}
- #define CMPS(a) \
+ #define CMPSB \
 	{  \
-			void * dest;void * src;src=realAddress(si,ds); dest=realAddress(di,es); \
-			AFFECT_ZF( (*(char*)dest-*(char*)src) ); di+=a; si+=a; \
+			db* src=realAddress(si,ds); db* dest=realAddress(di,es); \
+			CMP(*dest, *src); di+=(DF==0)?1:-1; si+=(DF==0)?1:-1; \
+	}
+ #define CMPSW \
+	{  \
+			dw* src=(dw*)realAddress(si,ds); dw* dest=(dw*)realAddress(di,es); \
+			CMP(*dest, *src); di+=(DF==0)?2:-2; si+=(DF==0)?2:-2; \
+	}
+ #define CMPSD \
+	{  \
+			dd* src=(dd*)realAddress(si,ds); dd* dest=(dd*)realAddress(di,es); \
+			CMP(*dest, *src); di+=(DF==0)?4:-4; si+=(DF==0)?4:-4; \
 	}
 
  #define SCASB \
 	{  \
-			db* dest=realAddress(di,es); \
-			CMP(*dest, al); edi+=(DF==0)?1:-1; \
+			CMP(*realAddress(di,es), al); di+=(DF==0)?1:-1; \
 	}
  #define SCASW \
 	{  \
-			dw* dest=realAddress(di,es); \
-			CMP(*dest, ax); edi+=(DF==0)?2:-2; \
+			CMP(*(dw*)realAddress(di,es), ax); di+=(DF==0)?2:-2; \
 	}
  #define SCASD \
 	{  \
-			dd* dest=realAddress(di,es); \
-			CMP(*dest, eax); edi+=(DF==0)?4:-4; \
+			CMP(*(dd*)realAddress(di,es), eax); di+=(DF==0)?4:-4; \
 	}
 
- #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; si+=s;} // TODO not always si!!!
- #define LODSS(a,b) {memcpy (((db *)&eax)+b, realAddress(si,ds), a); si+=a;}
+ #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; si+=(DF==0)?s:-s;} // TODO not always si!!!
+ #define LODSS(a,b) {memcpy (((db *)&eax)+b, realAddress(si,ds), a); si+=(DF==0)?a:-a;}
 
  #ifdef MSB_FIRST
   #define STOSB STOS(1,3)
@@ -201,25 +219,28 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 	  SDL_SetRenderDrawColor(renderer, vgaPalette[3*al+2], vgaPalette[3*al+1], vgaPalette[3*al], 255); \
           SDL_RenderDrawPoint(renderer, di%320, di/320); \
   	  SDL_RenderPresent(renderer); \
-	  di+=1;} \
+	  di+=(DF==0)?1:-1;} \
 	else \
 		{STOS(1,0);} \
 	}
   #else
-   #define STOSB { \
-		{STOS(1,0);} \
+   #define STOSB STOS(1,0) \
 	}
   #endif
 
-  #define STOSW { \
+   #ifdef A_NORMAL
+    #define STOSW { \
 	if (es==0xB800)  \
-		{dd t=(di>>1);attrset(COLOR_PAIR(ah)); mvaddch(t/80, t%80, al); /*attroff(COLOR_PAIR(ah))*/;di+=2;refresh();} \
+		{dd t=(di>>1);attrset(COLOR_PAIR(ah)); mvaddch(t/80, t%80, al); /*attroff(COLOR_PAIR(ah))*/;di+=(DF==0)?2:-2;refresh();} \
 	else \
 		{STOS(2,0);} \
 	}
-//#define STOSW {if (es!=0xB800) {STOS(2,0);} else {di+=2;}}
-  #define STOSD STOS(4,0)
+   #else
+    #define STOSW { \
+		STOS(2,0)
+   #endif
  #endif
+ #define STOSD STOS(4,0)
 
 #define LOOP(label) DEC(cx); JNZ(label)
 #define LOOPE(label) --cx; if (cx!=0 && ZF) GOTOLABEL(label) //TODO
@@ -665,11 +686,10 @@ void MOV_(D* dest, const S& src)
 #define XCHG(dest,src) {dd t = (dd) dest; dest = src; src = t;}//std::swap(dest,src); TODO
 
 
-#define MOVS(dest,src,s)  {dest=src; dest+=s; src+=s; }
+#define MOVS(dest,src,s)  {dest=src; dest+=(DF==0)?a:-a; src+=(DF==0)?a:-a; }
 //                        {memmove(dest,src,s); dest+=s; src+=s; } \
 
 
-#define CMPSB CMPS(1)
 #define CBW {ah = ((int8_t)al) < 0?-1:0;} // TODO
 #define CWD {dx = ((int16_t)ax) < 0?-1:0;}
 #define CWDE {*(((dw*)&eax)+1) = ((int16_t)ax) < 0?-1:0;}
@@ -726,9 +746,9 @@ void MOV_(D* dest, const S& src)
 #define CLD {DF=0;}
 #define STD {DF=1;}
 
-#define STC {CF=1;} //TODO
-#define CLC {CF=0;} //TODO
-#define CMC {CF ^= 1;} //TODO
+#define STC {CF=1;}
+#define CLC {CF=0;}
+#define CMC {CF ^= 1;}
 
 //struct _STATE;
 
@@ -744,8 +764,6 @@ void asm2C_OUT(int16_t address, int data);
 int8_t asm2C_IN(int16_t data);
 #define IN(a,b) a = asm2C_IN(b); TESTJUMPTOBACKGROUND
 
-#define STI // TODO: STI not implemented
-#define CLI // TODO: STI not implemented
 //#define PUSHF {dd t = CF+(ZF<<1)+(DF<<2)+(SF<<3); PUSH(t);}
 //#define POPF {dd t; POP(t); CF=t&1; ZF=(t>>1)&1; DF=(t>>2)&1; SF=(t>>3)&1;}
 
@@ -1062,20 +1080,20 @@ extern db vgaPalette[256*3];
 #define AAS log_debug("unimplemented\n");
 #define BSR(a,b) log_debug("unimplemented\n");
 #define BSWAP(a) log_debug("unimplemented\n");
+#define BSWAPD(op1)														\
+	op1 = (op1>>24)|((op1>>8)&0xFF00)|((op1<<8)&0xFF0000)|((op1<<24)&0xFF000000);
+
 #define CDQ log_debug("unimplemented\n");
-#define CMPSD log_debug("unimplemented\n");
-#define CMPSW log_debug("unimplemented\n");
 #define CMPXCHG log_debug("unimplemented\n");
 #define DAA log_debug("unimplemented\n");
 #define DAS log_debug("unimplemented\n");
-#define SCASD log_debug("unimplemented\n");
-#define SCASW log_debug("unimplemented\n");
-//#define SHLD(a,b,c) log_debug("unimplemented\n");
 #define XADD(a,b) log_debug("unimplemented\n");
 
 #define LOOPW(x) log_debug("unimplemented\n");
 #define LOOPWE(x) log_debug("unimplemented\n");
 #define LOOPWNE(x) log_debug("unimplemented\n");
+#define STI log_debug("unimplemented\n");
+#define CLI log_debug("unimplemented\n");
 // ---------
 
 #endif

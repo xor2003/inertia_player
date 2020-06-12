@@ -1,5 +1,20 @@
+.386p
+
+_DATA   segment use32 dword public 'DATA' ;IGNORE
+var1 db 2,5,6
+var2 dw 4,6,9
+var3 dd 11,-11,2,4000000
+_DATA   ends ;IGNORE
+
 _text segment byte public 'CODE' use16
 _start:
+mov al,0
+mov ah,4ch                    ; AH=4Ch - Exit To DOS
+int 21h                       ; DOS INT 21h                     ; DOS INT 21h
+
+cmp var1[1],2
+cmp var1[bx],2
+cmp var1[bx+si],2
 label1:
 		mov	es:[di+8], eax
 
