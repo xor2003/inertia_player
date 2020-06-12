@@ -114,9 +114,9 @@ int DosMemCheck(void);
 
 
 #ifdef DEBUG3
-VOID show_chain(void);
+void show_chain(void);
 
-VOID mcb_print(mcb_p mcbp);
+void mcb_print(mcb_p mcbp);
 #endif
 
 static void mcb_init_copy(dw seg, dw size, mcb *near_mcb);

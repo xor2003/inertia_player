@@ -381,7 +381,7 @@ int DosMemCheck(void)
 
 
 #ifdef DEBUG3
-VOID show_chain(void)
+void show_chain(void)
 {
   mcb_p p;
   p = para2far(first_mcb);
@@ -396,17 +396,19 @@ VOID show_chain(void)
   }
 }
 
-VOID mcb_print(mcb_p mcbp)
+void mcb_print(mcb_p mcbp)
 {
   static BYTE buff[9];
 
   memcpy(buff, mcbp->m_name, 8);
   buff[8] = '\0';
+/*
   printf
       ("%04x:%04x -> |%s| m_type = 0x%02x '%c'; m_psp = 0x%04x; m_size = 0x%04x\n",
        FP_SEG(mcbp), FP_OFF(mcbp), *buff == '\0' ? "*NO-ID*" : buff,
        mcbp->m_type, mcbp->m_type > ' ' ? mcbp->m_type : ' ', mcbp->m_psp,
        mcbp->m_size);
+*/
 }
 #endif
 

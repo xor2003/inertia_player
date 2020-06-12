@@ -1,5 +1,5 @@
 #!/bin/sh
-export OPT="-m32 -mno-ms-bitfields -Wno-multichar -I/mingw32/include/pdcurses -L/mingw32/lib -I. -L. -lmingw32 -mconsole -DSDL_MAIN_HANDLED -ggdb3  -DDEBUG=3"
+export OPT="-m32 -mno-ms-bitfields -Wno-multichar -I/mingw32/include/pdcurses -L/mingw32/lib -I. -L. -lmingw32 -mconsole -DSDL_MAIN_HANDLED -ggdb3 "
 # -DDEBUG=3
 export CC="gcc"
 $CC $OPT asm.cpp -c

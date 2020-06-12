@@ -88,7 +88,7 @@ struct find_t * diskTransferAddr = 0;
 
 bool isLittle;
 bool jumpToBackGround;
-char *path;
+//char *path;
 bool executionFinished;
 db exitCode;
 
@@ -306,6 +306,7 @@ uint16_t asm2C_INW(uint16_t address) {
 		return 0;
 	}
 #endif
+	return 0;
 }
 
 bool is_little_endian_real_check() {
@@ -678,11 +679,11 @@ X86_REGREF
 		case 0x3d: //open
 		{
 			char fileName[1000];
-			if (path!=NULL) {
-				sprintf(fileName,"%s/%s",path,(const char *) realAddress(dx, ds));
-			} else {
+//			if (path!=NULL) {
+//				sprintf(fileName,"%s/%s",path,(const char *) realAddress(dx, ds));
+//			} else {
 				sprintf(fileName,"%s",(const char *) realAddress(dx, ds));
-			}
+//			}
 			file=fopen(fileName, "rb"); //TOFIX, multiple files support
 			log_debug2("Opening file %s -> %p\n",fileName,(void *) file);
 			if (file!=NULL) {
@@ -1392,17 +1393,6 @@ From: "The MS-DOS Encyclopaedia" (also Duncan) - talking about .EXE files. There
 int init(struct _STATE* state);
 void mainproc(_offsets _i, struct _STATE* state);
 
-#include <windows.h>
-
-int  WinMain(
-  HINSTANCE hInstance,
-  HINSTANCE hPrevInstance,
-  LPSTR     lpCmdLine,
-  int       nShowCmd
-)
-{main(0,0);
-}
-
 int main(int argc, char *argv[])
 {
   struct _STATE state;
@@ -1426,6 +1416,16 @@ int main(int argc, char *argv[])
   }
 	mainproc((_offsets) 0x1001, _state);
 	return(0);
+}
+
+#include <windows.h>
+int  WinMain(
+  HINSTANCE hInstance,
+  HINSTANCE hPrevInstance,
+  LPSTR     lpCmdLine,
+  int       nShowCmd
+)
+{return main(0,0);
 }
 
 chtype vga_to_curses[256];

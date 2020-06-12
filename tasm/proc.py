@@ -243,9 +243,9 @@ class Proc(object):
                         raise Exception("unknown command: " + cmd.lower())
                 return cl
 
-        def add_equ(self, label, value, line_number=0):
+        def add_equ(self, label, value, line_number=0):  #only for tests. to remove
                 o = self.add_equ_(label, value, line_number)
-                #self.stmts.append(o)
+                self.stmts.insert(0, o)
 
         def add_equ_(self, label, value, line_number):  # TODO Move it to parser
                 import tasm.cpp

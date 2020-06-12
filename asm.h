@@ -123,8 +123,9 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 			dw* src=(dw*)realAddress(esi,ds); dw* dest=(dw*)realAddress(edi,es); \
 			CMP(*dest, *src); edi+=(DF==0)?2:-2; esi+=(DF==0)?2:-2; \
 	}
+//  printf("~%08X_",*(dd*)realAddress(esi,ds)); printf("%08X~",*(dd*)realAddress(edi,es)); \
  #define CMPSD \
-	{  printf("~%08X_",*(dd*)realAddress(esi,ds)); printf("%08X~",*(dd*)realAddress(edi,es)); \
+	{ \
 			dd* src=(dd*)realAddress(esi,ds); dd* dest=(dd*)realAddress(edi,es); \
 			CMP(*dest, *src); edi+=(DF==0)?4:-4; esi+=(DF==0)?4:-4; \
 	}
@@ -153,7 +154,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
    #ifdef A_NORMAL
     #define STOSW {if (es>=0xB800) {STOS(2,0);} else {attron(COLOR_PAIR(ah)); mvaddch(edi/160, (edi/2)%80, al); /*attroff(COLOR_PAIR(ah))*/;edi+=(DF==0)?2:-2;refresh();}}
    #else
-    #define STOSW STOS(2,0);
+    #define STOSW STOS(2,0)
    #endif
  #endif
  #define STOSD STOS(4,0)
@@ -224,8 +225,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 		{STOS(1,0);} \
 	}
   #else
-   #define STOSB STOS(1,0) \
-	}
+   #define STOSB STOS(1,0)
   #endif
 
    #ifdef A_NORMAL
@@ -236,8 +236,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
 		{STOS(2,0);} \
 	}
    #else
-    #define STOSW { \
-		STOS(2,0)
+    #define STOSW STOS(2,0)
    #endif
  #endif
  #define STOSD STOS(4,0)
@@ -686,7 +685,7 @@ void MOV_(D* dest, const S& src)
 #define XCHG(dest,src) {dd t = (dd) dest; dest = src; src = t;}//std::swap(dest,src); TODO
 
 
-#define MOVS(dest,src,s)  {dest=src; dest+=(DF==0)?a:-a; src+=(DF==0)?a:-a; }
+#define MOVS(dest,src,s)  {dest=src; dest+=(DF==0)?s:-s; src+=(DF==0)?s:-s; }
 //                        {memmove(dest,src,s); dest+=s; src+=s; } \
 
 

@@ -17,6 +17,7 @@
 
 #include "iplay_m_.h"
 
+#define __bool_true_false_are_defined 1
 #include <curses.h>
 
 #ifdef SDL_MAJOR_VERSION
@@ -204,7 +205,7 @@ int init(struct _STATE* _state)
 X86_REGREF
 
 _state->_indent=0;
-logDebug=fopen("iplay_masm_.log","w");
+logDebug=fopen("iplay_m_.log","w");
 	
   log_debug("~~~ %d %d %d", HEAP_SIZE, (HEAP_SIZE >> 4), seg_offset(heap) );
   /* We expect ram_top as Kbytes, so convert to paragraphs */
@@ -247,7 +248,7 @@ realtocurs();
 
 	refresh();
    	
-//  strcpy( ((char*)&m)+0x80, "\x09aryx.s3m\x0D");
+  strcpy( ((char*)&m)+0x80, "\x09HACKER4.S3M\x0D");
 
 R(MOV(cs, seg_offset(_text)));	// mov cs,_TEXT
 

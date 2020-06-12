@@ -7,6 +7,7 @@
 #define _BITS 32
 #define _PROTECTED_MODE 1
 
+#define __bool_true_false_are_defined
 #include <curses.h>
 
 
