@@ -248,7 +248,8 @@ realtocurs();
 
 	refresh();
    	
-  strcpy( ((char*)&m)+0x80, "\x09HACKER4.S3M\x0D");
+//  strcpy( ((char*)&m)+0x80, "\x09HACKER4.S3M\x0D");
+  strcpy( ((char*)&m)+0x80, "\x09HACKER4.S3M");
 
 R(MOV(cs, seg_offset(_text)));	// mov cs,_TEXT
 
