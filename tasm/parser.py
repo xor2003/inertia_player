@@ -308,7 +308,7 @@ class Parser(object):
                         v = v.strip()
                         if width == 1 and (v[0] in ["'", '"']):
                                 if v[-1] not in ["'", '"']:
-                                        raise Exception("invalid string %s" %v)
+                                        raise Exception("string is not quoted: %s" %v)
                                 if width > 1:
                                         raise Exception("string with data width more than 1") #we could allow it :)
                                 v.replace("''", "'")
@@ -450,6 +450,10 @@ class Parser(object):
                                                         vv += r"\r"
                                                 elif r[i] == 10:
                                                         vv += r"\n"
+                                                elif r[i] < 10:
+                                                        vv += "\\{:01x}".format(r[i])
+                                                elif r[i] < 32:
+                                                        vv += "\\x{:02x}".format(r[i])
                                                 elif r[i] == "\\":
                                                         vv += '\\\\'
                                                 else:
@@ -476,9 +480,11 @@ class Parser(object):
                                                 if r[i] in ["\'", '\"', '\\']:
                                                         #print "aaa"
                                                         r[i] = "\\" + r[i]
-                                                elif ord(r[i]) > 127: # \
+                                                elif ord(r[i]) > 127:
                                                         r[i] = hex(ord(r[i].encode('cp437', 'backslashreplace')))
                                                         r[i]='\\' + r[i][1:]
+                                                elif r[i] == '\0':
+                                                        r[i]='\\0'
                                                 vv += "'" + r[i] + "'"
                                             if i != len(r)-1:
                                                 vv += ","
