@@ -19,6 +19,7 @@
 #define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
+/*
 #include <string.h>
 #include <inttypes.h>
 #include <math.h>
@@ -27,7 +28,7 @@
 #include <errno.h>
 #include <sys/ucontext.h>
 #include <sys/mman.h>
-
+*/
 #include <iostream>
 #include <ios>
 
@@ -3808,8 +3809,8 @@ print_buffer(); { /*dd esi, edi, eax, ecx,*/ dd eflags; esi = (dd)(str_buffer + 
 PUSH((dd)0);POPF;STD;CMPSD;CLD;PUSHF;POP(eflags);
  printf("%-10s ESI=%08lx EDI=%08lx EAX=%08lx ECX=%08lx EFL=%04x\n", "cmpsl", esi - (dd)(str_buffer), edi - (dd)(str_buffer), eax, ecx, (int)(eflags & (0x0001 | 0x0040 | 0x0080)));}; ;
 
-print_buf((long)(str_buffer + sizeof(str_buffer) / 2)-17*4, 18*4);printf("~");
-print_buf((long)(str_buffer + sizeof(str_buffer) / 2)-17*4+16, 18*4);
+//print_buf((long)(str_buffer + sizeof(str_buffer) / 2)-17*4, 18*4);printf("~");
+//print_buf((long)(str_buffer + sizeof(str_buffer) / 2)-17*4+16, 18*4);
 
 print_buffer(); { /*dd esi, edi, eax, ecx,*/ dd eflags; esi = (dd)(str_buffer + sizeof(str_buffer) / 2); edi = (dd)(str_buffer + sizeof(str_buffer) / 2) + 16; eax = i2l(0x12345678); ecx = 17;
 //PUSH((dd)0);POPF;REPE CMPSB;CLD;PUSHF;POP(eflags);
@@ -3832,7 +3833,7 @@ PUSH((dd)0);POPF;STD;REPE CMPSW;CLD;PUSHF;POP(eflags);
 
 print_buffer(); { /*dd esi, edi, eax, ecx,*/ dd eflags; esi = (dd)(str_buffer + sizeof(str_buffer) / 2); edi = (dd)(str_buffer + sizeof(str_buffer) / 2) + 16; eax = i2l(0x12345678); ecx = 17;
 PUSH((dd)0);POPF;STD;REPE CMPSD;CLD;PUSHF;POP(eflags);
- printf("!%-10s ESI=%08lx EDI=%08lx EAX=%08lx ECX=%08lx EFL=%04x\n", "repz cmpsl", esi - (dd)(str_buffer), edi - (dd)(str_buffer), eax, ecx, (int)(eflags & (0x0001 | 0x0040 | 0x0080)));}; ;
+ printf("%-10s ESI=%08lx EDI=%08lx EAX=%08lx ECX=%08lx EFL=%04x\n", "repz cmpsl", esi - (dd)(str_buffer), edi - (dd)(str_buffer), eax, ecx, (int)(eflags & (0x0001 | 0x0040 | 0x0080)));}; ;
 print_buffer(); { /*dd esi, edi, eax, ecx,*/ dd eflags; esi = (dd)(str_buffer + sizeof(str_buffer) / 2); edi = (dd)(str_buffer + sizeof(str_buffer) / 2) + 16; eax = i2l(0x12345678); ecx = 17;
 PUSH((dd)0);POPF;REPNE CMPSB;CLD;PUSHF;POP(eflags);
  printf("%-10s ESI=%08lx EDI=%08lx EAX=%08lx ECX=%08lx EFL=%04x\n", "repnz cmpsb", esi - (dd)(str_buffer), edi - (dd)(str_buffer), eax, ecx, (int)(eflags & (0x0001 | 0x0040 | 0x0080)));};

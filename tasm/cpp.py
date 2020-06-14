@@ -768,7 +768,13 @@ class Cpp(object):
         return "MOVSD;\n"  # %("" if n == 1 else n, ", true" if clear_cx else "")
 
     def _scasb(self):
-        return "\tR(SCASB);\n"
+        return "SCASB;\n"
+
+    def _scasw(self):
+        return "SCASW;\n"
+
+    def _scasd(self):
+        return "SCASD;\n"
 
     def _scas(self, src):
         size = self.get_size(src)
@@ -816,6 +822,7 @@ int init(struct _STATE* _state)
 X86_REGREF
 
 _state->_indent=0;
+logDebug=fopen("%s.log","w");
 ecx=0;
 
 initscr();
@@ -857,7 +864,7 @@ X86_REGREF
 __disp=_i;
 if (__disp==kbegin) goto %s;
 else goto __dispatch_call;
-""" % (name, self.context.entry_point)
+""" % (self.namespace, name, self.context.entry_point)
 
             logging.info(name)
             self.proc.optimize()

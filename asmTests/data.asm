@@ -18,6 +18,7 @@ dw 223,22
 db 'OKOKOKOK',10,13
 db 4 dup (5)
 db 'OKOKOKOK'
+db 'ABC',0
 dd offset var5
 ASCII DB '00000000',0Dh,0Ah,'$' ; buffer for ASCII string
 doublequote db 'ab''cd'

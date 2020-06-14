@@ -244,7 +244,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.convert_data_to_c(width=1,data=["'abcde\0\0'"],label=u'var5'),(['{', "'a','b','c','d','e','\\0','\\0'", '}', ', // var5\n'], ['char var5[7]', ';\n'], 0))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,label='_a_mod_nst_669_s',data=["'.MOD.NST.669.STM.S3M.MTM.PSM.WOW.INR.FAR.ULT.OKT.OCT'", '0', '0', '0', '0']),(['', '".MOD.NST.669.STM.S3M.MTM.PSM.WOW.INR.FAR.ULT.OKT.OCT\\0\\0\\0"', ', // _a_mod_nst_669_s\n'], ['char _a_mod_nst_669_s[56]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,label='_a_mod_nst_669_s',data=["'.MOD.'", '0', '0', '0', '0']),(['', '".MOD.\\0\\0\\0"', ', // _a_mod_nst_669_s\n'], ['char _a_mod_nst_669_s[56]', ';\n'], 4))
 
     @patch.object(logging, 'debug')
     def test_fix_dollar(self, mock_debug):

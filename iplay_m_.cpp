@@ -893,6 +893,7 @@ loc_10544:
 	R(ROL(ebx, 0x10));	// 707 rol	ebx, 10h
 	R(MOV(bl, al));	// 708 mov	bl, al
 	R(AND(bx, 0x0F));	// 709 and	bx, 0Fh
+	cs=seg_offset(_text);
 	R(MOV(dl, *(raddr(cs,offset(_text,asc_1058C)+bx))));	// 710 mov	dl, byte ptr cs:[asc_1058C+bx] ; "\x18\v\r\n\x02\x01\x03\x04\a"
 	R(ROR(ebx, 0x10));	// 711 ror	ebx, 10h
 loc_10565:
@@ -1198,6 +1199,7 @@ loc_1083e:
 		R(JA(loc_1088d));	// 1062 ja	short loc_1088D
 	R(ROL(ebx, 0x10));	// 1063 rol	ebx, 10h
 	R(MOVZX(bx, dl));	// 1064 movzx	bx, dl
+	cs=seg_offset(_text);
 	R(MOV(dl, *(raddr(cs,offset(_text,_s3mtable_108D6)+bx))));	// 1065 mov	dl, cs:[_s3mtable_108D6+bx]
 	R(CMP(dl, 0x0FF));	// 1066 cmp	dl, 0FFh
 		R(JZ(loc_10885));	// 1067 jz	short loc_10885
@@ -1207,6 +1209,7 @@ loc_1083e:
 		R(JNZ(loc_10887));	// 1071 jnz	short loc_10887
 	R(MOV(bl, dh));	// 1072 mov	bl, dh
 	R(SHR(bl, 4));	// 1073 shr	bl, 4
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_s3mtable_108F0)+bx))));	// 1074 mov	al, cs:[_s3mtable_108F0+bx]
 	R(CMP(al, 0x0FF));	// 1075 cmp	al, 0FFh
 		R(JZ(loc_10885));	// 1076 jz	short loc_10885
@@ -1455,6 +1458,7 @@ loc_10b0f:
 	R(MOV(al, *(raddr(ds,offset(seg003,_word_3052A)+si))));	// 1373 mov	al, byte ptr [_word_3052A+si]
 	R(MOV(di, ax));	// 1374 mov	di, ax
 	R(AND(di, 0x0F));	// 1375 and	di, 0Fh
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_13C54)+di))));	// 1376 mov	al, cs:[_byte_13C54+di]
 	R(MOV(*(raddr(ds,offset(seg003,_dword_27BC8)+si)), al));	// 1377 mov	byte ptr [_dword_27BC8+si], al
 	R(INC(si));	// 1378 inc	si
@@ -1872,6 +1876,7 @@ _far_module:
 	R(MOV(al, *(raddr(ds,offset(seg003,_word_30552)+1))));	// 1842 mov	al, byte ptr [_word_30552+1]
 	R(AND(ax, 0x0F));	// 1843 and	ax, 0Fh
 	R(MOV(di, ax));	// 1844 mov	di, ax
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_table_14057)+di))));	// 1845 mov	al, cs:[_table_14057+di]
 	R(MOV(m._byte_2467B, al));	// 1846 mov	_byte_2467B, al
 	R(MOV(m._byte_2467C, 0));	// 1847 mov	_byte_2467C, 0
@@ -1886,6 +1891,7 @@ loc_10f6a:
 	R(MOV(al, *(raddr(ds,offset(seg003,_word_30554)+si))));	// 1857 mov	al, byte ptr [_word_30554+si]
 	R(MOV(di, ax));	// 1858 mov	di, ax
 	R(AND(di, 0x0F));	// 1859 and	di, 0Fh
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_13C54)+di))));	// 1860 mov	al, cs:[_byte_13C54+di]
 	R(MOV(*(raddr(ds,offset(seg003,_dword_27BC8)+si)), al));	// 1861 mov	byte ptr [_dword_27BC8+si], al
 	R(INC(si));	// 1862 inc	si
@@ -2353,6 +2359,7 @@ loc_113e2:
 	R(MOV(al, *(raddr(ds,offset(seg003,_word_3063B)+si))));	// 2399 mov	al, byte ptr [_word_3063B+si]
 	R(MOV(di, ax));	// 2400 mov	di, ax
 	R(AND(di, 0x0F));	// 2401 and	di, 0Fh
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_13C54)+di))));	// 2402 mov	al, cs:[_byte_13C54+di]
 	R(MOV(*(raddr(ds,offset(seg003,_dword_27BC8)+si)), al));	// 2403 mov	byte ptr [_dword_27BC8+si], al
 	R(INC(si));	// 2404 inc	si
@@ -2908,6 +2915,7 @@ sub_11c0c:
 		R(JZ(locret_11c28));	// 3146 jz	short locret_11C28
 	bx = 0;AFFECT_ZF(0); AFFECT_SF(bx,0);	// 3147 xor	bx, bx
 loc_11c14:
+	cs=seg_offset(_text);
 	R(MOV(bl, *(raddr(cs,offset(_text,_byte_11C29)+bx))));	// 3151 mov	bl, cs:[_byte_11C29+bx]
 	R(ADD(si, bx));	// 3152 add	si, bx
 	R(MOV(bl, *(raddr(es,si))));	// 3153 mov	bl, es:[si]
@@ -4750,6 +4758,7 @@ sub_12d35:
 	R(CMP(al, 1));	// 5437 cmp	al, 1
 		R(JZ(loc_12d4e));	// 5438 jz	short loc_12D4E
 loc_12d41:
+	cs=seg_offset(_text);
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F71))), 0));	// 5441 mov	cs:[_byte_14F71], 0
 	R(CALL(k_setmemalloc1));	// 5442 call	_setmemalloc1
 	R(POP(ds));	// 5443 pop	ds
@@ -4757,6 +4766,7 @@ loc_12d41:
 	R(POP(ax));	// 5445 pop	ax
 	R(RETF);	// 5446 retf
 loc_12d4e:
+	cs=seg_offset(_text);
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F71))), 1));	// 5450 mov	cs:[_byte_14F71], 1
 	R(MOV(ax, m._word_2460C));	// 5451 mov	ax, _word_2460C
 	R(CALL(k_setmemallocstrat));	// 5452 call	_setmemallocstrat
@@ -4795,6 +4805,7 @@ sub_12da8:
 	R(MOV(m._snd_set_flag, 0));	// 5498 mov	_snd_set_flag,	0
 	R(MOV(al, 8));	// 5499 mov	al, 8
 	R(CALL(k_getint_vect));	// 5500 call	_getint_vect
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_int8addr))), bx));	// 5501 mov	word ptr cs:[_int8addr],	bx
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_int8addr)+2)), dx));	// 5502 mov	word ptr cs:[_int8addr+2], dx
 	R(PUSH(cs));	// 5503 push	cs
@@ -4809,6 +4820,7 @@ sub_12da8:
 	R(AND(ax, 0x0F00F));	// 5512 and	ax, 0F00Fh
 	R(SHR(ah, 4));	// 5513 shr	ah, 4
 	R(MOVZX(di, al));	// 5514 movzx	di, al
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_13C54)+di))));	// 5515 mov	al, cs:[_byte_13C54+di]
 	R(MOVZX(di, ah));	// 5516 movzx	di, ah
 	R(MOV(ah, *(raddr(cs,offset(_text,_byte_13C54)+di))));	// 5517 mov	ah, cs:[_byte_13C54+di]
@@ -4984,6 +4996,7 @@ locret_12fb3:
 	R(RETN);	// 5729 retn
  // Procedure _clean_int8_mem_timr() start
 _clean_int8_mem_timr:
+	cs=seg_offset(_text);
 	R(MOV(dx, *(dw*)(raddr(cs,offset(_text,_int8addr)+2))));	// 5738 mov	dx, word ptr cs:[_int8addr+2]
 	R(MOV(bx, *(dw*)(raddr(cs,offset(_text,_int8addr)))));	// 5739 mov	bx, word ptr cs:[_int8addr]
 	R(MOV(al, 8));	// 5740 mov	al, 8
@@ -5001,6 +5014,7 @@ _configure_timer:
 	R(MOV(ax, 0x34DC));	// 5757 mov	ax, 34DCh
 	R(DIV2(m._freq1));	// 5758 div	_freq1
 	R(CALL(k_set_timer));	// 5759 call	_set_timer
+	cs=seg_offset(_text);
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F70))), 1));	// 5760 mov	cs:[_byte_14F70], 1
 	R(MOV(ax, m._word_245E4));	// 5761 mov	ax, _word_245E4
 	R(MOV(*(dw*)(raddr(cs,offset(_text,audio_len))), ax));	// 5762 mov	cs:[audio_len], ax
@@ -5012,6 +5026,7 @@ _memfill8080:
 	R(CLI);	// 5774 cli
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 5775 xor	ax, ax
 	R(CALL(k_set_timer));	// 5776 call	_set_timer
+	cs=seg_offset(_text);
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F70))), 0));	// 5777 mov	cs:[_byte_14F70], 0
 	R(MOV(*(dw*)(raddr(cs,offset(_text,audio_len))), 1));	// 5778 mov	cs:[audio_len], 1
 	R(MOV(es, *(dw*)(raddr(ds,offset(seg003,_dma_buf_pointer)+2))));	// 5779 mov	es, word ptr [_dma_buf_pointer+2]
@@ -5470,6 +5485,7 @@ __disp = (dw)(*(dw*)(raddr(cs,offset(_text,_effoff_18FA2)+di)));
 loc_137be:
 	R(MOVZX(di, dh));	// 6392 movzx	di, dh
 	R(SHR(di, 5));	// 6393 shr	di, 5
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_11C29)+di))));	// 6394 mov	al, cs:[_byte_11C29+di]
 	ah = 0;AFFECT_ZF(0); AFFECT_SF(ah,0);	// 6395 xor	ah, ah
 	R(ADD(si, ax));	// 6396 add	si, ax
@@ -6031,6 +6047,7 @@ _eff_13c3f:
 loc_13c47:
 	R(MOV(di, ax));	// 7205 mov	di, ax
 	R(AND(di, 0x0F));	// 7206 and	di, 0Fh
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_13C54)+di))));	// 7207 mov	al, cs:[_byte_13C54+di]
 		R(JMP(_eff_13a43));	// 7208 jmp	_eff_13A43
  // Procedure _eff_13c64() start
@@ -6113,6 +6130,7 @@ sub_13cf6:
 	R(MOV(dl, 91));	// 7355 mov	dl, 91
 	R(DIV1(dl));	// 7356 div	dl
 	R(INC(al));	// 7357 inc	al
+	cs=seg_offset(_text);
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F72))), al));	// 7358 mov	cs:[_byte_14F72], al
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F73))), al));	// 7359 mov	cs:[_byte_14F73], al
 	R(TEST(m._sndflags_24622, 4));	// 7360 test	_sndflags_24622, 4
@@ -6136,6 +6154,7 @@ loc_13d36:
 	R(MOV(m._word_245EE, ax));	// 7379 mov	_word_245EE, ax
 	R(MOV(ax, m._word_245E8));	// 7380 mov	ax, _word_245E8
 	R(MOV(m._word_245E4, ax));	// 7381 mov	_word_245E4, ax
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,audio_len))), ax));	// 7382 mov	cs:[audio_len], ax
 	R(RETN);	// 7383 retn
 loc_13d4b:
@@ -6200,6 +6219,7 @@ _settimer:
 	R(DIV2(cx));	// 7463 div	cx	// 7464 jmp	short $+2
  // Procedure _set_timer() start
 _set_timer:
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_timer_word_14F6E))), ax));	// 7472 mov	cs:[_timer_word_14F6E], ax
 	R(PUSHF);	// 7473 pushf
 	R(CLI);	// 7474 cli
@@ -6507,6 +6527,7 @@ _eff_14020:
 _eff_14030:
 	R(AND(ax, 0x0F));	// 7912 and	ax, 0Fh
 	R(MOV(di, ax));	// 7913 mov	di, ax
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_table_14057)+di))));	// 7914 mov	al, cs:[_table_14057+di]
 	R(MOV(m._byte_2467B, al));	// 7915 mov	_byte_2467B, al
 loc_1403d:
@@ -6849,12 +6870,14 @@ loc_14b50:
 		R(JZ(loc_14b6a));	// 8531 jz	short loc_14B6A
 	R(MOV(ax, m._sb_base_port));	// 8532 mov	ax, _sb_base_port
 	R(ADD(al, 0x0E));	// 8533 add	al, 0Eh
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_14BBB))), ax));	// 8534 mov	cs:[_word_14BBB], ax
 	R(MOV(ax, 0x0C6));	// 8535 mov	ax, 0C6h ; '?'
 		R(JMP(loc_14b76));	// 8536 jmp	short loc_14B76
 loc_14b6a:
 	R(MOV(ax, m._sb_base_port));	// 8540 mov	ax, _sb_base_port
 	R(ADD(al, 0x0F));	// 8541 add	al, 0Fh
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_14BBB))), ax));	// 8542 mov	cs:[_word_14BBB], ax
 	R(MOV(ax, 0x10B6));	// 8543 mov	ax, 10B6h
 loc_14b76:
@@ -6939,6 +6962,7 @@ _sbpro_set:
 	R(MOV(m._word_2460E, 0x1000));	// 8670 mov	_word_2460E, 1000h
 	R(MOV(ax, m._sb_base_port));	// 8671 mov	ax, _sb_base_port
 	R(ADD(al, 0x0E));	// 8672 add	al, 0Eh
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_14CEB))), ax));	// 8673 mov	cs:[_word_14CEB], ax
 	R(MOV(ah, 0x0E));	// 8674 mov	ah, 0Eh
 	R(CALL(k_readmixersb));	// 8675 call	_ReadMixerSB
@@ -7099,6 +7123,7 @@ loc_14ecc:
 	R(IRET);	// 8912 iret
  // Procedure _timer_int_end() start
 _timer_int_end:
+	cs=seg_offset(_text);
 	R(CMP(*(raddr(cs,offset(_text,_byte_14F70))), 0));	// 8931 cmp	cs:[_byte_14F70], 0
 		R(JZ(loc_14f3c));	// 8932 jz	short loc_14F3C
 	R(PUSHAD);	// 8933 pushad
@@ -7119,6 +7144,7 @@ _timer_int_end:
 	R(POPAD);	// 8948 popad
 	R(IRET);	// 8949 iret
 loc_14f3c:
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,audio_len))), 1));	// 8953 mov	cs:[audio_len], 1
 	cs=seg_offset(_text);
 __disp = (dw)(*(dd*)(raddr(cs,offset(_text,_int8addr))));
@@ -7129,6 +7155,7 @@ __disp = (dw)(*(dd*)(raddr(cs,offset(_text,_int8addr))));
 	R(IRET);	// 8960 iret
 loc_14f50:
 	R(PUSH(ax));	// 8964 push	ax
+	cs=seg_offset(_text);
 	R(MOV(al, *(raddr(cs,offset(_text,_byte_14F72)))));	// 8965 mov	al, cs:[_byte_14F72]
 	R(MOV(*(raddr(cs,offset(_text,_byte_14F73))), al));	// 8966 mov	cs:[_byte_14F73], al
 	R(MOV(ax, *(dw*)(raddr(cs,offset(_text,_timer_word_14F6E)))));	// 8967 mov	ax, cs:[_timer_word_14F6E]
@@ -7150,6 +7177,7 @@ _covox_init:
 	R(MOV(m._snd_base_port, ax));	// 8999 mov	_snd_base_port, ax
 loc_14f95:
 	R(MOV(ax, m._snd_base_port));	// 9002 mov	ax, _snd_base_port
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_14FC8))), ax));	// 9003 mov	cs:[_word_14FC8], ax
 	R(PUSHF);	// 9004 pushf
 	R(CLI);	// 9005 cli
@@ -7200,6 +7228,7 @@ _covox_timer_int:
 		R(JZ(_timer_int_end));	// 9058 jz	near ptr _timer_int_end
 	R(IRET);	// 9059 iret
 loc_14fe3:
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_14FC5))), 0x0F000));	// 9063 mov	cs:[_word_14FC5], 0F000h
 	cs=seg_offset(_text);
 	R(DEC(*(dw*)(raddr(cs,offset(_text,audio_len)))));	// 9064 dec	cs:[audio_len]
@@ -7227,6 +7256,7 @@ _stereo_init:
 loc_1501d:
 	R(MOV(ax, m._snd_base_port));	// 9103 mov	ax, _snd_base_port
 	R(ADD(ax, 2));	// 9104 add	ax, 2
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_1504D))), ax));	// 9105 mov	cs:[_word_1504D], ax
 	R(PUSHF);	// 9106 pushf
 	R(CLI);	// 9107 cli
@@ -7265,6 +7295,7 @@ loc_15047:
 	R(POP(ds));	// 9168 pop	ds
 	R(POP(dx));	// 9170 pop	dx
 	R(POP(ax));	// 9171 pop	ax
+	cs=seg_offset(_text);
 	R(ADD(*(dw*)(raddr(cs,offset(_text,_word_15056))), 2));	// 9172 add	cs:[_word_15056], 2
 		R(JC(loc_1507e));	// 9173 jb	short loc_1507E
 	cs=seg_offset(_text);
@@ -7272,6 +7303,7 @@ loc_15047:
 		R(JZ(_timer_int_end));	// 9175 jz	near ptr _timer_int_end
 	R(IRET);	// 9176 iret
 loc_1507e:
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_15056))), 0x0F000));	// 9180 mov	cs:[_word_15056], 0F000h
 	cs=seg_offset(_text);
 	R(DEC(*(dw*)(raddr(cs,offset(_text,audio_len)))));	// 9181 dec	cs:[audio_len]
@@ -7327,6 +7359,7 @@ loc_150e8:
 	R(CALL(k_set_timer_int));	// 9247 call	_set_timer_int
 	R(SUB(ax, 0x0F00));	// 9248 sub	ax, 0F00h
 	R(MOV(*(dw*)(raddr(cs,kloc_15120+1)), ax));	// 9249 mov	word ptr cs:[loc_15120+1], ax
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_15126))), 0x0F000));	// 9250 mov	cs:[_word_15126], 0F000h
 	R(POPF);	// 9251 popf
 	R(CLC);	// 9252 clc
@@ -7364,6 +7397,7 @@ loc_1513c:
 		R(JZ(_timer_int_end));	// 9300 jz	near ptr _timer_int_end
 	R(IRET);	// 9301 iret
 loc_1514e:
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_15126))), 0x0F000));	// 9305 mov	cs:[_word_15126], 0F000h
 		R(JMP(loc_1513c));	// 9306 jmp	short loc_1513C
  // Procedure _adlib_sndoff() start
@@ -7387,6 +7421,7 @@ _pcspeaker_init:
 	R(MOV(dx, k_pcspeaker_interrupt));	// 9338 mov	dx, offset _pcspeaker_interrupt
 	R(CALL(k_set_timer_int));	// 9339 call	_set_timer_int
 	R(SUB(ax, 0x0F00));	// 9340 sub	ax, 0F00h
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_1519B))), ax));	// 9341 mov	cs:[_word_1519B], ax
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_151A3))), 0x0F000));	// 9342 mov	cs:[_word_151A3], 0F000h
 	R(POPF);	// 9343 popf
@@ -7404,6 +7439,7 @@ _pcspeaker_interrupt:
 	R(PUSH(ds));	// 9378 push	ds
 	R(MOV(ds, bx));	// 9383 mov	ds, bx
 	bh = 0;AFFECT_ZF(0); AFFECT_SF(bh,0);	// 9384 xor	bh, bh
+	cs=seg_offset(_text);
 	R(MOV(bl, *(raddr(cs,offset(_text,_pc_timer_tbl)+bx))));	// 9391 mov	bl, cs:[_pc_timer_tbl+bx]
 	R(MOV(bh, al));	// 9392 mov	bh, al
 	R(MOV(al, bl));	// 9393 mov	al, bl
@@ -7421,6 +7457,7 @@ _pcspeaker_interrupt:
 		R(JZ(_timer_int_end));	// 9403 jz	near ptr _timer_int_end
 	R(IRET);	// 9404 iret
 loc_151c9:
+	cs=seg_offset(_text);
 	R(MOV(*(dw*)(raddr(cs,offset(_text,_word_151A3))), 0x0F000));	// 9408 mov	cs:[_word_151A3], 0F000h
 	cs=seg_offset(_text);
 	R(DEC(*(dw*)(raddr(cs,offset(_text,audio_len)))));	// 9409 dec	cs:[audio_len]
@@ -7518,6 +7555,7 @@ loc_1539a:
 	R(IRET);	// 9566 iret
  // Procedure _midi_sndoff() start
 _midi_sndoff:
+	cs=seg_offset(_text);
 	R(MOV(dx, *(dw*)(raddr(cs,offset(_text,_int8addr)+2))));	// 9574 mov	dx, word ptr cs:[_int8addr+2]
 	R(MOV(bx, *(dw*)(raddr(cs,offset(_text,_int8addr)))));	// 9575 mov	bx, word ptr cs:[_int8addr]
 	R(MOV(al, 8));	// 9576 mov	al, 8
@@ -7997,6 +8035,7 @@ loc_157e5:
 	R(RETN);	// 10211 retn
 _lc_perfrm_interpol:
 	R(MOV(al, ch));	// 10217 mov	al, ch
+	cs=seg_offset(_text);
 	R(CMP(al, *(raddr(cs,offset(_text,_byte_158B4)))));	// 10218 cmp	al, cs:[_byte_158B4]
 		R(JZ(loc_15877));	// 10219 jz	short loc_15877
 	R(MOV(*(raddr(cs,offset(_text,_byte_158B4))), al));	// 10220 mov	cs:[_byte_158B4], al
@@ -8896,6 +8935,7 @@ loc_161c9:
 		R(JMP(loc_1578c));	// 11430 jmp	loc_1578C
 _lc_perfrm_interpol2:
 	R(MOV(al, ch));	// 11434 mov	al, ch
+	cs=seg_offset(_text);
 	R(CMP(al, *(raddr(cs,offset(_text,_byte_16379)))));	// 11435 cmp	al, cs:[_byte_16379]
 		R(JZ(loc_1633c));	// 11436 jz	short loc_1633C
 	R(MOV(*(raddr(cs,offset(_text,_byte_16379))), al));	// 11437 mov	cs:[_byte_16379], al
@@ -12786,12 +12826,14 @@ loc_1917d:
 	R(MOV(m._oint8seg_1DE16, es));	// 17106 mov	_oint8seg_1DE16, es
 	R(MOV(ax, 0x3509));	// 17107 mov	ax, 3509h
 	R(_INT(0x21));	// 17108 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint9_1C1A4))), bx));	// 17111 mov	word ptr cs:[_oint9_1C1A4], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint9_1C1A4)+2)), es));	// 17112 mov	word ptr cs:[_oint9_1C1A4+2], es
 loc_191a2:
 	R(MOV(ax, 0x3524));	// 17115 mov	ax, 3524h
 loc_191a5:
 	R(_INT(0x21));	// 17118 int	21h		; AL = interrupt number
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint24_1C1AC))), bx));	// 17120 mov	word ptr cs:[_oint24_1C1AC], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_oint24_1C1AC)+2)), es));	// 17121 mov	word ptr cs:[_oint24_1C1AC+2], es
 	R(MOV(ax, 0x352F));	// 17122 mov	ax, 352Fh
@@ -12860,6 +12902,7 @@ loc_19250:
 loc_19256:
 	R(CALL(k_mouse_deinit));	// 17199 call	_mouse_deinit
 	R(PUSH(ds));	// 17200 push	ds
+	cs=seg_offset(seg001);
 	R(LDS(dx, *(dd*)(raddr(cs,offset(seg001,_oint2f_1C1B4)))));	// 17201 lds	dx, cs:[_oint2f_1C1B4]
 	R(MOV(ax, 0x252F));	// 17202 mov	ax, 252Fh
 	R(_INT(0x21));	// 17203 int	21h		; DOS -	SET INTERRUPT VECTOR
@@ -13018,6 +13061,7 @@ ax=getscan();
 	R(PUSH(ax));	// 17385 push	ax
 	R(CALL(k_mouse_hide));	// 17386 call	_mouse_hide
 	R(POP(ax));	// 17387 pop	ax
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), 0));	// 17388 mov	cs:[_key_code], 0
 	R(CMP(al, 1));	// 17389 cmp	al, 1
 		R(JZ(loc_1964e));	// 17390 jz	loc_1964E
@@ -13094,6 +13138,7 @@ loc_194ce:
 	R(MOV(ax, 0x7E0D));	// 17468 mov	ax, 7E0Dh
 	R(CALL(k_message_1be77));	// 17469 call	_message_1BE77
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 17470 xor	ax, ax
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), ax));	// 17471 mov	cs:[_key_code], ax
 loc_194da:
 //	R(XCHG(ax, *(dw*)(raddr(cs,offset(seg001,_key_code)))));	// 17474 xchg	ax, cs:[_key_code]
@@ -13233,6 +13278,7 @@ loc_19657:
 	R(ADD(ax, dx));	// 17641 add	ax, dx
 	R(ADD(ax, m._word_1DE52));	// 17642 add	ax, _word_1DE52
 	R(MOV(fs, ax));	// 17643 mov	fs, ax
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 4));	// 17644 test	cs:[_keyb_switches], 4
 		R(JNZ(loc_196b0));	// 17645 jnz	short loc_196B0
 	R(CMP(*(raddr(fs,2)), 2));	// 17646 cmp	byte ptr fs:[2], 2
@@ -13345,6 +13391,7 @@ STOSW;	// 0 stosw
 	R(LES(di, m._videomempointer));	// 17765 les	di, _videomempointer
 	R(CALL(k_write_scr));	// 17766 call	_write_scr
 loc_197bf:
+	cs=seg_offset(seg001);
 	R(CMP(*(raddr(cs,offset(seg001,_key_code))), 0));	// 17769 cmp	byte ptr cs:[_key_code],	0
 		R(JLE(loc_197bf));	// 17770 jle	short loc_197BF
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), 0));	// 17771 mov	cs:[_key_code], 0
@@ -13748,6 +13795,7 @@ MOVSD;	// 18274 movsd
 MOVSD;	// 18275 movsd
 	R(MOV(ebp, eax));	// 18276 mov	ebp, eax
 	R(INC(m._word_1DE58));	// 18277 inc	_word_1DE58
+	cs=seg_offset(seg001);
 	R(CMP(*(dw*)(raddr(cs,offset(seg001,_key_code))), 1));	// 18278 cmp	cs:[_key_code], 1
 		R(JNZ(loc_19bdd));	// 18279 jnz	short loc_19BDD
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), 0));	// 18280 mov	cs:[_key_code], 0
@@ -14256,6 +14304,7 @@ _l_right:
 	R(MUL1_1(m._byte_1DE84));	// 18893 mul	_byte_1DE84
 	R(ADD(bx, ax));	// 18894 add	bx, ax
 	R(MOV(cl, 8));	// 18895 mov	cl, 8
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 18896 test	cs:[_keyb_switches], 3
 		R(JNZ(loc_1a0e6));	// 18897 jnz	short loc_1A0E6
 	R(MOV(cl, 1));	// 18898 mov	cl, 1
@@ -14275,6 +14324,7 @@ _l_left:
 	R(MUL1_1(m._byte_1DE84));	// 18917 mul	_byte_1DE84
 	R(ADD(bx, ax));	// 18918 add	bx, ax
 	R(MOV(cl, 8));	// 18919 mov	cl, 8
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 18920 test	cs:[_keyb_switches], 3
 		R(JNZ(loc_1a118));	// 18921 jnz	short loc_1A118
 	R(MOV(cl, 1));	// 18922 mov	cl, 1
@@ -14300,6 +14350,7 @@ _l_plus:
 	R(MOV(ax, -1));	// 18953 mov	ax, -1
 	R(CALLF(k_getset_volume));	// 18954 call	_getset_volume
 	R(MOV(cx, 32));	// 18955 mov	cx, 32
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 18956 test	cs:[_keyb_switches], 3
 		R(JNZ(loc_1a14b));	// 18957 jnz	short loc_1A14B
 	R(MOV(cx, 2));	// 18958 mov	cx, 2
@@ -14315,6 +14366,7 @@ _l_minus:
 	R(MOV(ax, -1));	// 18972 mov	ax, -1
 	R(CALLF(k_getset_volume));	// 18973 call	_getset_volume
 	R(MOV(cx, 32));	// 18974 mov	cx, 32
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 18975 test	cs:[_keyb_switches], 3
 		R(JNZ(loc_1a174));	// 18976 jnz	short loc_1A174
 	R(MOV(cx, 2));	// 18977 mov	cx, 2
@@ -14329,6 +14381,7 @@ _l_rbracket:
 	R(MOV(ax, 0x0FFFF));	// 18990 mov	ax, 0FFFFh
 	R(CALLF(k_getset_amplif));	// 18991 call	_getset_amplif
 	R(MOV(cx, 1));	// 18992 mov	cx, 1
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 18993 test	cs:[_keyb_switches], 3
 		R(JNZ(loc_1a199));	// 18994 jnz	short loc_1A199
 	R(MOV(cx, 0x0A));	// 18995 mov	cx, 0Ah
@@ -14344,6 +14397,7 @@ _l_lbracket:
 	R(MOV(ax, -1));	// 19009 mov	ax, -1
 	R(CALLF(k_getset_amplif));	// 19010 call	_getset_amplif
 	R(MOV(cx, 1));	// 19011 mov	cx, 1
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 19012 test	cs:[_keyb_switches], 3
 		R(JNZ(loc_1a1c2));	// 19013 jnz	short loc_1A1C2
 	R(MOV(cx, 10));	// 19014 mov	cx, 10
@@ -14367,6 +14421,7 @@ _l_f2:
 _l_f3:
 	R(CALL(k_f3_textmetter));	// 19042 call	_f3_textmetter
 	R(MOV(m._byte_1DE85, 0));	// 19043 mov	_byte_1DE85, 0
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 3));	// 19044 test	cs:[_keyb_switches], 3
 		R(JZ(_keyb_screen_loop));	// 19045 jz	_keyb_screen_loop
 	R(MOV(m._byte_1DE85, 1));	// 19046 mov	_byte_1DE85, 1
@@ -14400,6 +14455,7 @@ __disp = (dw)(*(dw*)&m.off_1DE3C);
 	R(CALL(__disp));	// 19082 call	[off_1DE3C]
 		R(JMP(_keyb_screen_loop));	// 19083 jmp	_keyb_screen_loop
 _l_f9:
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x4));	// 19087 test	cs:[_keyb_switches], 100b
 		R(JNZ(_l_f11));	// 19088 jnz	short _l_f11
 	R(CALLF(k_get_playsettings));	// 19089 call	_get_playsettings
@@ -14407,6 +14463,7 @@ _l_f9:
 	R(CALLF(k_set_playsettings));	// 19091 call	_set_playsettings
 		R(JMP(_keyb_screen_loop));	// 19092 jmp	_keyb_screen_loop
 _l_f10:
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x4));	// 19096 test	cs:[_keyb_switches], 100b
 		R(JNZ(_l_f12));	// 19097 jnz	short _l_f12
 	R(CALLF(k_get_playsettings));	// 19098 call	_get_playsettings
@@ -14427,9 +14484,11 @@ loc_1a28f:
 	R(XOR(*(raddr(ds,offset(dseg,_configword)+1)), 1));	// 19121 xor	byte ptr [_configword+1], 1
 		R(JMP(_keyb_screen_loop));	// 19122 jmp	_keyb_screen_loop
 _l_tab:
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x4));	// 19126 test	cs:[_keyb_switches], 100b
 		R(JNZ(loc_1a2c1));	// 19127 jnz	short loc_1A2C1
 loc_1a2a0:
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x8));	// 19130 test	cs:[_keyb_switches], 1000b
 		R(JNZ(loc_1a2d1));	// 19131 jnz	short loc_1A2D1
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x3));	// 19132 test	cs:[_keyb_switches], 11b
@@ -14458,6 +14517,7 @@ loc_1a2e1:
 	R(CALLF(ksub_12cad));	// 19162 call	sub_12CAD
 		R(JMP(_keyb_screen_loop));	// 19163 jmp	_keyb_screen_loop
 _l_numlock:
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x4));	// 19167 test	cs:[_keyb_switches], 100b
 		R(JZ(_keyb_screen_loop));	// 19168 jz	_keyb_screen_loop
 	R(MOV(al, 0x0FF));	// 19169 mov	al, 0FFh
@@ -14489,10 +14549,12 @@ _l_1_end:
 		R(JMP(_keyb_screen_loop));	// 19201 jmp	_keyb_screen_loop
 loc_1a33e:
 	R(SUB(al, 2));	// 19205 sub	al, 2
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x3));	// 19206 test	cs:[_keyb_switches], 11b
 		R(JZ(loc_1a34b));	// 19207 jz	short loc_1A34B
 	R(ADD(al, 10));	// 19208 add	al, 10
 loc_1a34b:
+	cs=seg_offset(seg001);
 	R(TEST(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x4));	// 19211 test	cs:[_keyb_switches], 100b
 		R(JZ(loc_1a356));	// 19212 jz	short loc_1A356
 	R(ADD(al, 20));	// 19213 add	al, 20
@@ -17463,6 +17525,7 @@ _graph_1c070:
 	R(RETN);	// 22786 retn
  // Procedure _int9_keyb() start
 _int9_keyb:
+	cs=seg_offset(seg001);
 	R(CMP(*(raddr(cs,offset(seg001,_byte_1C1B8))), 1));	// 22795 cmp	cs:[_byte_1C1B8], 1
 		R(JZ(loc_1c11f));	// 22796 jz	loc_1C11F
 	R(PUSH(ax));	// 22797 push	ax
@@ -17492,6 +17555,7 @@ loc_1c0a5:
 		R(JZ(_l_alt));	// 22822 jz	short _l_alt
 	R(CMP(al, 0x0B8));	// 22823 cmp	al, 0B8h ; '?'
 		R(JZ(_l_altup));	// 22824 jz	short _l_altup
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_key_code))), ax));	// 22825 mov	cs:[_key_code], ax
 loc_1c0c9:
 	R(IN(al, 0x61));	// 22829 in	al, 61h		; PC/XT	PPI port B bits:
@@ -17504,30 +17568,39 @@ loc_1c0c9:
 	R(POP(ax));	// 22857 pop	ax
 	R(IRET);	// 22858 iret
 _l_rshift:
+	cs=seg_offset(seg001);
 	R(OR(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 1));	// 22862 or	cs:[_keyb_switches], 1
 		R(JMP(loc_1c0c9));	// 22863 jmp	short loc_1C0C9
 _l_rshiftup:
+	cs=seg_offset(seg001);
 	R(AND(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), ~1));	// 22867 and	cs:[_keyb_switches], not	1
 		R(JMP(loc_1c0c9));	// 22868 jmp	short loc_1C0C9
 _l_lshift:
+	cs=seg_offset(seg001);
 	R(OR(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x2));	// 22872 or	cs:[_keyb_switches], 10b
 		R(JMP(loc_1c0c9));	// 22873 jmp	short loc_1C0C9
 _l_lshiftup:
+	cs=seg_offset(seg001);
 	R(AND(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), ~0x2));	// 22877 and	cs:[_keyb_switches], not	10b
 		R(JMP(loc_1c0c9));	// 22878 jmp	short loc_1C0C9
 _l_ctrl:
+	cs=seg_offset(seg001);
 	R(OR(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x4));	// 22882 or	cs:[_keyb_switches], 100b
 		R(JMP(loc_1c0c9));	// 22883 jmp	short loc_1C0C9
 _l_lctrlup:
+	cs=seg_offset(seg001);
 	R(AND(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), ~0x4));	// 22887 and	cs:[_keyb_switches], not	100b
 		R(JMP(loc_1c0c9));	// 22888 jmp	short loc_1C0C9
 _l_alt:
+	cs=seg_offset(seg001);
 	R(OR(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), 0x8));	// 22893 or	cs:[_keyb_switches], 1000b
 		R(JMP(loc_1c0c9));	// 22894 jmp	short loc_1C0C9
 _l_altup:
+	cs=seg_offset(seg001);
 	R(AND(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), ~0x8));	// 22898 and	cs:[_keyb_switches], not	1000b
 		R(JMP(loc_1c0c9));	// 22899 jmp	short loc_1C0C9
 _l_escaped_scancode:
+	cs=seg_offset(seg001);
 	R(MOV(*(raddr(cs,offset(seg001,_prev_scan_code))), al));	// 22904 mov	cs:[_prev_scan_code], al
 		R(JMP(loc_1c0c9));	// 22905 jmp	short loc_1C0C9
 loc_1c11f:
@@ -17540,6 +17613,7 @@ _get_keybsw:
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 22918 xor	ax, ax
 	R(MOV(es, ax));	// 22919 mov	es, ax
 	R(MOV(ax, *(dw*)(raddr(es,0x17))));	// 22921 mov	ax, es:[17h]
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_keyb_switches))), ax));	// 22922 mov	cs:[_keyb_switches], ax
 	R(POP(es));	// 22923 pop	es
 	R(RETN);	// 22925 retn
@@ -17548,6 +17622,7 @@ _set_keybsw:
 	R(PUSH(es));	// 22933 push	es
 	ax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);	// 22934 xor	ax, ax
 	R(MOV(es, ax));	// 22935 mov	es, ax
+	cs=seg_offset(seg001);
 	R(MOV(ax, *(dw*)(raddr(cs,offset(seg001,_keyb_switches)))));	// 22937 mov	ax, cs:[_keyb_switches]
 	R(MOV(*(dw*)(raddr(es,0x17)), ax));	// 22938 mov	es:[17h], ax
 	R(POP(es));	// 22939 pop	es
@@ -17631,6 +17706,7 @@ _dosexec:
 		R(JZ(loc_1c209));	// 23063 jz	short loc_1C209
 	R(MOV(ax, 0x351A));	// 23064 mov	ax, 351Ah
 	R(_INT(0x21));	// 23065 int	21h		; DOS -	2+ - GET INTERRUPT VECTOR
+	cs=seg_offset(seg001);
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_int1Avect))), bx));	// 23068 mov	word ptr cs:[_int1Avect], bx
 	R(MOV(*(dw*)(raddr(cs,offset(seg001,_int1Avect)+2)), es));	// 23069 mov	word ptr cs:[_int1Avect+2], es
 	R(PUSH(ds));	// 23070 push	ds
@@ -17644,6 +17720,7 @@ loc_1c209:
 	R(MOV(si, offset(dseg,_byte_1DD3F)));	// 23083 mov	si, offset _byte_1DD3F ;	str
 	R(CALL(k_dosgetcurdir));	// 23084 call	_dosgetcurdir
 	R(MOV(al, 1));	// 23085 mov	al, 1
+	cs=seg_offset(seg001);
 	R(MOV(*(raddr(cs,offset(seg001,_byte_1C1B8))), al));	// 23086 mov	cs:[_byte_1C1B8], al
 	R(CALLF(ksub_12d35));	// 23087 call	sub_12D35
 	R(MOV(es, m._esseg_atstart));	// 23088 mov	es, _esseg_atstart
@@ -17662,6 +17739,7 @@ loc_1c209:
 	R(POP(ds));	// 23105 pop	ds
 loc_1c23e:
 	R(MOV(al, 0));	// 23108 mov	al, 0
+	cs=seg_offset(seg001);
 	R(MOV(*(raddr(cs,offset(seg001,_byte_1C1B8))), al));	// 23109 mov	cs:[_byte_1C1B8], al
 	R(CALLF(ksub_12d35));	// 23110 call	sub_12D35
 	R(TEST(m._byte_1DE78, 2));	// 23111 test	_byte_1DE78, 2

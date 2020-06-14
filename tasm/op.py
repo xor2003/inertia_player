@@ -262,6 +262,20 @@ class _scasb(baseop):
     def visit(self, visitor):
         return visitor._scasb()
 
+class _scasw(baseop):
+    def __init__(self, arg):
+        pass
+
+    def visit(self, visitor):
+        return visitor._scasw()
+
+class _scasd(baseop):
+    def __init__(self, arg):
+        pass
+
+    def visit(self, visitor):
+        return visitor._scasd()
+
 class _cmpsb(baseop):
     def __init__(self, arg):
         pass

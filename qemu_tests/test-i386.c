@@ -25,8 +25,8 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <errno.h>
-#include <sys/ucontext.h>
-#include <sys/mman.h>
+//#include <sys/ucontext.h>
+//#include <sys/mman.h>
 
 #if !defined(__x86_64__)
 //#define TEST_VM86
@@ -1496,8 +1496,8 @@ void test_string(void)
    TEST_STRING(scas, "repz ");
    TEST_STRING(scas, "repnz ");
    TEST_STRING(cmps, "");
-print_buf((str_buffer + sizeof(str_buffer) / 2)-17*4, 18*4);printf("~");
-print_buf((str_buffer + sizeof(str_buffer) / 2)-17*4+16, 18*4);
+//print_buf((str_buffer + sizeof(str_buffer) / 2)-17*4, 18*4);printf("~");
+//print_buf((str_buffer + sizeof(str_buffer) / 2)-17*4+16, 18*4);
    TEST_STRING(cmps, "repz ");
    TEST_STRING(cmps, "repnz ");
 }

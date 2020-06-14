@@ -5,8 +5,12 @@ export OPT="-Og -m32 -mno-ms-bitfields -Wno-multichar -Wno-narrowing -I../ -L../
 #   -DDEBUG=3
 #export CC="/Mingw/bin/g++"
 export CC="g++"
+
+#cd ..
 #$CC $OPT asm.cpp -c
 #$CC $OPT memmgr.cpp -c
+#cd asmTests
+     
 #$CC $OPT $1.cpp -E >$1.e
 $CC $OPT $1.cpp -c
 $CC  $1.o ../asm.o ../memmgr.o /mingw32/lib/libpdcurses.dll.a -o $1 $OPT
