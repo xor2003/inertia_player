@@ -116,20 +116,24 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
  #define CMPSB \
 	{  \
 			db* src=realAddress(esi,ds); db* dest=realAddress(edi,es); \
-			CMP(*dest, *src); edi+=(DF==0)?1:-1; esi+=(DF==0)?1:-1; \
+			CMP(*src, *dest); edi+=(DF==0)?1:-1; esi+=(DF==0)?1:-1; \
 	}
  #define CMPSW \
 	{  \
 			dw* src=(dw*)realAddress(esi,ds); dw* dest=(dw*)realAddress(edi,es); \
-			CMP(*dest, *src); edi+=(DF==0)?2:-2; esi+=(DF==0)?2:-2; \
+			CMP(*src, *dest); edi+=(DF==0)?2:-2; esi+=(DF==0)?2:-2; \
 	}
+
 //  printf("~%08X_",*(dd*)realAddress(esi,ds)); printf("%08X~",*(dd*)realAddress(edi,es)); \
+
  #define CMPSD \
 	{ \
 			dd* src=(dd*)realAddress(esi,ds); dd* dest=(dd*)realAddress(edi,es); \
-			CMP(*dest, *src); edi+=(DF==0)?4:-4; esi+=(DF==0)?4:-4; \
+			CMP(*src, *dest); edi+=(DF==0)?4:-4; esi+=(DF==0)?4:-4; \
 	}
+
 //printf("~%02X",al);printf("%02X~",*realAddress(edi,es));
+
  #define SCASB \
 	{  \
 			CMP(al, *(db*)realAddress(edi,es)); edi+=(DF==0)?1:-1; \
@@ -178,30 +182,30 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
  #define CMPSB \
 	{  \
 			db* src=realAddress(si,ds); db* dest=realAddress(di,es); \
-			CMP(*dest, *src); di+=(DF==0)?1:-1; si+=(DF==0)?1:-1; \
+			CMP(*src, *dest); di+=(DF==0)?1:-1; si+=(DF==0)?1:-1; \
 	}
  #define CMPSW \
 	{  \
 			dw* src=(dw*)realAddress(si,ds); dw* dest=(dw*)realAddress(di,es); \
-			CMP(*dest, *src); di+=(DF==0)?2:-2; si+=(DF==0)?2:-2; \
+			CMP(*src, *dest); di+=(DF==0)?2:-2; si+=(DF==0)?2:-2; \
 	}
  #define CMPSD \
 	{  \
 			dd* src=(dd*)realAddress(si,ds); dd* dest=(dd*)realAddress(di,es); \
-			CMP(*dest, *src); di+=(DF==0)?4:-4; si+=(DF==0)?4:-4; \
+			CMP(*src, *dest); di+=(DF==0)?4:-4; si+=(DF==0)?4:-4; \
 	}
 
  #define SCASB \
 	{  \
-			CMP(*realAddress(di,es), al); di+=(DF==0)?1:-1; \
+			CMP(al, *realAddress(di,es)); di+=(DF==0)?1:-1; \
 	}
  #define SCASW \
 	{  \
-			CMP(*(dw*)realAddress(di,es), ax); di+=(DF==0)?2:-2; \
+			CMP(ax, *(dw*)realAddress(di,es)); di+=(DF==0)?2:-2; \
 	}
  #define SCASD \
 	{  \
-			CMP(*(dd*)realAddress(di,es), eax); di+=(DF==0)?4:-4; \
+			CMP(eax, *(dd*)realAddress(di,es)); di+=(DF==0)?4:-4; \
 	}
 
  #define LODS(addr,s) {memcpy (((db *)&eax), &(addr), s);; si+=(DF==0)?s:-s;} // TODO not always si!!!
