@@ -2593,12 +2593,14 @@ void test_mulb(dd op0, dd op1)
     s1 = op1;
     res = s0;
     flags = 0;
-    asm ("push %4\nPOPF;"
-         "mulb %b2\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags)
-         : "q" (s1), "0" (res), "1" (flags));
+        eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(MUL1_1((db)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+        res=eax;
+
     printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n",
            "mulb", s0, s1, res, flags & (0x0001));
 }
@@ -2610,13 +2612,15 @@ void test_mulw(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
-    asm ("push %5\n"
-         "POPF;"
-         "mulw %w3\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags), "=d" (resh)
-         : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+        edx=resh;
+        eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(MUL1_2((dw)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+        resh=edx;
+        res=eax;
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "mulw", op0h, op0, s1, resh, res, flags & (0x0001));
 }
@@ -2628,13 +2632,15 @@ void test_mull(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
-    asm ("push %5\n"
-         "POPF;"
-         "mull %k3\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags), "=d" (resh)
-         : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+        edx=resh;
+        eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(MUL1_4((dd)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+        resh=edx;
+        res=eax;
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "mull", op0h, op0, s1, resh, res, flags & (0x0001));
 }
@@ -2650,6 +2656,7 @@ void test_imulb(dd op0, dd op1)
     s1 = op1;
     res = s0;
     flags = 0;
+/*
     asm ("push %4\n"
          "POPF;"
          "imul""b %b2\n"
@@ -2657,6 +2664,15 @@ void test_imulb(dd op0, dd op1)
          "pop %1\n"
          : "=a" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
+*/
+        eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IMUL1_1((db)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+        res=eax;
+
     printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n",
            "imulb", s0, s1, res, flags & (0x0001));
 }
@@ -2668,6 +2684,7 @@ void test_imulw(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
+/*
     asm ("push %5\n"
          "POPF;"
          "imulw %w3\n"
@@ -2675,6 +2692,16 @@ void test_imulw(dd op0h, dd op0, dd op1)
          "pop %1\n"
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+*/
+        edx=resh;
+        eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IMUL1_2((dw)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+        resh=edx;
+        res=eax;
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "imulw", op0h, op0, s1, resh, res, flags & (0x0001));
 }
@@ -2686,13 +2713,15 @@ void test_imull(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
-    asm ("push %5\n"
-         "POPF;"
-         "imull %k3\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags), "=d" (resh)
-         : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+        edx=resh;
+        eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IMUL1_4((dd)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+        resh=edx;
+        res=eax;
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "imull", op0h, op0, s1, resh, res, flags & (0x0001));
 }
@@ -2705,6 +2734,7 @@ void test_imulw2(dd op0, dd op1)
     s1 = op1;
     res = s0;
     flags = 0;
+/*
     asm volatile ("push %4\n"
          "POPF;"
          "imulw %w2, %w0\n"
@@ -2712,6 +2742,13 @@ void test_imulw2(dd op0, dd op1)
          "pop %1\n"
          : "=q" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
+*/
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IMUL2_2(*(dw*)&res,(dw)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+
     printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n",
            "imulw", s0, s1, res, flags & (0x0001));
 }
@@ -2723,6 +2760,7 @@ void test_imull2(dd op0, dd op1)
     s1 = op1;
     res = s0;
     flags = 0;
+/*
     asm volatile ("push %4\n"
          "POPF;"
          "imull %k2, %k0\n"
@@ -2730,6 +2768,13 @@ void test_imull2(dd op0, dd op1)
          "pop %1\n"
          : "=q" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
+*/
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IMUL2_4(*(dd*)&res,(dd)s1));	// 8690 mul     cl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+
     printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n",
            "imull", s0, s1, res, flags & (0x0001));
 }

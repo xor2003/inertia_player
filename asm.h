@@ -559,21 +559,21 @@ else
 		AFFECT_SF(a,a);} 
 
 // #num_args _ #bytes
-#define IMUL1_1(a) {ax=(int16_t)((int8_t)al)*((int8_t)(a));}
-#define IMUL1_2(a) {int32_t t=(int32_t)((int16_t)ax)*((int16_t)(a));ax=t;dx=t>>16;}
-#define IMUL1_4(a) {int64_t t=(int64_t)((int32_t)eax)*((int32_t)(a));eax=t;edx=t>>32;}
-#define IMUL2_2(a,b) {a = ((int16_t)(a)) * ((int16_t)(b));}
-#define IMUL2_4(a,b) {a = ((int32_t)(a)) * ((int32_t)(b));}
-#define IMUL3_2(a,b,c) {a = ((int16_t)(b)) * ((int16_t)(c));}
-#define IMUL3_4(a,b,c) {a = ((int32_t)(b)) * ((int32_t)(c));}
+#define IMUL1_1(a) {ax=((int8_t)al)*((int8_t)(a)); OF=CF=(ax & 0xff80)==0xff80||(ax & 0xff80)==0?false:true;}
+#define IMUL1_2(a) {int32_t t=(int32_t)((int16_t)ax)*((int16_t)(a));ax=t;dx=t>>16; OF=CF=(t & 0xffff8000)==0xffff8000||(t & 0xffff8000)==0?false:true;}
+#define IMUL1_4(a) {int64_t t=(int64_t)((int32_t)eax)*((int32_t)(a));eax=t;edx=t>>32; OF=CF=(t & 0xffffffff80000000)==0xffffffff80000000||(t & 0xffffffff80000000)==0?false:true;}
+#define IMUL2_2(a,b) {int32_t t = ((int16_t)(a)) * ((int16_t)(b)); a=t;OF=CF=(t>= -32768)  && (t<=32767)?false:true;}
+#define IMUL2_4(a,b) {int64_t t = ((int64_t)(a)) * ((int32_t)(b)); a=t;OF=CF=(t>=-((int64_t)(2147483647)+1)) && (t<=(int64_t)2147483647)?false:true;}
+#define IMUL3_2(a,b,c) {int32_t t = ((int16_t)(b)) * ((int16_t)(c)); a=t;OF=CF=(t>= -32768)  && (t<=32767)?false:true;}
+#define IMUL3_4(a,b,c) {int64_t t = ((int64_t)(b)) * ((int32_t)(c)); a=t;OF=CF=(t>=-((int64_t)(2147483647)+1)) && (t<=(int64_t)2147483647)?false:true;}
 
-#define MUL1_1(a) {ax=(dw)al*(a);}
-#define MUL1_2(a) {dd t=(dd)ax*(a);ax=t;dx=t>>16;}
-#define MUL1_4(a) {uint64_t t=(dq)eax*(a);eax=t;edx=t>>32;}
-#define MUL2_2(a,b) {a *= (b);}
-#define MUL2_4(a,b) {a *= (b);}
-#define MUL3_2(a,b,c) {a = (b) * (c);}
-#define MUL3_4(a,b,c) {a = (b) * (c);}
+#define MUL1_1(a) {ax=(dw)al*(a); OF=CF=ah;}
+#define MUL1_2(a) {dd t=(dd)ax*(a);ax=t;dx=t>>16; OF=CF=dx;}
+#define MUL1_4(a) {dq t=(dq)eax*(a);eax=t;edx=t>>32; OF=CF=edx;}
+#define MUL2_2(a,b) {dd t=(dd)(a)*(b);a=t; OF=CF=t>>16;}
+#define MUL2_4(a,b) {dq t=(dq)(a)*(b);a=t; OF=CF=t>>32;}
+#define MUL3_2(a,b,c) {dd t=(dd)(b)*(c);a=t; OF=CF=t>>16;}
+#define MUL3_4(a,b,c) {dq t=(dq)(b)*(c);a=t; OF=CF=t>>32;}
 
 #define IDIV1(a) {int16_t t=ax;al=t/((int8_t)a); ah=t%((int8_t)a);}
 #define IDIV2(a) {int32_t t=(((int32_t)(int16_t)dx)<<16)|ax; ax=t/((int16_t)a);dx=t%((int16_t)a);}

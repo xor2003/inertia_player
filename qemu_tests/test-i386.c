@@ -504,11 +504,14 @@ void test_loop(void)
 }
 
 #undef CC_MASK
+/*
 #ifdef TEST_P4_FLAGS
 #define CC_MASK (CC_C | CC_P | CC_Z | CC_S | CC_O | CC_A)
 #else
 #define CC_MASK (CC_O | CC_C)
 #endif
+*/
+#define CC_MASK (CC_C)
 
 #define OP mul
 #include "test-i386-muldiv.h"
