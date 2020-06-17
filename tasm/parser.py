@@ -215,13 +215,12 @@ class Parser(object):
                         v = int(v[:-1], 2)
                         #print "~2~ %i" %v
 
-                '''
                 try:
                         vv=eval(v)
                         v=vv
                 except:
                         pass
-                '''
+
                 #print "~4~ %s" %v
                 return int(v)
 
@@ -241,7 +240,7 @@ class Parser(object):
                                         r.append(ord(v[i]))
                                 continue
                         
-                        m = re.match(r'(\w+)\s+dup\s*\((\s*\S+\s*)\)', v)
+                        m = re.match(r'([\w\*\+]+)\s+dup\s*\((\s*.+\s*)\)', v, re.IGNORECASE)
                         if m is not None:
                                 #we should parse that
                                 n = self.parse_int(m.group(1))
@@ -324,7 +323,7 @@ class Parser(object):
                         if is_string and v.isdigit():
                                 v = "'\\" +str(hex(int(v)))[1:] + "'"
                         '''
-                        m = re.match(r'(\w+)\s+dup\s*\((\s*\S+\s*)\)', v)
+                        m = re.match(r'([\w\+\*]+)\s+dup\s*\((\s*.+\s*)\)', v, re.IGNORECASE)
                         if m is not None:
                                 #we should parse that
                                 n = self.parse_int(m.group(1))

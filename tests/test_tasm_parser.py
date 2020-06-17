@@ -103,7 +103,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'4 dup (5)']),[5, 5, 5, 5])
         self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'4']),[4])
         self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'5 dup (0)']),[0, 0, 0, 0, 0])
-        self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'5*5 dup (0', u'testEqu*2', u'2*2', u'3)']),[0, 0, 0, 0])
+        self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'5*5 dup (0', u'testEqu*2', u'2*2', u'3)']),[0, 0, 4, 0])
         self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'6']),[6])
 
         self.assertEqual(parser_instance.convert_data_to_blob(width=2,data=[u'11']),[11, 0])
@@ -190,7 +190,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5 dup (0)'],label=u'var2'),(['{', '0,', '0,', '0,', '0,', '0', '}', u', // var2\n'], ['db var2[5]', ';\n'], 5))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5*5 dup (0', u'testEqu*2', u'2*2', u'3)'],label=u'var3'),(['{', '0,', '0,', '0,', '0', '}', u', // var3\n'], ['db var3[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5*5 dup (0', u'testEqu*2', u'2*2', u'3)'],label=u'var3'),(['{', '0,', '0,', '4,', '0', '}', ', // var3\n'], ['db var3[4]', ';\n'], 4))
 
         parser_instance = Parser([])
         self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'6'],label=u'var1'),(['', '6', u', // var1\n'], [u'db var1', ';\n'], 1))
@@ -244,7 +244,9 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.convert_data_to_c(width=1,data=["'abcde\0\0'"],label=u'var5'),(['{', "'a','b','c','d','e','\\0','\\0'", '}', ', // var5\n'], ['char var5[7]', ';\n'], 0))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,label='_a_mod_nst_669_s',data=["'.MOD.'", '0', '0', '0', '0']),(['', '".MOD.\\0\\0\\0"', ', // _a_mod_nst_669_s\n'], ['char _a_mod_nst_669_s[56]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,label='_a_mod_nst_669_s',data=["'.MOD.'", '0', '0', '0', '0']),(['', '".MOD.\\0\\0\\0"', ', // _a_mod_nst_669_s\n'], ['char _a_mod_nst_669_s[9]', ';\n'], 4))
+
+        #error self.assertEqual(parser_instance.convert_data_to_c(width=1,label=u'var3',data=["'*'", '10', '11', '3 * 15 DUP(0)']),(['', '"*\\n\\x0b"', ', // var3\n'], ['char var3[4]', ';\n'], 3))
 
     @patch.object(logging, 'debug')
     def test_fix_dollar(self, mock_debug):
@@ -498,21 +500,14 @@ class ParserTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             parser_instance.parse_int(v=u'word ptr var5')
 
-        with self.assertRaises(ValueError):
-            parser_instance.parse_int(v=u'-1-(-2+3)')
-
-        with self.assertRaises(ValueError):
-            parser_instance.parse_int(v=u'14*320')
-
-        with self.assertRaises(ValueError):
-            parser_instance.parse_int(v=u'2*2')
-
-        with self.assertRaises(ValueError):
-            parser_instance.parse_int(v=u'3*4')
 
         with self.assertRaises(ValueError):
             parser_instance.parse_int(v=u'ah')
 
+        self.assertEqual(parser_instance.parse_int(v=u'14*320'),4480)
+        self.assertEqual(parser_instance.parse_int(v=u'2*2'),4)
+        self.assertEqual(parser_instance.parse_int(v=u'3*4'),12)
+        self.assertEqual(parser_instance.parse_int(v=u'-1-(-2+3)'),-2)
         self.assertEqual(parser_instance.parse_int(v=u'-1'),-1)
         self.assertEqual(parser_instance.parse_int(v=u'-11'),-11)
         self.assertEqual(parser_instance.parse_int(v=u'-2'),-2)
