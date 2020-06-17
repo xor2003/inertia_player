@@ -314,7 +314,8 @@ class Cpp(object):
 
         expr = re.sub(r'^\(\s*(.*?)\s*\)$', '\\1', expr)  # (expr)
         logging.debug("wo curls " + expr)
-        expr = re.sub(r'\bnot\b', '~', expr)  # (expr)
+        expr = re.sub(r'\bnot\b', '~', expr)
+        expr = re.sub(r'\band\b', '&', expr)
 
         size = self.get_size(expr) if def_size == 0 else def_size
 
