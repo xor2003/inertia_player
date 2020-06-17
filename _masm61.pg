@@ -1,9 +1,6 @@
 module
   :  directiveList?  endDir
   ; 
-endOfLine
-  : /[\r\n]+/
-  ;
 lineReminder
   : comment? endOfLine
   ; 
@@ -68,10 +65,10 @@ bitFieldSize
   : constExpr
   ; 
 ifcexpr
-  : ".IF" cExpr
+  : _IF cExpr
   ;
 blockStatements
-  : directiveList| ".CONTINUE" ifcexpr? | ".BREAK" ifcexpr?
+  : directiveList| _CONTINUE ifcexpr? | _BREAK ifcexpr?
   ; 
 bool
   : "TRUE" | "FALSE" 
@@ -81,9 +78,6 @@ byteRegister
   ; 
 cExpr
   : aExpr| cExpr ":" aExpr
-  ; 
-character
-  : /[^\n\r]/
   ; 
 charList
   : character| charList character
@@ -96,9 +90,6 @@ commDecl
   ; 
 commDir
   : "COMM" commList lineReminder
-  ; 
-comment
-  : /;[^\n\r]*/
   ; 
 commentDir
   : "COMMENT" delimiter text text delimiter text lineReminder
@@ -131,23 +122,23 @@ controlDir
   : controlIf| controlBlock
   ; 
 controlElseif
-  : ".ELSEIF" cExpr lineReminder directiveList controlElseif? 
+  : _ELSEIF cExpr lineReminder directiveList controlElseif? 
   ; 
 
 elsedirectiveList
-  : ".ELSE" lineReminder directiveList
+  : _ELSE lineReminder directiveList
   ;
 controlIf
-  : ".IF" cExpr lineReminder directiveList controlElseif? elsedirectiveList? ".ENDIF" lineReminder
+  : _IF cExpr lineReminder directiveList controlElseif? elsedirectiveList? _ENDIF lineReminder
   ; 
 coprocessor
-  : ".8087" | ".287" | ".387" | ".NO87" 
+  : _8087 | _287 | _387 | _NO87 
   ; 
 crefDir
   : crefOption lineReminder
   ; 
 crefOption
-  : ".CREF" | ".XCREF" idList? | ".NOCREF" idList? 
+  : _CREF | _XCREF idList? | _NOCREF idList? 
   ; 
 cxzExpr
   : expr| "!" expr| expr  "==" expr| expr  "!=" expr
@@ -163,9 +154,6 @@ dataItem
   ; 
 dataType
   : "BYTE" | "SBYTE" | "WORD" | "SWORD" | "DWORD" | "SDWORD" | "FWORD" | "QWORD" | "TBYTE" | "REAL4" | "REAL8" | "REAL10" 
-  ; 
-decdigit
-  : /\d/
   ; 
 decNumber
   : decdigit| decNumber decdigit
@@ -210,7 +198,7 @@ e09
   : "OFFSET" e10| "SEG" e10| "LROFFSET" e10| "TYPE" e10| "THIS" e10| e09 "PTR" e10| e09 ":" e10| e10
   ; 
 e10
-  : e10 "." e11| e10  expr? | e11
+  : e10 _DOT e11| e10  expr? | e11
   ; 
 e11
   : "(" expr ")"|  expr? | "WIDTH" id| "MASK" id| "SIZE" sizeArg| "SIZEOF" sizeArg| "LENGTH" id| "LENGTHOF" id | recordConst| string| constant| type| id| "$"| segmentRegister| register| "ST" | "ST" "(" expr ")"
@@ -243,10 +231,10 @@ errorDir
   : errorOpt lineReminder
   ; 
 errorOpt
-  : ".ERR" textItem? | ".ERRE" constExpr optText? | ".ERRNZ" constExpr optText? | ".ERRB" textItem optText? | ".ERRNB" textItem optText? | ".ERRDEF" id  optText? | ".ERRNDEF" id optText? | ".ERRDIF" textItem "," textItem  optText? | ".ERRDIFI" textItem "," textItem  optText? | ".ERRIDN" textItem "," textItem  optText? | ".ERRIDNI" textItem "," textItem  optText? | ".ERR1" textItem? | ".ERR2" textItem?  
+  : _ERR textItem? | _ERRE constExpr optText? | _ERRNZ constExpr optText? | _ERRB textItem optText? | _ERRNB textItem optText? | _ERRDEF id  optText? | _ERRNDEF id optText? | _ERRDIF textItem "," textItem  optText? | _ERRDIFI textItem "," textItem  optText? | _ERRIDN textItem "," textItem  optText? | _ERRIDNI textItem "," textItem  optText? | _ERR1 textItem? | _ERR2 textItem?  
   ; 
 exitDir
-  : ".EXIT" expr?  lineReminder
+  : _EXIT expr?  lineReminder
   ; 
 exitmDir
   : "EXITM" | "EXITM" textItem
@@ -255,7 +243,7 @@ exponent
   : "E"  sign?  decNumber
   ; 
 expr
-  : "SHORT" e05| ".TYPE" e01| "OPATTR" e01| e01
+  : "SHORT" e05| _TYPE e01| "OPATTR" e01| e01
   ; 
 exprList
   : expr| exprList  ","  expr
@@ -300,7 +288,7 @@ flagName
   : "ZERO? "| "CARRY?" | "OVERFLOW?"|"SIGN?"| "PARITY?"
   ; 
 floatNumber 
-  :  sign?  decNumber "." decNumber?   exponent? | digits "R"| digits "r"
+  :  sign?  decNumber _DOT decNumber?   exponent? | digits "R"| digits "r"
   ; 
 forcDir
   : "FORC" | "IRPC" 
@@ -334,12 +322,6 @@ groupDir
   ; 
 groupId
   : id
-  ; 
-hexdigit
-  : /[A-Fa-f]/
-  ; 
-id
-  : /[A-Za-z]/ | id /[A-Za-z]/| id decdigit
   ; 
 idList
   : id| idList "," id
@@ -402,7 +384,7 @@ listDir
   : listOption lineReminder
   ; 
 listOption
-  : ".LIST" | ".NOLIST" | ".XLIST" | ".LISTALL" | ".LISTIF" | ".LFCOND" | ".NOLISTIF" | ".SFCOND" | ".TFCOND" | ".LISTMACROALL" | ".LALL" | ".NOLISTMACRO" | ".SALL" | ".LISTMACRO" | ".XALL" 
+  : _LIST | _NOLIST | _XLIST | _LISTALL | _LISTIF | _LFCOND | _NOLISTIF | _SFCOND | _TFCOND | _LISTMACROALL | _LALL | _NOLISTMACRO | _SALL | _LISTMACRO | _XALL 
   ; 
 localDef
   : "LOCAL" idList lineReminder
@@ -1082,7 +1064,7 @@ commamodelOptlist
   : "," modelOptlist
   ;
 modelDir
-  : ".MODEL" memOption commamodelOptlist? lineReminder
+  : _MODEL memOption commamodelOptlist? lineReminder
   ; 
 modelOpt
   : langType| stackOption 
@@ -1178,8 +1160,8 @@ procDir
   : procId "PROC" pOptions?  brmacroArgList?  usesRegs?   procParmList? 
   ; 
 processor
-  : ".8086" | ".186" | ".286" | ".286C" | ".286P" | ".386" | ".386C" | ".386P" | ".486" | ".486P" | ".586" | ".586P" |
- ".686" | ".686P" | ".K3D" | ".MMX" | ".XMM" | ".8086" 
+  : _8086 | _186 | _286 | _286C | _286P | _386 | _386C | _386P | _486 | _486P | _586 | _586P |
+ _686 | _686P | _K3D | _MMX | _XMM | _8086 
   ; 
 processorDir
   : processor lineReminder | coprocessor lineReminder
@@ -1241,10 +1223,7 @@ quote
   : '"' | "'"
   ; 
 radixDir
-  : ".RADIX" constExpr lineReminder
-  ; 
-radixOverride
-  : /[hoqtyHOQTY]/
+  : _RADIX constExpr lineReminder
   ; 
 recordConst
   : recordTag "{" oldRecordFieldList "}"| recordTag "<" oldRecordFieldList ">"
@@ -1274,7 +1253,7 @@ relOp
   : "EQ" | "NE" | "LT" | "LE" | "GT" | "GE" 
   ; 
 repeatBlock
-  : ".REPEAT" lineReminder blockStatements lineReminder untilDir lineReminder
+  : _REPEAT lineReminder blockStatements lineReminder untilDir lineReminder
   ; 
 repeatDir
   : "REPEAT" | "REPT" 
@@ -1289,7 +1268,7 @@ segAttrib
   : "PUBLIC" | "STACK" | "COMMON" | "MEMORY" | "AT" constExpr| "PRIVATE" 
   ; 
 segDir
-  : ".CODE" segId? | ".DATA" | ".DATA?"| ".CONST" | ".FARDATA" segId? | ".FARDATA?" segId? | ".STACK" constExpr? 
+  : _CODE segId? | _DATA | _DATA?| _CONST | _FARDATA segId? | _FARDATA? segId? | _STACK constExpr? 
   ; 
 segId
   : id
@@ -1313,7 +1292,7 @@ segOptionList
   : segOption| segOptionList segOption
   ; 
 segOrderDir
-  : ".ALPHA" | ".SEQ" | ".DOSSEG" | "DOSSEG" 
+  : _ALPHA | _SEQ | _DOSSEG | "DOSSEG" 
   ; 
 segRO
   : readonly
@@ -1337,7 +1316,7 @@ sizeArg
   : id| type| e10
   ; 
 specialChars
-  : ":" | "." | "[[" | "]]" | "(" | ")" | "<" | ">" | "{" | "}"| "+" | "-" | "/" | "*" | "&" | "%" | "!"| "'" | "\\" | "=" | ";" | "," | '"'| whiteSpaceCharacter | endOfLine
+  : ":" | _DOT | "[[" | "]]" | "(" | ")" | "<" | ">" | "{" | "}"| "+" | "-" | "/" | "*" | "&" | "%" | "!"| "'" | "\\" | "=" | ";" | "," | '"'| whiteSpaceCharacter | endOfLine
   ; 
 specialRegister
   : 'CR0' | 'CR2' | 'CR3' | 'DR0' | 'DR1' | 'DR2' | 'DR3' | 'DR6' | 'DR7'| 'TR3' | 'TR4' | 'TR5' | 'TR6' | 'TR7'
@@ -1346,16 +1325,13 @@ stackOption
   : "NEARSTACK" | "FARSTACK" 
   ; 
 startupDir
-  : ".STARTUP" lineReminder
+  : _STARTUP lineReminder
   ; 
 stext
   : stringChar| stext stringChar
   ; 
 string
   : quote  stext?  quote
-  ; 
-stringChar
-  : quote quote| /[^\'\"]/
   ; 
 structBody
   : structItem lineReminder | structBody structItem lineReminder
@@ -1436,13 +1412,35 @@ unionTag
   : id
   ; 
 untilDir
-  : ".UNTIL" cExpr lineReminder ".UNTILCXZ" cxzExpr?  lineReminder
+  : _UNTIL cExpr lineReminder _UNTILCXZ cxzExpr?  lineReminder
   ; 
 usesRegs
   : "USES" regList 
   ; 
 whileBlock
-  : ".WHILE" cExpr lineReminder blockStatements lineReminder ".ENDW" 
+  : _WHILE cExpr lineReminder blockStatements lineReminder _ENDW 
+  ; 
+terminals
+radixOverride
+  : /[hoqtyHOQTY]/
+  ; 
+character
+  : /[^\n\r]/
+  ; 
+comment
+  : /;[^\n\r]*/
+  ; 
+stringChar
+  : /\'\'|\"\"|[^\'\"]/
+  ; 
+decdigit
+  : /\d/
+  ; 
+hexdigit
+  : /[A-Fa-f]/
+  ; 
+id
+  : /[A-Za-z]+\d*/
   ; 
 delimiter
   : /[^\b\t\v\f\n\r\x1a\s\d]/
@@ -1450,3 +1448,85 @@ delimiter
 whiteSpaceCharacter
   : /[\b\t\v\f\x1a\s]/
   ;
+endOfLine
+  : /[\r\n]+/
+  ;
+_186: ".186";
+_286: ".286";
+_286C: ".286C";
+_286P: ".286P";
+_287: ".287";
+_386: ".386";
+_386C: ".386C";
+_386P: ".386P";
+_387: ".387";
+_486: ".486";
+_486P: ".486P";
+_586: ".586";
+_586P: ".586P";
+_686: ".686";
+_686P: ".686P";
+_8086: ".8086";
+_8087: ".8087";
+_ALPHA: ".ALPHA";
+_BREAK: ".BREAK";
+_CODE: ".CODE";
+_CONST: ".CONST";
+_CONTINUE: ".CONTINUE";
+_CREF: ".CREF";
+_DATA: ".DATA";
+_DOSSEG: ".DOSSEG";
+_ELSE: ".ELSE";
+_ELSEIF: ".ELSEIF";
+_ENDIF: ".ENDIF";
+_ENDW: ".ENDW";
+_ERR: ".ERR";
+_ERR1: ".ERR1";
+_ERR2: ".ERR2";
+_ERRB: ".ERRB";
+_ERRDEF: ".ERRDEF";
+_ERRDIF: ".ERRDIF";
+_ERRDIFI: ".ERRDIFI";
+_ERRE: ".ERRE";
+_ERRIDN: ".ERRIDN";
+_ERRIDNI: ".ERRIDNI";
+_ERRNB: ".ERRNB";
+_ERRNDEF: ".ERRNDEF";
+_ERRNZ: ".ERRNZ";
+_EXIT: ".EXIT";
+_FARDATA: ".FARDATA";
+_IF: ".IF";
+_K3D: ".K3D";
+_LALL: ".LALL";
+_LFCOND: ".LFCOND";
+_LIST: ".LIST";
+_LISTALL: ".LISTALL";
+_LISTIF: ".LISTIF";
+_LISTMACRO: ".LISTMACRO";
+_LISTMACROALL: ".LISTMACROALL";
+_MMX: ".MMX";
+_MODEL: ".MODEL";
+_NO87: ".NO87";
+_NOCREF: ".NOCREF";
+_NOLIST: ".NOLIST";
+_NOLISTIF: ".NOLISTIF";
+_NOLISTMACRO: ".NOLISTMACRO";
+_RADIX: ".RADIX";
+_REPEAT: ".REPEAT";
+_SALL: ".SALL";
+_SEQ: ".SEQ";
+_SFCOND: ".SFCOND";
+_STACK: ".STACK";
+_STARTUP: ".STARTUP";
+_TFCOND: ".TFCOND";
+_TYPE: ".TYPE";
+_UNTIL: ".UNTIL";
+_UNTILCXZ: ".UNTILCXZ";
+_WHILE: ".WHILE";
+_XALL: ".XALL";
+_XCREF: ".XCREF";
+_XLIST: ".XLIST";
+_XMM: ".XMM";
+_DOT: ".";
+_DATA_: ".DATA?";
+_FARDATA_: ".FARDATA?";
