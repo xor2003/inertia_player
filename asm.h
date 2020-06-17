@@ -367,6 +367,8 @@ typedef union registry16Bits
 
 #define AFFECT_ZF(a) {ZF=((a)==0);}
 #define AFFECT_CF(a) {CF=(a);}
+#define AFFECT_AF(a) {AF=(a);}
+#define AFFECT_OF(a) {OF=(a);}
 //#define ISNEGATIVE(a) (a & (1 << (sizeof(a)*8-1)))
 //#define AFFECT_SF(a) {SF=ISNEGATIVE(a);}
 #define ISNEGATIVE(f,a) ( (a) & (1 << (bitsizeof(f)-1)) )
@@ -523,7 +525,128 @@ else
 #define READDBh(a) (*((db *) &m.a.dbh.val))
 #define READDBl(a) (*((db *) &m.a.dbl.val))
 
-#define AAD {al = al + (ah * 10) & 0xFF; ah = 0;} //TODO
+//#define AAD {al = al + (ah * 10) & 0xFF; ah = 0;} //TODO
+/*
+#define DAA	{											\
+	if (((al & 0x0F)>0x09) || AF) {				\
+		if ((al > 0x99) || CF) {					\
+			al+=0x60;									\
+			AFFECT_CF(true);							\
+		} else {											\
+			AFFECT_CF(false);							\
+		}													\
+		al+=0x06;										\
+		AFFECT_AF(true);								\
+	} else {												\
+		if ((al > 0x99) || CF) {					\
+			al+=0x60;									\
+			AFFECT_CF(true);							\
+		} else {											\
+			AFFECT_CF(false);							\
+		}													\
+		AFFECT_AF(false);								\
+	}														\
+	SF=(al&0x80);							\
+	AFFECT_ZF(al);}
+
+
+#define DAS												\
+{															\
+	db osigned=al & 0x80;							\
+	if (((al & 0x0f) > 9) || AF) {				\
+		if ((al>0x99) || CF) {					\
+			al-=0x60;									\
+			AFFECT_CF(true);							\
+		} else {											\
+			AFFECT_CF((al<=0x05));					\
+		}													\
+		al-=6;											\
+		AFFECT_AF(true);								\
+	} else {												\
+		if ((al>0x99) || CF) {					\
+			al-=0x60;									\
+			AFFECT_CF(true);							\
+		} else {											\
+			AFFECT_CF(false);							\
+		}													\
+		AFFECT_AF(false);								\
+	}														\
+	AFFECT_OF(osigned && ((al&0x80)==0));			\
+	SF=(al&0x80);							\
+	AFFECT_ZF(al); \
+}
+*/
+
+#define AAA	{											\
+	SF=((al>=0x7a) && (al<=0xf9));		\
+	if ((al & 0xf) > 9) {								\
+		AFFECT_OF((al&0xf0)==0x70);					\
+		ax += 0x106;									\
+		AFFECT_CF(true);								\
+		AFFECT_ZF(al);						\
+		AFFECT_AF(true);								\
+	} else if (AF) {									\
+		ax += 0x106;									\
+		AFFECT_OF(false);								\
+		AFFECT_CF(true);								\
+		ZF=false;								\
+		AFFECT_AF(true);								\
+	} else {												\
+		AFFECT_OF(false);								\
+		AFFECT_CF(false);								\
+		AFFECT_ZF(al);						\
+		AFFECT_AF(false);								\
+	}														\
+	al &= 0x0F;}
+
+#define AAS {												\
+	if ((al & 0x0f)>9) {								\
+		SF=(al>0x85);						\
+		ax -= 0x106;									\
+		AFFECT_OF(false);								\
+		AFFECT_CF(true);								\
+		AFFECT_AF(true);								\
+	} else if (AF) {									\
+		AFFECT_OF(((al>=0x80) && (al<=0x85)));	\
+		SF=(al<0x06) || (al>0x85);		\
+		ax -= 0x106;									\
+		AFFECT_CF(true);								\
+		AFFECT_AF(true);								\
+	} else {												\
+		SF=(al>=0x80);						\
+		AFFECT_OF(false);								\
+		AFFECT_CF(false);								\
+		AFFECT_AF(false);								\
+	}														\
+	AFFECT_ZF((al == 0));							\
+	al &= 0x0F;}
+
+#define AAM											\
+{															\
+	db dv=10;											\
+	if (dv!=0) {											\
+		ah=al / dv;									\
+		al=al % dv;									\
+		SF=(al & 0x80);						\
+		AFFECT_ZF(al);						\
+		AFFECT_CF(false);								\
+		AFFECT_OF(false);								\
+		AFFECT_AF(false);								\
+	} \
+}
+
+
+#define AAD											\
+	{														\
+		al = ah * 10 + al;								\
+		ah = 0;											\
+		AFFECT_CF(false);								\
+		AFFECT_OF(false);								\
+		AFFECT_AF(false);								\
+		SF=(al >= 0x80);						\
+		AFFECT_ZF(al);							\
+	}
+
 
 #define ADD(a,b) {dq t=(dq)a+(dq)b; \
 		AFFECT_CF((t)>MASK[sizeof(a)]); \
@@ -575,13 +698,13 @@ else
 #define MUL3_2(a,b,c) {dd t=(dd)(b)*(c);a=t; OF=CF=t>>16;}
 #define MUL3_4(a,b,c) {dq t=(dq)(b)*(c);a=t; OF=CF=t>>32;}
 
-#define IDIV1(a) {int16_t t=ax;al=t/((int8_t)a); ah=t%((int8_t)a);}
-#define IDIV2(a) {int32_t t=(((int32_t)(int16_t)dx)<<16)|ax; ax=t/((int16_t)a);dx=t%((int16_t)a);}
-#define IDIV4(a) {int64_t t=(((int64_t)(int32_t)edx)<<32)|eax;eax=t/((int32_t)a);edx=t%((int32_t)a);}
+#define IDIV1(a) {int16_t t=ax;al=t/((int8_t)a); ah=t%((int8_t)a); AFFECT_OF(false);}
+#define IDIV2(a) {int32_t t=(((int32_t)(int16_t)dx)<<16)|ax; ax=t/((int16_t)a);dx=t%((int16_t)a); AFFECT_OF(false);}
+#define IDIV4(a) {int64_t t=(((int64_t)(int32_t)edx)<<32)|eax;eax=t/((int32_t)a);edx=t%((int32_t)a); AFFECT_OF(false);}
 
-#define DIV1(a) {dw t=ax;al=t/(a);ah=t%(a);}
-#define DIV2(a) {dd t=((((dd)dx)<<16)|ax);ax=t/(a);dx=t%(a);}
-#define DIV4(a) {uint64_t t=((((dq)edx)<<32)|eax);eax=t/(a);edx=t%(a);}
+#define DIV1(a) {dw t=ax;al=t/(a);ah=t%(a); AFFECT_OF(false);}
+#define DIV2(a) {dd t=((((dd)dx)<<16)|ax);ax=t/(a);dx=t%(a); AFFECT_OF(false);}
+#define DIV4(a) {uint64_t t=((((dq)edx)<<32)|eax);eax=t/(a);edx=t%(a); AFFECT_OF(false);}
 
 #define NOT(a) a= ~(a);// AFFECT_ZF(a) //TODO
 
@@ -837,6 +960,8 @@ int8_t asm2C_IN(int16_t data);
 #define RETN RET
 #define IRET RETF
 //#define RETF {dw tt=0; POP(tt); RET;}
+#define BSWAP(op1)														\
+	op1 = (op1>>24)|((op1>>8)&0xFF00)|((op1<<8)&0xFF0000)|((op1<<24)&0xFF000000);
 
 
 #ifdef __LIBSDL2__
@@ -1055,48 +1180,46 @@ extern db vgaPalette[256*3];
 #endif
 
 // ---------unimplemented
-#define CMPXCHG8B(a) log_debug("unimplemented\n"); // not in dosbox
-#define CMOVA(a,b) log_debug("unimplemented\n"); // not in dosbox
-#define CMOVB(a,b) log_debug("unimplemented\n");
-#define CMOVBE(a,b) log_debug("unimplemented\n");
-#define CMOVG(a,b) log_debug("unimplemented\n");
-#define CMOVGE(a,b) log_debug("unimplemented\n");
-#define CMOVL(a,b) log_debug("unimplemented\n");
-#define CMOVLE(a,b) log_debug("unimplemented\n");
-#define CMOVNB(a,b) log_debug("unimplemented\n");
-#define CMOVNO(a,b) log_debug("unimplemented\n");
-#define CMOVNP(a,b) log_debug("unimplemented\n");
-#define CMOVNS(a,b) log_debug("unimplemented\n");
-#define CMOVNZ(a,b) log_debug("unimplemented\n");
-#define CMOVO(a,b) log_debug("unimplemented\n");
-#define CMOVP(a,b) log_debug("unimplemented\n");
-#define CMOVS(a,b) log_debug("unimplemented\n");
-#define CMOVZ(a,b) log_debug("unimplemented\n");
+#define UNIMPLEMENTED log_debug("unimplemented\n");
+#define CMPXCHG8B(a) UNIMPLEMENTED // not in dosbox
+#define CMOVA(a,b) UNIMPLEMENTED // not in dosbox
+#define CMOVB(a,b) UNIMPLEMENTED
+#define CMOVBE(a,b) UNIMPLEMENTED
+#define CMOVG(a,b) UNIMPLEMENTED
+#define CMOVGE(a,b) UNIMPLEMENTED
+#define CMOVL(a,b) UNIMPLEMENTED
+#define CMOVLE(a,b) UNIMPLEMENTED
+#define CMOVNB(a,b) UNIMPLEMENTED
+#define CMOVNO(a,b) UNIMPLEMENTED
+#define CMOVNP(a,b) UNIMPLEMENTED
+#define CMOVNS(a,b) UNIMPLEMENTED
+#define CMOVNZ(a,b) UNIMPLEMENTED
+#define CMOVO(a,b) UNIMPLEMENTED
+#define CMOVP(a,b) UNIMPLEMENTED
+#define CMOVS(a,b) UNIMPLEMENTED
+#define CMOVZ(a,b) UNIMPLEMENTED
 
-#define JNO(x) log_debug("unimplemented\n");
-#define JNP(x) log_debug("unimplemented\n");
-#define JO(x) log_debug("unimplemented\n");
-#define JP(x) log_debug("unimplemented\n");
+#define JNO(x) UNIMPLEMENTED
+#define JNP(x) UNIMPLEMENTED
+#define JO(x) UNIMPLEMENTED
+#define JP(x) UNIMPLEMENTED
 
-#define AAA log_debug("unimplemented\n");
-#define AAM log_debug("unimplemented\n");
-#define AAS log_debug("unimplemented\n");
-#define BSR(a,b) log_debug("unimplemented\n");
-#define BSWAP(a) log_debug("unimplemented\n");
-#define BSWAPD(op1)														\
-	op1 = (op1>>24)|((op1>>8)&0xFF00)|((op1<<8)&0xFF0000)|((op1<<24)&0xFF000000);
+#define DAA UNIMPLEMENTED
+#define DAS UNIMPLEMENTED
 
-#define CDQ log_debug("unimplemented\n");
-#define CMPXCHG log_debug("unimplemented\n");
-#define DAA log_debug("unimplemented\n");
-#define DAS log_debug("unimplemented\n");
-#define XADD(a,b) log_debug("unimplemented\n");
+#define BSR(a,b) UNIMPLEMENTED
 
-#define LOOPW(x) log_debug("unimplemented\n");
-#define LOOPWE(x) log_debug("unimplemented\n");
-#define LOOPWNE(x) log_debug("unimplemented\n");
-#define STI log_debug("unimplemented\n");
-#define CLI log_debug("unimplemented\n");
+#define CDQ UNIMPLEMENTED
+//#define CWDE UNIMPLEMENTED
+
+#define CMPXCHG UNIMPLEMENTED
+#define XADD(a,b) UNIMPLEMENTED
+
+#define LOOPW(x) UNIMPLEMENTED
+#define LOOPWE(x) UNIMPLEMENTED
+#define LOOPWNE(x) UNIMPLEMENTED
+#define STI UNIMPLEMENTED
+#define CLI UNIMPLEMENTED
 // ---------
 
 #endif

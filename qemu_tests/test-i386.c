@@ -746,7 +746,7 @@ void test_bsx(void)
 }
 
 /**********************************************/
-
+#if 0
 union float64u {
     double d;
     uint64_t l;
@@ -1034,6 +1034,7 @@ void test_floats(void)
         test_fcmov();
     }
 }
+#endif
 
 /**********************************************/
 #if !defined(__x86_64__)

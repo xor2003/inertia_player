@@ -2788,6 +2788,7 @@ void test_divb(dd op0, dd op1)
     s1 = op1;
     res = s0;
     flags = 0;
+/*
     asm ("push %4\n"
          "POPF;"
          "div""b %b2\n"
@@ -2795,6 +2796,15 @@ void test_divb(dd op0, dd op1)
          "pop %1\n"
          : "=a" (res), "=g" (flags)
          : "q" (s1), "0" (res), "1" (flags));
+*/
+	eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(DIV1((db)s1));	// 9094 div     dl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+	res=eax;
+
     printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n",
            "divb", s0, s1, res, flags & (0));
 }
@@ -2806,6 +2816,7 @@ void test_divw(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
+/*
     asm ("push %5\n"
          "POPF;"
          "divw %w3\n"
@@ -2813,6 +2824,17 @@ void test_divw(dd op0h, dd op0, dd op1)
          "pop %1\n"
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+*/
+	edx=resh;
+	eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(DIV2((dw)s1));	// 9094 div     dl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+	res=eax;
+	resh=edx;
+
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "divw", op0h, op0, s1, resh, res, flags & (0));
 }
@@ -2824,6 +2846,7 @@ void test_divl(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
+/*
     asm ("push %5\n"
          "POPF;"
          "divl %k3\n"
@@ -2831,6 +2854,17 @@ void test_divl(dd op0h, dd op0, dd op1)
          "pop %1\n"
          : "=a" (res), "=g" (flags), "=d" (resh)
          : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+*/
+	edx=resh;
+	eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(DIV4((dd)s1));	// 9094 div     dl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+	res=eax;
+	resh=edx;
+
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "divl", op0h, op0, s1, resh, res, flags & (0));
 }
@@ -2846,13 +2880,13 @@ void test_idivb(dd op0, dd op1)
     s1 = op1;
     res = s0;
     flags = 0;
-    asm ("push %4\n"
-         "POPF;"
-         "idiv""b %b2\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags)
-         : "q" (s1), "0" (res), "1" (flags));
+	eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IDIV1((db)s1));	// 9094 div     dl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+	res=eax;
     printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n",
            "idivb", s0, s1, res, flags & (0));
 }
@@ -2864,13 +2898,15 @@ void test_idivw(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
-    asm ("push %5\n"
-         "POPF;"
-         "idivw %w3\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags), "=d" (resh)
-         : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+	edx=resh;
+	eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IDIV2((dd)s1));	// 9094 div     dl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+	res=eax;
+	resh=edx;
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "idivw", op0h, op0, s1, resh, res, flags & (0));
 }
@@ -2882,13 +2918,16 @@ void test_idivl(dd op0h, dd op0, dd op1)
     resh = op0h;
     res = op0;
     flags = 0;
-    asm ("push %5\n"
-         "POPF;"
-         "idivl %k3\n"
-         "PUSHF;"
-         "pop %1\n"
-         : "=a" (res), "=g" (flags), "=d" (resh)
-         : "q" (s1), "0" (res), "1" (flags), "2" (resh));
+
+	edx=resh;
+	eax=res;
+	R(PUSH(flags));	// 8688 push    edx
+	R(POPF);	// 8689 popf
+	R(IDIV4((dd)s1));	// 9094 div     dl
+	R(PUSHF);	// 8691 pushf
+	R(POP(flags));	// 8692 pop     edx
+	res=eax;
+	resh=edx;
     printf("%-10s AH=%08lx AL=%08lx B=%08lx RH=%08lx RL=%08lx CC=%04lx\n",
            "idivl", op0h, op0, s1, resh, res, flags & (0));
 }
@@ -2936,30 +2975,31 @@ void test_mul(void)
     test_imull2(0x80000000, 0x80000000);
     test_imull2(0x10000, 0x10000);
 
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1234;
-asm volatile ("push %3\nPOPF;imulw $" "45, %w2, %w0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1234; dd op0=45;
+	R(PUSH(flags));R(POPF);R(IMUL3_2( *(dw *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imulw im", (dd)45, (dd)0x1234, res, flags & (0));};
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 23;
-asm volatile ("push %3\nPOPF;imulw $" "-45, %w2, %w0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 23; dd op0=-45;
+	R(PUSH(flags));R(POPF);R(IMUL3_2( *(dw *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imulw im", (dd)-45, (dd)23, res, flags & (0));};
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x80000000;
-asm volatile ("push %3\nPOPF;imulw $" "0x8000, %w2, %w0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x80000000; dd op0=0x8000;
+	R(PUSH(flags));R(POPF);R(IMUL3_2( *(dw *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imulw im", (dd)0x8000, (dd)0x80000000, res, flags & (0));};
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1000;
-asm volatile ("push %3\nPOPF;imulw $" "0x7fff, %w2, %w0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1000; dd op0=0x7fff;
+	R(PUSH(flags));R(POPF);R(IMUL3_2( *(dw *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imulw im", (dd)0x7fff, (dd)0x1000, res, flags & (0));};
 
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1234;
-asm volatile ("push %3\nPOPF;imull $" "45, %k2, %k0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1234;dd op0=45;
+	R(PUSH(flags));R(POPF);R(IMUL3_4( *(dd *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imull im", (dd)45, (dd)0x1234, res, flags & (0));};
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 23;
-asm volatile ("push %3\nPOPF;imull $" "-45, %k2, %k0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 23;dd op0=-45;
+	R(PUSH(flags));R(POPF);R(IMUL3_4( *(dd *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imull im", (dd)-45, (dd)23, res, flags & (0));};
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x80000000;
-asm volatile ("push %3\nPOPF;imull $" "0x8000, %k2, %k0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x80000000; dd op0=0x8000;
+	R(PUSH(flags));R(POPF);R(IMUL3_4( *(dd *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imull im", (dd)0x8000, (dd)0x80000000, res, flags & (0));};
-    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1000;
-asm volatile ("push %3\nPOPF;imull $" "0x7fff, %k2, %k0\nPUSHF;pop %1\n" : "=r" (res), "=g" (flags) : "r" (s1), "1" (flags), "0" (res));
+    { dd res, flags, s1; flags = 0; res = 0; s1 = 0x1000; dd op0=0x7fff;
+	R(PUSH(flags));R(POPF);R(IMUL3_4( *(dd *)&res,s1,op0 ));R(PUSHF);R(POP(flags));
  printf("%-10s A=%08lx B=%08lx R=%08lx CC=%04lx\n", "imull im", (dd)0x7fff, (dd)0x1000, res, flags & (0));};
 
     test_idivb(0x12341678, 0x127e);
@@ -3923,30 +3963,35 @@ static void test_enter(void)
 
 void test_conv(void)
 {
-    { unsigned long a, r; a = i2l(0x8234a6f8); r = a;
-asm volatile("cbw" : "=a" (r) : "0" (r));
+    { unsigned long a, r; a = i2l(0x8234a6f8); eax = a;
+CBW;
+r=eax;
  printf("%-10s A=%08lx R=%08lx\n", "cbw", a, r);};
-    { unsigned long a, r; a = i2l(0x8234a6f8); r = a;
-asm volatile("cwde" : "=a" (r) : "0" (r));
+    { unsigned long a, r; a = i2l(0x8234a6f8); eax = a;
+CWDE;
+r=eax;
  printf("%-10s A=%08lx R=%08lx\n", "cwde", a, r);};
 
 
 
 
-    { unsigned long a, d, r, rh; a = i2l(0x8234a6f8); d = i2l(0x8345a1f2); r = a; rh = d;
-asm volatile("cwd" : "=a" (r), "=d" (rh) : "0" (r), "1" (rh));
+    { unsigned long a, d, r, rh; a = i2l(0x8234a6f8); d = i2l(0x8345a1f2); eax = a; edx = d;
+CWD;
+rh=edx;r=eax;
  printf("%-10s A=%08lx R=%08lx:%08lx\n", "cwd", a, r, rh); };
-    { unsigned long a, d, r, rh; a = i2l(0x8234a6f8); d = i2l(0x8345a1f2); r = a; rh = d;
-asm volatile("cdq" : "=a" (r), "=d" (rh) : "0" (r), "1" (rh));
+    { unsigned long a, d, r, rh; a = i2l(0x8234a6f8); d = i2l(0x8345a1f2); eax = a; edx = d;
+//asm volatile("cdq" : "=a" (r), "=d" (rh) : "0" (r), "1" (rh));
+CDQ;
+rh=edx;r=eax;
  printf("%-10s A=%08lx R=%08lx:%08lx\n", "cdq", a, r, rh); };
 
 
 
 
     {
-        unsigned long a, r;
-        a = i2l(0x12345678);
-        // asm volatile("bswapl %k0" : "=r" (r) : "0" (a));
+        dd a, r;
+        r= a = i2l(0x12345678);
+        BSWAP(r);
         printf("%-10s: A=%08lx R=%08lx\n", "bswapl", a, r);
     }
 
