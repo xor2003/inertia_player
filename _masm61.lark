@@ -20,8 +20,8 @@ bitdef: bitfieldid ":" bitfieldsize eqconstexpr?
 bitdeflist: bitdef| bitdef "," linereminder? bitdeflist
 bitfieldid : id 
 bitfieldsize: constexpr
-ifcexpr: _IF cexpr
-blockstatements: _CONTINUE ifcexpr? | _BREAK ifcexpr? | directivelist
+ifcexpr: U_IF cexpr
+blockstatements: U_CONTINUE ifcexpr? | U_BREAK ifcexpr? | directivelist
 bool: TRUE | FALSE 
 byteregister: AL | AH | BL | BH | CL | CH | DL | DH 
 cexpr: aexpr ":" cexpr | aexpr
@@ -39,12 +39,12 @@ contextitem: ASSUMES | RADIX | LISTING | CPU | ALL
 contextitemlist: contextitem| contextitem "," contextitemlist
 controlblock: whileblock| repeatblock
 controldir: controlif| controlblock
-controlelseif: _ELSEIF cexpr linereminder directivelist controlelseif? 
-elsedirectivelist: _ELSE linereminder directivelist
-controlif: _IF cexpr linereminder directivelist controlelseif? elsedirectivelist? _ENDIF linereminder
-coprocessor: _8087 | _287 | _387 | _NO87 
+controlelseif: U_ELSEIF cexpr linereminder directivelist controlelseif? 
+elsedirectivelist: U_ELSE linereminder directivelist
+controlif: U_IF cexpr linereminder directivelist controlelseif? elsedirectivelist? U_ENDIF linereminder
+coprocessor: U_8087 | U_287 | U_387 | U_NO87 
 crefdir: crefoption linereminder
-crefoption: _CREF | _XCREF idlist? | _NOCREF idlist? 
+crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? 
 cxzexpr: "!" expr| expr  "==" expr| expr  "!=" expr | expr
 datadecl: DB | DW | DD | DF | DQ | DT | datatype | typeid
 datadir: id?  dataitem linereminder
@@ -64,7 +64,7 @@ e06: e06 mulop e07| e06 shiftop e07| e07
 e07: e07 addop e08| e08
 e08: HIGH e09| LOW e09| HIGHWORD e09| LOWWORD e09| e09
 e09: OFFSET e10| SEG e10| LROFFSET e10| TYPE e10| THIS e10| e09 PTR e10| e09 ":" e10| e10
-e10: e10 _DOT e11| e10 expr | e11
+e10: e10 U_DOT e11| e10 expr | e11
 e11: "( expr )" | WIDTH id| MASK id| SIZE sizearg| SIZEOF sizearg| LENGTH id| LENGTHOF id | recordconst| string| constant| type| id| "$"| segmentregister| register| ST | ST "( expr )" | expr
 echodir: ECHO arbitrarytext linereminder "%OUT" arbitrarytext linereminder
 elseifblock: elseifstatement linereminder directivelist elseifblock? 
@@ -75,11 +75,11 @@ endsdir: id ENDS linereminder
 equdir: textmacroid EQU equtype linereminder
 equtype: immexpr| textliteral
 errordir: erroropt linereminder
-erroropt: _ERR textitem? | _ERRE constexpr opttext? | _ERRNZ constexpr opttext? | _ERRB textitem opttext? | _ERRNB textitem opttext? | _ERRDEF id  opttext? | _ERRNDEF id opttext? | _ERRDIF textitem "," textitem  opttext? | _ERRDIFI textitem "," textitem  opttext? | _ERRIDN textitem "," textitem  opttext? | _ERRIDNI textitem "," textitem  opttext? | _ERR1 textitem? | _ERR2 textitem?  
-exitdir: _EXIT expr?  linereminder
+erroropt: U_ERR textitem? | U_ERRE constexpr opttext? | U_ERRNZ constexpr opttext? | U_ERRB textitem opttext? | U_ERRNB textitem opttext? | U_ERRDEF id  opttext? | U_ERRNDEF id opttext? | U_ERRDIF textitem "," textitem  opttext? | U_ERRDIFI textitem "," textitem  opttext? | U_ERRIDN textitem "," textitem  opttext? | U_ERRIDNI textitem "," textitem  opttext? | U_ERR1 textitem? | U_ERR2 textitem?  
+exitdir: U_EXIT expr?  linereminder
 exitmdir: EXITM | EXITM textitem
-exponent: E  sign?  decnumber
-expr: SHORT e05| _TYPE e01| OPATTR e01| e01
+exponent: "E"  sign?  decnumber
+expr: SHORT e05| U_TYPE e01| OPATTR e01| e01
 exprlist: expr | expr  ","  exprlist
 altidq: "( altid )"
 externdef: langtype?  id altidq? ":" externtype
@@ -93,8 +93,8 @@ fieldinitlist: fieldinit ","  linereminder?  fieldinitlist | fieldinit
 filechar: delimiter
 filecharlist: filechar+
 filespec: filecharlist| textliteral
-flagname: ZERO?| CARRY? | OVERFLOW?|SIGN?| PARITY?
-floatnumber : sign?  decnumber _DOT decnumber?   exponent? | digits R| digits r
+flagname: ZERO_ | CARRY_ | OVERFLOW_ | SIGN_ | PARITY_
+floatnumber : sign?  decnumber U_DOT decnumber?   exponent? | digits "R"| digits "r"
 forcdir: FORC | IRPC 
 fordir: FOR | IRP 
 dotdotforparmtype: ":" forparmtype
@@ -126,7 +126,7 @@ labeldef: id ":" | id "::" | MONKEY
 labeldir: id LABEL qualifiedtype linereminder
 langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL 
 listdir: listoption linereminder
-listoption: _LIST | _NOLIST | _XLIST | _LISTALL | _LISTIF | _LFCOND | _NOLISTIF | _SFCOND | _TFCOND | _LISTMACROALL | _LALL | _NOLISTMACRO | _SALL | _LISTMACRO | _XALL 
+listoption: U_LIST | U_NOLIST | U_XLIST | U_LISTALL | U_LISTIF | U_LFCOND | U_NOLISTIF | U_SFCOND | U_TFCOND | U_LISTMACROALL | U_LALL | U_NOLISTMACRO | U_SALL | U_LISTMACRO | U_XALL 
 localdef: LOCAL idlist linereminder
 localdir: LOCAL parmlist linereminder
 localdirlist: localdir+
@@ -136,7 +136,7 @@ macroarglist: macroarg  "," macroarglist | macroarg
 macrobody: locallist? macrostmtlist
 macrocall: id  "(" macroarglist ")" | id macroarglist linereminder
 macrodir: id MACRO macroparmlist?  linereminder macrobody ENDM linereminder
-macrofor: fordir forparm  "," "<" macroarglist ">" linereminder macrobody ENDM" linereminder
+macrofor: fordir forparm  "," "<" macroarglist ">" linereminder macrobody ENDM linereminder
 macroforc: forcdir id  "," textliteral linereminder macrobody ENDM linereminder
 macrofuncid: id
 macroid: macroprocid| macrofuncid
@@ -152,328 +152,9 @@ macrostmtlist: macrostmt macrostmtlist | macrostmt linereminder
 macrowhile: WHILE constexpr linereminder macrobody ENDM linereminder
 maptype: ALL | NONE | NOTPUBLIC 
 memoption: TINY | SMALL | MEDIUM | COMPACT | LARGE | HUGE | FLAT 
-mnemonic: AAA|
-    AAD|
-    AAM|
-    AAS|
-    ADC|
-    ADD|
-    AND|
-    CALL|
-    CBW|
-    CLC|
-    CLD|
-    CLI|
-    CMC|
-    CMP|
-    CMPS|
-    CMPSB|
-    CMPSW|
-    CWD|
-    DAA|
-    DAS|
-    DEC|
-    DIV|
-    ESC|
-    HLT|
-    IDIV|
-    IMUL|
-    IN|
-    INC|
-    INT|
-    INTO|
-    IRET|
-    JA|
-    JAE|
-    JB|
-    JBE|
-    JC|
-    JCXZ|
-    JE|
-    JG|
-    JGE|
-    JL|
-    JLE|
-    JMP|
-    JNA|
-    JNAE|
-    JNB|
-    JNBE|
-    JNC|
-    JNE|
-    JNG|
-    JNGE|
-    JNL|
-    JNLE|
-    JNO|
-    JNP|
-    JNS|
-    JNZ|
-    JO|
-    JP|
-    JPE|
-    JPO|
-    JS|
-    JZ|
-    LAHF|
-    LDS|
-    LEA|
-    LES|
-    LODS|
-    LODSB|
-    LODSW|
-    LOOP|
-    LOOPE|
-    LOOPEW|
-    LOOPNE|
-    LOOPNEW|
-    LOOPNZ|
-    LOOPNZW|
-    LOOPW|
-    LOOPZ|
-    LOOPZW|
-    MOV|
-    MOVS|
-    MOVSB|
-    MOVSW|
-    MUL|
-    NEG|
-    NOP|
-    NOT|
-    OR|
-    OUT|
-    POP|
-    POPF|
-    PUSH|
-    PUSHF|
-    RCL|
-    RCR|
-    RET|
-    RETF|
-    RETN|
-    ROL|
-    ROR|
-    SAHF|
-    SAL|
-    SAR|
-    SBB|
-    SCAS|
-    SCASB|
-    SCASW|
-    SHL|
-    SHR|
-    STC|
-    STD|
-    STI|
-    STOS|
-    STOSB|
-    STOSW|
-    SUB|
-    TEST|
-    WAIT|
-    XCHG|
-    XLAT|
-    XLATB|
-    XOR|
-    BOUND|
-    ENTER|
-    INS|
-    INSB|
-    INSW|
-    LEAVE|
-    OUTS|
-    OUTSB|
-    OUTSW|
-    POPA|
-    PUSHA|
-    PUSHW|
-    ARPL|
-    LAR|
-    LSL|
-    SGDT|
-    SIDT|
-    SLDT|
-    SMSW|
-    STR|
-    VERR|
-    VERW|
-    CLTS|
-    LGDT|
-    LIDT|
-    LLDT|
-    LMSW|
-    LTR|
-    BSF|
-    BSR|
-    BT|
-    BTC|
-    BTR|
-    BTS|
-    CDQ|
-    CMPSD|
-    CWDE|
-    INSD|
-    IRETD|
-    IRETDF|
-    IRETF|
-    JECXZ|
-    LFS|
-    LGS|
-    LODSD|
-    LOOPD|
-    LOOPED|
-    LOOPNED|
-    LOOPNZD|
-    LOOPZD|
-    LSS|
-    MOVSD|
-    MOVSX|
-    MOVZX|
-    OUTSD|
-    POPAD|
-    POPFD|
-    PUSHAD|
-    PUSHD|
-    PUSHFD|
-    SCASD|
-    SETA|
-    SETAE|
-    SETB|
-    SETBE|
-    SETC|
-    SETE|
-    SETG|
-    SETGE|
-    SETL|
-    SETLE|
-    SETNA|
-    SETNAE|
-    SETNB|
-    SETNBE|
-    SETNC|
-    SETNE|
-    SETNG|
-    SETNGE|
-    SETNL|
-    SETNLE|
-    SETNO|
-    SETNP|
-    SETNS|
-    SETNZ|
-    SETO|
-    SETP|
-    SETPE|
-    SETPO|
-    SETS|
-    SETZ|
-    SHLD|
-    SHRD|
-    STOSD|
-    BSWAP|
-    CMPXCHG|
-    INVD|
-    INVLPG|
-    WBINVD|
-    XADD|
-    F2XM1|
-    FABS|
-    FADD|
-    FADDP|
-    FBLD|
-    FBSTP|
-    FCHS|
-    FCLEX|
-    FCOM|
-    FCOMP|
-    FCOMPP|
-    FDECSTP|
-    FDISI|
-    FDIV|
-    FDIVP|
-    FDIVR|
-    FDIVRP|
-    FENI|
-    FFREE|
-    FIADD|
-    FICOM|
-    FICOMP|
-    FIDIV|
-    FIDIVR|
-    FILD|
-    FIMUL|
-    FINCSTP|
-    FINIT|
-    FIST|
-    FISTP|
-    FISUB|
-    FISUBR|
-    FLD|
-    FLD1|
-    FLDCW|
-    FLDENV|
-    FLDENVW|
-    FLDL2E|
-    FLDL2T|
-    FLDLG2|
-    FLDLN2|
-    FLDPI|
-    FLDZ|
-    FMUL|
-    FMULP|
-    FNCLEX|
-    FNDISI|
-    FNENI|
-    FNINIT|
-    FNOP|
-    FNSAVE|
-    FNSAVEW|
-    FNSTCW|
-    FNSTENV|
-    FNSTENVW|
-    FNSTSW|
-    FPATAN|
-    FPREM|
-    FPTAN|
-    FRNDINT|
-    FRSTOR|
-    FRSTORW|
-    FSAVE|
-    FSAVEW|
-    FSCALE|
-    FSQRT|
-    FST|
-    FSTCW|
-    FSTENV|
-    FSTENVW|
-    FSTP|
-    FSTSW|
-    FSUB|
-    FSUBP|
-    FSUBR|
-    FSUBRP|
-    FTST|
-    FWAIT|
-    FXAM|
-    FXCH|
-    FXTRACT|
-    FYL2X|
-    FYL2XP1|
-    FSETPM|
-    FCOS|
-    FLDENVD|
-    FNSAVED|
-    FNSTENVD|
-    FPREM1|
-    FRSTORD|
-    FSAVED|
-    FSIN|
-    FSINCOS|
-    FSTENVD|
-    FUCOM|
-    FUCOMP|
-    FUCOMPP
+mnemonic: AAA| AAD| AAM| AAS| ADC| ADD| AND| CALL| CBW| CLC| CLD| CLI| CMC| CMP| CMPS| CMPSB| CMPSW| CWD| DAA| DAS| DEC| DIV| ESC| HLT| IDIV| IMUL| IN| INC| INT| INTO| IRET| JA| JAE| JB| JBE| JC| JCXZ| JE| JG| JGE| JL| JLE| JMP| JNA| JNAE| JNB| JNBE| JNC| JNE| JNG| JNGE| JNL| JNLE| JNO| JNP| JNS| JNZ| JO| JP| JPE| JPO| JS| JZ| LAHF| LDS| LEA| LES| LODS| LODSB| LODSW| LOOP| LOOPE| LOOPEW| LOOPNE| LOOPNEW| LOOPNZ| LOOPNZW| LOOPW| LOOPZ| LOOPZW| MOV| MOVS| MOVSB| MOVSW| MUL| NEG| NOP| NOT| OR| OUT| POP| POPF| PUSH| PUSHF| RCL| RCR| RET| RETF| RETN| ROL| ROR| SAHF| SAL| SAR| SBB| SCAS| SCASB| SCASW| SHL| SHR| STC| STD| STI| STOS| STOSB| STOSW| SUB| TEST| WAIT| XCHG| XLAT| XLATB| XOR| BOUND| ENTER| INS| INSB| INSW| LEAVE| OUTS| OUTSB| OUTSW| POPA| PUSHA| PUSHW| ARPL| LAR| LSL| SGDT| SIDT| SLDT| SMSW| STR| VERR| VERW| CLTS| LGDT| LIDT| LLDT| LMSW| LTR| BSF| BSR| BT| BTC| BTR| BTS| CDQ| CMPSD| CWDE| INSD| IRETD| IRETDF| IRETF| JECXZ| LFS| LGS| LODSD| LOOPD| LOOPED| LOOPNED| LOOPNZD| LOOPZD| LSS| MOVSD| MOVSX| MOVZX| OUTSD| POPAD| POPFD| PUSHAD| PUSHD| PUSHFD| SCASD| SETA| SETAE| SETB| SETBE| SETC| SETE| SETG| SETGE| SETL| SETLE| SETNA| SETNAE| SETNB| SETNBE| SETNC| SETNE| SETNG| SETNGE| SETNL| SETNLE| SETNO| SETNP| SETNS| SETNZ| SETO| SETP| SETPE| SETPO| SETS| SETZ| SHLD| SHRD| STOSD| BSWAP| CMPXCHG| INVD| INVLPG| WBINVD| XADD| F2XM1| FABS| FADD| FADDP| FBLD| FBSTP| FCHS| FCLEX| FCOM| FCOMP| FCOMPP| FDECSTP| FDISI| FDIV| FDIVP| FDIVR| FDIVRP| FENI| FFREE| FIADD| FICOM| FICOMP| FIDIV| FIDIVR| FILD| FIMUL| FINCSTP| FINIT| FIST| FISTP| FISUB| FISUBR| FLD| FLD1| FLDCW| FLDENV| FLDENVW| FLDL2E| FLDL2T| FLDLG2| FLDLN2| FLDPI| FLDZ| FMUL| FMULP| FNCLEX| FNDISI| FNENI| FNINIT| FNOP| FNSAVE| FNSAVEW| FNSTCW| FNSTENV| FNSTENVW| FNSTSW| FPATAN| FPREM| FPTAN| FRNDINT| FRSTOR| FRSTORW| FSAVE| FSAVEW| FSCALE| FSQRT| FST| FSTCW| FSTENV| FSTENVW| FSTP| FSTSW| FSUB| FSUBP| FSUBR| FSUBRP| FTST| FWAIT| FXAM| FXCH| FXTRACT| FYL2X| FYL2XP1| FSETPM| FCOS| FLDENVD| FNSAVED| FNSTENVD| FPREM1| FRSTORD| FSAVED| FSIN| FSINCOS| FSTENVD| FUCOM| FUCOMP| FUCOMPP
 commamodeloptlist: "," modeloptlist
-modeldir: _MODEL memoption commamodeloptlist? linereminder
+modeldir: U_MODEL memoption commamodeloptlist? linereminder
 modelopt: langtype| stackoption 
 modeloptlist: modelopt| modelopt  "," modeloptlist
 mulop: "*"| "/" | MOD 
@@ -505,19 +186,16 @@ poptions: distance?   langtype?   ovisibility?
 primary: expr binaryop expr| flagname| expr
 brmacroarglist: "<" macroarglist ">"
 procdir: procid PROC poptions?  brmacroarglist?  usesregs?   procparmlist? 
-processor: _8086 | _186 | _286 | _286C | _286P | _386 | _386C | _386P | _486 | _486P | _586 | _586P |
- _686 | _686P | _K3D | _MMX | _XMM
+processor: U_8086 | U_186 | U_286 | U_286C | U_286P | U_386 | U_386C | U_386P | U_486 | U_486P | U_586 | U_586P | U_686 | U_686P | U_K3D | U_MMX | U_XMM
 processordir: processor linereminder | coprocessor linereminder
 procid: id
 commaparmlist: ","  linereminder?  parmlist
-commaparmidvararg: ","  linereminder?  parmid _VARARG
-procparmlist: commaparmlist? 
-    commaparmidvararg?
+commaparmidvararg: ","  linereminder?  parmid U_VARARG
+procparmlist: "," commaparmlist? "," commaparmidvararg?
 protoarg : id? ":" qualifiedtype 
 commaprotolist: ","  linereminder?  protolist
-commaidvararg: ","  linereminder?   id? _VARARG
-protoarglist: commaprotolist?
-    commaidvararg?
+commaidvararg: ","  linereminder?   id? U_VARARG
+protoarglist: "," commaprotolist? "," commaidvararg?
 protolist: protoarg| protoarg  "," linereminder?  protolist
 protospec: typeid | distance?   langtype?   protoarglist?
 prototypedir: id PROTO protospec
@@ -527,8 +205,8 @@ publist: pubdef  "," linereminder?  publist | pubdef
 purgedir: PURGE macroidlist
 qualifiedtype: distance? PTR qualifiedtype? | type
 qualifier: PROTO protospec | qualifiedtype
-quote: '"' | "'"
-radixdir: _RADIX constexpr linereminder
+quote: "\"" | "'"
+radixdir: U_RADIX constexpr linereminder
 recordconst: recordtag "{" oldrecordfieldlist "}"| recordtag "<" oldrecordfieldlist ">"
 recorddir: recordtag RECORD bitdeflist linereminder 
 recordfieldlist: constexpr  ","  linereminder? recordfieldlist | constexpr
@@ -538,12 +216,12 @@ recordtag: id
 register: specialregister| gpregister| byteregister
 reglist: register+
 relop: EQ | NE | LT | LE | GT | GE 
-repeatblock: _REPEAT linereminder blockstatements linereminder untildir linereminder
+repeatblock: U_REPEAT linereminder blockstatements linereminder untildir linereminder
 repeatdir: REPEAT | REPT 
 scalarinstlist: initvalue ","  linereminder? scalarinstlist | initvalue
 segalign: BYTE | WORD | DWORD | PARA | PAGE 
 segattrib: PUBLIC | STACK | COMMON | MEMORY | AT constexpr| PRIVATE 
-segdir: _CODE segid? | _DATA | _DATA_| _CONST | _FARDATA segid? | _FARDATA_ segid? | _STACK constexpr?
+segdir: U_CODE segid? | U_DATA | U_DATA_| U_CONST | U_FARDATA segid? | U_FARDATA_ segid? | U_STACK constexpr?
 segid: id
 segidlist : segid  "," segidlist | segid
 segmentdef: segmentdir  insegdirlist?  endsdir| simplesegdir  insegdirlist?   endsdir? 
@@ -551,7 +229,7 @@ segmentdir: segid SEGMENT segoptionlist?  linereminder
 segmentregister: CS | DS | ES | FS | GS | SS
 segoption: segalign| segro| segattrib| segsize| classname
 segoptionlist: segoption+
-segorderdir: _ALPHA | _SEQ | _DOSSEG | DOSSEG 
+segorderdir: U_ALPHA | U_SEQ | U_DOSSEG | DOSSEG 
 segro: readonly
 segsize : USE16 | USE32 | FLAT
 shiftop: SHR | SHL 
@@ -559,9 +237,9 @@ sign: "-" | "+"
 simpleexpr: "(" cexpr ")"| primary
 simplesegdir: segdir linereminder
 sizearg: id| type| e10
-specialregister: 'CR0' | 'CR2' | 'CR3' | 'DR0' | 'DR1' | 'DR2' | 'DR3' | 'DR6' | 'DR7'| 'TR3' | 'TR4' | 'TR5' | 'TR6' | 'TR7'
+specialregister: "CR0" | "CR2" | "CR3" | "DR0" | "DR1" | "DR2" | "DR3" | "DR6" | "DR7"| "TR3" | "TR4" | "TR5" | "TR6" | "TR7"
 stackoption: NEARSTACK | FARSTACK 
-startupdir: _STARTUP linereminder
+startupdir: U_STARTUP linereminder
 stext: stringchar+
 string: quote  stext?  quote
 structbody: structitem structbody | structitem linereminder
@@ -590,23 +268,14 @@ type: structtag| uniontag| recordtag| distance| datatype| typeid
 typedefdir: typeid TYPEDEF qualifier
 typeid: id
 uniontag: id
-untildir: _UNTIL cexpr linereminder _UNTILCXZ cxzexpr?  linereminder
+untildir: U_UNTIL cexpr linereminder U_UNTILCXZ cxzexpr?  linereminder
 usesregs: USES reglist 
-whileblock: _WHILE cexpr linereminder blockstatements linereminder _ENDW 
-radixoverride: H | O | Q | T | Y
-decdigit: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-hexdigit: A | B | C | D | E | F
-letter : A | B | C | D | E | F | G
-       | H | I | J | K | L | M | N
-       | O | P | Q | R | S | T | U
-       | V | W | X | Y | Z | a | b
-       | c | d | e | f | g | h | i
-       | j | k | l | m | n | o | p
-       | q | r | s | t | u | v | w
-       | x | y | z | "_"
-id: letter
-| id letter
-| id decdigit
+whileblock: U_WHILE cexpr linereminder blockstatements linereminder U_ENDW 
+radixoverride: "H" | "O" | "Q" | "T" | "Y"
+decdigit: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+hexdigit: "A" | "B" | "C" | "D" | "E" | "F"
+letter : "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "_"
+id: letter | id letter | id decdigit
 whitespacecharacter: WS
 endofline: /[\r\n]+/
 WS: /[\t\s]+/
@@ -1188,83 +857,85 @@ XLAT: "XLAT"
 XLATB: "XLATB"
 XOR: "XOR"
 ZERO_: "ZERO?"
-_186: ".186"
-_286: ".286"
-_286C: ".286C"
-_286P: ".286P"
-_287: ".287"
-_386: ".386"
-_386C: ".386C"
-_386P: ".386P"
-_387: ".387"
-_486: ".486"
-_486P: ".486P"
-_586: ".586"
-_586P: ".586P"
-_686: ".686"
-_686P: ".686P"
-_8086: ".8086"
-_8087: ".8087"
-_ALPHA: ".ALPHA"
-_BREAK: ".BREAK"
-_CODE: ".CODE"
-_CONST: ".CONST"
-_CONTINUE: ".CONTINUE"
-_CREF: ".CREF"
-_DATA: ".DATA"
-_DATA_: ".DATA?"
-_DOSSEG: ".DOSSEG"
-_ELSE: ".ELSE"
-_ELSEIF: ".ELSEIF"
-_ENDIF: ".ENDIF"
-_ENDW: ".ENDW"
-_ERR1: ".ERR1"
-_ERR2: ".ERR2"
-_ERR: ".ERR"
-_ERRB: ".ERRB"
-_ERRDEF: ".ERRDEF"
-_ERRDIF: ".ERRDIF"
-_ERRDIFI: ".ERRDIFI"
-_ERRE: ".ERRE"
-_ERRIDN: ".ERRIDN"
-_ERRIDNI: ".ERRIDNI"
-_ERRNB: ".ERRNB"
-_ERRNDEF: ".ERRNDEF"
-_ERRNZ: ".ERRNZ"
-_EXIT: ".EXIT"
-_FARDATA: ".FARDATA"
-_FARDATA_: ".FARDATA?"
-_IF: ".IF"
-_K3D: ".K3D"
-_LALL: ".LALL"
-_LFCOND: ".LFCOND"
-_LIST: ".LIST"
-_LISTALL: ".LISTALL"
-_LISTIF: ".LISTIF"
-_LISTMACRO: ".LISTMACRO"
-_LISTMACROALL: ".LISTMACROALL"
-_MMX: ".MMX"
-_MODEL: ".MODEL"
-_NO87: ".NO87"
-_NOCREF: ".NOCREF"
-_NOLIST: ".NOLIST"
-_NOLISTIF: ".NOLISTIF"
-_NOLISTMACRO: ".NOLISTMACRO"
-_OUT: "%OUT"
-_RADIX: ".RADIX"
-_REPEAT: ".REPEAT"
-_SALL: ".SALL"
-_SEQ: ".SEQ"
-_SFCOND: ".SFCOND"
-_STACK: ".STACK"
-_STARTUP: ".STARTUP"
-_TFCOND: ".TFCOND"
-_TYPE: ".TYPE"
-_UNTIL: ".UNTIL"
-_UNTILCXZ: ".UNTILCXZ"
-_VARARG: ":VARARG"
-_WHILE: ".WHILE"
-_XALL: ".XALL"
-_XCREF: ".XCREF"
-_XLIST: ".XLIST"
-_XMM: ".XMM"
+U_186: ".186"
+U_286: ".286"
+U_286C: ".286C"
+U_286P: ".286P"
+U_287: ".287"
+U_386: ".386"
+U_386C: ".386C"
+U_386P: ".386P"
+U_387: ".387"
+U_486: ".486"
+U_486P: ".486P"
+U_586: ".586"
+U_586P: ".586P"
+U_686: ".686"
+U_686P: ".686P"
+U_8086: ".8086"
+U_8087: ".8087"
+U_ALPHA: ".ALPHA"
+U_BREAK: ".BREAK"
+U_CODE: ".CODE"
+U_CONST: ".CONST"
+U_CONTINUE: ".CONTINUE"
+U_CREF: ".CREF"
+U_DATA: ".DATA"
+U_DATA_: ".DATA?"
+U_DOSSEG: ".DOSSEG"
+U_ELSE: ".ELSE"
+U_ELSEIF: ".ELSEIF"
+U_ENDIF: ".ENDIF"
+U_ENDW: ".ENDW"
+U_ERR1: ".ERR1"
+U_ERR2: ".ERR2"
+U_ERR: ".ERR"
+U_ERRB: ".ERRB"
+U_ERRDEF: ".ERRDEF"
+U_ERRDIF: ".ERRDIF"
+U_ERRDIFI: ".ERRDIFI"
+U_ERRE: ".ERRE"
+U_ERRIDN: ".ERRIDN"
+U_ERRIDNI: ".ERRIDNI"
+U_ERRNB: ".ERRNB"
+U_ERRNDEF: ".ERRNDEF"
+U_ERRNZ: ".ERRNZ"
+U_EXIT: ".EXIT"
+U_FARDATA: ".FARDATA"
+U_FARDATA_: ".FARDATA?"
+U_IF: ".IF"
+U_K3D: ".K3D"
+U_LALL: ".LALL"
+U_LFCOND: ".LFCOND"
+U_LIST: ".LIST"
+U_LISTALL: ".LISTALL"
+U_LISTIF: ".LISTIF"
+U_LISTMACRO: ".LISTMACRO"
+U_LISTMACROALL: ".LISTMACROALL"
+U_MMX: ".MMX"
+U_MODEL: ".MODEL"
+U_NO87: ".NO87"
+U_NOCREF: ".NOCREF"
+U_NOLIST: ".NOLIST"
+U_NOLISTIF: ".NOLISTIF"
+U_NOLISTMACRO: ".NOLISTMACRO"
+U_OUT: "%OUT"
+U_RADIX: ".RADIX"
+U_REPEAT: ".REPEAT"
+U_SALL: ".SALL"
+U_SEQ: ".SEQ"
+U_SFCOND: ".SFCOND"
+U_STACK: ".STACK"
+U_STARTUP: ".STARTUP"
+U_TFCOND: ".TFCOND"
+U_TYPE: ".TYPE"
+U_UNTIL: ".UNTIL"
+U_UNTILCXZ: ".UNTILCXZ"
+U_VARARG: ":VARARG"
+U_WHILE: ".WHILE"
+U_XALL: ".XALL"
+U_XCREF: ".XCREF"
+U_XLIST: ".XLIST"
+U_XMM: ".XMM"
+U_DOT: "."
+C: "C"
