@@ -1,469 +1,468 @@
 module
-  :  directiveList?  endDir
+  : directiveList?  endDir
   ; 
 lineReminder
-  : comment? endOfLine
+  :comment? endOfLine
   ; 
 eqDir
-  : id "=" immExpr lineReminder
+  :id "=" immExpr lineReminder
   ; 
 addOp
-  : "+" | "-"
+  :"+" | "-"
   ; 
 aExpr
-  : term | aExpr  "&&" term
+  : term "&&" aExpr | term
   ; 
 altId
-  : id
+  :id
   ; 
 arbitraryText
-  : charList
+  :charList
   ; 
 asmInstruction
-  : mnemonic  exprList? 
+  :mnemonic  exprList? 
   ; 
 assumeDir
-  : "ASSUME" assumeList lineReminder| "ASSUME NOTHING" lineReminder
+  :"ASSUME" assumeList lineReminder| "ASSUME NOTHING" lineReminder
   ; 
 assumeList 
-  : assumeRegister| assumeList  "," assumeRegister
+  :assumeRegister| assumeRegister "," assumeList
   ; 
 assumeReg
-  : register ":" assumeVal
+  :register ":" assumeVal
   ; 
 assumeRegister
-  : assumeSegReg| assumeReg
+  :assumeSegReg| assumeReg
   ; 
 assumeSegReg
-  : segmentRegister ":" assumeSegVal
+  :segmentRegister ":" assumeSegVal
   ; 
 assumeSegVal
-  : frameExpr| "NOTHING" | "ERROR" 
+  : "NOTHING" | "ERROR" | frameExpr
   ; 
 assumeVal
-  : qualifiedType| "NOTHING" | "ERROR" 
+  : "NOTHING" | "ERROR" | qualifiedType
   ; 
 bcdConst
-  :  sign?  decNumber
+  : sign?  decNumber
   ; 
 binaryOp
-  : "=="| "!="| ">="| "<="| ">"| "<"| "&" 
+  :"=="| "!="| ">="| "<="| ">"| "<"| "&" 
   ; 
 eqconstExpr
-  : "=" constExpr
+  :"=" constExpr
   ;
 bitDef
-  : bitFieldId ":" bitFieldSize eqconstExpr?
+  :bitFieldId ":" bitFieldSize eqconstExpr?
   ; 
 bitDefList
-  : bitDef| bitDefList  "," lineReminder?  bitDef
+  :bitDef| bitDef "," lineReminder? bitDefList
   ; 
 bitFieldId 
-  : id 
+  :id 
   ; 
 bitFieldSize
-  : constExpr
+  :constExpr
   ; 
 ifcexpr
-  : _IF cExpr
+  :_IF cExpr
   ;
 blockStatements
-  : directiveList| _CONTINUE ifcexpr? | _BREAK ifcexpr?
+  : _CONTINUE ifcexpr? | _BREAK ifcexpr? | directiveList
   ; 
 bool
-  : "TRUE" | "FALSE" 
+  :"TRUE" | "FALSE" 
   ; 
 byteRegister
-  : 'AL' | 'AH' | 'BL' | 'BH' | 'CL' | 'CH' | 'DL' | 'DH' 
+  :'AL' | 'AH' | 'BL' | 'BH' | 'CL' | 'CH' | 'DL' | 'DH' 
   ; 
 cExpr
-  : aExpr| cExpr ":" aExpr
+  : aExpr ":" cExpr | aExpr
   ; 
 charList
-  : character| charList character
+  : character+
   ; 
 className
-  : string
+  :string
   ; 
 commDecl
-  :  nearfar?   langType?  id ":" commType eqconstExpr?
+  : nearfar?   langType?  id ":" commType eqconstExpr?
   ; 
 commDir
-  : "COMM" commList lineReminder
+  :"COMM" commList lineReminder
   ; 
 commentDir
-  : "COMMENT" delimiter text text delimiter text lineReminder
+  :"COMMENT" delimiter text text delimiter text lineReminder
   ; 
 commList
-  : commDecl| commList  "," commDecl
+  :commDecl| commDecl "," commList
   ; 
 commType
-  : type| constExpr
+  : type | constExpr
   ; 
 constant
-  : digits  radixOverride? 
+  :digits  radixOverride? 
   ; 
 constExpr
-  : expr
+  :expr
   ; 
 contextDir
-  : "PUSHCONTEXT" contextItemList lineReminder| "POPCONTEXT" contextItemList lineReminder
+  :"PUSHCONTEXT" contextItemList lineReminder| "POPCONTEXT" contextItemList lineReminder
   ; 
 contextItem
-  : "ASSUMES" | "RADIX" | "LISTING" | "CPU" | "ALL" 
+  :"ASSUMES" | "RADIX" | "LISTING" | "CPU" | "ALL" 
   ; 
 contextItemList
-  : contextItem| contextItemList  "," contextItem
+  :contextItem| contextItem "," contextItemList
   ; 
 controlBlock
-  : whileBlock| repeatBlock
+  :whileBlock| repeatBlock
   ; 
 controlDir
-  : controlIf| controlBlock
+  :controlIf| controlBlock
   ; 
 controlElseif
-  : _ELSEIF cExpr lineReminder directiveList controlElseif? 
+  :_ELSEIF cExpr lineReminder directiveList controlElseif? 
   ; 
 
 elsedirectiveList
-  : _ELSE lineReminder directiveList
+  :_ELSE lineReminder directiveList
   ;
 controlIf
-  : _IF cExpr lineReminder directiveList controlElseif? elsedirectiveList? _ENDIF lineReminder
+  :_IF cExpr lineReminder directiveList controlElseif? elsedirectiveList? _ENDIF lineReminder
   ; 
 coprocessor
-  : _8087 | _287 | _387 | _NO87 
+  :_8087 | _287 | _387 | _NO87 
   ; 
 crefDir
-  : crefOption lineReminder
+  :crefOption lineReminder
   ; 
 crefOption
-  : _CREF | _XCREF idList? | _NOCREF idList? 
+  :_CREF | _XCREF idList? | _NOCREF idList? 
   ; 
 cxzExpr
-  : expr| "!" expr| expr  "==" expr| expr  "!=" expr
+  : "!" expr| expr  "==" expr| expr  "!=" expr | expr
   ; 
 dataDecl
-  : "DB" | "DW" | "DD" | "DF" | "DQ" | "DT" | dataType | typeId
+  :"DB" | "DW" | "DD" | "DF" | "DQ" | "DT" | dataType | typeId
   ; 
 dataDir
-  :  id?  dataItem lineReminder
+  : id?  dataItem lineReminder
   ; 
 dataItem
-  : dataDecl scalarInstList| structTag structInstList| typeId structInstList| unionTag structInstList| recordTag recordInstList
+  :dataDecl scalarInstList| structTag structInstList| typeId structInstList| unionTag structInstList| recordTag recordInstList
   ; 
 dataType
-  : "BYTE" | "SBYTE" | "WORD" | "SWORD" | "DWORD" | "SDWORD" | "FWORD" | "QWORD" | "TBYTE" | "REAL4" | "REAL8" | "REAL10" 
+  :"BYTE" | "SBYTE" | "WORD" | "SWORD" | "DWORD" | "SDWORD" | "FWORD" | "QWORD" | "TBYTE" | "REAL4" | "REAL8" | "REAL10" 
   ; 
 decNumber
-  : decdigit| decNumber decdigit
+  :decdigit+
   ; 
 digits
-  : decdigit| digits decdigit| digits hexdigit
+  :decdigit+| digits hexdigit
   ; 
 directive
-  : generalDir| segmentDef
+  :generalDir| segmentDef
   ; 
 directiveList
-  : directive| directiveList directive
+  :directive+
   ; 
 distance
-  : nearfar| "NEAR16" | "NEAR32" | "FAR16" | "FAR32" 
+  :nearfar| "NEAR16" | "NEAR32" | "FAR16" | "FAR32" 
   ; 
 e01
-  : e01 orOp e02| e02
+  :e01 orOp e02| e02
   ; 
 e02
-  : e02 "AND" e03| e03
+  :e02 "AND" e03| e03
   ; 
 e03
-  : "NOT" e04| e04
+  :"NOT" e04| e04
   ; 
 e04
-  : e04 relOp e05| e05
+  :e04 relOp e05| e05
   ; 
 e05
-  : e05 addOp e06| e06
+  :e05 addOp e06| e06
   ; 
 e06
-  : e06 mulOp e07| e06 shiftOp e07| e07
+  :e06 mulOp e07| e06 shiftOp e07| e07
   ; 
 e07
-  : e07 addOp e08| e08
+  :e07 addOp e08| e08
   ; 
 e08
-  : "HIGH" e09| "LOW" e09| "HIGHWORD" e09| "LOWWORD" e09| e09
+  :"HIGH" e09| "LOW" e09| "HIGHWORD" e09| "LOWWORD" e09| e09
   ; 
 e09
-  : "OFFSET" e10| "SEG" e10| "LROFFSET" e10| "TYPE" e10| "THIS" e10| e09 "PTR" e10| e09 ":" e10| e10
+  :"OFFSET" e10| "SEG" e10| "LROFFSET" e10| "TYPE" e10| "THIS" e10| e09 "PTR" e10| e09 ":" e10| e10
   ; 
 e10
-  : e10 _DOT e11| e10  expr? | e11
+  :e10 _DOT e11| e10 expr | e11
   ; 
 e11
-  : "(" expr ")"|  expr? | "WIDTH" id| "MASK" id| "SIZE" sizeArg| "SIZEOF" sizeArg| "LENGTH" id| "LENGTHOF" id | recordConst| string| constant| type| id| "$"| segmentRegister| register| "ST" | "ST" "(" expr ")"
+  :"(" expr ")" | "WIDTH" id| "MASK" id| "SIZE" sizeArg| "SIZEOF" sizeArg| "LENGTH" id| "LENGTHOF" id | recordConst| string| constant| type| id| "$"| segmentRegister| register| "ST" | "ST" "(" expr ")" | expr
   ; 
 echoDir
-  : "ECHO" arbitraryText lineReminder "%OUT" arbitraryText lineReminder
+  :"ECHO" arbitraryText lineReminder "%OUT" arbitraryText lineReminder
   ; 
 elseifBlock
-  : elseifStatement lineReminder directiveList elseifBlock? 
+  :elseifStatement lineReminder directiveList elseifBlock? 
   ; 
 elseifStatement
-  : "ELSEIF" constExpr| "ELSEIFE" constExpr| "ELSEIFB" textItem| "ELSEIFNB" textItem | "ELSEIFDEF" id| "ELSEIFNDEF" id| "ELSEIFDIF" textItem "," textItem| "ELSEIFDIFI" textItem "," textItem| "ELSEIFIDN" textItem "," textItem| "ELSEIFIDNI" textItem "," textItem| "ELSEIF1" | "ELSEIF2" 
+  :"ELSEIF" constExpr| "ELSEIFE" constExpr| "ELSEIFB" textItem| "ELSEIFNB" textItem | "ELSEIFDEF" id| "ELSEIFNDEF" id| "ELSEIFDIF" textItem "," textItem| "ELSEIFDIFI" textItem "," textItem| "ELSEIFIDN" textItem "," textItem| "ELSEIFIDNI" textItem "," textItem| "ELSEIF1" | "ELSEIF2" 
   ; 
 endDir
-  : "END" immExpr?  lineReminder?
+  :"END" immExpr?  lineReminder?
   ; 
 endpDir
-  : procId "ENDP" lineReminder
+  :procId "ENDP" lineReminder
   ; 
 endsDir
-  : id "ENDS" lineReminder
+  :id "ENDS" lineReminder
   ; 
 equDir
-  : textMacroId "EQU" equType lineReminder
+  :textMacroId "EQU" equType lineReminder
   ; 
 equType
-  : immExpr| textLiteral
+  :immExpr| textLiteral
   ; 
 errorDir
-  : errorOpt lineReminder
+  :errorOpt lineReminder
   ; 
 errorOpt
-  : _ERR textItem? | _ERRE constExpr optText? | _ERRNZ constExpr optText? | _ERRB textItem optText? | _ERRNB textItem optText? | _ERRDEF id  optText? | _ERRNDEF id optText? | _ERRDIF textItem "," textItem  optText? | _ERRDIFI textItem "," textItem  optText? | _ERRIDN textItem "," textItem  optText? | _ERRIDNI textItem "," textItem  optText? | _ERR1 textItem? | _ERR2 textItem?  
+  :_ERR textItem? | _ERRE constExpr optText? | _ERRNZ constExpr optText? | _ERRB textItem optText? | _ERRNB textItem optText? | _ERRDEF id  optText? | _ERRNDEF id optText? | _ERRDIF textItem "," textItem  optText? | _ERRDIFI textItem "," textItem  optText? | _ERRIDN textItem "," textItem  optText? | _ERRIDNI textItem "," textItem  optText? | _ERR1 textItem? | _ERR2 textItem?  
   ; 
 exitDir
-  : _EXIT expr?  lineReminder
+  :_EXIT expr?  lineReminder
   ; 
 exitmDir
-  : "EXITM" | "EXITM" textItem
+  :"EXITM" | "EXITM" textItem
   ; 
 exponent
-  : "E"  sign?  decNumber
+  :"E"  sign?  decNumber
   ; 
 expr
-  : "SHORT" e05| _TYPE e01| "OPATTR" e01| e01
+  :"SHORT" e05| _TYPE e01| "OPATTR" e01| e01
   ; 
 exprList
-  : expr| exprList  ","  expr
+  : expr | expr  ","  exprList
   ; 
 altIdq
-  : "(" altId ")"
+  :"(" altId ")"
   ;
 externDef
-  :  langType?  id altIdq? ":" externType
+  : langType?  id altIdq? ":" externType
   ; 
 externDir
-  : externKey externList lineReminder
+  :externKey externList lineReminder
   ; 
 externKey
-  : "EXTRN" | "EXTERN" | "EXTERNDEF" 
+  :"EXTRN" | "EXTERN" | "EXTERNDEF" 
   ; 
 externList
-  : externDef| externList  "," lineReminder?  externDef
+  :externDef| externDef  "," lineReminder?  externList
   ; 
 externType
-  : "ABS" | qualifiedType
+  :"ABS" | qualifiedType
   ; 
 fieldAlign
-  : constExpr
+  :constExpr
   ; 
 fieldInit
-  :  initValue? | structInstance
+  : initValue | structInstance
   ; 
 fieldInitList
-  : fieldInit| fieldInitList ","  lineReminder?  fieldInit
+  : fieldInit ","  lineReminder?  fieldInitList | fieldInit
   ; 
 fileChar
-  : delimiter
+  :delimiter
   ; 
 fileCharList
-  : fileChar| fileCharList fileChar
+  :fileChar+
   ; 
 fileSpec
-  : fileCharList| textLiteral
+  :fileCharList| textLiteral
   ; 
 flagName
-  : "ZERO? "| "CARRY?" | "OVERFLOW?"|"SIGN?"| "PARITY?"
+  :"ZERO? "| "CARRY?" | "OVERFLOW?"|"SIGN?"| "PARITY?"
   ; 
 floatNumber 
-  :  sign?  decNumber _DOT decNumber?   exponent? | digits "R"| digits "r"
+  : sign?  decNumber _DOT decNumber?   exponent? | digits "R"| digits "r"
   ; 
 forcDir
-  : "FORC" | "IRPC" 
+  :"FORC" | "IRPC" 
   ; 
 forDir
-  : "FOR" | "IRP" 
+  :"FOR" | "IRP" 
   ; 
 dotdotforParmType
-  : ":" forParmType
+  :":" forParmType
   ;
 forParm
-  : id dotdotforParmType?
+  :id dotdotforParmType?
   ; 
 forParmType
-  : "REQ" | "=" textLiteral
+  :"REQ" | "=" textLiteral
   ; 
 frameExpr
-  : "SEG" id | "DGROUP" ":" id| segmentRegister ":" id| id
+  :"SEG" id | "DGROUP" ":" id| segmentRegister ":" id| id
   ; 
 generalDir
-  : modelDir | segOrderDir | nameDir| includeLibDir | commentDir| groupDir | assumeDir| structDir | recordDir | typedefDir| externDir | publicDir | commDir | protoTypeDir| equDir | eqDir | textDir| contextDir | optionDir | processorDir| radixDir | titleDir | pageDir | listDir | crefDir | echoDir| ifDir | errorDir | includeDir | macroDir | macroCall | macroRepeat | purgeDir| macroWhile | macroFor | macroForc| aliasDir
+  :modelDir | segOrderDir | nameDir| includeLibDir | commentDir| groupDir | assumeDir| structDir | recordDir | typedefDir| externDir | publicDir | commDir | protoTypeDir| equDir | eqDir | textDir| contextDir | optionDir | processorDir| radixDir | titleDir | pageDir | listDir | crefDir | echoDir| ifDir | errorDir | includeDir | macroDir | macroCall | macroRepeat | purgeDir| macroWhile | macroFor | macroForc| aliasDir
   ; 
 aliasDir
-  : "ALIAS"
+  :"ALIAS"
   ;
 gpRegister
-  : 'AX' | 'EAX' | 'BX' | 'EBX' | 'CX' | 'ECX' | 'DX' | 'EDX'| 'BP' | 'EBP' | 'SP' | 'ESP' | 'DI' | 'EDI' | 'SI' | 'ESI'
+  :'AX' | 'EAX' | 'BX' | 'EBX' | 'CX' | 'ECX' | 'DX' | 'EDX'| 'BP' | 'EBP' | 'SP' | 'ESP' | 'DI' | 'EDI' | 'SI' | 'ESI'
   ; 
 groupDir 
-  : groupId "GROUP" segIdList
+  :groupId "GROUP" segIdList
   ; 
 groupId
-  : id
+  :id
   ; 
 idList
-  : id| idList "," id
+  : id "," idList | id
   ; 
 ifDir
-  : ifStatement lineReminder directiveList elseifBlock? elsedirectiveList? "ENDIF" lineReminder
+  :ifStatement lineReminder directiveList elseifBlock? elsedirectiveList? "ENDIF" lineReminder
   ; 
 ifStatement
-  : "IF" constExpr| "IFE" constExpr| "IFB" textItem| "IFNB" textItem| "IFDEF" id| "IFNDEF" id| "IFDIF" textItem "," textItem| "IFDIFI" textItem "," textItem| "IFIDN" textItem "," textItem| "IFIDNI" textItem "," textItem| "IF1" | "IF2" 
+  :"IF" constExpr| "IFE" constExpr| "IFB" textItem| "IFNB" textItem| "IFDEF" id| "IFNDEF" id| "IFDIF" textItem "," textItem| "IFDIFI" textItem "," textItem| "IFIDN" textItem "," textItem| "IFIDNI" textItem "," textItem| "IF1" | "IF2" 
   ; 
 immExpr
-  : expr
+  :expr
   ; 
 includeDir
-  : "INCLUDE" fileSpec lineReminder
+  :"INCLUDE" fileSpec lineReminder
   ; 
 includeLibDir
-  : "INCLUDELIB" fileSpec lineReminder
+  :"INCLUDELIB" fileSpec lineReminder
   ; 
 initValue
-  : immExpr| string| "?"| constExpr  "DUP" "(" scalarInstList ")"| floatNumber| bcdConst
+  :immExpr| string| "?"| constExpr  "DUP" "(" scalarInstList ")"| floatNumber| bcdConst
   ; 
 inSegDir
-  :  labelDef?  inSegmentDir
+  : labelDef?  inSegmentDir
   ; 
 inSegDirList
-  : inSegDir | inSegDirList inSegDir
+  :inSegDir+
   ; 
 inSegmentDir
-  : instruction| dataDir| controlDir| startupDir| exitDir| offsetDir| labelDir| procDir  localDirList?   inSegDirList?  endpDir| invokeDir| generalDir 
+  :instruction| dataDir| controlDir| startupDir| exitDir| offsetDir| labelDir| procDir  localDirList?   inSegDirList?  endpDir| invokeDir| generalDir 
   ; 
 instrPrefix
-  : "REP" | "REPE" | "REPZ" | "REPNE" | "REPNZ" | "LOCK" 
+  :"REP" | "REPE" | "REPZ" | "REPNE" | "REPNZ" | "LOCK" 
   ; 
 instruction
-  :  instrPrefix?  asmInstruction
+  : instrPrefix?  asmInstruction
   ; 
 invokeArg
-  : register "::" register| expr| "ADDR" expr
+  :register "::" register| "ADDR" expr | expr
   ; 
 commainvokeList
-  : "," lineReminder? invokeList
+  :"," lineReminder? invokeList
   ;
 invokeDir
-  : "INVOKE" expr commainvokeList? lineReminder
+  :"INVOKE" expr commainvokeList? lineReminder
   ; 
 invokeList
-  : invokeArg| invokeList  "," lineReminder?  invokeArg
+  : invokeArg  "," lineReminder?  invokeList | invokeArg
   ; 
 labelDef
-  : id ":" | id "::" | "@@:"
+  :id ":" | id "::" | "@@:"
   ; 
 labelDir
-  : id "LABEL" qualifiedType lineReminder
+  :id "LABEL" qualifiedType lineReminder
   ; 
 langType
-  : "C" | "PASCAL" | "FORTRAN" | "BASIC" | "SYSCALL" | "STDCALL" 
+  :"C" | "PASCAL" | "FORTRAN" | "BASIC" | "SYSCALL" | "STDCALL" 
   ; 
 listDir
-  : listOption lineReminder
+  :listOption lineReminder
   ; 
 listOption
-  : _LIST | _NOLIST | _XLIST | _LISTALL | _LISTIF | _LFCOND | _NOLISTIF | _SFCOND | _TFCOND | _LISTMACROALL | _LALL | _NOLISTMACRO | _SALL | _LISTMACRO | _XALL 
+  :_LIST | _NOLIST | _XLIST | _LISTALL | _LISTIF | _LFCOND | _NOLISTIF | _SFCOND | _TFCOND | _LISTMACROALL | _LALL | _NOLISTMACRO | _SALL | _LISTMACRO | _XALL 
   ; 
 localDef
-  : "LOCAL" idList lineReminder
+  :"LOCAL" idList lineReminder
   ; 
 localDir
-  : "LOCAL" parmList lineReminder
+  :"LOCAL" parmList lineReminder
   ; 
 localDirList
-  : localDir| localDirList localDir
+  :localDir+
   ; 
 localList
-  : localDef| localList localDef
+  :localDef+
   ; 
 macroArg
-  : "%" constExpr| "%" textMacroId| "%" macroFuncId "(" macroArgList ")"| string| arbitraryText| "<" arbitraryText ">"
+  :"%" constExpr| "%" textMacroId| "%" macroFuncId "(" macroArgList ")"| string| "<" arbitraryText ">" | arbitraryText
   ; 
 macroArgList
-  : macroArg| macroArgList  "," macroArg
+  : macroArg  "," macroArgList | macroArg
   ; 
 macroBody
-  :  localList? macroStmtList
+  : localList? macroStmtList
   ; 
 macroCall
-  : id macroArgList lineReminder| id  "(" macroArgList ")"
+  : id  "(" macroArgList ")" | id macroArgList lineReminder
   ; 
 macroDir
-  : id "MACRO" macroParmList?  lineReminder macroBody "ENDM" lineReminder
+  :id "MACRO" macroParmList?  lineReminder macroBody "ENDM" lineReminder
   ; 
 macroFor
-  : forDir forParm  "," "<" macroArgList ">" lineReminder macroBody "ENDM" lineReminder
+  :forDir forParm  "," "<" macroArgList ">" lineReminder macroBody "ENDM" lineReminder
   ; 
 macroForc
-  : forcDir id  "," textLiteral lineReminder macroBody "ENDM" lineReminder
+  :forcDir id  "," textLiteral lineReminder macroBody "ENDM" lineReminder
   ; 
 macroFuncId
-  : id
+  :id
   ; 
 macroId
-  : macroProcId| macroFuncId
+  :macroProcId| macroFuncId
   ; 
 macroIdList
-  : macroId| macroIdList  ","  macroId
+  : macroId  ","  macroIdList | macroId
   ; 
 macroLabel
-  : id
+  :id
   ; 
 dotdotparmType
-  : ":" parmType
+  :":" parmType
   ;
 macroParm
-  : id dotdotparmType?
+  :id dotdotparmType?
   ; 
 macroParmList
-  : macroParm| macroParmList  "," lineReminder?  macroParm
+  : macroParm  "," lineReminder?  macroParmList | macroParm
   ; 
 macroProcId
-  : id
+  :id
   ; 
 macroRepeat
-  : repeatDir constExpr lineReminder macroBody "ENDM" lineReminder
+  :repeatDir constExpr lineReminder macroBody "ENDM" lineReminder
   ; 
 macroStmt
-  : directive| exitmDir| ":" macroLabel| "GOTO" macroLabel
+  :directive| exitmDir| ":" macroLabel| "GOTO" macroLabel
   ; 
 macroStmtList
-  : macroStmt lineReminder| macroStmtList macroStmt lineReminder
+  : macroStmt macroStmtList | macroStmt lineReminder
   ; 
 macroWhile
-  : "WHILE" constExpr lineReminder macroBody "ENDM" lineReminder
+  :"WHILE" constExpr lineReminder macroBody "ENDM" lineReminder
   ; 
 mapType
-  : "ALL" | "NONE" | "NOTPUBLIC" 
+  :"ALL" | "NONE" | "NOTPUBLIC" 
   ; 
 memOption
-  : "TINY" | "SMALL" | "MEDIUM" | "COMPACT" | "LARGE" | "HUGE" | "FLAT" 
+  :"TINY" | "SMALL" | "MEDIUM" | "COMPACT" | "LARGE" | "HUGE" | "FLAT" 
   ; 
 mnemonic
-  : 
-    "aaa"|
+  : "aaa"|
     "aad"|
     "aam"|
     "aas"|
@@ -1061,395 +1060,392 @@ mnemonic
     "movdq2q"
   ; 
 commamodelOptlist
-  : "," modelOptlist
+  :"," modelOptlist
   ;
 modelDir
-  : _MODEL memOption commamodelOptlist? lineReminder
+  :_MODEL memOption commamodelOptlist? lineReminder
   ; 
 modelOpt
-  : langType| stackOption 
+  :langType| stackOption 
   ; 
 modelOptlist
-  : modelOpt| modelOptlist  "," modelOpt
+  :modelOpt| modelOpt  "," modelOptlist
   ; 
 mulOp
-  : "*"| "/" | "MOD" 
+  :"*"| "/" | "MOD" 
   ; 
 nameDir
-  : "NAME" id lineReminder
+  :"NAME" id lineReminder
   ; 
 nearfar
-  : "NEAR" | "FAR" 
+  :"NEAR" | "FAR" 
   ; 
 nestedStruct
-  : structHdr  id?  lineReminder structBody "ENDS" lineReminder
+  :structHdr  id?  lineReminder structBody "ENDS" lineReminder
   ; 
 offsetDir
-  : offsetDirType lineReminder
+  :offsetDirType lineReminder
   ; 
 offsetDirType
-  : "EVEN" | "ORG" immExpr| "ALIGN" constExpr? 
+  :"EVEN" | "ORG" immExpr| "ALIGN" constExpr? 
   ; 
 offsetType
-  : "GROUP" | "SEGMENT" | "FLAT" 
+  :"GROUP" | "SEGMENT" | "FLAT" 
   ; 
 oldRecordFieldList
-  :  constExpr? | oldRecordFieldList ","  constExpr? 
+  : constExpr "," oldRecordFieldList | constExpr
   ; 
 optionDir
-  : "OPTION" optionList lineReminder
+  :"OPTION" optionList lineReminder
   ; 
 readonly
-  : "READONLY"
+  :"READONLY"
   ;
 optionItem
-  : "CASEMAP" ":" mapType| "DOTNAME" | "NODOTNAME" | "EMULATOR" | "NOEMULATOR" | "EPILOGUE" ":" macroId| "EXPR16" | "EXPR32" | "LANGUAGE" ":" langType| "LJMP" | "NOLJMP" | "M510" | "NOM510" | "NOSIGNEXTEND" | "OFFSET" ":" offsetType| "OLDMACROS" | "NOOLDMACROS" | "OLDSTRUCTS" | "NOOLDSTRUCTS" | "PROC" ":" oVisibility| "PROLOGUE" ":" macroId| readonly | "NOREADONLY" | "SCOPED" | "NOSCOPED" | "SEGMENT" ":" segSize| "SETIF2" ":" bool
+  :"CASEMAP" ":" mapType| "DOTNAME" | "NODOTNAME" | "EMULATOR" | "NOEMULATOR" | "EPILOGUE" ":" macroId| "EXPR16" | "EXPR32" | "LANGUAGE" ":" langType| "LJMP" | "NOLJMP" | "M510" | "NOM510" | "NOSIGNEXTEND" | "OFFSET" ":" offsetType| "OLDMACROS" | "NOOLDMACROS" | "OLDSTRUCTS" | "NOOLDSTRUCTS" | "PROC" ":" oVisibility| "PROLOGUE" ":" macroId| readonly | "NOREADONLY" | "SCOPED" | "NOSCOPED" | "SEGMENT" ":" segSize| "SETIF2" ":" bool
   ; 
 optionList
-  : optionItem| optionList  "," lineReminder?  optionItem
+  :optionItem| optionItem  "," lineReminder?  optionList
   ; 
 optText
-  : "," textItem
+  :"," textItem
   ; 
 orOp
-  : "OR" | "XOR" 
+  :"OR" | "XOR" 
   ; 
 oVisibility
-  : "PUBLIC" | "PRIVATE" | "EXPORT" 
+  :"PUBLIC" | "PRIVATE" | "EXPORT" 
   ; 
 pageDir
-  : "PAGE" pageExpr?  lineReminder
+  :"PAGE" pageExpr?  lineReminder
   ; 
 commapageWidth
-  : "," pageWidth
+  :"," pageWidth
   ;
 pageExpr
-  : "+"|  pageLength?  commapageWidth?
+  :"+"|  pageLength?  commapageWidth?
   ; 
 pageLength
-  : constExpr
+  :constExpr
   ; 
 pageWidth
-  : constExpr
+  :constExpr
   ; 
 dotdotqualifiedType
-  : ":" qualifiedType
+  :":" qualifiedType
   ;
 parm
-  : parmId dotdotqualifiedType? | parmId  constExpr? dotdotqualifiedType?
+  : parmId  constExpr? dotdotqualifiedType?
   ; 
 parmId
-  : id
+  :id
   ; 
 parmList
-  : parm| parmList  "," lineReminder?  parm
+  : parm  "," lineReminder? parmList | parm
   ; 
 parmType
-  : "REQ" | "=" textLiteral| "VARARG" 
+  :"REQ" | "=" textLiteral| "VARARG" 
   ; 
 pOptions
-  :  distance?   langType?   oVisibility? 
+  : distance?   langType?   oVisibility? 
   ; 
 primary
-  : expr binaryOp expr| flagName| expr
+  :expr binaryOp expr| flagName| expr
   ; 
 brmacroArgList
-  : "<" macroArgList ">"
+  :"<" macroArgList ">"
   ;
 procDir
-  : procId "PROC" pOptions?  brmacroArgList?  usesRegs?   procParmList? 
+  :procId "PROC" pOptions?  brmacroArgList?  usesRegs?   procParmList? 
   ; 
 processor
-  : _8086 | _186 | _286 | _286C | _286P | _386 | _386C | _386P | _486 | _486P | _586 | _586P |
- _686 | _686P | _K3D | _MMX | _XMM | _8086 
+  :_8086 | _186 | _286 | _286C | _286P | _386 | _386C | _386P | _486 | _486P | _586 | _586P |
+ _686 | _686P | _K3D | _MMX | _XMM
   ; 
 processorDir
-  : processor lineReminder | coprocessor lineReminder
+  :processor lineReminder | coprocessor lineReminder
   ; 
 procId
-  : id
+  :id
   ; 
 commaparmList
-  : ","  lineReminder?  parmList
+  :","  lineReminder?  parmList
   ;
 commaparmIdvararg
-  : ","  lineReminder?  parmId ":VARARG" 
+  :","  lineReminder?  parmId ":VARARG" 
   ;
 procParmList
-  : commaparmList? 
+  :commaparmList? 
     commaparmIdvararg?
   ; 
 protoArg 
-  :  id? ":" qualifiedType 
+  : id? ":" qualifiedType 
   ; 
 commaprotoList
-  : ","  lineReminder?  protoList
+  :","  lineReminder?  protoList
   ;
 commaidvararg
-  : ","  lineReminder?   id? ":VARARG" 
+  :","  lineReminder?   id? ":VARARG" 
   ;
 protoArgList
-  : commaprotoList?
+  :commaprotoList?
     commaidvararg?
   ; 
 protoList
-  : protoArg| protoList  "," lineReminder?  protoArg
+  :protoArg| protoArg  "," lineReminder?  protoList
   ; 
 protoSpec
-  :  distance?   langType?   protoArgList?  | typeId
+  : typeId | distance?   langType?   protoArgList?
   ; 
 protoTypeDir
-  : id "PROTO" protoSpec
+  :id "PROTO" protoSpec
   ; 
 pubDef
-  :  langType?  id
+  : langType?  id
   ; 
 publicDir
-  : "PUBLIC" pubList lineReminder
+  :"PUBLIC" pubList lineReminder
   ; 
 pubList
-  : pubDef| pubList  "," lineReminder?  pubDef
+  : pubDef  "," lineReminder?  pubList | pubDef
   ; 
 purgeDir
-  : "PURGE" macroIdList
+  :"PURGE" macroIdList
   ; 
 qualifiedType
-  : type|  distance? "PTR" qualifiedType? 
+  :  distance? "PTR" qualifiedType? | type
   ; 
 qualifier
-  : qualifiedType| "PROTO" protoSpec
+  : "PROTO" protoSpec | qualifiedType
   ; 
 quote
-  : '"' | "'"
+  :'"' | "'"
   ; 
 radixDir
-  : _RADIX constExpr lineReminder
+  :_RADIX constExpr lineReminder
   ; 
 recordConst
-  : recordTag "{" oldRecordFieldList "}"| recordTag "<" oldRecordFieldList ">"
+  :recordTag "{" oldRecordFieldList "}"| recordTag "<" oldRecordFieldList ">"
   ; 
 recordDir
-  : recordTag "RECORD" bitDefList lineReminder 
+  :recordTag "RECORD" bitDefList lineReminder 
   ; 
 recordFieldList
-  :  constExpr? | recordFieldList  ","  lineReminder?   constExpr? 
+  : constExpr  ","  lineReminder? recordFieldList | constExpr
   ; 
 recordInstance
-  : "{"  lineReminder?  recordFieldList  lineReminder?  "}"| "<" oldRecordFieldList ">"| constExpr "DUP" "(" recordInstance ")"
+  :"{"  lineReminder?  recordFieldList  lineReminder?  "}"| "<" oldRecordFieldList ">"| constExpr "DUP" "(" recordInstance ")"
   ; 
 recordInstList
-  : recordInstance| recordInstList ","  lineReminder?  recordInstance
+  :recordInstance| recordInstance ","  lineReminder?  recordInstList
   ; 
 recordTag
-  : id
+  :id
   ; 
 register
-  : specialRegister| gpRegister| byteRegister
+  :specialRegister| gpRegister| byteRegister
   ; 
 regList
-  : register| regList register
+  :register+
   ; 
 relOp
-  : "EQ" | "NE" | "LT" | "LE" | "GT" | "GE" 
+  :"EQ" | "NE" | "LT" | "LE" | "GT" | "GE" 
   ; 
 repeatBlock
-  : _REPEAT lineReminder blockStatements lineReminder untilDir lineReminder
+  :_REPEAT lineReminder blockStatements lineReminder untilDir lineReminder
   ; 
 repeatDir
-  : "REPEAT" | "REPT" 
+  :"REPEAT" | "REPT" 
   ; 
 scalarInstList
-  : initValue| scalarInstList  ","  lineReminder?  initValue
+  : initValue ","  lineReminder? scalarInstList | initValue
   ; 
 segAlign
-  : "BYTE" | "WORD" | "DWORD" | "PARA" | "PAGE" 
+  :"BYTE" | "WORD" | "DWORD" | "PARA" | "PAGE" 
   ; 
 segAttrib
-  : "PUBLIC" | "STACK" | "COMMON" | "MEMORY" | "AT" constExpr| "PRIVATE" 
+  :"PUBLIC" | "STACK" | "COMMON" | "MEMORY" | "AT" constExpr| "PRIVATE" 
   ; 
 segDir
-  : _CODE segId? | _DATA | _DATA?| _CONST | _FARDATA segId? | _FARDATA? segId? | _STACK constExpr? 
+  :_CODE segId? | _DATA | _DATA_| _CONST | _FARDATA segId? | _FARDATA_ segId? | _STACK constExpr?
   ; 
 segId
-  : id
+  :id
   ; 
 segIdList 
-  : segId| segIdList  "," segId
+  : segId  "," segIdList | segId
   ; 
 segmentDef
-  : segmentDir  inSegDirList?  endsDir| simpleSegDir  inSegDirList?   endsDir? 
+  :segmentDir  inSegDirList?  endsDir| simpleSegDir  inSegDirList?   endsDir? 
   ; 
 segmentDir
-  : segId "SEGMENT" segOptionList?  lineReminder
+  :segId "SEGMENT" segOptionList?  lineReminder
   ; 
 segmentRegister
-  : 'CS' | 'DS' | 'ES' | 'FS' | 'GS' | 'SS'
+  :'CS' | 'DS' | 'ES' | 'FS' | 'GS' | 'SS'
   ; 
 segOption
-  : segAlign| segRO| segAttrib| segSize| className
+  :segAlign| segRO| segAttrib| segSize| className
   ; 
 segOptionList
-  : segOption| segOptionList segOption
+  :segOption+
   ; 
 segOrderDir
-  : _ALPHA | _SEQ | _DOSSEG | "DOSSEG" 
+  :_ALPHA | _SEQ | _DOSSEG | "DOSSEG" 
   ; 
 segRO
-  : readonly
+  :readonly
   ; 
 segSize 
-  : "USE16" | "USE32" | "FLAT" 
+  :"USE16" | "USE32" | "FLAT" 
   ; 
 shiftOp
-  : "SHR" | "SHL" 
+  :"SHR" | "SHL" 
   ; 
 sign
-  : "-" | "+"
+  :"-" | "+"
   ; 
 simpleExpr
-  : "(" cExpr ")"| primary
+  :"(" cExpr ")"| primary
   ; 
 simpleSegDir
-  : segDir lineReminder
+  :segDir lineReminder
   ; 
 sizeArg
-  : id| type| e10
-  ; 
-specialChars
-  : ":" | _DOT | "[[" | "]]" | "(" | ")" | "<" | ">" | "{" | "}"| "+" | "-" | "/" | "*" | "&" | "%" | "!"| "'" | "\\" | "=" | ";" | "," | '"'| whiteSpaceCharacter | endOfLine
+  :id| type| e10
   ; 
 specialRegister
-  : 'CR0' | 'CR2' | 'CR3' | 'DR0' | 'DR1' | 'DR2' | 'DR3' | 'DR6' | 'DR7'| 'TR3' | 'TR4' | 'TR5' | 'TR6' | 'TR7'
+  :'CR0' | 'CR2' | 'CR3' | 'DR0' | 'DR1' | 'DR2' | 'DR3' | 'DR6' | 'DR7'| 'TR3' | 'TR4' | 'TR5' | 'TR6' | 'TR7'
   ; 
 stackOption
-  : "NEARSTACK" | "FARSTACK" 
+  :"NEARSTACK" | "FARSTACK" 
   ; 
 startupDir
-  : _STARTUP lineReminder
+  :_STARTUP lineReminder
   ; 
 stext
-  : stringChar| stext stringChar
+  :stringChar+
   ; 
 string
-  : quote  stext?  quote
+  :quote  stext?  quote
   ; 
 structBody
-  : structItem lineReminder | structBody structItem lineReminder
+  : structItem structBody | structItem lineReminder
   ; 
 commanonuniq
-  : "," "NONUNIQUE"
+  :"," "NONUNIQUE"
   ;
 structDir
-  : structTag structHdr  fieldAlign?  commanonuniq? lineReminder structBody structTag "ENDS" lineReminder
+  :structTag structHdr  fieldAlign?  commanonuniq? lineReminder structBody structTag "ENDS" lineReminder
   ; 
 structHdr
-  : "STRUC" | "STRUCT" | "UNION" 
+  :"STRUC" | "STRUCT" | "UNION" 
   ; 
 structInstance
-  : "<"  fieldInitList?  ">"| "{" lineReminder?   fieldInitList?   lineReminder?  "}"| constExpr "DUP" "(" structInstList ")"
+  :"<"  fieldInitList?  ">"| "{" lineReminder?   fieldInitList?   lineReminder?  "}"| constExpr "DUP" "(" structInstList ")"
   ; 
 structInstList
-  : structInstance| structInstList  ","  lineReminder?  structInstance
+  :structInstance| structInstance  ","  lineReminder?  structInstList
   ; 
 structItem 
-  : dataDir| generalDir| offsetDir| nestedStruct
+  :dataDir| generalDir| offsetDir| nestedStruct
   ; 
 structTag
-  : id
+  :id
   ; 
 term
-  : simpleExpr| "!" simpleExpr
+  : "!" simpleExpr | simpleExpr
   ; 
 text
-  : textLiteral| text character| "!" character text| character| "!" character
+  : "!" character text| "!" character| textLiteral | character+
   ; 
 textDir
-  : id textMacroDir lineReminder
+  :id textMacroDir lineReminder
   ; 
 textItem
-  : textLiteral| textMacroId| "%" constExpr
+  :textLiteral| "%" constExpr| textMacroId
   ; 
 textLen
-  : constExpr
+  :constExpr
   ; 
 textList
-  : textItem| textList  "," lineReminder?  textItem
+  : textItem  "," lineReminder?  textList | textItem
   ; 
 textLiteral
-  : "<" text ">" lineReminder
+  :"<" text ">" lineReminder
   ; 
 commatextLen
-  : "," textLen
+  :"," textLen
   ;
 textStartcomma
-  : textStart  ","
+  :textStart  ","
   ;
 textMacroDir
-  : "CATSTR" textList? | "TEXTEQU" textList? | "SIZESTR" textItem| "SUBSTR" textItem  "," textStart commatextLen| "INSTR" textStartcomma? textItem  "," textItem
+  :"CATSTR" textList? | "TEXTEQU" textList? | "SIZESTR" textItem| "SUBSTR" textItem  "," textStart commatextLen| "INSTR" textStartcomma? textItem  "," textItem
   ; 
 textMacroId
-  : id
+  :id
   ; 
 textStart
-  : constExpr
+  :constExpr
   ; 
 titleDir
-  : titleType arbitraryText lineReminder
+  :titleType arbitraryText lineReminder
   ; 
 titleType
-  : "TITLE" | "SUBTITLE" | "SUBTTL" 
+  :"TITLE" | "SUBTITLE" | "SUBTTL" 
   ; 
 type
-  : structTag| unionTag| recordTag| distance| dataType| typeId
+  :structTag| unionTag| recordTag| distance| dataType| typeId
   ; 
 typedefDir
-  : typeId "TYPEDEF" qualifier
+  :typeId "TYPEDEF" qualifier
   ; 
 typeId
-  : id
+  :id
   ; 
 unionTag
-  : id
+  :id
   ; 
 untilDir
-  : _UNTIL cExpr lineReminder _UNTILCXZ cxzExpr?  lineReminder
+  :_UNTIL cExpr lineReminder _UNTILCXZ cxzExpr?  lineReminder
   ; 
 usesRegs
-  : "USES" regList 
+  :"USES" regList 
   ; 
 whileBlock
-  : _WHILE cExpr lineReminder blockStatements lineReminder _ENDW 
+  :_WHILE cExpr lineReminder blockStatements lineReminder _ENDW 
   ; 
 terminals
 radixOverride
-  : /[hoqtyHOQTY]/
+  :/[hoqtyHOQTY]/
   ; 
 character
-  : /[^\n\r]/
+  :/[^\n\r]/
   ; 
 comment
-  : /;[^\n\r]*/
+  :/;[^\n\r]*/
   ; 
 stringChar
-  : /\'\'|\"\"|[^\'\"]/
+  :/(\'\')|(\"\")|[^\'\"]/
   ; 
 decdigit
-  : /\d/
+  :/\d/
   ; 
 hexdigit
-  : /[A-Fa-f]/
+  :/[A-Fa-f]/
   ; 
 id
-  : /[A-Za-z]+\d*/
+  :/[A-Za-z]+\d*/
   ; 
 delimiter
-  : /[^\b\t\v\f\n\r\x1a\s\d]/
+  :/[^\b\t\v\f\n\r\x1a\s\d]/
   ; 
 whiteSpaceCharacter
-  : /[\b\t\v\f\x1a\s]/
+  :/[\b\t\v\f\x1a\s]/
   ;
 endOfLine
-  : /[\r\n]+/
+  :/[\r\n]+/
   ;
 _186: ".186";
 _286: ".286";
