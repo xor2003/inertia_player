@@ -57,18 +57,30 @@ digits: decdigit+| digits hexdigit;
 directive: generaldir| segmentdef;
 directivelist: directive+;
 distance: nearfar| NEAR16 | NEAR32 | FAR16 | FAR32;
-e01: e01 orop e02| e02;
-e02: e02 AND e03| e03;
+e01: e02 e01a;
+e01a: (orop e02 e01a)? ;
+e02: e03 e02a;
+e02a: (AND e03 e02a)? ;
 e03: NOT e04| e04;
-e04: e04 relop e05| e05;
-e05: e05 addop e06| e06;
-e06: e06 mulop e07| e06 shiftop e07| e07;
-e07: e07 addop e08| e08;
+e04: e05 e04a;
+e04a: (relop e05 e04a)? ;
+e05: e06 e05a;
+e05a: (addop e06 e05a)? ;
+
+e06: e08 e06a;
+e06a: (mulop e08 e06a)? | (shiftop e08 e06a);
+
 e08: HIGH e09| LOW e09| HIGHWORD e09| LOWWORD e09| e09;
-e09: OFFSET e10| SEG e10| LROFFSET e10| TYPE e10| THIS e10| e09 PTR e10| e09 ':' e10| e10;
-e10: e10 U_DOT e11| e10 expr | e11;
-e11: '( expr )' | WIDTH id| MASK id| SIZE sizearg| SIZEOF sizearg| LENGTH id| LENGTHOF id | recordconst| string| constant| type| id| '$'| segmentregister| register| ST | ST '( expr )' | expr;
-echodir: ECHO arbitrarytext linereminder | '%OUT' arbitrarytext linereminder;
+
+e09: OFFSET e10| SEG e10| LROFFSET e10| TYPE e10| THIS e10| e10 e09a;
+e09a: (PTR e10 e09a)? | (':' e10 e09a);
+
+e10: e11 e10a;
+e10a: (U_DOT e11 e10a)?;
+
+expr: SHORT e05| U_TYPE e01| OPATTR e01| e01;
+e11: '( expr )' | WIDTH id| MASK id| SIZE sizearg| SIZEOF sizearg| LENGTH id| LENGTHOF id | recordconst| string| constant| type| id| '$'| segmentregister| register| ST | ST '( expr )';
+echodir: ECHO arbitrarytext linereminder | U_OUT arbitrarytext linereminder;
 elseifblock: elseifstatement linereminder directivelist elseifblock? ;
 elseifstatement: ELSEIF constexpr| ELSEIFE constexpr| ELSEIFB textitem| ELSEIFNB textitem | ELSEIFDEF id| ELSEIFNDEF id| ELSEIFDIF textitem ',' textitem| ELSEIFDIFI textitem ',' textitem| ELSEIFIDN textitem ',' textitem| ELSEIFIDNI textitem ',' textitem| 'ELSEIF1' | 'ELSEIF2' ;
 enddir: END immexpr?  linereminder;
@@ -81,7 +93,6 @@ erroropt: U_ERR textitem? | U_ERRE constexpr opttext? | U_ERRNZ constexpr opttex
 exitdir: U_EXIT expr?  linereminder;
 exitmdir: EXITM | EXITM textitem;
 exponent: 'E'  sign?  decnumber;
-expr: SHORT e05| U_TYPE e01| OPATTR e01| e01;
 exprlist: expr | expr  ','  exprlist;
 altidq: '( altid )';
 externdef: langtype?  id altidq? ':' externtype;
