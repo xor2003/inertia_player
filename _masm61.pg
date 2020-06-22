@@ -1,1261 +1,965 @@
-module
-  : directiveList?  endDir
-  ; 
-lineReminder
-  :comment? endOfLine
-  ; 
-eqDir
-  :id "=" immExpr lineReminder
-  ; 
-addOp
-  :"+" | "-"
-  ; 
-aExpr
-  : term "&&" aExpr | term
-  ; 
-altId
-  :id
-  ; 
-arbitraryText
-  :charList
-  ; 
-asmInstruction
-  :mnemonic  exprList? 
-  ; 
-assumeDir
-  :"ASSUME" assumeList lineReminder| "ASSUME NOTHING" lineReminder
-  ; 
-assumeList 
-  :assumeRegister| assumeRegister "," assumeList
-  ; 
-assumeReg
-  :register ":" assumeVal
-  ; 
-assumeRegister
-  :assumeSegReg| assumeReg
-  ; 
-assumeSegReg
-  :segmentRegister ":" assumeSegVal
-  ; 
-assumeSegVal
-  : "NOTHING" | "ERROR" | frameExpr
-  ; 
-assumeVal
-  : "NOTHING" | "ERROR" | qualifiedType
-  ; 
-bcdConst
-  : sign?  decNumber
-  ; 
-binaryOp
-  :"=="| "!="| ">="| "<="| ">"| "<"| "&" 
-  ; 
-eqconstExpr
-  :"=" constExpr
-  ;
-bitDef
-  :bitFieldId ":" bitFieldSize eqconstExpr?
-  ; 
-bitDefList
-  :bitDef| bitDef "," lineReminder? bitDefList
-  ; 
-bitFieldId 
-  :id 
-  ; 
-bitFieldSize
-  :constExpr
-  ; 
-ifcexpr
-  :_IF cExpr
-  ;
-blockStatements
-  : _CONTINUE ifcexpr? | _BREAK ifcexpr? | directiveList
-  ; 
-bool
-  :"TRUE" | "FALSE" 
-  ; 
-byteRegister
-  :'AL' | 'AH' | 'BL' | 'BH' | 'CL' | 'CH' | 'DL' | 'DH' 
-  ; 
-cExpr
-  : aExpr ":" cExpr | aExpr
-  ; 
-charList
-  : character+
-  ; 
-className
-  :string
-  ; 
-commDecl
-  : nearfar?   langType?  id ":" commType eqconstExpr?
-  ; 
-commDir
-  :"COMM" commList lineReminder
-  ; 
-commentDir
-  :"COMMENT" delimiter text text delimiter text lineReminder
-  ; 
-commList
-  :commDecl| commDecl "," commList
-  ; 
-commType
-  : type | constExpr
-  ; 
-constant
-  :digits  radixOverride? 
-  ; 
-constExpr
-  :expr
-  ; 
-contextDir
-  :"PUSHCONTEXT" contextItemList lineReminder| "POPCONTEXT" contextItemList lineReminder
-  ; 
-contextItem
-  :"ASSUMES" | "RADIX" | "LISTING" | "CPU" | "ALL" 
-  ; 
-contextItemList
-  :contextItem| contextItem "," contextItemList
-  ; 
-controlBlock
-  :whileBlock| repeatBlock
-  ; 
-controlDir
-  :controlIf| controlBlock
-  ; 
-controlElseif
-  :_ELSEIF cExpr lineReminder directiveList controlElseif? 
-  ; 
+module: directivelist?  enddir;
+linereminder: comment | ENDOFLINE;
+assdir: label '=' expr linereminder;
+addop: '+' | '-';
+aexpr: term '&&' aexpr | term;
+altid: label;
+arbitrarytext: charlist;
+asminstruction: mnemonic  exprlist? ;
+assumedir: ASSUME assumelist linereminder| ASSUMENOTHING linereminder;
+assumelist : assumeregister| assumeregister ',' assumelist;
+assumereg: register ':' assumeval;
+assumeregister: assumesegreg| assumereg;
+assumesegreg: segmentregister ':' assumesegval;
+assumesegval: NOTHING | ERROR | frameexpr;
+assumeval: NOTHING | ERROR | qualifiedtype;
+bcdconst: sign?  decnumber;
+binaryop: '=='| '!='| '>='| '<='| '>'| '<'| '&' ;
+eqconstexpr: '=' expr;
+bitdef: bitfieldid ':' bitfieldsize eqconstexpr?;
+bitdeflist: bitdef| bitdef ',' linereminder? bitdeflist;
+bitfieldid : label ;
+bitfieldsize: expr;
+ifcexpr: U_IF cexpr;
+blockstatements: U_CONTINUE ifcexpr? | U_BREAK ifcexpr? | directivelist;
+bool: TRUE | FALSE ;
+byteregister: AL | AH | BL | BH | CL | CH | DL | DH ;
+cexpr: aexpr ':' cexpr | aexpr;
+charlist: CHARACTER+;
+classname: string;
+commdecl: nearfar?   langtype?  label ':' commtype eqconstexpr?;
+commdir: COMM commlist linereminder;
+commentdir: COMMENT DELIMITER text text DELIMITER text linereminder;
+commlist: commdecl| commdecl ',' commlist;
+commtype: type | expr;
+constant: digits  radixoverride? ;
+contextdir: PUSHCONTEXT contextitemlist linereminder| POPCONTEXT contextitemlist linereminder;
+contextitem: ASSUMES | RADIX | LISTING | CPU | ALL ;
+contextitemlist: contextitem| contextitem ',' contextitemlist;
+controlblock: whileblock| repeatblock;
+controldir: controlif| controlblock;
+controlelseif: U_ELSEIF cexpr linereminder directivelist controlelseif? ;
+elsedirectivelist: U_ELSE linereminder directivelist;
+controlif: U_IF cexpr linereminder directivelist controlelseif? elsedirectivelist? U_ENDIF linereminder;
+coprocessor: U_8087 | U_287 | U_387 | U_NO87 ;
+crefdir: crefoption linereminder;
+crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? ;
+cxzexpr: '!' expr| expr  '==' expr| expr  '!=' expr | expr;
+datadecl: DB | DW | DD | DF | DQ | DT | datatype | typeid;
+datadir: label?  dataitem linereminder;
+dataitem: datadecl scalarinstlist| structtag structinstlist| typeid structinstlist| uniontag structinstlist| recordtag recordinstlist;
+datatype: BYTE | SBYTE | WORD | SWORD | DWORD | SDWORD | FWORD | QWORD | TBYTE | REAL4 | REAL8 | REAL10;
+directive: generaldir| segmentdef;
+directivelist: directive+;
+distance: nearfar| NEAR16 | NEAR32 | FAR16 | FAR32;
+e01: e02 e01a;
+e01a: orop e02 e01a | EMPTY ;
+e02: e03 e02a;
+e02a: AND e03 e02a | EMPTY ;
+e03: NOT e04| e04;
+e04: e05 e04a;
+e04a: relop e05 e04a | EMPTY ;
+e05: e06 e05a;
+e05a: addop e06 e05a | EMPTY ;
 
-elsedirectiveList
-  :_ELSE lineReminder directiveList
-  ;
-controlIf
-  :_IF cExpr lineReminder directiveList controlElseif? elsedirectiveList? _ENDIF lineReminder
-  ; 
-coprocessor
-  :_8087 | _287 | _387 | _NO87 
-  ; 
-crefDir
-  :crefOption lineReminder
-  ; 
-crefOption
-  :_CREF | _XCREF idList? | _NOCREF idList? 
-  ; 
-cxzExpr
-  : "!" expr| expr  "==" expr| expr  "!=" expr | expr
-  ; 
-dataDecl
-  :"DB" | "DW" | "DD" | "DF" | "DQ" | "DT" | dataType | typeId
-  ; 
-dataDir
-  : id?  dataItem lineReminder
-  ; 
-dataItem
-  :dataDecl scalarInstList| structTag structInstList| typeId structInstList| unionTag structInstList| recordTag recordInstList
-  ; 
-dataType
-  :"BYTE" | "SBYTE" | "WORD" | "SWORD" | "DWORD" | "SDWORD" | "FWORD" | "QWORD" | "TBYTE" | "REAL4" | "REAL8" | "REAL10" 
-  ; 
-decNumber
+e06: e08 e06a;
+e06a:  mulop e08 e06a | shiftop e08 e06a | EMPTY;
+
+e08: HIGH e09| LOW e09| HIGHWORD e09| LOWWORD e09| e09;
+
+e09: OFFSET e10| SEG e10| LROFFSET e10| TYPE e10| THIS e10| e10 e09a;
+e09a: PTR e10 e09a | ':' e10 e09a | EMPTY;
+
+e10: e11 e10a;
+e10a: U_DOT e11 e10a | EMPTY;
+
+expr: SHORT e05| U_TYPE e01| OPATTR e01| e01;
+e11: '( expr )' | WIDTH label| MASK label| SIZE sizearg| SIZEOF sizearg| LENGTH label| LENGTHOF label | recordconst| string| constant| type| label| '$'| segmentregister| register| ST | ST '( expr )';
+echodir: ECHO arbitrarytext linereminder | U_OUT arbitrarytext linereminder;
+elseifblock: elseifstatement linereminder directivelist elseifblock? ;
+elseifstatement: ELSEIF expr| ELSEIFE expr| ELSEIFB textitem| ELSEIFNB textitem | ELSEIFDEF label| ELSEIFNDEF label| ELSEIFDIF textitem ',' textitem| ELSEIFDIFI textitem ',' textitem| ELSEIFIDN textitem ',' textitem| ELSEIFIDNI textitem ',' textitem| ELSEIF1 | ELSEIF2 ;
+enddir: END expr?  linereminder;
+endpdir: procid ENDP linereminder;
+endsdir: label ENDS linereminder;
+equdir: textmacroid EQU equtype linereminder;
+equtype: expr| textliteral;
+errordir: erroropt linereminder;
+erroropt: U_ERR textitem? | U_ERRE expr opttext? | U_ERRNZ expr opttext? | U_ERRB textitem opttext? | U_ERRNB textitem opttext? | U_ERRDEF label  opttext? | U_ERRNDEF label opttext? | U_ERRDIF textitem ',' textitem  opttext? | U_ERRDIFI textitem ',' textitem  opttext? | U_ERRIDN textitem ',' textitem  opttext? | U_ERRIDNI textitem ',' textitem  opttext? | U_ERR1 textitem? | U_ERR2 textitem?  ;
+exitdir: U_EXIT expr?  linereminder;
+exitmdir: EXITM | EXITM textitem;
+exponent: 'E'  sign?  decnumber;
+exprlist: expr | expr  ','  exprlist;
+altidq: '( altid )';
+externdef: langtype?  label altidq? ':' externtype;
+externdir: externkey externlist linereminder;
+externkey: EXTRN | EXTERN | EXTERNDEF ;
+externlist: externdef| externdef  ',' linereminder?  externlist;
+externtype: ABS | qualifiedtype;
+fieldalign: expr;
+fieldinit: initvalue | structinstance;
+fieldinitlist: fieldinit ','  linereminder?  fieldinitlist | fieldinit;
+filechar: DELIMITER;
+filecharlist: filechar+;
+filespec: filecharlist| textliteral;
+flagname: ZERO_ | CARRY_ | OVERFLOW_ | SIGN_ | PARITY_;
+floatnumber : sign?  decnumber U_DOT decnumber?   exponent? | digits 'R'| digits 'r';
+forcdir: FORC | IRPC ;
+fordir: FOR | IRP ;
+dotdotforparmtype: ':' forparmtype;
+forparm: label dotdotforparmtype?;
+forparmtype: REQ | '=' textliteral;
+frameexpr: SEG label | DGROUP ':' label| segmentregister ':' label| label;
+generaldir: modeldir | segorderdir | namedir| includelibdir | commentdir| groupdir | assumedir| structdir | recorddir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir | processordir| radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir;
+aliasdir: ALIAS;
+gpregister: AX | EAX | BX | EBX | CX | ECX | DX | EDX| BP | EBP | SP | ESP | DI | EDI | SI | ESI;
+groupdir : groupid GROUP segidlist;
+groupid: label;
+idlist: label ',' idlist | label;
+ifdir: ifstatement linereminder directivelist elseifblock? elsedirectivelist? ENDIF linereminder;
+ifstatement: IF expr| IFE expr| IFB textitem| IFNB textitem| IFDEF label| IFNDEF label| IFDIF textitem ',' textitem| IFDIFI textitem ',' textitem| IFIDN textitem ',' textitem| IFIDNI textitem ',' textitem| IF1 | IF2 ;
+includedir: INCLUDE filespec linereminder;
+includelibdir: INCLUDELIB filespec linereminder;
+initvalue: expr| string| '?'| expr  DUP '( scalarinstlist )'| floatnumber| bcdconst;
+insegdir: labeldef?  insegmentdir;
+insegdirlist: insegdir+;
+insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist?   insegdirlist?  endpdir| invokedir| generaldir ;
+instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;
+instruction: instrprefix?  asminstruction;
+invokearg: register '::' register| ADDR expr | expr;
+commainvokelist: ',' linereminder? invokelist;
+invokedir: INVOKE expr commainvokelist? linereminder;
+invokelist: invokearg  ',' linereminder?  invokelist | invokearg;
+labeldef: label ':' | label '::' | MONKEY;
+labeldir: label LABEL qualifiedtype linereminder;
+langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL ;
+listdir: listoption linereminder;
+listoption: U_LIST | U_NOLIST | U_XLIST | U_LISTALL | U_LISTIF | U_LFCOND | U_NOLISTIF | U_SFCOND | U_TFCOND | U_LISTMACROALL | U_LALL | U_NOLISTMACRO | U_SALL | U_LISTMACRO | U_XALL ;
+localdef: LOCAL idlist linereminder;
+localdir: LOCAL parmlist linereminder;
+localdirlist: localdir+;
+locallist: localdef+;
+macroarg: '%' expr| '%' textmacroid| '%' macrofuncid '(' macroarglist ')'| string| '<' arbitrarytext '>' | arbitrarytext;
+macroarglist: macroarg  ',' macroarglist | macroarg;
+macrobody: locallist? macrostmtlist;
+macrocall: label  '(' macroarglist ')' | label macroarglist linereminder;
+macrodir: label MACRO macroparmlist?  linereminder macrobody ENDM linereminder;
+macrofor: fordir forparm  ',' '<' macroarglist '>' linereminder macrobody ENDM linereminder;
+macroforc: forcdir label  ',' textliteral linereminder macrobody ENDM linereminder;
+macrofuncid: label;
+macroid: macroprocid| macrofuncid;
+macroidlist: macroid  ','  macroidlist | macroid;
+macrolabel: label;
+dotdotparmtype: ':' parmtype;
+macroparm: label dotdotparmtype?;
+macroparmlist: macroparm  ',' linereminder?  macroparmlist | macroparm;
+macroprocid: label;
+macrorepeat: repeatdir expr linereminder macrobody ENDM linereminder;
+macrostmt: directive| exitmdir| ':' macrolabel| GOTO macrolabel;
+macrostmtlist: macrostmt macrostmtlist linereminder | macrostmt linereminder;
+macrowhile: WHILE expr linereminder macrobody ENDM linereminder;
+maptype: ALL | NONE | NOTPUBLIC ;
+memoption: TINY | SMALL | MEDIUM | COMPACT | LARGE | HUGE | FLAT ;
+mnemonic: AAA| AAD| AAM| AAS| ADC| ADD| AND| CALL| CBW| CLC| CLD| CLI| CMC| CMP| CMPS| CMPSB| CMPSW| CWD| DAA| DAS| DEC| DIV| ESC| HLT| IDIV| IMUL| IN| INC| INT| INTO| IRET| JA| JAE| JB| JBE| JC| JCXZ| JE| JG| JGE| JL| JLE| JMP| JNA| JNAE| JNB| JNBE| JNC| JNE| JNG| JNGE| JNL| JNLE| JNO| JNP| JNS| JNZ| JO| JP| JPE| JPO| JS| JZ| LAHF| LDS| LEA| LES| LODS| LODSB| LODSW| LOOP| LOOPE| LOOPEW| LOOPNE| LOOPNEW| LOOPNZ| LOOPNZW| LOOPW| LOOPZ| LOOPZW| MOV| MOVS| MOVSB| MOVSW| MUL| NEG| NOP| NOT| OR| OUT| POP| POPF| PUSH| PUSHF| RCL| RCR| RET| RETF| RETN| ROL| ROR| SAHF| SAL| SAR| SBB| SCAS| SCASB| SCASW| SHL| SHR| STC| STD| STI| STOS| STOSB| STOSW| SUB| TEST| WAIT| XCHG| XLAT| XLATB| XOR| BOUND| ENTER| INS| INSB| INSW| LEAVE| OUTS| OUTSB| OUTSW| POPA| PUSHA| PUSHW| ARPL| LAR| LSL| SGDT| SIDT| SLDT| SMSW| STR| VERR| VERW| CLTS| LGDT| LIDT| LLDT| LMSW| LTR| BSF| BSR| BT| BTC| BTR| BTS| CDQ| CMPSD| CWDE| INSD| IRETD| IRETDF| IRETF| JECXZ| LFS| LGS| LODSD| LOOPD| LOOPED| LOOPNED| LOOPNZD| LOOPZD| LSS| MOVSD| MOVSX| MOVZX| OUTSD| POPAD| POPFD| PUSHAD| PUSHD| PUSHFD| SCASD| SETA| SETAE| SETB| SETBE| SETC| SETE| SETG| SETGE| SETL| SETLE| SETNA| SETNAE| SETNB| SETNBE| SETNC| SETNE| SETNG| SETNGE| SETNL| SETNLE| SETNO| SETNP| SETNS| SETNZ| SETO| SETP| SETPE| SETPO| SETS| SETZ| SHLD| SHRD| STOSD| BSWAP| CMPXCHG| INVD| INVLPG| WBINVD| XADD| F2XM1| FABS| FADD| FADDP| FBLD| FBSTP| FCHS| FCLEX| FCOM| FCOMP| FCOMPP| FDECSTP| FDISI| FDIV| FDIVP| FDIVR| FDIVRP| FENI| FFREE| FIADD| FICOM| FICOMP| FIDIV| FIDIVR| FILD| FIMUL| FINCSTP| FINIT| FIST| FISTP| FISUB| FISUBR| FLD| FLD1| FLDCW| FLDENV| FLDENVW| FLDL2E| FLDL2T| FLDLG2| FLDLN2| FLDPI| FLDZ| FMUL| FMULP| FNCLEX| FNDISI| FNENI| FNINIT| FNOP| FNSAVE| FNSAVEW| FNSTCW| FNSTENV| FNSTENVW| FNSTSW| FPATAN| FPREM| FPTAN| FRNDINT| FRSTOR| FRSTORW| FSAVE| FSAVEW| FSCALE| FSQRT| FST| FSTCW| FSTENV| FSTENVW| FSTP| FSTSW| FSUB| FSUBP| FSUBR| FSUBRP| FTST| FWAIT| FXAM| FXCH| FXTRACT| FYL2X| FYL2XP1| FSETPM| FCOS| FLDENVD| FNSAVED| FNSTENVD| FPREM1| FRSTORD| FSAVED| FSIN| FSINCOS| FSTENVD| FUCOM| FUCOMP| FUCOMPP;
+commamodeloptlist: ',' modeloptlist;
+modeldir: U_MODEL memoption commamodeloptlist? linereminder;
+modelopt: langtype| stackoption ;
+modeloptlist: modelopt| modelopt  ',' modeloptlist;
+mulop: '*'| '/' | MOD ;
+namedir: NAME label linereminder;
+nearfar: NEAR | FAR ;
+nestedstruct: structhdr  label?  linereminder structbody ENDS linereminder;
+offsetdir: offsetdirtype linereminder;
+offsetdirtype: EVEN | ORG expr| ALIGN expr? ;
+offsettype: GROUP | SEGMENT | FLAT ;
+oldrecordfieldlist: expr ',' oldrecordfieldlist | expr;
+optiondir: OPTION optionlist linereminder;
+readonly: READONLY;
+optionitem: CASEMAP ':' maptype| DOTNAME | NODOTNAME | EMULATOR | NOEMULATOR | EPILOGUE ':' macroid| EXPR16 | EXPR32 | LANGUAGE ':' langtype| LJMP | NOLJMP | M510 | NOM510 | NOSIGNEXTEND | OFFSET ':' offsettype| OLDMACROS | NOOLDMACROS | OLDSTRUCTS | NOOLDSTRUCTS | PROC ':' ovisibility| PROLOGUE ':' macroid| readonly | NOREADONLY | SCOPED | NOSCOPED | SEGMENT ':' segsize| SETIF2 ':' bool;
+optionlist: optionitem| optionitem  ',' linereminder?  optionlist;
+opttext: ',' textitem;
+orop: OR | XOR ;
+ovisibility: PUBLIC | PRIVATE | EXPORT ;
+pagedir: PAGE pageexpr? linereminder;
+commapagewidth: ',' pagewidth;
+pageexpr: '+'|  pagelength commapagewidth? | commapagewidth;
+pagelength: expr;
+pagewidth: expr;
+dotdotqualifiedtype: ':' qualifiedtype;
+parm: parmid  expr? dotdotqualifiedtype?;
+parmid: label;
+parmlist: parm  ',' linereminder? parmlist | parm;
+parmtype: REQ | '=' textliteral| VARARG ;
+poptions: distance?  langtype?  ovisibility? ;
+primary: expr binaryop expr| flagname| expr;
+brmacroarglist: '<' macroarglist '>';
+procdir: procid PROC poptions  brmacroarglist?  usesregs?   procparmlist? ;
+processor: U_8086 | U_186 | U_286 | U_286C | U_286P | U_386 | U_386C | U_386P | U_486 | U_486P | U_586 | U_586P | U_686 | U_686P | U_K3D | U_MMX | U_XMM;
+processordir: processor linereminder | coprocessor linereminder;
+procid: label;
+commaparmlist: ','  linereminder?  parmlist;
+commaparmidvararg: ','  linereminder?  parmid U_VARARG;
+procparmlist: ',' commaparmlist? ',' commaparmidvararg?;
+protoarg : label? ':' qualifiedtype ;
+commaprotolist: ','  linereminder?  protolist;
+commaidvararg: ','  linereminder?   label? U_VARARG;
+protoarglist: ',' commaprotolist? ',' commaidvararg?;
+protolist: protoarg| protoarg  ',' linereminder?  protolist;
+protospec: typeid | distance?   langtype?   protoarglist?;
+prototypedir: label PROTO protospec;
+pubdef: langtype?  label;
+publicdir: PUBLIC publist linereminder;
+publist: pubdef  ',' linereminder?  publist | pubdef;
+purgedir: PURGE macroidlist;
+qualifiedtype: distance? PTR qualifiedtype? | type;
+qualifier: PROTO protospec | qualifiedtype;
+quote: '\'' | '"';
+radixdir: U_RADIX expr linereminder;
+recordconst: recordtag '{' oldrecordfieldlist '}'| recordtag '<' oldrecordfieldlist '>';
+recorddir: recordtag RECORD bitdeflist linereminder ;
+recordfieldlist: expr  ','  linereminder? recordfieldlist | expr;
+recordinstance: '{'  linereminder?  recordfieldlist  linereminder?  '}'| '<' oldrecordfieldlist '>'| expr DUP '(' recordinstance ')';
+recordinstlist: recordinstance| recordinstance ','  linereminder?  recordinstlist;
+recordtag: label;
+register: specialregister| gpregister| byteregister;
+reglist: register+;
+relop: EQ | NE | LT | LE | GT | GE ;
+repeatblock: U_REPEAT linereminder blockstatements linereminder untildir linereminder;
+repeatdir: REPEAT | REPT ;
+scalarinstlist: initvalue ','  linereminder? scalarinstlist | initvalue;
+segalign: BYTE | WORD | DWORD | PARA | PAGE ;
+segattrib: PUBLIC | STACK | COMMON | MEMORY | AT expr| PRIVATE ;
+segdir: U_CODE segid? | U_DATA | U_DATA_| U_CONST | U_FARDATA segid? | U_FARDATA_ segid? | U_STACK expr?;
+segid: label;
+segidlist : segid  ',' segidlist | segid;
+segmentdef: segmentdir  insegdirlist?  endsdir| simplesegdir  insegdirlist?   endsdir? ;
+segmentdir: segid SEGMENT segoptionlist?  linereminder;
+segmentregister: CS | DS | ES | FS | GS | SS;
+segoption: segalign| segro| segattrib| segsize| classname;
+segoptionlist: segoption+;
+segorderdir: U_ALPHA | U_SEQ | U_DOSSEG | DOSSEG ;
+segro: readonly;
+segsize : USE16 | USE32 | FLAT;
+shiftop: SHR | SHL ;
+sign: '-' | '+';
+simpleexpr: '(' cexpr ')'| primary;
+simplesegdir: segdir linereminder;
+sizearg: label| type| e10;
+specialregister: CR0 | CR2 | CR3 | DR0 | DR1 | DR2 | DR3 | DR6 | DR7| TR3 | TR4 | TR5 | TR6 | TR7;
+stackoption: NEARSTACK | FARSTACK ;
+startupdir: U_STARTUP linereminder;
+stext: STRINGCHAR+;
+string: quote  stext?  quote;
+structbody: structitem structbody | structitem linereminder;
+commanonuniq: ',' NONUNIQUE;
+structdir: structtag structhdr  fieldalign?  commanonuniq? linereminder structbody structtag ENDS linereminder;
+structhdr: STRUC | STRUCT | UNION ;
+structinstance: '<'  fieldinitlist?  '>'| '{' linereminder?   fieldinitlist?   linereminder?  '}'| expr DUP '( structinstlist )';
+structinstlist: structinstance| structinstance  ','  linereminder?  structinstlist;
+structitem : datadir| generaldir| offsetdir| nestedstruct;
+structtag: label;
+term: '!' simpleexpr | simpleexpr;
+text: '!' CHARACTER text| '!' CHARACTER| textliteral | CHARACTER+;
+textdir: label textmacrodir linereminder;
+textitem: textliteral| '%' expr| textmacroid;
+textlen: expr;
+textlist: textitem  ',' linereminder?  textlist | textitem;
+textliteral: '<' text '>' linereminder;
+commatextlen: ',' textlen;
+textstartcomma: textstart  ',';
+textmacrodir: CATSTR textlist? | TEXTEQU textlist? | SIZESTR textitem| SUBSTR textitem  ',' textstart commatextlen| INSTR textstartcomma? textitem  ',' textitem;
+textmacroid: label;
+textstart: expr;
+titledir: titletype arbitrarytext linereminder;
+titletype: TITLE | SUBTITLE | SUBTTL ;
+type: structtag| uniontag| recordtag| distance| datatype| typeid;
+typedefdir: typeid TYPEDEF qualifier;
+typeid: label;
+uniontag: label;
+untildir: U_UNTIL cexpr linereminder U_UNTILCXZ cxzexpr?  linereminder;
+usesregs: USES reglist ;
+whileblock: U_WHILE cexpr linereminder blockstatements linereminder U_ENDW ;
+comment: ';' text linereminder;
+
+decnumber
   :decdigit+
   ; 
 digits
   :decdigit+| digits hexdigit
   ; 
-directive
-  :generalDir| segmentDef
-  ; 
-directiveList
-  :directive+
-  ; 
-distance
-  :nearfar| "NEAR16" | "NEAR32" | "FAR16" | "FAR32" 
-  ; 
-e01
-  :e01 orOp e02| e02
-  ; 
-e02
-  :e02 "AND" e03| e03
-  ; 
-e03
-  :"NOT" e04| e04
-  ; 
-e04
-  :e04 relOp e05| e05
-  ; 
-e05
-  :e05 addOp e06| e06
-  ; 
-e06
-  :e06 mulOp e07| e06 shiftOp e07| e07
-  ; 
-e07
-  :e07 addOp e08| e08
-  ; 
-e08
-  :"HIGH" e09| "LOW" e09| "HIGHWORD" e09| "LOWWORD" e09| e09
-  ; 
-e09
-  :"OFFSET" e10| "SEG" e10| "LROFFSET" e10| "TYPE" e10| "THIS" e10| e09 "PTR" e10| e09 ":" e10| e10
-  ; 
-e10
-  :e10 _DOT e11| e10 expr | e11
-  ; 
-e11
-  :"(" expr ")" | "WIDTH" id| "MASK" id| "SIZE" sizeArg| "SIZEOF" sizeArg| "LENGTH" id| "LENGTHOF" id | recordConst| string| constant| type| id| "$"| segmentRegister| register| "ST" | "ST" "(" expr ")" | expr
-  ; 
-echoDir
-  :"ECHO" arbitraryText lineReminder "%OUT" arbitraryText lineReminder
-  ; 
-elseifBlock
-  :elseifStatement lineReminder directiveList elseifBlock? 
-  ; 
-elseifStatement
-  :"ELSEIF" constExpr| "ELSEIFE" constExpr| "ELSEIFB" textItem| "ELSEIFNB" textItem | "ELSEIFDEF" id| "ELSEIFNDEF" id| "ELSEIFDIF" textItem "," textItem| "ELSEIFDIFI" textItem "," textItem| "ELSEIFIDN" textItem "," textItem| "ELSEIFIDNI" textItem "," textItem| "ELSEIF1" | "ELSEIF2" 
-  ; 
-endDir
-  :"END" immExpr?  lineReminder?
-  ; 
-endpDir
-  :procId "ENDP" lineReminder
-  ; 
-endsDir
-  :id "ENDS" lineReminder
-  ; 
-equDir
-  :textMacroId "EQU" equType lineReminder
-  ; 
-equType
-  :immExpr| textLiteral
-  ; 
-errorDir
-  :errorOpt lineReminder
-  ; 
-errorOpt
-  :_ERR textItem? | _ERRE constExpr optText? | _ERRNZ constExpr optText? | _ERRB textItem optText? | _ERRNB textItem optText? | _ERRDEF id  optText? | _ERRNDEF id optText? | _ERRDIF textItem "," textItem  optText? | _ERRDIFI textItem "," textItem  optText? | _ERRIDN textItem "," textItem  optText? | _ERRIDNI textItem "," textItem  optText? | _ERR1 textItem? | _ERR2 textItem?  
-  ; 
-exitDir
-  :_EXIT expr?  lineReminder
-  ; 
-exitmDir
-  :"EXITM" | "EXITM" textItem
-  ; 
-exponent
-  :"E"  sign?  decNumber
-  ; 
-expr
-  :"SHORT" e05| _TYPE e01| "OPATTR" e01| e01
-  ; 
-exprList
-  : expr | expr  ","  exprList
-  ; 
-altIdq
-  :"(" altId ")"
-  ;
-externDef
-  : langType?  id altIdq? ":" externType
-  ; 
-externDir
-  :externKey externList lineReminder
-  ; 
-externKey
-  :"EXTRN" | "EXTERN" | "EXTERNDEF" 
-  ; 
-externList
-  :externDef| externDef  "," lineReminder?  externList
-  ; 
-externType
-  :"ABS" | qualifiedType
-  ; 
-fieldAlign
-  :constExpr
-  ; 
-fieldInit
-  : initValue | structInstance
-  ; 
-fieldInitList
-  : fieldInit ","  lineReminder?  fieldInitList | fieldInit
-  ; 
-fileChar
-  :delimiter
-  ; 
-fileCharList
-  :fileChar+
-  ; 
-fileSpec
-  :fileCharList| textLiteral
-  ; 
-flagName
-  :"ZERO? "| "CARRY?" | "OVERFLOW?"|"SIGN?"| "PARITY?"
-  ; 
-floatNumber 
-  : sign?  decNumber _DOT decNumber?   exponent? | digits "R"| digits "r"
-  ; 
-forcDir
-  :"FORC" | "IRPC" 
-  ; 
-forDir
-  :"FOR" | "IRP" 
-  ; 
-dotdotforParmType
-  :":" forParmType
-  ;
-forParm
-  :id dotdotforParmType?
-  ; 
-forParmType
-  :"REQ" | "=" textLiteral
-  ; 
-frameExpr
-  :"SEG" id | "DGROUP" ":" id| segmentRegister ":" id| id
-  ; 
-generalDir
-  :modelDir | segOrderDir | nameDir| includeLibDir | commentDir| groupDir | assumeDir| structDir | recordDir | typedefDir| externDir | publicDir | commDir | protoTypeDir| equDir | eqDir | textDir| contextDir | optionDir | processorDir| radixDir | titleDir | pageDir | listDir | crefDir | echoDir| ifDir | errorDir | includeDir | macroDir | macroCall | macroRepeat | purgeDir| macroWhile | macroFor | macroForc| aliasDir
-  ; 
-aliasDir
-  :"ALIAS"
-  ;
-gpRegister
-  :'AX' | 'EAX' | 'BX' | 'EBX' | 'CX' | 'ECX' | 'DX' | 'EDX'| 'BP' | 'EBP' | 'SP' | 'ESP' | 'DI' | 'EDI' | 'SI' | 'ESI'
-  ; 
-groupDir 
-  :groupId "GROUP" segIdList
-  ; 
-groupId
-  :id
-  ; 
-idList
-  : id "," idList | id
-  ; 
-ifDir
-  :ifStatement lineReminder directiveList elseifBlock? elsedirectiveList? "ENDIF" lineReminder
-  ; 
-ifStatement
-  :"IF" constExpr| "IFE" constExpr| "IFB" textItem| "IFNB" textItem| "IFDEF" id| "IFNDEF" id| "IFDIF" textItem "," textItem| "IFDIFI" textItem "," textItem| "IFIDN" textItem "," textItem| "IFIDNI" textItem "," textItem| "IF1" | "IF2" 
-  ; 
-immExpr
-  :expr
-  ; 
-includeDir
-  :"INCLUDE" fileSpec lineReminder
-  ; 
-includeLibDir
-  :"INCLUDELIB" fileSpec lineReminder
-  ; 
-initValue
-  :immExpr| string| "?"| constExpr  "DUP" "(" scalarInstList ")"| floatNumber| bcdConst
-  ; 
-inSegDir
-  : labelDef?  inSegmentDir
-  ; 
-inSegDirList
-  :inSegDir+
-  ; 
-inSegmentDir
-  :instruction| dataDir| controlDir| startupDir| exitDir| offsetDir| labelDir| procDir  localDirList?   inSegDirList?  endpDir| invokeDir| generalDir 
-  ; 
-instrPrefix
-  :"REP" | "REPE" | "REPZ" | "REPNE" | "REPNZ" | "LOCK" 
-  ; 
-instruction
-  : instrPrefix?  asmInstruction
-  ; 
-invokeArg
-  :register "::" register| "ADDR" expr | expr
-  ; 
-commainvokeList
-  :"," lineReminder? invokeList
-  ;
-invokeDir
-  :"INVOKE" expr commainvokeList? lineReminder
-  ; 
-invokeList
-  : invokeArg  "," lineReminder?  invokeList | invokeArg
-  ; 
-labelDef
-  :id ":" | id "::" | "@@:"
-  ; 
-labelDir
-  :id "LABEL" qualifiedType lineReminder
-  ; 
-langType
-  :"C" | "PASCAL" | "FORTRAN" | "BASIC" | "SYSCALL" | "STDCALL" 
-  ; 
-listDir
-  :listOption lineReminder
-  ; 
-listOption
-  :_LIST | _NOLIST | _XLIST | _LISTALL | _LISTIF | _LFCOND | _NOLISTIF | _SFCOND | _TFCOND | _LISTMACROALL | _LALL | _NOLISTMACRO | _SALL | _LISTMACRO | _XALL 
-  ; 
-localDef
-  :"LOCAL" idList lineReminder
-  ; 
-localDir
-  :"LOCAL" parmList lineReminder
-  ; 
-localDirList
-  :localDir+
-  ; 
-localList
-  :localDef+
-  ; 
-macroArg
-  :"%" constExpr| "%" textMacroId| "%" macroFuncId "(" macroArgList ")"| string| "<" arbitraryText ">" | arbitraryText
-  ; 
-macroArgList
-  : macroArg  "," macroArgList | macroArg
-  ; 
-macroBody
-  : localList? macroStmtList
-  ; 
-macroCall
-  : id  "(" macroArgList ")" | id macroArgList lineReminder
-  ; 
-macroDir
-  :id "MACRO" macroParmList?  lineReminder macroBody "ENDM" lineReminder
-  ; 
-macroFor
-  :forDir forParm  "," "<" macroArgList ">" lineReminder macroBody "ENDM" lineReminder
-  ; 
-macroForc
-  :forcDir id  "," textLiteral lineReminder macroBody "ENDM" lineReminder
-  ; 
-macroFuncId
-  :id
-  ; 
-macroId
-  :macroProcId| macroFuncId
-  ; 
-macroIdList
-  : macroId  ","  macroIdList | macroId
-  ; 
-macroLabel
-  :id
-  ; 
-dotdotparmType
-  :":" parmType
-  ;
-macroParm
-  :id dotdotparmType?
-  ; 
-macroParmList
-  : macroParm  "," lineReminder?  macroParmList | macroParm
-  ; 
-macroProcId
-  :id
-  ; 
-macroRepeat
-  :repeatDir constExpr lineReminder macroBody "ENDM" lineReminder
-  ; 
-macroStmt
-  :directive| exitmDir| ":" macroLabel| "GOTO" macroLabel
-  ; 
-macroStmtList
-  : macroStmt macroStmtList | macroStmt lineReminder
-  ; 
-macroWhile
-  :"WHILE" constExpr lineReminder macroBody "ENDM" lineReminder
-  ; 
-mapType
-  :"ALL" | "NONE" | "NOTPUBLIC" 
-  ; 
-memOption
-  :"TINY" | "SMALL" | "MEDIUM" | "COMPACT" | "LARGE" | "HUGE" | "FLAT" 
-  ; 
-mnemonic
-  : "AAA"|
-    "AAD"|
-    "AAM"|
-    "AAS"|
-    "ADC"|
-    "ADD"|
-    "AND"|
-    "CALL"|
-    "CBW"|
-    "CLC"|
-    "CLD"|
-    "CLI"|
-    "CMC"|
-    "CMP"|
-    "CMPS"|
-    "CMPSB"|
-    "CMPSW"|
-    "CWD"|
-    "DAA"|
-    "DAS"|
-    "DEC"|
-    "DIV"|
-    "ESC"|
-    "HLT"|
-    "IDIV"|
-    "IMUL"|
-    "IN"|
-    "INC"|
-    "INT"|
-    "INTO"|
-    "IRET"|
-    "JA"|
-    "JAE"|
-    "JB"|
-    "JBE"|
-    "JC"|
-    "JCXZ"|
-    "JE"|
-    "JG"|
-    "JGE"|
-    "JL"|
-    "JLE"|
-    "JMP"|
-    "JNA"|
-    "JNAE"|
-    "JNB"|
-    "JNBE"|
-    "JNC"|
-    "JNE"|
-    "JNG"|
-    "JNGE"|
-    "JNL"|
-    "JNLE"|
-    "JNO"|
-    "JNP"|
-    "JNS"|
-    "JNZ"|
-    "JO"|
-    "JP"|
-    "JPE"|
-    "JPO"|
-    "JS"|
-    "JZ"|
-    "LAHF"|
-    "LDS"|
-    "LEA"|
-    "LES"|
-    "LODS"|
-    "LODSB"|
-    "LODSW"|
-    "LOOP"|
-    "LOOPE"|
-    "LOOPEW"|
-    "LOOPNE"|
-    "LOOPNEW"|
-    "LOOPNZ"|
-    "LOOPNZW"|
-    "LOOPW"|
-    "LOOPZ"|
-    "LOOPZW"|
-    "MOV"|
-    "MOVS"|
-    "MOVSB"|
-    "MOVSW"|
-    "MUL"|
-    "NEG"|
-    "NOP"|
-    "NOT"|
-    "OR"|
-    "OUT"|
-    "POP"|
-    "POPF"|
-    "PUSH"|
-    "PUSHF"|
-    "RCL"|
-    "RCR"|
-    "RET"|
-    "RETF"|
-    "RETN"|
-    "ROL"|
-    "ROR"|
-    "SAHF"|
-    "SAL"|
-    "SAR"|
-    "SBB"|
-    "SCAS"|
-    "SCASB"|
-    "SCASW"|
-    "SHL"|
-    "SHR"|
-    "STC"|
-    "STD"|
-    "STI"|
-    "STOS"|
-    "STOSB"|
-    "STOSW"|
-    "SUB"|
-    "TEST"|
-    "WAIT"|
-    "XCHG"|
-    "XLAT"|
-    "XLATB"|
-    "XOR"|
-    "BOUND"|
-    "ENTER"|
-    "INS"|
-    "INSB"|
-    "INSW"|
-    "LEAVE"|
-    "OUTS"|
-    "OUTSB"|
-    "OUTSW"|
-    "POPA"|
-    "PUSHA"|
-    "PUSHW"|
-    "ARPL"|
-    "LAR"|
-    "LSL"|
-    "SGDT"|
-    "SIDT"|
-    "SLDT"|
-    "SMSW"|
-    "STR"|
-    "VERR"|
-    "VERW"|
-    "CLTS"|
-    "LGDT"|
-    "LIDT"|
-    "LLDT"|
-    "LMSW"|
-    "LTR"|
-    "BSF"|
-    "BSR"|
-    "BT"|
-    "BTC"|
-    "BTR"|
-    "BTS"|
-    "CDQ"|
-    "CMPSD"|
-    "CWDE"|
-    "INSD"|
-    "IRETD"|
-    "IRETDF"|
-    "IRETF"|
-    "JECXZ"|
-    "LFS"|
-    "LGS"|
-    "LODSD"|
-    "LOOPD"|
-    "LOOPED"|
-    "LOOPNED"|
-    "LOOPNZD"|
-    "LOOPZD"|
-    "LSS"|
-    "MOVSD"|
-    "MOVSX"|
-    "MOVZX"|
-    "OUTSD"|
-    "POPAD"|
-    "POPFD"|
-    "PUSHAD"|
-    "PUSHD"|
-    "PUSHFD"|
-    "SCASD"|
-    "SETA"|
-    "SETAE"|
-    "SETB"|
-    "SETBE"|
-    "SETC"|
-    "SETE"|
-    "SETG"|
-    "SETGE"|
-    "SETL"|
-    "SETLE"|
-    "SETNA"|
-    "SETNAE"|
-    "SETNB"|
-    "SETNBE"|
-    "SETNC"|
-    "SETNE"|
-    "SETNG"|
-    "SETNGE"|
-    "SETNL"|
-    "SETNLE"|
-    "SETNO"|
-    "SETNP"|
-    "SETNS"|
-    "SETNZ"|
-    "SETO"|
-    "SETP"|
-    "SETPE"|
-    "SETPO"|
-    "SETS"|
-    "SETZ"|
-    "SHLD"|
-    "SHRD"|
-    "STOSD"|
-    "BSWAP"|
-    "CMPXCHG"|
-    "INVD"|
-    "INVLPG"|
-    "WBINVD"|
-    "XADD"|
-    "F2XM1"|
-    "FABS"|
-    "FADD"|
-    "FADDP"|
-    "FBLD"|
-    "FBSTP"|
-    "FCHS"|
-    "FCLEX"|
-    "FCOM"|
-    "FCOMP"|
-    "FCOMPP"|
-    "FDECSTP"|
-    "FDISI"|
-    "FDIV"|
-    "FDIVP"|
-    "FDIVR"|
-    "FDIVRP"|
-    "FENI"|
-    "FFREE"|
-    "FIADD"|
-    "FICOM"|
-    "FICOMP"|
-    "FIDIV"|
-    "FIDIVR"|
-    "FILD"|
-    "FIMUL"|
-    "FINCSTP"|
-    "FINIT"|
-    "FIST"|
-    "FISTP"|
-    "FISUB"|
-    "FISUBR"|
-    "FLD"|
-    "FLD1"|
-    "FLDCW"|
-    "FLDENV"|
-    "FLDENVW"|
-    "FLDL2E"|
-    "FLDL2T"|
-    "FLDLG2"|
-    "FLDLN2"|
-    "FLDPI"|
-    "FLDZ"|
-    "FMUL"|
-    "FMULP"|
-    "FNCLEX"|
-    "FNDISI"|
-    "FNENI"|
-    "FNINIT"|
-    "FNOP"|
-    "FNSAVE"|
-    "FNSAVEW"|
-    "FNSTCW"|
-    "FNSTENV"|
-    "FNSTENVW"|
-    "FNSTSW"|
-    "FPATAN"|
-    "FPREM"|
-    "FPTAN"|
-    "FRNDINT"|
-    "FRSTOR"|
-    "FRSTORW"|
-    "FSAVE"|
-    "FSAVEW"|
-    "FSCALE"|
-    "FSQRT"|
-    "FST"|
-    "FSTCW"|
-    "FSTENV"|
-    "FSTENVW"|
-    "FSTP"|
-    "FSTSW"|
-    "FSUB"|
-    "FSUBP"|
-    "FSUBR"|
-    "FSUBRP"|
-    "FTST"|
-    "FWAIT"|
-    "FXAM"|
-    "FXCH"|
-    "FXTRACT"|
-    "FYL2X"|
-    "FYL2XP1"|
-    "FSETPM"|
-    "FCOS"|
-    "FLDENVD"|
-    "FNSAVED"|
-    "FNSTENVD"|
-    "FPREM1"|
-    "FRSTORD"|
-    "FSAVED"|
-    "FSIN"|
-    "FSINCOS"|
-    "FSTENVD"|
-    "FUCOM"|
-    "FUCOMP"|
-    "FUCOMPP"
-  ; 
-commamodelOptlist
-  :"," modelOptlist
-  ;
-modelDir
-  :_MODEL memOption commamodelOptlist? lineReminder
-  ; 
-modelOpt
-  :langType| stackOption 
-  ; 
-modelOptlist
-  :modelOpt| modelOpt  "," modelOptlist
-  ; 
-mulOp
-  :"*"| "/" | "MOD" 
-  ; 
-nameDir
-  :"NAME" id lineReminder
-  ; 
-nearfar
-  :"NEAR" | "FAR" 
-  ; 
-nestedStruct
-  :structHdr  id?  lineReminder structBody "ENDS" lineReminder
-  ; 
-offsetDir
-  :offsetDirType lineReminder
-  ; 
-offsetDirType
-  :"EVEN" | "ORG" immExpr| "ALIGN" constExpr? 
-  ; 
-offsetType
-  :"GROUP" | "SEGMENT" | "FLAT" 
-  ; 
-oldRecordFieldList
-  : constExpr "," oldRecordFieldList | constExpr
-  ; 
-optionDir
-  :"OPTION" optionList lineReminder
-  ; 
-readonly
-  :"READONLY"
-  ;
-optionItem
-  :"CASEMAP" ":" mapType| "DOTNAME" | "NODOTNAME" | "EMULATOR" | "NOEMULATOR" | "EPILOGUE" ":" macroId| "EXPR16" | "EXPR32" | "LANGUAGE" ":" langType| "LJMP" | "NOLJMP" | "M510" | "NOM510" | "NOSIGNEXTEND" | "OFFSET" ":" offsetType| "OLDMACROS" | "NOOLDMACROS" | "OLDSTRUCTS" | "NOOLDSTRUCTS" | "PROC" ":" oVisibility| "PROLOGUE" ":" macroId| readonly | "NOREADONLY" | "SCOPED" | "NOSCOPED" | "SEGMENT" ":" segSize| "SETIF2" ":" bool
-  ; 
-optionList
-  :optionItem| optionItem  "," lineReminder?  optionList
-  ; 
-optText
-  :"," textItem
-  ; 
-orOp
-  :"OR" | "XOR" 
-  ; 
-oVisibility
-  :"PUBLIC" | "PRIVATE" | "EXPORT" 
-  ; 
-pageDir
-  :"PAGE" pageExpr?  lineReminder
-  ; 
-commapageWidth
-  :"," pageWidth
-  ;
-pageExpr
-  :"+"|  pageLength?  commapageWidth?
-  ; 
-pageLength
-  :constExpr
-  ; 
-pageWidth
-  :constExpr
-  ; 
-dotdotqualifiedType
-  :":" qualifiedType
-  ;
-parm
-  : parmId  constExpr? dotdotqualifiedType?
-  ; 
-parmId
-  :id
-  ; 
-parmList
-  : parm  "," lineReminder? parmList | parm
-  ; 
-parmType
-  :"REQ" | "=" textLiteral| "VARARG" 
-  ; 
-pOptions
-  : distance?   langType?   oVisibility? 
-  ; 
-primary
-  :expr binaryOp expr| flagName| expr
-  ; 
-brmacroArgList
-  :"<" macroArgList ">"
-  ;
-procDir
-  :procId "PROC" pOptions?  brmacroArgList?  usesRegs?   procParmList? 
-  ; 
-processor
-  :_8086 | _186 | _286 | _286C | _286P | _386 | _386C | _386P | _486 | _486P | _586 | _586P |
- _686 | _686P | _K3D | _MMX | _XMM
-  ; 
-processorDir
-  :processor lineReminder | coprocessor lineReminder
-  ; 
-procId
-  :id
-  ; 
-commaparmList
-  :","  lineReminder?  parmList
-  ;
-commaparmIdvararg
-  :","  lineReminder?  parmId ":VARARG" 
-  ;
-procParmList
-  :commaparmList? 
-    commaparmIdvararg?
-  ; 
-protoArg 
-  : id? ":" qualifiedType 
-  ; 
-commaprotoList
-  :","  lineReminder?  protoList
-  ;
-commaidvararg
-  :","  lineReminder?   id? ":VARARG" 
-  ;
-protoArgList
-  :commaprotoList?
-    commaidvararg?
-  ; 
-protoList
-  :protoArg| protoArg  "," lineReminder?  protoList
-  ; 
-protoSpec
-  : typeId | distance?   langType?   protoArgList?
-  ; 
-protoTypeDir
-  :id "PROTO" protoSpec
-  ; 
-pubDef
-  : langType?  id
-  ; 
-publicDir
-  :"PUBLIC" pubList lineReminder
-  ; 
-pubList
-  : pubDef  "," lineReminder?  pubList | pubDef
-  ; 
-purgeDir
-  :"PURGE" macroIdList
-  ; 
-qualifiedType
-  :  distance? "PTR" qualifiedType? | type
-  ; 
-qualifier
-  : "PROTO" protoSpec | qualifiedType
-  ; 
-quote
-  :'"' | "'"
-  ; 
-radixDir
-  :_RADIX constExpr lineReminder
-  ; 
-recordConst
-  :recordTag "{" oldRecordFieldList "}"| recordTag "<" oldRecordFieldList ">"
-  ; 
-recordDir
-  :recordTag "RECORD" bitDefList lineReminder 
-  ; 
-recordFieldList
-  : constExpr  ","  lineReminder? recordFieldList | constExpr
-  ; 
-recordInstance
-  :"{"  lineReminder?  recordFieldList  lineReminder?  "}"| "<" oldRecordFieldList ">"| constExpr "DUP" "(" recordInstance ")"
-  ; 
-recordInstList
-  :recordInstance| recordInstance ","  lineReminder?  recordInstList
-  ; 
-recordTag
-  :id
-  ; 
-register
-  :specialRegister| gpRegister| byteRegister
-  ; 
-regList
-  :register+
-  ; 
-relOp
-  :"EQ" | "NE" | "LT" | "LE" | "GT" | "GE" 
-  ; 
-repeatBlock
-  :_REPEAT lineReminder blockStatements lineReminder untilDir lineReminder
-  ; 
-repeatDir
-  :"REPEAT" | "REPT" 
-  ; 
-scalarInstList
-  : initValue ","  lineReminder? scalarInstList | initValue
-  ; 
-segAlign
-  :"BYTE" | "WORD" | "DWORD" | "PARA" | "PAGE" 
-  ; 
-segAttrib
-  :"PUBLIC" | "STACK" | "COMMON" | "MEMORY" | "AT" constExpr| "PRIVATE" 
-  ; 
-segDir
-  :_CODE segId? | _DATA | _DATA_| _CONST | _FARDATA segId? | _FARDATA_ segId? | _STACK constExpr?
-  ; 
-segId
-  :id
-  ; 
-segIdList 
-  : segId  "," segIdList | segId
-  ; 
-segmentDef
-  :segmentDir  inSegDirList?  endsDir| simpleSegDir  inSegDirList?   endsDir? 
-  ; 
-segmentDir
-  :segId "SEGMENT" segOptionList?  lineReminder
-  ; 
-segmentRegister
-  :'CS' | 'DS' | 'ES' | 'FS' | 'GS' | 'SS'
-  ; 
-segOption
-  :segAlign| segRO| segAttrib| segSize| className
-  ; 
-segOptionList
-  :segOption+
-  ; 
-segOrderDir
-  :_ALPHA | _SEQ | _DOSSEG | "DOSSEG" 
-  ; 
-segRO
-  :readonly
-  ; 
-segSize 
-  :"USE16" | "USE32" | "FLAT" 
-  ; 
-shiftOp
-  :"SHR" | "SHL" 
-  ; 
-sign
-  :"-" | "+"
-  ; 
-simpleExpr
-  :"(" cExpr ")"| primary
-  ; 
-simpleSegDir
-  :segDir lineReminder
-  ; 
-sizeArg
-  :id| type| e10
-  ; 
-specialRegister
-  :'CR0' | 'CR2' | 'CR3' | 'DR0' | 'DR1' | 'DR2' | 'DR3' | 'DR6' | 'DR7'| 'TR3' | 'TR4' | 'TR5' | 'TR6' | 'TR7'
-  ; 
-stackOption
-  :"NEARSTACK" | "FARSTACK" 
-  ; 
-startupDir
-  :_STARTUP lineReminder
-  ; 
-stext
-  :stringChar+
-  ; 
-string
-  :quote  stext?  quote
-  ; 
-structBody
-  : structItem structBody | structItem lineReminder
-  ; 
-commanonuniq
-  :"," "NONUNIQUE"
-  ;
-structDir
-  :structTag structHdr  fieldAlign?  commanonuniq? lineReminder structBody structTag "ENDS" lineReminder
-  ; 
-structHdr
-  :"STRUC" | "STRUCT" | "UNION" 
-  ; 
-structInstance
-  :"<"  fieldInitList?  ">"| "{" lineReminder?   fieldInitList?   lineReminder?  "}"| constExpr "DUP" "(" structInstList ")"
-  ; 
-structInstList
-  :structInstance| structInstance  ","  lineReminder?  structInstList
-  ; 
-structItem 
-  :dataDir| generalDir| offsetDir| nestedStruct
-  ; 
-structTag
-  :id
-  ; 
-term
-  : "!" simpleExpr | simpleExpr
-  ; 
-text
-  : "!" character text| "!" character| textLiteral | character+
-  ; 
-textDir
-  :id textMacroDir lineReminder
-  ; 
-textItem
-  :textLiteral| "%" constExpr| textMacroId
-  ; 
-textLen
-  :constExpr
-  ; 
-textList
-  : textItem  "," lineReminder?  textList | textItem
-  ; 
-textLiteral
-  :"<" text ">" lineReminder
-  ; 
-commatextLen
-  :"," textLen
-  ;
-textStartcomma
-  :textStart  ","
-  ;
-textMacroDir
-  :"CATSTR" textList? | "TEXTEQU" textList? | "SIZESTR" textItem| "SUBSTR" textItem  "," textStart commatextLen| "INSTR" textStartcomma? textItem  "," textItem
-  ; 
-textMacroId
-  :id
-  ; 
-textStart
-  :constExpr
-  ; 
-titleDir
-  :titleType arbitraryText lineReminder
-  ; 
-titleType
-  :"TITLE" | "SUBTITLE" | "SUBTTL" 
-  ; 
-type
-  :structTag| unionTag| recordTag| distance| dataType| typeId
-  ; 
-typedefDir
-  :typeId "TYPEDEF" qualifier
-  ; 
-typeId
-  :id
-  ; 
-unionTag
-  :id
-  ; 
-untilDir
-  :_UNTIL cExpr lineReminder _UNTILCXZ cxzExpr?  lineReminder
-  ; 
-usesRegs
-  :"USES" regList 
-  ; 
-whileBlock
-  :_WHILE cExpr lineReminder blockStatements lineReminder _ENDW 
-  ; 
-radixOverride
-  : 'H' | 'O' | 'Q' | 'T' | 'Y'
+label: letter
+| label letter
+| label decdigit;
+
+WHITESPACECHARACTER: WS;
+terminals
+radixoverride
+  : /[hoqtyHOQTY]/
   ; 
 decdigit
-  : '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+  : /[0-9]/
   ; 
 hexdigit
-  : 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
+  : /[A-Fa-f]/
   ; 
-letter : "A" | "B" | "C" | "D" | "E" | "F" | "G"
-       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
-       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
-       | "V" | "W" | "X" | "Y" | "Z" | "a" | "b"
-       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
-       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
-       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
-       | "x" | "y" | "z" | "_";
-id: letter
-| id letter
-| id decdigit;
-whiteSpaceCharacter
-  : WS
-  ;
-terminals
-endOfLine
-  : /[\r\n]+/
-  ;
-WS: /[\t\s]+/;
-character
-  :/[^\n\r!]/
-  ; 
-comment
-  :/;[^\n\r]*/
-  ; 
-stringChar
-  :/(\'\')|(\"\")|[^\'\"]/
-  ; 
-delimiter
-  :/[^\t\n\r\s\w]/
-  ; 
-_186: ".186";
-_286: ".286";
-_286C: ".286C";
-_286P: ".286P";
-_287: ".287";
-_386: ".386";
-_386C: ".386C";
-_386P: ".386P";
-_387: ".387";
-_486: ".486";
-_486P: ".486P";
-_586: ".586";
-_586P: ".586P";
-_686: ".686";
-_686P: ".686P";
-_8086: ".8086";
-_8087: ".8087";
-_ALPHA: ".ALPHA";
-_BREAK: ".BREAK";
-_CODE: ".CODE";
-_CONST: ".CONST";
-_CONTINUE: ".CONTINUE";
-_CREF: ".CREF";
-_DATA: ".DATA";
-_DOSSEG: ".DOSSEG";
-_ELSE: ".ELSE";
-_ELSEIF: ".ELSEIF";
-_ENDIF: ".ENDIF";
-_ENDW: ".ENDW";
-_ERR: ".ERR";
-_ERR1: ".ERR1";
-_ERR2: ".ERR2";
-_ERRB: ".ERRB";
-_ERRDEF: ".ERRDEF";
-_ERRDIF: ".ERRDIF";
-_ERRDIFI: ".ERRDIFI";
-_ERRE: ".ERRE";
-_ERRIDN: ".ERRIDN";
-_ERRIDNI: ".ERRIDNI";
-_ERRNB: ".ERRNB";
-_ERRNDEF: ".ERRNDEF";
-_ERRNZ: ".ERRNZ";
-_EXIT: ".EXIT";
-_FARDATA: ".FARDATA";
-_IF: ".IF";
-_K3D: ".K3D";
-_LALL: ".LALL";
-_LFCOND: ".LFCOND";
-_LIST: ".LIST";
-_LISTALL: ".LISTALL";
-_LISTIF: ".LISTIF";
-_LISTMACRO: ".LISTMACRO";
-_LISTMACROALL: ".LISTMACROALL";
-_MMX: ".MMX";
-_MODEL: ".MODEL";
-_NO87: ".NO87";
-_NOCREF: ".NOCREF";
-_NOLIST: ".NOLIST";
-_NOLISTIF: ".NOLISTIF";
-_NOLISTMACRO: ".NOLISTMACRO";
-_RADIX: ".RADIX";
-_REPEAT: ".REPEAT";
-_SALL: ".SALL";
-_SEQ: ".SEQ";
-_SFCOND: ".SFCOND";
-_STACK: ".STACK";
-_STARTUP: ".STARTUP";
-_TFCOND: ".TFCOND";
-_TYPE: ".TYPE";
-_UNTIL: ".UNTIL";
-_UNTILCXZ: ".UNTILCXZ";
-_WHILE: ".WHILE";
-_XALL: ".XALL";
-_XCREF: ".XCREF";
-_XLIST: ".XLIST";
-_XMM: ".XMM";
-_DOT: ".";
-_DATA_: ".DATA?";
-_FARDATA_: ".FARDATA?";
+letter : /[A-Za-z_]/;
+AAA: 'AAA';
+AAD: 'AAD';
+AAM: 'AAM';
+AAS: 'AAS';
+ABS: 'ABS';
+ADC: 'ADC';
+ADD: 'ADD';
+ADDR: 'ADDR';
+AH: 'AH';
+AL: 'AL';
+ALIAS: 'ALIAS';
+ALIGN: 'ALIGN';
+ALL: 'ALL';
+AND: 'AND';
+ARPL: 'ARPL';
+ASSUMENOTHING: 'ASSUME NOTHING';
+ASSUME: 'ASSUME';
+ASSUMES: 'ASSUMES';
+AT: 'AT';
+AX: 'AX';
+BASIC: 'BASIC';
+BH: 'BH';
+BL: 'BL';
+BOUND: 'BOUND';
+BP: 'BP';
+BSF: 'BSF';
+BSR: 'BSR';
+BSWAP: 'BSWAP';
+BT: 'BT';
+BTC: 'BTC';
+BTR: 'BTR';
+BTS: 'BTS';
+BX: 'BX';
+BYTE: 'BYTE';
+CALL: 'CALL';
+CARRY_: 'CARRY?';
+CASEMAP: 'CASEMAP';
+CATSTR: 'CATSTR';
+CBW: 'CBW';
+CDQ: 'CDQ';
+CH: 'CH';
+CL: 'CL';
+CLC: 'CLC';
+CLD: 'CLD';
+CLI: 'CLI';
+CLTS: 'CLTS';
+CMC: 'CMC';
+CMP: 'CMP';
+CMPS: 'CMPS';
+CMPSB: 'CMPSB';
+CMPSD: 'CMPSD';
+CMPSW: 'CMPSW';
+CMPXCHG: 'CMPXCHG';
+COMM: 'COMM';
+COMMENT: 'COMMENT';
+COMMON: 'COMMON';
+COMPACT: 'COMPACT';
+CPU: 'CPU';
+CR0: 'CR0';
+CR2: 'CR2';
+CR3: 'CR3';
+CS: 'CS';
+CWD: 'CWD';
+CWDE: 'CWDE';
+CX: 'CX';
+DAA: 'DAA';
+DAS: 'DAS';
+DB: 'DB';
+DD: 'DD';
+DEC: 'DEC';
+DF: 'DF';
+DGROUP: 'DGROUP';
+DH: 'DH';
+DI: 'DI';
+DIV: 'DIV';
+DL: 'DL';
+DOSSEG: 'DOSSEG';
+DOTNAME: 'DOTNAME';
+DQ: 'DQ';
+DR0: 'DR0';
+DR1: 'DR1';
+DR2: 'DR2';
+DR3: 'DR3';
+DR6: 'DR6';
+DR7: 'DR7';
+DS: 'DS';
+DT: 'DT';
+DUP: 'DUP';
+DW: 'DW';
+DWORD: 'DWORD';
+DX: 'DX';
+EAX: 'EAX';
+EBP: 'EBP';
+EBX: 'EBX';
+ECHO: 'ECHO';
+ECX: 'ECX';
+EDI: 'EDI';
+EDX: 'EDX';
+ELSEIF1: 'ELSEIF1';
+ELSEIF2: 'ELSEIF2';
+ELSEIF: 'ELSEIF';
+ELSEIFB: 'ELSEIFB';
+ELSEIFDEF: 'ELSEIFDEF';
+ELSEIFDIF: 'ELSEIFDIF';
+ELSEIFDIFI: 'ELSEIFDIFI';
+ELSEIFE: 'ELSEIFE';
+ELSEIFIDN: 'ELSEIFIDN';
+ELSEIFIDNI: 'ELSEIFIDNI';
+ELSEIFNB: 'ELSEIFNB';
+ELSEIFNDEF: 'ELSEIFNDEF';
+EMULATOR: 'EMULATOR';
+END: 'END';
+ENDIF: 'ENDIF';
+ENDM: 'ENDM';
+ENDP: 'ENDP';
+ENDS: 'ENDS';
+ENTER: 'ENTER';
+EPILOGUE: 'EPILOGUE';
+EQ: 'EQ';
+EQU: 'EQU';
+ERROR: 'ERROR';
+ES: 'ES';
+ESC: 'ESC';
+ESI: 'ESI';
+ESP: 'ESP';
+EVEN: 'EVEN';
+EXITM: 'EXITM';
+EXPORT: 'EXPORT';
+EXPR16: 'EXPR16';
+EXPR32: 'EXPR32';
+EXTERN: 'EXTERN';
+EXTERNDEF: 'EXTERNDEF';
+EXTRN: 'EXTRN';
+F2XM1: 'F2XM1';
+FABS: 'FABS';
+FADD: 'FADD';
+FADDP: 'FADDP';
+FALSE: 'FALSE';
+FAR16: 'FAR16';
+FAR32: 'FAR32';
+FAR: 'FAR';
+FARSTACK: 'FARSTACK';
+FBLD: 'FBLD';
+FBSTP: 'FBSTP';
+FCHS: 'FCHS';
+FCLEX: 'FCLEX';
+FCOM: 'FCOM';
+FCOMP: 'FCOMP';
+FCOMPP: 'FCOMPP';
+FCOS: 'FCOS';
+FDECSTP: 'FDECSTP';
+FDISI: 'FDISI';
+FDIV: 'FDIV';
+FDIVP: 'FDIVP';
+FDIVR: 'FDIVR';
+FDIVRP: 'FDIVRP';
+FENI: 'FENI';
+FFREE: 'FFREE';
+FIADD: 'FIADD';
+FICOM: 'FICOM';
+FICOMP: 'FICOMP';
+FIDIV: 'FIDIV';
+FIDIVR: 'FIDIVR';
+FILD: 'FILD';
+FIMUL: 'FIMUL';
+FINCSTP: 'FINCSTP';
+FINIT: 'FINIT';
+FIST: 'FIST';
+FISTP: 'FISTP';
+FISUB: 'FISUB';
+FISUBR: 'FISUBR';
+FLAT: 'FLAT';
+FLD1: 'FLD1';
+FLD: 'FLD';
+FLDCW: 'FLDCW';
+FLDENV: 'FLDENV';
+FLDENVD: 'FLDENVD';
+FLDENVW: 'FLDENVW';
+FLDL2E: 'FLDL2E';
+FLDL2T: 'FLDL2T';
+FLDLG2: 'FLDLG2';
+FLDLN2: 'FLDLN2';
+FLDPI: 'FLDPI';
+FLDZ: 'FLDZ';
+FMUL: 'FMUL';
+FMULP: 'FMULP';
+FNCLEX: 'FNCLEX';
+FNDISI: 'FNDISI';
+FNENI: 'FNENI';
+FNINIT: 'FNINIT';
+FNOP: 'FNOP';
+FNSAVE: 'FNSAVE';
+FNSAVED: 'FNSAVED';
+FNSAVEW: 'FNSAVEW';
+FNSTCW: 'FNSTCW';
+FNSTENV: 'FNSTENV';
+FNSTENVD: 'FNSTENVD';
+FNSTENVW: 'FNSTENVW';
+FNSTSW: 'FNSTSW';
+FOR: 'FOR';
+FORC: 'FORC';
+FORTRAN: 'FORTRAN';
+FPATAN: 'FPATAN';
+FPREM1: 'FPREM1';
+FPREM: 'FPREM';
+FPTAN: 'FPTAN';
+FRNDINT: 'FRNDINT';
+FRSTOR: 'FRSTOR';
+FRSTORD: 'FRSTORD';
+FRSTORW: 'FRSTORW';
+FS: 'FS';
+FSAVE: 'FSAVE';
+FSAVED: 'FSAVED';
+FSAVEW: 'FSAVEW';
+FSCALE: 'FSCALE';
+FSETPM: 'FSETPM';
+FSIN: 'FSIN';
+FSINCOS: 'FSINCOS';
+FSQRT: 'FSQRT';
+FST: 'FST';
+FSTCW: 'FSTCW';
+FSTENV: 'FSTENV';
+FSTENVD: 'FSTENVD';
+FSTENVW: 'FSTENVW';
+FSTP: 'FSTP';
+FSTSW: 'FSTSW';
+FSUB: 'FSUB';
+FSUBP: 'FSUBP';
+FSUBR: 'FSUBR';
+FSUBRP: 'FSUBRP';
+FTST: 'FTST';
+FUCOM: 'FUCOM';
+FUCOMP: 'FUCOMP';
+FUCOMPP: 'FUCOMPP';
+FWAIT: 'FWAIT';
+FWORD: 'FWORD';
+FXAM: 'FXAM';
+FXCH: 'FXCH';
+FXTRACT: 'FXTRACT';
+FYL2X: 'FYL2X';
+FYL2XP1: 'FYL2XP1';
+GE: 'GE';
+GOTO: 'GOTO';
+GROUP: 'GROUP';
+GS: 'GS';
+GT: 'GT';
+HIGH: 'HIGH';
+HIGHWORD: 'HIGHWORD';
+HLT: 'HLT';
+HUGE: 'HUGE';
+IDIV: 'IDIV';
+IF1: 'IF1';
+IF2: 'IF2';
+IF: 'IF';
+IFB: 'IFB';
+IFDEF: 'IFDEF';
+IFDIF: 'IFDIF';
+IFDIFI: 'IFDIFI';
+IFE: 'IFE';
+IFIDN: 'IFIDN';
+IFIDNI: 'IFIDNI';
+IFNB: 'IFNB';
+IFNDEF: 'IFNDEF';
+IMUL: 'IMUL';
+IN: 'IN';
+INC: 'INC';
+INCLUDE: 'INCLUDE';
+INCLUDELIB: 'INCLUDELIB';
+INS: 'INS';
+INSB: 'INSB';
+INSD: 'INSD';
+INSTR: 'INSTR';
+INSW: 'INSW';
+INT: 'INT';
+INTO: 'INTO';
+INVD: 'INVD';
+INVLPG: 'INVLPG';
+INVOKE: 'INVOKE';
+IRET: 'IRET';
+IRETD: 'IRETD';
+IRETDF: 'IRETDF';
+IRETF: 'IRETF';
+IRP: 'IRP';
+IRPC: 'IRPC';
+JA: 'JA';
+JAE: 'JAE';
+JB: 'JB';
+JBE: 'JBE';
+JC: 'JC';
+JCXZ: 'JCXZ';
+JE: 'JE';
+JECXZ: 'JECXZ';
+JG: 'JG';
+JGE: 'JGE';
+JL: 'JL';
+JLE: 'JLE';
+JMP: 'JMP';
+JNA: 'JNA';
+JNAE: 'JNAE';
+JNB: 'JNB';
+JNBE: 'JNBE';
+JNC: 'JNC';
+JNE: 'JNE';
+JNG: 'JNG';
+JNGE: 'JNGE';
+JNL: 'JNL';
+JNLE: 'JNLE';
+JNO: 'JNO';
+JNP: 'JNP';
+JNS: 'JNS';
+JNZ: 'JNZ';
+JO: 'JO';
+JP: 'JP';
+JPE: 'JPE';
+JPO: 'JPO';
+JS: 'JS';
+JZ: 'JZ';
+LABEL: 'LABEL';
+LAHF: 'LAHF';
+LANGUAGE: 'LANGUAGE';
+LAR: 'LAR';
+LARGE: 'LARGE';
+LDS: 'LDS';
+LE: 'LE';
+LEA: 'LEA';
+LEAVE: 'LEAVE';
+LENGTH: 'LENGTH';
+LENGTHOF: 'LENGTHOF';
+LES: 'LES';
+LFS: 'LFS';
+LGDT: 'LGDT';
+LGS: 'LGS';
+LIDT: 'LIDT';
+LISTING: 'LISTING';
+LJMP: 'LJMP';
+LLDT: 'LLDT';
+LMSW: 'LMSW';
+LOCAL: 'LOCAL';
+LOCK: 'LOCK';
+LODS: 'LODS';
+LODSB: 'LODSB';
+LODSD: 'LODSD';
+LODSW: 'LODSW';
+LOOP: 'LOOP';
+LOOPD: 'LOOPD';
+LOOPE: 'LOOPE';
+LOOPED: 'LOOPED';
+LOOPEW: 'LOOPEW';
+LOOPNE: 'LOOPNE';
+LOOPNED: 'LOOPNED';
+LOOPNEW: 'LOOPNEW';
+LOOPNZ: 'LOOPNZ';
+LOOPNZD: 'LOOPNZD';
+LOOPNZW: 'LOOPNZW';
+LOOPW: 'LOOPW';
+LOOPZ: 'LOOPZ';
+LOOPZD: 'LOOPZD';
+LOOPZW: 'LOOPZW';
+LOW: 'LOW';
+LOWWORD: 'LOWWORD';
+LROFFSET: 'LROFFSET';
+LSL: 'LSL';
+LSS: 'LSS';
+LT: 'LT';
+LTR: 'LTR';
+M510: 'M510';
+MACRO: 'MACRO';
+MASK: 'MASK';
+MEDIUM: 'MEDIUM';
+MEMORY: 'MEMORY';
+MOD: 'MOD';
+MONKEY: '@@:';
+MOV: 'MOV';
+MOVS: 'MOVS';
+MOVSB: 'MOVSB';
+MOVSD: 'MOVSD';
+MOVSW: 'MOVSW';
+MOVSX: 'MOVSX';
+MOVZX: 'MOVZX';
+MUL: 'MUL';
+NAME: 'NAME';
+NE: 'NE';
+NEAR16: 'NEAR16';
+NEAR32: 'NEAR32';
+NEAR: 'NEAR';
+NEARSTACK: 'NEARSTACK';
+NEG: 'NEG';
+NODOTNAME: 'NODOTNAME';
+NOEMULATOR: 'NOEMULATOR';
+NOLJMP: 'NOLJMP';
+NOM510: 'NOM510';
+NONE: 'NONE';
+NONUNIQUE: 'NONUNIQUE';
+NOOLDMACROS: 'NOOLDMACROS';
+NOOLDSTRUCTS: 'NOOLDSTRUCTS';
+NOP: 'NOP';
+NOREADONLY: 'NOREADONLY';
+NOSCOPED: 'NOSCOPED';
+NOSIGNEXTEND: 'NOSIGNEXTEND';
+NOT: 'NOT';
+NOTHING: 'NOTHING';
+NOTPUBLIC: 'NOTPUBLIC';
+OFFSET: 'OFFSET';
+OLDMACROS: 'OLDMACROS';
+OLDSTRUCTS: 'OLDSTRUCTS';
+OPATTR: 'OPATTR';
+OPTION: 'OPTION';
+OR: 'OR';
+ORG: 'ORG';
+OUT: 'OUT';
+OUTS: 'OUTS';
+OUTSB: 'OUTSB';
+OUTSD: 'OUTSD';
+OUTSW: 'OUTSW';
+OVERFLOW_: 'OVERFLOW?';
+PAGE: 'PAGE';
+PARA: 'PARA';
+PARITY_: 'PARITY?';
+PASCAL: 'PASCAL';
+POP: 'POP';
+POPA: 'POPA';
+POPAD: 'POPAD';
+POPCONTEXT: 'POPCONTEXT';
+POPF: 'POPF';
+POPFD: 'POPFD';
+PRIVATE: 'PRIVATE';
+PROC: 'PROC';
+PROLOGUE: 'PROLOGUE';
+PROTO: 'PROTO';
+PTR: 'PTR';
+PUBLIC: 'PUBLIC';
+PURGE: 'PURGE';
+PUSH: 'PUSH';
+PUSHA: 'PUSHA';
+PUSHAD: 'PUSHAD';
+PUSHCONTEXT: 'PUSHCONTEXT';
+PUSHD: 'PUSHD';
+PUSHF: 'PUSHF';
+PUSHFD: 'PUSHFD';
+PUSHW: 'PUSHW';
+QWORD: 'QWORD';
+RADIX: 'RADIX';
+RCL: 'RCL';
+RCR: 'RCR';
+READONLY: 'READONLY';
+REAL10: 'REAL10';
+REAL4: 'REAL4';
+REAL8: 'REAL8';
+RECORD: 'RECORD';
+REP: 'REP';
+REPE: 'REPE';
+REPEAT: 'REPEAT';
+REPNE: 'REPNE';
+REPNZ: 'REPNZ';
+REPT: 'REPT';
+REPZ: 'REPZ';
+REQ: 'REQ';
+RET: 'RET';
+RETF: 'RETF';
+RETN: 'RETN';
+ROL: 'ROL';
+ROR: 'ROR';
+SAHF: 'SAHF';
+SAL: 'SAL';
+SAR: 'SAR';
+SBB: 'SBB';
+SBYTE: 'SBYTE';
+SCAS: 'SCAS';
+SCASB: 'SCASB';
+SCASD: 'SCASD';
+SCASW: 'SCASW';
+SCOPED: 'SCOPED';
+SDWORD: 'SDWORD';
+SEG: 'SEG';
+SEGMENT: 'SEGMENT';
+SETA: 'SETA';
+SETAE: 'SETAE';
+SETB: 'SETB';
+SETBE: 'SETBE';
+SETC: 'SETC';
+SETE: 'SETE';
+SETG: 'SETG';
+SETGE: 'SETGE';
+SETIF2: 'SETIF2';
+SETL: 'SETL';
+SETLE: 'SETLE';
+SETNA: 'SETNA';
+SETNAE: 'SETNAE';
+SETNB: 'SETNB';
+SETNBE: 'SETNBE';
+SETNC: 'SETNC';
+SETNE: 'SETNE';
+SETNG: 'SETNG';
+SETNGE: 'SETNGE';
+SETNL: 'SETNL';
+SETNLE: 'SETNLE';
+SETNO: 'SETNO';
+SETNP: 'SETNP';
+SETNS: 'SETNS';
+SETNZ: 'SETNZ';
+SETO: 'SETO';
+SETP: 'SETP';
+SETPE: 'SETPE';
+SETPO: 'SETPO';
+SETS: 'SETS';
+SETZ: 'SETZ';
+SGDT: 'SGDT';
+SHL: 'SHL';
+SHLD: 'SHLD';
+SHORT: 'SHORT';
+SHR: 'SHR';
+SHRD: 'SHRD';
+SI: 'SI';
+SIDT: 'SIDT';
+SIGN_: 'SIGN?';
+SIZE: 'SIZE';
+SIZEOF: 'SIZEOF';
+SIZESTR: 'SIZESTR';
+SLDT: 'SLDT';
+SMALL: 'SMALL';
+SMSW: 'SMSW';
+SP: 'SP';
+SS: 'SS';
+ST: 'ST';
+STACK: 'STACK';
+STC: 'STC';
+STD: 'STD';
+STDCALL: 'STDCALL';
+STI: 'STI';
+STOS: 'STOS';
+STOSB: 'STOSB';
+STOSD: 'STOSD';
+STOSW: 'STOSW';
+STR: 'STR';
+STRUC: 'STRUC';
+STRUCT: 'STRUCT';
+SUB: 'SUB';
+SUBSTR: 'SUBSTR';
+SUBTITLE: 'SUBTITLE';
+SUBTTL: 'SUBTTL';
+SWORD: 'SWORD';
+SYSCALL: 'SYSCALL';
+TBYTE: 'TBYTE';
+TEST: 'TEST';
+TEXTEQU: 'TEXTEQU';
+THIS: 'THIS';
+TINY: 'TINY';
+TITLE: 'TITLE';
+TR3: 'TR3';
+TR4: 'TR4';
+TR5: 'TR5';
+TR6: 'TR6';
+TR7: 'TR7';
+TRUE: 'TRUE';
+TYPE: 'TYPE';
+TYPEDEF: 'TYPEDEF';
+UNION: 'UNION';
+USE16: 'USE16';
+USE32: 'USE32';
+USES: 'USES';
+VARARG: 'VARARG';
+VERR: 'VERR';
+VERW: 'VERW';
+WAIT: 'WAIT';
+WBINVD: 'WBINVD';
+WHILE: 'WHILE';
+WIDTH: 'WIDTH';
+WORD: 'WORD';
+XADD: 'XADD';
+XCHG: 'XCHG';
+XLAT: 'XLAT';
+XLATB: 'XLATB';
+XOR: 'XOR';
+ZERO_: 'ZERO?';
+U_186: '.186';
+U_286: '.286';
+U_286C: '.286C';
+U_286P: '.286P';
+U_287: '.287';
+U_386: '.386';
+U_386C: '.386C';
+U_386P: '.386P';
+U_387: '.387';
+U_486: '.486';
+U_486P: '.486P';
+U_586: '.586';
+U_586P: '.586P';
+U_686: '.686';
+U_686P: '.686P';
+U_8086: '.8086';
+U_8087: '.8087';
+U_ALPHA: '.ALPHA';
+U_BREAK: '.BREAK';
+U_CODE: '.CODE';
+U_CONST: '.CONST';
+U_CONTINUE: '.CONTINUE';
+U_CREF: '.CREF';
+U_DATA: '.DATA';
+U_DATA_: '.DATA?';
+U_DOSSEG: '.DOSSEG';
+U_ELSE: '.ELSE';
+U_ELSEIF: '.ELSEIF';
+U_ENDIF: '.ENDIF';
+U_ENDW: '.ENDW';
+U_ERR1: '.ERR1';
+U_ERR2: '.ERR2';
+U_ERR: '.ERR';
+U_ERRB: '.ERRB';
+U_ERRDEF: '.ERRDEF';
+U_ERRDIF: '.ERRDIF';
+U_ERRDIFI: '.ERRDIFI';
+U_ERRE: '.ERRE';
+U_ERRIDN: '.ERRIDN';
+U_ERRIDNI: '.ERRIDNI';
+U_ERRNB: '.ERRNB';
+U_ERRNDEF: '.ERRNDEF';
+U_ERRNZ: '.ERRNZ';
+U_EXIT: '.EXIT';
+U_FARDATA: '.FARDATA';
+U_FARDATA_: '.FARDATA?';
+U_IF: '.IF';
+U_K3D: '.K3D';
+U_LALL: '.LALL';
+U_LFCOND: '.LFCOND';
+U_LIST: '.LIST';
+U_LISTALL: '.LISTALL';
+U_LISTIF: '.LISTIF';
+U_LISTMACRO: '.LISTMACRO';
+U_LISTMACROALL: '.LISTMACROALL';
+U_MMX: '.MMX';
+U_MODEL: '.MODEL';
+U_NO87: '.NO87';
+U_NOCREF: '.NOCREF';
+U_NOLIST: '.NOLIST';
+U_NOLISTIF: '.NOLISTIF';
+U_NOLISTMACRO: '.NOLISTMACRO';
+U_OUT: '%OUT';
+U_RADIX: '.RADIX';
+U_REPEAT: '.REPEAT';
+U_SALL: '.SALL';
+U_SEQ: '.SEQ';
+U_SFCOND: '.SFCOND';
+U_STACK: '.STACK';
+U_STARTUP: '.STARTUP';
+U_TFCOND: '.TFCOND';
+U_TYPE: '.TYPE';
+U_UNTIL: '.UNTIL';
+U_UNTILCXZ: '.UNTILCXZ';
+U_VARARG: ':VARARG';
+U_WHILE: '.WHILE';
+U_XALL: '.XALL';
+U_XCREF: '.XCREF';
+U_XLIST: '.XLIST';
+U_XMM: '.XMM';
+U_DOT: '.';
+C: 'C';
+WS: /[\b\t\f ]+/;
+ENDOFLINE: /[\r\n]+/;
+CHARACTER: /[^\r\n]/;
+STRINGCHAR: /(\'\')|(\"\")|[^\'\"]/;
+DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
