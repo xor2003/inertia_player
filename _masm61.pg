@@ -13,9 +13,10 @@ assumeregister: assumesegreg| assumereg;
 assumesegreg: segmentregister ':' assumesegval;
 assumesegval: NOTHING | ERROR | frameexpr;
 assumeval: NOTHING | ERROR | qualifiedtype;
-bcdconst: sign?  decnumber;
+//bcdconst: sign?  decnumber;
 binaryop: '=='| '!='| '>='| '<='| '>'| '<'| '&' ;
-bitdef: bitfieldid ':' expr eqconstexpr?;
+//bitdef: bitfieldid ':' expr eqconstexpr?;
+bitdef: bitfieldid ':' expr;
 bitdeflist: bitdef| bitdef ',' linereminder? bitdeflist;
 bitfieldid : label ;
 blockstatements: U_CONTINUE ifcexpr? | U_BREAK ifcexpr? | directivelist;
@@ -24,7 +25,7 @@ brmacroarglist: '<' macroarglist '>';
 byteregister: AL | AH | BL | BH | CL | CH | DL | DH ;
 cexpr: aexpr ':' cexpr | aexpr;
 charlist: CHARACTER+;
-classname: string;
+classname: STRING;
 commaidvararg: ','  linereminder?   label? U_VARARG;
 commainvokelist: ',' linereminder? invokelist;
 commamodeloptlist: ',' modeloptlist;
@@ -37,10 +38,11 @@ commatextlen: ',' expr;
 commdecl: nearfar?   langtype?  label ':' commtype eqconstexpr?;
 commdir: COMM commlist linereminder;
 comment: ';' text linereminder;
-commentdir: COMMENT DELIMITER text text DELIMITER text linereminder;
+//commentdir: COMMENT DELIMITER text text DELIMITER text linereminder; TODO
+commentdir: COMMENT text linereminder;
 commlist: commdecl| commdecl ',' commlist;
 commtype: type | expr;
-constant: digits  radixoverride? ;
+//constant: digits  radixoverride? ;
 contextdir: PUSHCONTEXT contextitemlist linereminder| POPCONTEXT contextitemlist linereminder;
 contextitem: ASSUMES | RADIX | LISTING | CPU | ALL ;
 contextitemlist: contextitem| contextitem ',' contextitemlist;
@@ -58,7 +60,7 @@ dataitem: datadecl scalarinstlist| label structinstlist| label recordinstlist;
 datatype: BYTE | SBYTE | WORD | SWORD | DWORD | SDWORD | FWORD | QWORD | TBYTE | REAL4 | REAL8 | REAL10;
 decnumber: INTEGER;
 digits: decnumber| digits hexdigit;
-directive: generaldir| segmentdef;
+directive: generaldir| segmentdef |linereminder;
 directivelist: directive+;
 distance: nearfar| NEAR16 | NEAR32 | FAR16 | FAR32;
 dotdotforparmtype: ':' forparmtype;
@@ -104,7 +106,6 @@ expr: SHORT expr {2,left}
 | expr PTR expr {20,left}
 | expr ":" expr {20,left}
 | expr U_DOT expr {22,left}
-| "(" expr ")" {24,left}
 | WIDTH label {23,left}
 | MASK label {23,left}
 | SIZE sizearg {23,left}
@@ -112,8 +113,8 @@ expr: SHORT expr {2,left}
 | LENGTH label {23,left}
 | LENGTHOF label  {23,left}
 //| recordconst {23,left}
-| string {23,left}
-| constant {23,left}
+| STRING {23,left}
+| INTEGER {23,left}
 | type {23,left}
 | label {23,left}
 | "$" {23,left}
@@ -121,6 +122,7 @@ expr: SHORT expr {2,left}
 | register {23,left}
 | ST  {23,left}
 | ST "(" expr ")" {23,left}
+| "(" expr ")" {24,left}
   ; 
 sizearg: label| type
 | expr {left};
@@ -149,7 +151,7 @@ externlist: externdef| externdef  ',' linereminder?  externlist;
 externtype: ABS | qualifiedtype;
 fieldinit: initvalue | structinstance;
 fieldinitlist: fieldinit ','  linereminder?  fieldinitlist | fieldinit;
-filechar: DELIMITER;
+filechar: CHARACTER;
 filecharlist: filechar+;
 filespec: filecharlist| textliteral;
 flagname: ZERO_ | CARRY_ | OVERFLOW_ | SIGN_ | PARITY_;
@@ -168,7 +170,7 @@ ifdir: ifstatement linereminder directivelist elseifblock? elsedirectivelist? EN
 ifstatement: IF expr| IFE expr| IFB textitem| IFNB textitem| IFDEF label| IFNDEF label| IFDIF textitem ',' textitem| IFDIFI textitem ',' textitem| IFIDN textitem ',' textitem| IFIDNI textitem ',' textitem| IF1 | IF2 ;
 includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
-initvalue: expr| string| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber| bcdconst;
+initvalue: expr| STRING| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber| INTEGER;
 insegdir: labeldef  insegmentdir | insegmentdir;
 insegdirlist: insegdir+;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? insegdirlist? endpdir|invokedir| generaldir ;
@@ -177,18 +179,18 @@ instruction: instrprefix?  asminstruction;
 invokearg: register '::' register| ADDR expr | expr;
 invokedir: INVOKE expr commainvokelist? linereminder;
 invokelist: invokearg  ',' linereminder?  invokelist | invokearg;
-label: letter {1,left}| label letter {2,left} | label decdigit {2,left} ;
+//label: letter {1,left}| label letter {2,left} | label decdigit {2,left} ;
 labeldef: label ':' | label '::' | MONKEY;
 labeldir: label LABEL qualifiedtype linereminder;
 langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL ;
-linereminder: comment | ENDOFLINE;
+linereminder: COMMENT | ENDOFLINE;
 listdir: listoption linereminder;
 listoption: U_LIST | U_NOLIST | U_XLIST | U_LISTALL | U_LISTIF | U_LFCOND | U_NOLISTIF | U_SFCOND | U_TFCOND | U_LISTMACROALL | U_LALL | U_NOLISTMACRO | U_SALL | U_LISTMACRO | U_XALL ;
 localdef: LOCAL idlist linereminder;
 localdir: LOCAL parmlist linereminder;
 localdirlist: localdir+;
 locallist: localdef+;
-macroarg: '%' expr| '%' label| '%' label '(' macroarglist ')'| string| '<' arbitrarytext '>' | arbitrarytext;
+macroarg: '%' expr| '%' label| '%' label '(' macroarglist ')'| STRING| '<' arbitrarytext '>' | arbitrarytext;
 macroarglist: macroarg  ',' macroarglist | macroarg;
 macrobody: locallist? macrostmtlist;
 macrocall: label  '(' macroarglist ')' | label macroarglist linereminder;
@@ -257,7 +259,9 @@ reglist: register+;
 relop: EQ | NE | LT | LE | GT | GE ;
 repeatblock: U_REPEAT linereminder blockstatements linereminder untildir linereminder;
 repeatdir: REPEAT | REPT ;
-scalarinstlist: initvalue ','  linereminder? scalarinstlist | initvalue;
+//scalarinstlist: initvalue ','  linereminder? scalarinstlist | initvalue;
+scalarinstlist: initvalue+[scalarinstlist_sep];
+scalarinstlist_sep: ','  linereminder?;
 segalign: BYTE | WORD | DWORD | PARA | PAGE ;
 segattrib: PUBLIC | STACK | COMMON | MEMORY | AT expr| PRIVATE ;
 segdir: U_CODE label? | U_DATA | U_DATA_| U_CONST | U_FARDATA label? | U_FARDATA_ label? | U_STACK expr?;
@@ -277,8 +281,8 @@ simplesegdir: segdir linereminder;
 specialregister: CR0 | CR2 | CR3 | DR0 | DR1 | DR2 | DR3 | DR6 | DR7| TR3 | TR4 | TR5 | TR6 | TR7;
 stackoption: NEARSTACK | FARSTACK ;
 startupdir: U_STARTUP linereminder;
-stext: STRINGCHAR+;
-string: quote  stext?  quote;
+//stext: STRINGCHAR+;
+//string: quote  stext?  quote;
 structbody: structitem structbody | structitem linereminder;
 structdir: label structhdr  expr?  commanonuniq? linereminder structbody label ENDS linereminder;
 structhdr: STRUC | STRUCT | UNION ;
@@ -287,6 +291,7 @@ structinstlist: structinstance| structinstance  ','  linereminder?  structinstli
 structitem : datadir| generaldir| offsetdir| nestedstruct;
 term: '!' simpleexpr | simpleexpr;
 text: '!' CHARACTER text| '!' CHARACTER| textliteral | CHARACTER+;
+text: CHARACTER+;
 textdir: label textmacrodir linereminder;
 textitem: textliteral| '%' expr| label;
 textlist: textitem  ',' linereminder?  textlist | textitem;
@@ -301,11 +306,11 @@ untildir: U_UNTIL cexpr linereminder U_UNTILCXZ cxzexpr?  linereminder;
 usesregs: USES reglist ;
 whileblock: U_WHILE cexpr linereminder blockstatements linereminder U_ENDW ;
 WHITESPACECHARACTER: WS;
+
+LAYOUT: LayoutItem | LAYOUT LayoutItem;
+LayoutItem: WS | Comment | EMPTY;
+
 terminals
-radixoverride: /[hoqtyHOQTY]/;
-decdigit: /[0-9]/; 
-hexdigit: /[A-Fa-f]/; 
-letter : /[A-Za-z_]/;
 AAA: 'AAA';
 AAD: 'AAD';
 AAM: 'AAM';
@@ -963,9 +968,14 @@ U_XMM: '.XMM';
 U_DOT: '.';
 C: 'C';
 CHARACTER: /[^\r\n]/;
+STRING: /(\'.*?\')|(\".*?\")/;
+label: /[A-Za-z_][A-Za-z_0-9]*/;
+
+decdigit: /[0-9]/; 
+hexdigit: /[A-Fa-f]/; 
 DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
 ENDOFLINE: /[\r\n]+/;
 FLOAT: /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b/;
-INTEGER: /[-+]?[0-9]+\b/ {prefer};
-STRINGCHAR: /(\'\')|(\"\")|[^\'\"]/;
-WS: /[\b\t\f ]+/;
+INTEGER: /[-+]?[0-9]+[hoqtyHOQTY]?\b/ {prefer};
+WS: /[\t ]+/;
+Comment: /;[^\r\n]*/;
