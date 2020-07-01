@@ -163,8 +163,7 @@ fordir: FOR | IRP ;
 forparm: label dotdotforparmtype?;
 forparmtype: REQ | '=' textliteral;
 frameexpr: SEG label | DGROUP ':' label| segmentregister ':' label| label;
-generaldir: modeldir | segorderdir | namedir| includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir | processordir| radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir;
-// | recorddir
+generaldir: modeldir | segorderdir | namedir| includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir | processordir| radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir;
 gpregister: AX | EAX | BX | EBX | CX | ECX | DX | EDX| BP | EBP | SP | ESP | DI | EDI | SI | ESI;
 groupdir : label GROUP segidlist;
 idlist: label COMMA idlist | label;
