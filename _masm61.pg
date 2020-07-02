@@ -175,12 +175,11 @@ includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
 | STRING| '?'| expr  DUP '(' initvalue ')'| floatnumber| INTEGER;
-insegdir: insegmentdir | labeldef  insegmentdir;
-insegdirlist: insegdir {15,left}
-| insegdirlist insegdir;
-insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? insegdirlist endpdir| procdir  localdirlist? insegdirlist? endpdir|invokedir| generaldir | linereminder;
+insegdir: labeldef insegmentdir | insegmentdir;
+insegdirlist: insegdir+;
+insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? endpdir| procdir  localdirlist? insegdir+ endpdir| invokedir| generaldir | linereminder;
 instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;
-instruction: instrprefix?  asminstruction linereminder;
+instruction: asminstruction linereminder | instrprefix  asminstruction linereminder;
 invokearg: register '::' register| ADDR expr | expr;
 invokedir: INVOKE expr commainvokelist? linereminder;
 invokelist: invokearg  COMMA linereminder?  invokelist | invokearg;
@@ -276,7 +275,7 @@ segalign: BYTE | WORD | DWORD | PARA | PAGE ;
 segattrib: PUBLIC | STACK | COMMON | MEMORY | AT expr| PRIVATE ;
 segdir: U_CODE label? | U_DATA | U_DATA_| U_CONST | U_FARDATA label? | U_FARDATA_ label? | U_STACK expr?;
 segidlist : label  COMMA segidlist | label;
-segmentdef: segmentdir  endsdir | segmentdir  insegdirlist  endsdir| simplesegdir  insegdirlist?   endsdir? ;
+segmentdef: segmentdir  endsdir|segmentdir  insegdir+  endsdir| simplesegdir  endsdir? | simplesegdir  insegdir+   endsdir? ;
 segmentdir: label SEGMENT segoptionlist?  linereminder;
 segmentregister: CS | DS | ES | FS | GS | SS;
 segoption: segalign| segro| segattrib| segsize| classname;
