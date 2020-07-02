@@ -175,7 +175,8 @@ includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
 | STRING| '?'| expr  DUP '(' initvalue ')'| floatnumber| INTEGER;
 insegdir: insegmentdir | labeldef  insegmentdir;
-insegdirlist: insegdir+;
+insegdirlist: insegdir {15,left}
+| insegdirlist insegdir;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? insegdirlist? endpdir|invokedir| generaldir ;
 instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;
 instruction: instrprefix?  asminstruction linereminder;
@@ -274,7 +275,7 @@ segalign: BYTE | WORD | DWORD | PARA | PAGE ;
 segattrib: PUBLIC | STACK | COMMON | MEMORY | AT expr| PRIVATE ;
 segdir: U_CODE label? | U_DATA | U_DATA_| U_CONST | U_FARDATA label? | U_FARDATA_ label? | U_STACK expr?;
 segidlist : label  COMMA segidlist | label;
-segmentdef: segmentdir  insegdirlist?  endsdir| simplesegdir  insegdirlist?   endsdir? ;
+segmentdef: segmentdir  endsdir | segmentdir  insegdirlist  endsdir| simplesegdir  insegdirlist?   endsdir? ;
 segmentdir: label SEGMENT segoptionlist?  linereminder;
 segmentregister: CS | DS | ES | FS | GS | SS;
 segoption: segalign| segro| segattrib| segsize| classname;
@@ -317,7 +318,6 @@ WHITESPACECHARACTER: WS;
 
 LAYOUT: LayoutItem | LAYOUT LayoutItem;
 LayoutItem: WS | Comment | EMPTY;
-
 terminals
 AAA: 'AAA';
 AAD: 'AAD';
@@ -973,8 +973,8 @@ U_XALL: '.XALL';
 U_XCREF: '.XCREF';
 U_XLIST: '.XLIST';
 U_XMM: '.XMM';
-U_DOT: '.';
 C: 'C';
+U_DOT: '.';
 COMMA: ',';
 CHARACTER: /[^\r\n]/;
 STRING: /(\'.*?\')|(\".*?\")/;
@@ -985,7 +985,7 @@ hexdigit: /[A-Fa-f]/;
 DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
 ENDOFLINE: /[\r\n]+/;
 FLOAT: /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b/;
-INTEGER: /[-+]?[0-9]+[hoqtyHOQTY]?\b/ {prefer};
+INTEGER: /[-+]?[0-9][0-9A-F]*[hoqtyHOQTY]?\b/ {prefer};
 WS: /[\t ]+/;
 Comment: /;[^\r\n]*/;
 KEYWORD: /\w+/;
