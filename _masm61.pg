@@ -122,6 +122,7 @@ expr: SHORT expr {2,left}
 | register {23,left}
 | ST  {23,left}
 | ST "(" expr ")" {23,left}
+| "[" expr "]" {24,left}
 | "(" expr ")" {24,left}
   ; 
 sizearg: label| type
@@ -177,7 +178,7 @@ initvalue: expr {15,left}
 insegdir: insegmentdir | labeldef  insegmentdir;
 insegdirlist: insegdir {15,left}
 | insegdirlist insegdir;
-insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? insegdirlist? endpdir|invokedir| generaldir ;
+insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? insegdirlist endpdir| procdir  localdirlist? insegdirlist? endpdir|invokedir| generaldir | linereminder;
 instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;
 instruction: instrprefix?  asminstruction linereminder;
 invokearg: register '::' register| ADDR expr | expr;
@@ -234,7 +235,7 @@ parmlist: parm  COMMA linereminder? parmlist | parm;
 parmtype: REQ | '=' textliteral| VARARG ;
 poptions: distance?  langtype?  ovisibility? ;
 primary: expr binaryop expr| flagname| expr;
-procdir: label PROC poptions  brmacroarglist?  usesregs?   procparmlist? ;
+procdir: label PROC poptions  brmacroarglist?  usesregs?   procparmlist? linereminder;
 processor: U_8086 | U_186 | U_286 | U_286C | U_286P | U_386 | U_386C | U_386P | U_486 | U_486P | U_586 | U_586P | U_686 | U_686P | U_K3D | U_MMX | U_XMM;
 processordir: processor linereminder | coprocessor linereminder;
 procparmlist: COMMA commaparmlist? COMMA commaparmidvararg?;
@@ -983,7 +984,7 @@ label: /[A-Za-z_][A-Za-z_0-9]*/ {prefer};
 decdigit: /[0-9]/; 
 hexdigit: /[A-Fa-f]/; 
 DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
-ENDOFLINE: /[\r\n]+/;
+ENDOFLINE: /[\r\n]+[\t \r\n]*/;
 FLOAT: /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b/;
 INTEGER: /[-+]?[0-9][0-9A-F]*[hoqtyHOQTY]?\b/ {prefer};
 WS: /[\t ]+/;
