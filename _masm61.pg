@@ -106,6 +106,7 @@ expr: SHORT expr {2,left}
 | expr PTR expr {20,left}
 | expr ":" expr {20,left}
 | expr U_DOT expr {22,left}
+| expr '[' expr ']' {22,left}
 | WIDTH label {23,left}
 | MASK label {23,left}
 | SIZE sizearg {23,left}
@@ -117,13 +118,16 @@ expr: SHORT expr {2,left}
 | INTEGER {23,left}
 | type {23,left}
 | label {23,left}
+| MONKEY {23,left}
 | "$" {23,left}
-| segmentregister {23,left}
-| register {23,left}
 | ST  {23,left}
 | ST "(" expr ")" {23,left}
-| "[" expr "]" {24,left}
-| "(" expr ")" {24,left}
+//| reglist {23,left}
+| allreglist {23,left}
+| segmentregister {24,left}
+| register {24,left}
+| "[" expr "]" {25,left}
+| "(" expr ")" {25,left}
   ; 
 sizearg: label| type
 | expr {left};
@@ -174,7 +178,7 @@ ifstatement: IF expr| IFE expr| IFB textitem| IFNB textitem| IFDEF label| IFNDEF
 includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
-| STRING| '?'| expr  DUP '(' initvalue ')'| floatnumber| INTEGER;
+| STRING| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber| INTEGER;
 insegdir: labeldef insegmentdir | insegmentdir;
 insegdirlist: insegdir+;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? endpdir| procdir  localdirlist? insegdir+ endpdir| invokedir| generaldir | linereminder;
@@ -184,7 +188,7 @@ invokearg: register '::' register| ADDR expr | expr;
 invokedir: INVOKE expr commainvokelist? linereminder;
 invokelist: invokearg  COMMA linereminder?  invokelist | invokearg;
 //label: letter {1,left}| label letter {2,left} | label decdigit {2,left} ;
-labeldef: label ':' | label '::' | MONKEY;
+labeldef: label ':' | label '::' | MONKEY ':';
 labeldir: label LABEL qualifiedtype linereminder;
 langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL ;
 linereminder: COMMENT | ENDOFLINE;
@@ -255,7 +259,7 @@ readonly: READONLY;
 oldrecordfieldlist: expr+[COMMA];
 recordconst_: '{' oldrecordfieldlist '}'| oldrecordinstance;
 oldrecordinstance: '<' oldrecordfieldlist '>';
-recordconst: label recordconst_| label recordconst_;
+recordconst: label recordconst_;
 recorddir: label RECORD bitdeflist linereminder ;
 //recordfieldlist: expr  COMMA  linereminder? recordfieldlist | expr;
 recordfieldlist: scalarinstlist;
@@ -264,7 +268,9 @@ recordinstance_: '{'  linereminder? recordfieldlist linereminder?  '}';
 recordinstance: recordinstance_ | oldrecordinstance | expr DUP '(' recordinstance ')';
 recordinstlist: recordinstance| recordinstance COMMA  linereminder?  recordinstlist;
 register: specialregister| gpregister| byteregister;
+anyregister: segmentregister | register;
 reglist: register+;
+allreglist: anyregister+;
 relop: EQ | NE | LT | LE | GT | GE ;
 repeatblock: U_REPEAT linereminder blockstatements linereminder untildir linereminder;
 repeatdir: REPEAT | REPT ;
@@ -690,7 +696,6 @@ MASK: 'MASK';
 MEDIUM: 'MEDIUM';
 MEMORY: 'MEMORY';
 MOD: 'MOD';
-MONKEY: '@@:';
 MOV: 'MOV';
 MOVS: 'MOVS';
 MOVSB: 'MOVSB';
@@ -977,8 +982,9 @@ C: 'C';
 U_DOT: '.';
 COMMA: ',';
 CHARACTER: /[^\r\n]/;
-STRING: /(\'.*?\')|(\".*?\")/;
+STRING: /((?<!\')\'(?!\').+?(?<!\')\'(?!\'))|((?<!\")\"(?!\").+?(?<!\")\"(?!\"))/;
 label: /[A-Za-z_][A-Za-z_0-9]*/ {prefer};
+MONKEY: /@[A-Za-z_0-9@]*/ ;
 
 decdigit: /[0-9]/; 
 hexdigit: /[A-Fa-f]/; 
