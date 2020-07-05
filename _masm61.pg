@@ -2,10 +2,10 @@ module: directivelist?  enddir;
 addop: '+' | '-';
 aexpr: term '&&' aexpr | term;
 aliasdir: ALIAS;
-altidq: '(' label ')';
+altidq: '(' LABEL ')';
 arbitrarytext: charlist;
 asminstruction: mnemonic  exprlist? | PUSH allreglist | POP allreglist;
-assdir: label '=' expr linereminder;
+assdir: LABEL '=' expr linereminder;
 assumedir: ASSUME assumelist linereminder| ASSUMENOTHING linereminder;
 assumelist : assumeregister| assumeregister COMMA assumelist;
 assumereg: register ':' assumeval;
@@ -18,7 +18,7 @@ binaryop: '=='| '!='| '>='| '<='| '>'| '<'| '&' ;
 //bitdef: bitfieldid ':' expr eqconstexpr?;
 bitdef: bitfieldid ':' expr;
 bitdeflist: bitdef+[COMMAOEOL];
-bitfieldid : label ;
+bitfieldid : LABEL ;
 blockstatements: U_CONTINUE ifcexpr? | U_BREAK ifcexpr? | directivelist;
 bool: TRUE | FALSE ;
 brmacroarglist: '<' macroarglist '>';
@@ -26,20 +26,19 @@ byteregister: AL | AH | BL | BH | CL | CH | DL | DH ;
 cexpr: aexpr ':' cexpr | aexpr;
 charlist: CHARACTER+;
 classname: STRING;
-commaidvararg: COMMA  linereminder?   label? U_VARARG;
+commaidvararg: COMMA  linereminder?   LABEL? U_VARARG;
 commainvokelist: COMMA linereminder? invokelist;
 commamodeloptlist: COMMA modeloptlist;
 commanonuniq: COMMA NONUNIQUE;
 commapagewidth: COMMA expr;
-commaparmidvararg: COMMA  linereminder?  label U_VARARG;
+commaparmidvararg: COMMA  linereminder?  LABEL U_VARARG;
 commaparmlist: COMMA  linereminder?  parmlist;
 commaprotolist: COMMA  linereminder?  protolist;
 commatextlen: COMMA expr;
-commdecl: nearfar?   langtype?  label ':' commtype eqconstexpr?;
+commdecl: nearfar?   langtype?  LABEL ':' commtype eqconstexpr?;
 commdir: COMM commlist linereminder;
-//comment: ';' text linereminder;
-//commentdir: COMMENT DELIMITER text text DELIMITER text linereminder; TODO
-commentdir: COMMENT text linereminder;
+//commentdir: COMMENTKW DELIMITER text text DELIMITER text linereminder; TODO
+commentdir: COMMENTKW text linereminder;
 commlist: commdecl+[COMMA];
 commtype: type | expr;
 //constant: digits  radixoverride? ;
@@ -55,11 +54,11 @@ crefdir: crefoption linereminder;
 crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? ;
 cxzexpr: '!' expr| expr  '==' expr| expr  '!=' expr | expr;
 datadecl: DB | DW | DD | DF | DQ | DT | datatype;
-datadir: label?  dataitem linereminder;
-dataitem: datadecl scalarinstlist| label structinstlist| label recordinstlist;
+datadir: LABEL? dataitem linereminder;
+dataitem: datadecl scalarinstlist| LABEL structinstlist| LABEL recordinstlist;
 datatype: BYTE | SBYTE | WORD | SWORD | DWORD | SDWORD | FWORD | QWORD | TBYTE | REAL4 | REAL8 | REAL10;
 decnumber: INTEGER;
-digits: decnumber| digits hexdigit;
+digits: decnumber; //decnumber| digits hexdigit;
 directive: generaldir| segmentdef |linereminder;
 directivelist: directive+;
 distance: nearfar| NEAR16 | NEAR32 | FAR16 | FAR32;
@@ -107,17 +106,17 @@ expr: SHORT expr {2,left}
 | expr ":" expr {20,left}
 | expr U_DOT expr {22,left}
 | expr '[' expr ']' {22,left}
-| WIDTH label {23,left}
-| MASK label {23,left}
+| WIDTH LABEL {23,left}
+| MASK LABEL {23,left}
 | SIZE sizearg {23,left}
 | SIZEOF sizearg {23,left}
-| LENGTH label {23,left}
-| LENGTHOF label  {23,left}
-//| recordconst {23,left}
+| LENGTH LABEL {23,left}
+| LENGTHOF LABEL  {23,left}
+| recordconst {23,left}
 | STRING {23,left}
 | INTEGER {23,left}
 | type {23,left}
-| label {23,left}
+| LABEL {23,left}
 | MONKEY {23,left}
 | "$" {23,left}
 | ST  {23,left}
@@ -127,27 +126,25 @@ expr: SHORT expr {2,left}
 | "[" expr "]" {25,left}
 | "(" expr ")" {25,left}
   ; 
-sizearg: label| type
+sizearg: LABEL| type
 | expr {left};
 
-//exponent: 'E'  sign?  decnumber;
 echodir: ECHO arbitrarytext linereminder | U_OUT arbitrarytext linereminder;
 elsedirectivelist: U_ELSE linereminder directivelist;
 elseifblock: elseifstatement linereminder directivelist elseifblock? ;
-elseifstatement: ELSEIF expr| ELSEIFE expr| ELSEIFB textitem| ELSEIFNB textitem | ELSEIFDEF label| ELSEIFNDEF label| ELSEIFDIF textitem COMMA textitem| ELSEIFDIFI textitem COMMA textitem| ELSEIFIDN textitem COMMA textitem| ELSEIFIDNI textitem COMMA textitem| ELSEIF1 | ELSEIF2 ;
-enddir: END expr?  linereminder;
-endpdir: label ENDP linereminder;
-endsdir: label ENDS linereminder;
+elseifstatement: ELSEIF expr| ELSEIFE expr| ELSEIFB textitem| ELSEIFNB textitem | ELSEIFDEF LABEL| ELSEIFNDEF LABEL| ELSEIFDIF textitem COMMA textitem| ELSEIFDIFI textitem COMMA textitem| ELSEIFIDN textitem COMMA textitem| ELSEIFIDNI textitem COMMA textitem| ELSEIF1 | ELSEIF2 ;
+enddir: END expr?  linereminder?;
+endpdir: LABEL ENDP linereminder;
+endsdir: LABEL ENDS linereminder;
 eqconstexpr: '=' expr;
-equdir: label EQU equtype linereminder;
+equdir: LABEL EQU equtype linereminder;
 equtype: expr| textliteral;
 errordir: erroropt linereminder;
-erroropt: U_ERR textitem? | U_ERRE expr opttext? | U_ERRNZ expr opttext? | U_ERRB textitem opttext? | U_ERRNB textitem opttext? | U_ERRDEF label  opttext? | U_ERRNDEF label opttext? | U_ERRDIF textitem COMMA textitem  opttext? | U_ERRDIFI textitem COMMA textitem  opttext? | U_ERRIDN textitem COMMA textitem  opttext? | U_ERRIDNI textitem COMMA textitem  opttext? | U_ERR1 textitem? | U_ERR2 textitem?  ;
+erroropt: U_ERR textitem? | U_ERRE expr opttext? | U_ERRNZ expr opttext? | U_ERRB textitem opttext? | U_ERRNB textitem opttext? | U_ERRDEF LABEL  opttext? | U_ERRNDEF LABEL opttext? | U_ERRDIF textitem COMMA textitem  opttext? | U_ERRDIFI textitem COMMA textitem  opttext? | U_ERRIDN textitem COMMA textitem  opttext? | U_ERRIDNI textitem COMMA textitem  opttext? | U_ERR1 textitem? | U_ERR2 textitem?  ;
 exitdir: U_EXIT expr?  linereminder;
 exitmdir: EXITM textitem? linereminder;
-//exponent: 'E'  sign?  decnumber;
 exprlist: expr+[COMMA];
-externdef: langtype?  label altidq? ':' externtype;
+externdef: langtype?  LABEL altidq? ':' externtype;
 externdir: externkey externlist linereminder;
 externkey: EXTRN | EXTERN | EXTERNDEF ;
 externlist: externdef+[COMMAOEOL];
@@ -162,16 +159,16 @@ flagname: ZERO_ | CARRY_ | OVERFLOW_ | SIGN_ | PARITY_;
 floatnumber : FLOAT | digits 'R'| digits 'r';
 forcdir: FORC | IRPC ;
 fordir: FOR | IRP ;
-forparm: label dotdotforparmtype?;
+forparm: LABEL dotdotforparmtype?;
 forparmtype: REQ | '=' textliteral;
-frameexpr: SEG label | DGROUP ':' label| segmentregister ':' label| label;
+frameexpr: SEG LABEL | DGROUP ':' LABEL| segmentregister ':' LABEL| LABEL;
 generaldir: modeldir | segorderdir | namedir| includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir | processordir| radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir;
 gpregister: AX | EAX | BX | EBX | CX | ECX | DX | EDX| BP | EBP | SP | ESP | DI | EDI | SI | ESI;
-groupdir : label GROUP segidlist;
-idlist: label+[COMMA];
+groupdir : LABEL GROUP segidlist;
+idlist: LABEL+[COMMA];
 ifcexpr: U_IF cexpr;
 ifdir: ifstatement linereminder directivelist elseifblock? elsedirectivelist? ENDIF linereminder;
-ifstatement: IF expr| IFE expr| IFB textitem| IFNB textitem| IFDEF label| IFNDEF label| IFDIF textitem COMMA textitem| IFDIFI textitem COMMA textitem| IFIDN textitem COMMA textitem| IFIDNI textitem COMMA textitem| IF1 | IF2 ;
+ifstatement: IF expr| IFE expr| IFB textitem| IFNB textitem| IFDEF LABEL| IFNDEF LABEL| IFDIF textitem COMMA textitem| IFDIFI textitem COMMA textitem| IFIDN textitem COMMA textitem| IFIDNI textitem COMMA textitem| IF1 | IF2 ;
 includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
@@ -184,29 +181,28 @@ instruction: asminstruction linereminder | instrprefix  asminstruction lineremin
 invokearg: register '::' register| ADDR expr | expr;
 invokedir: INVOKE expr commainvokelist? linereminder;
 invokelist: invokearg+[COMMAOEOL];
-//label: letter {1,left}| label letter {2,left} | label decdigit {2,left} ;
-labeldef: label ':' | label '::' | MONKEY ':';
-labeldir: label LABEL qualifiedtype linereminder;
+labeldef: LABEL ':' | LABEL '::' | MONKEY ':';
+labeldir: LABEL LABELKW qualifiedtype linereminder;
 langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL ;
-linereminder: COMMENT | ENDOFLINE;
+linereminder: COMMENTTERM | ENDOFLINE;
 listdir: listoption linereminder;
 listoption: U_LIST | U_NOLIST | U_XLIST | U_LISTALL | U_LISTIF | U_LFCOND | U_NOLISTIF | U_SFCOND | U_TFCOND | U_LISTMACROALL | U_LALL | U_NOLISTMACRO | U_SALL | U_LISTMACRO | U_XALL ;
 localdef: LOCAL idlist linereminder;
 localdir: LOCAL parmlist linereminder;
 localdirlist: localdir+;
 locallist: localdef+;
-macroarg: '%' expr| '%' label| '%' label '(' macroarglist ')'| STRING| '<' arbitrarytext '>' | arbitrarytext;
+macroarg: '%' expr| '%' LABEL| '%' LABEL '(' macroarglist ')'| STRING| '<' arbitrarytext '>' | arbitrarytext;
 macroarglist: macroarg+[COMMA];
 macrobody: locallist? macrostmtlist;
-macrocall: label  '(' macroarglist ')' | label macroarglist linereminder;
-macrodir: label MACRO macroparmlist?  linereminder macrobody ENDM linereminder;
+macrocall: LABEL  '(' macroarglist ')' | LABEL macroarglist? linereminder;
+macrodir: LABEL MACRO macroparmlist?  linereminder macrobody ENDM linereminder;
 macrofor: fordir forparm  COMMA '<' macroarglist '>' linereminder macrobody ENDM linereminder;
-macroforc: forcdir label  COMMA textliteral linereminder macrobody ENDM linereminder;
-macroidlist: label+[COMMA];
-macroparm: label dotdotparmtype?;
+macroforc: forcdir LABEL  COMMA textliteral linereminder macrobody ENDM linereminder;
+macroidlist: LABEL+[COMMA];
+macroparm: LABEL dotdotparmtype?;
 macroparmlist: macroparm+[COMMAOEOL];
 macrorepeat: repeatdir expr linereminder macrobody ENDM linereminder;
-macrostmt: directive| exitmdir| ':' label linereminder| GOTO label linereminder;
+macrostmt: instruction| macrocall| exitmdir| ':' LABEL linereminder| GOTO LABEL linereminder| linereminder;
 macrostmtlist: macrostmt+;
 macrowhile: WHILE expr linereminder macrobody ENDM linereminder;
 maptype: ALL | NONE | NOTPUBLIC ;
@@ -216,35 +212,35 @@ modeldir: U_MODEL memoption commamodeloptlist? linereminder;
 modelopt: langtype| stackoption ;
 modeloptlist: modelopt+[COMMA];
 mulop: '*'| '/' | MOD ;
-namedir: NAME label linereminder;
+namedir: NAME LABEL linereminder;
 nearfar: NEAR | FAR ;
-nestedstruct: structhdr  label?  linereminder structbody ENDS linereminder;
+nestedstruct: structhdr  LABEL?  linereminder structbody ENDS linereminder;
 offsetdir: offsetdirtype linereminder;
 offsetdirtype: EVEN | ORG expr| ALIGN expr? ;
 offsettype: GROUP | SEGMENT | FLAT ;
 optiondir: OPTION optionlist linereminder;
-optionitem: CASEMAP ':' maptype| DOTNAME | NODOTNAME | EMULATOR | NOEMULATOR | EPILOGUE ':' label| EXPR16 | EXPR32 | LANGUAGE ':' langtype| LJMP | NOLJMP | M510 | NOM510 | NOSIGNEXTEND | OFFSET ':' offsettype| OLDMACROS | NOOLDMACROS | OLDSTRUCTS | NOOLDSTRUCTS | PROC ':' ovisibility| PROLOGUE ':' label| readonly | NOREADONLY | SCOPED | NOSCOPED | SEGMENT ':' segsize| SETIF2 ':' bool;
+optionitem: CASEMAP ':' maptype| DOTNAME | NODOTNAME | EMULATOR | NOEMULATOR | EPILOGUE ':' LABEL| EXPR16 | EXPR32 | LANGUAGE ':' langtype| LJMP | NOLJMP | M510 | NOM510 | NOSIGNEXTEND | OFFSET ':' offsettype| OLDMACROS | NOOLDMACROS | OLDSTRUCTS | NOOLDSTRUCTS | PROC ':' ovisibility| PROLOGUE ':' LABEL| readonly | NOREADONLY | SCOPED | NOSCOPED | SEGMENT ':' segsize| SETIF2 ':' bool;
 optionlist: optionitem+[COMMAOEOL];
 opttext: COMMA textitem;
 orop: OR | XOR ;
 ovisibility: PUBLIC | PRIVATE | EXPORT ;
 pagedir: PAGE pageexpr? linereminder;
 pageexpr: '+'|  expr commapagewidth? | commapagewidth;
-parm: label  expr? dotdotqualifiedtype?;
+parm: LABEL  expr? dotdotqualifiedtype?;
 parmlist: parm+[COMMAOEOL];
 parmtype: REQ | '=' textliteral| VARARG ;
 poptions: distance?  langtype?  ovisibility? ;
 primary: expr binaryop expr| flagname| expr;
-procdir: label PROC poptions  brmacroarglist?  usesregs?   procparmlist? linereminder;
+procdir: LABEL PROC poptions  brmacroarglist?  usesregs?   procparmlist? linereminder;
 processor: U_8086 | U_186 | U_286 | U_286C | U_286P | U_386 | U_386C | U_386P | U_486 | U_486P | U_586 | U_586P | U_686 | U_686P | U_K3D | U_MMX | U_XMM;
 processordir: processor linereminder | coprocessor linereminder;
 procparmlist: COMMA commaparmlist? COMMA commaparmidvararg?;
-protoarg : label? ':' qualifiedtype ;
+protoarg : LABEL? ':' qualifiedtype ;
 protoarglist: COMMA commaprotolist? COMMA commaidvararg?;
 protolist: protoarg+[COMMAOEOL];
-protospec: label | distance?   langtype?   protoarglist?;
-prototypedir: label PROTO protospec;
-pubdef: langtype?  label;
+protospec: LABEL | distance?   langtype?   protoarglist?;
+prototypedir: LABEL PROTO protospec;
+pubdef: langtype?  LABEL;
 publicdir: PUBLIC publist linereminder;
 publist: pubdef+[COMMAOEOL];
 purgedir: PURGE macroidlist;
@@ -256,11 +252,10 @@ readonly: READONLY;
 oldrecordfieldlist: expr+[COMMA];
 recordconst_: '{' oldrecordfieldlist '}'| oldrecordinstance;
 oldrecordinstance: '<' oldrecordfieldlist '>';
-recordconst: label recordconst_;
-recorddir: label RECORD bitdeflist linereminder ;
+recordconst: LABEL recordconst_;
+recorddir: LABEL RECORD bitdeflist linereminder ;
 //recordfieldlist: expr+[COMMAOEOL];
 recordfieldlist: scalarinstlist;
-//recordfield_sep: COMMA linereminder?;
 recordinstance_: '{'  linereminder? recordfieldlist linereminder?  '}';
 recordinstance: recordinstance_ | oldrecordinstance | expr DUP '(' recordinstance ')';
 recordinstlist: recordinstance+[COMMAOEOL];
@@ -275,10 +270,10 @@ scalarinstlist: initvalue+[COMMAOEOL];
 COMMAOEOL: COMMA  linereminder?;
 segalign: BYTE | WORD | DWORD | PARA | PAGE ;
 segattrib: PUBLIC | STACK | COMMON | MEMORY | AT expr| PRIVATE ;
-segdir: U_CODE label? | U_DATA | U_DATA_| U_CONST | U_FARDATA label? | U_FARDATA_ label? | U_STACK expr?;
-segidlist : label  COMMA segidlist | label;
+segdir: U_CODE LABEL? | U_DATA | U_DATA_| U_CONST | U_FARDATA LABEL? | U_FARDATA_ LABEL? | U_STACK expr?;
+segidlist : LABEL  COMMA segidlist | LABEL;
 segmentdef: segmentdir  endsdir|segmentdir  insegdir+  endsdir| simplesegdir  endsdir? | simplesegdir  insegdir+   endsdir? ;
-segmentdir: label SEGMENT segoptionlist?  linereminder;
+segmentdir: LABEL SEGMENT segoptionlist?  linereminder;
 segmentregister: CS | DS | ES | FS | GS | SS;
 segoption: segalign| segro| segattrib| segsize| classname;
 segoptionlist: segoption+;
@@ -292,34 +287,31 @@ simplesegdir: segdir linereminder;
 specialregister: CR0 | CR2 | CR3 | DR0 | DR1 | DR2 | DR3 | DR6 | DR7| TR3 | TR4 | TR5 | TR6 | TR7;
 stackoption: NEARSTACK | FARSTACK ;
 startupdir: U_STARTUP linereminder;
-//stext: STRINGCHAR+;
-//string: quote  stext?  quote;
 structbody: structitem | structbody structitem;
-structdir: label structhdr  expr?  commanonuniq? linereminder structbody label ENDS linereminder;
+structdir: LABEL structhdr  expr?  commanonuniq? linereminder structbody LABEL ENDS linereminder;
 structhdr: STRUC | STRUCT | UNION ;
 structinstance: '<'  fieldinitlist?  '>'| '{' linereminder?   fieldinitlist?   linereminder?  '}'| expr DUP '(' structinstlist ')';
 structinstlist: structinstance+[COMMAOEOL];
 structitem : datadir| generaldir| offsetdir| nestedstruct;
 term: '!' simpleexpr | simpleexpr;
-//text: '!' CHARACTER text| '!' CHARACTER| textliteral | CHARACTER+;
 text: CHARACTER+;
-textdir: label textmacrodir linereminder;
-textitem: textliteral| '%' expr| label;
+textdir: LABEL textmacrodir linereminder;
+textitem: textliteral| '%' expr| LABEL;
 textlist: textitem+[COMMAOEOL];
 textliteral: '<' text '>' linereminder;
 textmacrodir: CATSTR textlist? | TEXTEQU textlist? | SIZESTR textitem| SUBSTR textitem  COMMA expr commatextlen| INSTR textstartcomma? textitem  COMMA textitem;
 textstartcomma: expr  COMMA;
 titledir: titletype arbitrarytext linereminder;
 titletype: TITLE | SUBTITLE | SUBTTL ;
-type: label| distance| datatype;
-typedefdir: label TYPEDEF qualifier;
+type: LABEL| distance| datatype;
+typedefdir: LABEL TYPEDEF qualifier;
 untildir: U_UNTIL cexpr linereminder U_UNTILCXZ cxzexpr?  linereminder;
 usesregs: USES reglist ;
 whileblock: U_WHILE cexpr linereminder blockstatements linereminder U_ENDW ;
 WHITESPACECHARACTER: WS;
 
 LAYOUT: LayoutItem | LAYOUT LayoutItem;
-LayoutItem: WS | Comment | EMPTY;
+LayoutItem: WS | EMPTY;
 terminals
 AAA: 'AAA';
 AAD: 'AAD';
@@ -375,7 +367,7 @@ CMPSD: 'CMPSD';
 CMPSW: 'CMPSW';
 CMPXCHG: 'CMPXCHG';
 COMM: 'COMM';
-COMMENT: 'COMMENT';
+COMMENTKW: 'COMMENT';
 COMMON: 'COMMON';
 COMPACT: 'COMPACT';
 CPU: 'CPU';
@@ -638,7 +630,7 @@ JPE: 'JPE';
 JPO: 'JPO';
 JS: 'JS';
 JZ: 'JZ';
-LABEL: 'LABEL';
+LABELKW: 'LABEL';
 LAHF: 'LAHF';
 LANGUAGE: 'LANGUAGE';
 LAR: 'LAR';
@@ -979,15 +971,13 @@ U_DOT: '.';
 COMMA: ',';
 CHARACTER: /[^\r\n]/;
 STRING: /((?<!\')\'(?!\').+?(?<!\')\'(?!\'))|((?<!\")\"(?!\").+?(?<!\")\"(?!\"))/;
-label: /[A-Za-z_][A-Za-z_0-9]*/ {prefer};
-MONKEY: /@[A-Za-z_0-9@]*/ ;
+LABEL: /[A-Za-z_][A-Za-z_0-9]*/ {prefer};
+MONKEY: /@@|@B|@F/ ;
 
-decdigit: /[0-9]/; 
-hexdigit: /[A-Fa-f]/; 
-DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
+//DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
 ENDOFLINE: /[\r\n]+[\t \r\n]*/;
 FLOAT: /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b/;
 INTEGER: /[-+]?[0-9][0-9A-F]*[hoqtyHOQTY]?\b/ {prefer};
 WS: /[\t ]+/;
-Comment: /;[^\r\n]*/;
+COMMENTTERM: /;[^\r\n]*/;
 KEYWORD: /\w+/;
