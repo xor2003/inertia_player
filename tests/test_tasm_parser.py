@@ -121,6 +121,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.convert_data_to_blob(width=4,data=[u'9', u'8', u'7', u'1']),[9, 0, 0, 0, 8, 0, 0, 0, 7, 0, 0, 0, 1, 0, 0, 0])
         self.assertEqual(parser_instance.convert_data_to_blob(width=4,data=[u'offset var5']),[0, 0, 0, 0])
         self.assertEqual(parser_instance.convert_data_to_blob(width=4,data=[u'test2']),[0, 0, 0, 0])
+        #self.assertEqual(parser_instance.convert_data_to_blob(width=1,data=[u'2*2 dup (0,testEqu*2,2*2,3)']),[0, 0, 0, 0])
 
     @patch.object(logging, 'debug')
     @patch.object(logging, 'warning')
@@ -246,7 +247,12 @@ class ParserTest(unittest.TestCase):
         parser_instance = Parser([])
         self.assertEqual(parser_instance.convert_data_to_c(width=1,label='_a_mod_nst_669_s',data=["'.MOD.'", '0', '0', '0', '0']),(['', '".MOD.\\0\\0\\0"', ', // _a_mod_nst_669_s\n'], ['char _a_mod_nst_669_s[9]', ';\n'], 4))
 
-        #error self.assertEqual(parser_instance.convert_data_to_c(width=1,label=u'var3',data=["'*'", '10', '11', '3 * 15 DUP(0)']),(['', '"*\\n\\x0b"', ', // var3\n'], ['char var3[4]', ';\n'], 3))
+        parser_instance = Parser([])
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,label=u'var3',data=["'*'", '10', '11', '3 * 15 DUP(0)']),(['', '"*\\n\\x0b"', ', // var3\n'], ['char var3[4]', ';\n'], 3))
+
+        #parser_instance = Parser([])
+        #self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'2*2 dup (0,testEqu*2,2*2,3)']),[0, 0, 0, 0])
+
 
     @patch.object(logging, 'debug')
     def test_fix_dollar(self, mock_debug):

@@ -31,8 +31,8 @@ import re, os
 
 from tasm import op
 import tasm.proc
-from tasm import lex
 import tasm.cpp
+import tasm.lex
 
 import sys
 
@@ -67,6 +67,7 @@ class Parser(object):
                 self.prev_data_type = 0
                 self.prev_data_ctype = 0
                 self.line_number = 0
+                self.lex = tasm.lex.Lex()
 
         def visible(self):
                 for i in self.__stack:
@@ -795,11 +796,12 @@ class Parser(object):
 
         def parse_data(self, name, directive, arg):
                 binary_width = self.calculate_data_size(directive[1])
-                b = self.convert_data_to_blob(binary_width, lex.parse_args(arg))
+                args = self.lex.parse_args_new_data(arg)
+                b = self.convert_data_to_blob(binary_width, args)
                 self.binary_data += b
                 self.cur_seg_offset += len(b)
                 c, h, elements = self.convert_data_to_c(name, binary_width,
-                                                        lex.parse_args(arg))
+                                                        args)
                 self.c_data += c
                 self.h_data += h
                 return binary_width, elements
@@ -812,7 +814,7 @@ class Parser(object):
                 v = " ".join(cmd[2:])
                 logging.debug("%s" % v)
                 vv = self.fix_dollar(v)
-                vv = " ".join(lex.parse_args(vv))
+                vv = " ".join(self.lex.parse_args(vv))
                 vv = vv.strip()
                 logging.debug("%s" % vv)
                 size = 0

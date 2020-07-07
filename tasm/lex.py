@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -20,59 +21,87 @@ from __future__ import print_function
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 import logging
-from builtins import str
+import os
+
+from parglare import Grammar
+from parglare import Parser
 
 
-def parse_args(text):
-    # print "parsing: [%s]" %text
-    escape = False
-    string = False
-    result = []
-    token = ""
-    # value = 0
-    for c in text:
-        # print "[%s]%s: %s: %s" %(token, c, escape, string)
-        if c == '\\':
-            token += c
-        #               if c == '\\':
-        #                       escape = True
-        #                       continue
+class Lex(object):
+    def __new__(cls,*args, **kwargs):
+        if not hasattr(cls,'_inst'):
+            cls._inst = super(Lex, cls).__new__(cls)
+            logging.debug("Allocated Lex instance")
+            file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
+            grammar = Grammar.from_file(file_name, ignore_case=True)
+            ## parser = Parser(grammar, debug=True, debug_trace=True)
+            ## parser = Parser(grammar, debug=True)
+            cls._inst.parser = Parser(grammar)
+        return cls._inst
 
-        if escape:
-            if not string:
-                raise SyntaxError("escape found in no string: %s" % text)
+    def __init__(self):
+        pass
+        #file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
+        #grammar = Grammar.from_file(file_name, ignore_case=True)
+        ## parser = Parser(grammar, debug=True, debug_trace=True)
+        ## parser = Parser(grammar, debug=True)
+        #self.parser = Parser(grammar)
 
-            logging.debug("escaping[%s]" % c)
-            escape = False
-            token += c
-            continue
+    def parse_args_new_data(self, text):
+        # print "parsing: [%s]" %text
 
-        if string:
+        return self.parser.parse(text)
+
+    def parse_args(self, text):
+        # print "parsing: [%s]" %text
+        escape = False
+        string = False
+        result = []
+        token = ""
+        # value = 0
+        for c in text:
+            # print "[%s]%s: %s: %s" %(token, c, escape, string)
+            if c == '\\':
+                token += c
+            #               if c == '\\':
+            #                       escape = True
+            #                       continue
+
+            if escape:
+                if not string:
+                    raise SyntaxError("escape found in no string: %s" % text)
+
+                logging.debug("escaping[%s]" % c)
+                escape = False
+                token += c
+                continue
+
+            if string:
+                if c == '\'' or c == '"':
+                    string = False
+
+                token += c
+                continue
+
             if c == '\'' or c == '"':
-                string = False
+                string = True
+                token += c
+                continue
+
+            if c == ',':
+                result.append(token.strip())
+                token = ""
+                continue
+
+            if c == ';':  # comment, bailing out
+                break
 
             token += c
-            continue
-
-        if c == '\'' or c == '"':
-            string = True
-            token += c
-            continue
-
-        if c == ',':
-            result.append(token.strip())
-            token = ""
-            continue
-
-        if c == ';':  # comment, bailing out
-            break
-
-        token += c
-    token = token.strip()
-    if len(token):
-        result.append(token)
-    # print result
-    return result
+        token = token.strip()
+        if len(token):
+            result.append(token)
+        # print result
+        return result
 
 # def compile(width, data):
 #        logging.debug(data)

@@ -24,7 +24,7 @@ import logging
 from builtins import str
 from builtins import object
 
-from tasm import lex
+import tasm.lex
 
 
 # import traceback
@@ -122,6 +122,7 @@ class baseop(object):
     def split(self, text):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
         return lex.parse_args(text)
         # a, b = lex.parse_args(text)
 
@@ -219,7 +220,7 @@ class _jnb(basejmp):
 class _push(baseop):
     def __init__(self, arg):
         self.regs = []
-        for r in lex.parse_args(arg)[0].split():
+        for r in tasm.lex.Lex().parse_args(arg)[0].split():
             self.regs.append(self.parse_arg(r))
 
     def visit(self, visitor):
@@ -228,7 +229,7 @@ class _push(baseop):
 class _pop(baseop):
     def __init__(self, arg):
         self.regs = []
-        for r in lex.parse_args(arg)[0].split():
+        for r in tasm.lex.Lex().parse_args(arg)[0].split():
             self.regs.append(self.parse_arg(r))
 
     def visit(self, visitor):
@@ -479,7 +480,7 @@ class _instruction2(baseop):
 
 class _instruction3(baseop):
     def __init__(self, arg):
-        self.dst, self.src, self.c = lex.parse_args(arg)
+        self.dst, self.src, self.c = tasm.lex.Lex().parse_args(arg)
 
     def visit(self, visitor):
         return visitor._instruction3(self.cmd, self.dst, self.src, self.c)

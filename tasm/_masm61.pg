@@ -1,3 +1,4 @@
+start: scalarinstlist;
 module: directivelist?  enddir;
 addop: '+' | '-';
 aliasdir: ALIAS;
