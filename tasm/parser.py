@@ -684,7 +684,8 @@ class Parser(object):
                                         cmd0 = cmd0.lower()
                                         arg = line[len(cmd0):].strip()
                                         logging.debug("%d:1: %s" % (self.cur_seg_offset, arg))
-                                        self.parse_data("", cmd0, arg)
+                                        args = self.lex.parse_args_new_data(arg)
+                                        self.parse_data("", cmd0, args)
                                 continue
                         elif cmd0l == 'include':
                                 self.include(os.path.dirname(fname), cmd[1])
@@ -777,7 +778,8 @@ class Parser(object):
                                                 arg = line[len(cmd0l):].strip()
                                                 arg = arg[len(cmd1l):].strip()
                                                 logging.debug("data value %s offset %d" % (arg, offset))
-                                                binary_width, elements = self.parse_data(name, cmd1l, arg)
+                                                args = self.lex.parse_args_new_data(arg)
+                                                binary_width, elements = self.parse_data(name, cmd1l, args)
 
                                                 logging.debug("~size %d elements %d" % (binary_width, elements))
                                                 self.set_global(name, op.var(binary_width, offset, name=name,
@@ -794,9 +796,8 @@ class Parser(object):
                                 # print line
                                 pass
 
-        def parse_data(self, name, directive, arg):
+        def parse_data(self, name, directive, args):
                 binary_width = self.calculate_data_size(directive[1])
-                args = self.lex.parse_args_new_data(arg)
                 b = self.convert_data_to_blob(binary_width, args)
                 self.binary_data += b
                 self.cur_seg_offset += len(b)
