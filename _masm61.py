@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 from parglare import Grammar
 
-file_name = "_masm61.pg"
+file_name = os.path.dirname(os.path.realpath(__file__))+"/_masm61.pg"
 grammar = Grammar.from_file(file_name, ignore_case=True)
 
 from parglare import Parser
