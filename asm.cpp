@@ -3,6 +3,8 @@
 struct /*__attribute__((__packed__))*/ Memory;
 extern Memory m;
 
+#include <exception>
+
 #ifndef __BORLANDC__
  #ifndef __DJGPP__
   #include <SDL/SDL.h>
@@ -1404,6 +1406,7 @@ int main(int argc, char *argv[])
 	eax = 0x0ffff;
 	ebx=ecx=edx=ebp=esi=edi=DF=0;
 
+try{
 	init(_state);
 
   if (argc >= 2)
@@ -1415,9 +1418,19 @@ int main(int argc, char *argv[])
 
   }
 	mainproc((_offsets) 0x1001, _state);
+}
+catch (const std::exception& e)
+{
+   printf("std::exception& %s\n",e.what());
+}
+catch (...)
+{
+   printf("some exception\n");
+}
 	return(0);
 }
 
+#ifdef _WIN32
 #include <windows.h>
 int  WinMain(
   HINSTANCE hInstance,
@@ -1427,6 +1440,7 @@ int  WinMain(
 )
 {return main(0,0);
 }
+#endif
 
 chtype vga_to_curses[256];
 void prepare_cp437_to_curses()

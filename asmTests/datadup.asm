@@ -16,7 +16,8 @@ assume  cs:_TEXT,ds:_DATA
 
 _start proc near
 start: ;IGNORE
-mov ds,_DATA
+mov ax,_DATA
+mov ds,ax
 
 cmp [var],5
 mov al,1
@@ -55,4 +56,4 @@ stackseg   segment para stack 'STACK' ;IGNORE
 db 1000h dup(?)
 stackseg   ends ;IGNORE
 
-end start ;IGNORE
+end _start ;IGNORE

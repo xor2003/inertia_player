@@ -1,6 +1,6 @@
 start: module
 module: directivelist?  enddir
-linereminder: comment | endofline
+linereminder: comment | ENDOFLINE
 assdir: id "=" immexpr linereminder
 addop: "+" | "-"
 aexpr: term "&&" aexpr | term
@@ -26,13 +26,13 @@ blockstatements: U_CONTINUE ifcexpr? | U_BREAK ifcexpr? | directivelist
 bool: TRUE | FALSE 
 byteregister: AL | AH | BL | BH | CL | CH | DL | DH 
 cexpr: aexpr ":" cexpr | aexpr
-charlist: character+
+charlist: CHARACTER+
 classname: string
 commdecl: nearfar?   langtype?  id ":" commtype eqconstexpr?
 commdir: COMM commlist linereminder
-commentdir: COMMENT delimiter text text delimiter text linereminder
+commentdir: COMMENT DELIMITER text text DELIMITER text linereminder
 commlist: commdecl| commdecl "," commlist
-commtype: type | constexpr
+commtype: id| distance| datatype | constexpr
 constant: digits  radixoverride? 
 constexpr: expr
 contextdir: PUSHCONTEXT contextitemlist linereminder| POPCONTEXT contextitemlist linereminder
@@ -47,29 +47,41 @@ coprocessor: U_8087 | U_287 | U_387 | U_NO87
 crefdir: crefoption linereminder
 crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? 
 cxzexpr: "!" expr| expr  "==" expr| expr  "!=" expr | expr
-datadecl: DB | DW | DD | DF | DQ | DT | datatype | typeid
+datadecl: DB | DW | DD | DF | DQ | DT | datatype
 datadir: id?  dataitem linereminder
-dataitem: datadecl scalarinstlist| structtag structinstlist| typeid structinstlist| uniontag structinstlist| recordtag recordinstlist
+dataitem: id? datadecl scalarinstlist| id structinstlist| id recordinstlist
 datatype: BYTE | SBYTE | WORD | SWORD | DWORD | SDWORD | FWORD | QWORD | TBYTE | REAL4 | REAL8 | REAL10
 decnumber: decdigit+
 digits: decdigit+| digits hexdigit
 directive: generaldir| segmentdef
 directivelist: directive+
 distance: nearfar| NEAR16 | NEAR32 | FAR16 | FAR32
-e01: e01 orop e02| e02
-e02: e02 AND e03| e03
+e01: e02 e01a
+e01a: orop e02 e01a |  
+e02: e03 e02a
+e02a: AND e03 e02a |  
 e03: NOT e04| e04
-e04: e04 relop e05| e05
-e05: e05 addop e06| e06
-e06: e06 mulop e07| e06 shiftop e07| e07
-e07: e07 addop e08| e08
+e04: e05 e04a
+e04a: relop e05 e04a |  
+e05: e06 e05a
+e05a: addop e06 e05a |  
+
+e06: e08 e06a
+e06a:  mulop e08 e06a | shiftop e08 e06a | 
+
 e08: HIGH e09| LOW e09| HIGHWORD e09| LOWWORD e09| e09
-e09: OFFSET e10| SEG e10| LROFFSET e10| TYPE e10| THIS e10| e09 PTR e10| e09 ":" e10| e10
-e10: e10 U_DOT e11| e10 expr | e11
-e11: "( expr )" | WIDTH id| MASK id| SIZE sizearg| SIZEOF sizearg| LENGTH id| LENGTHOF id | recordconst| string| constant| type| id| "$"| segmentregister| register| ST | ST "( expr )" | expr
-echodir: ECHO arbitrarytext linereminder | "%OUT" arbitrarytext linereminder
+
+e09: OFFSET e10| SEG e10| LROFFSET e10| TYPE e10| THIS e10| e10 e09a
+e09a: PTR e10 e09a | ":" e10 e09a | 
+
+e10: e11 e10a
+e10a: U_DOT e11 e10a | 
+
+expr: SHORT e05| U_TYPE e01| OPATTR e01| e01
+e11: "( expr )" | WIDTH id| MASK id| SIZE sizearg| SIZEOF sizearg| LENGTH id| LENGTHOF id | recordconst| string| constant| id| distance| datatype| "$"| segmentregister| register| ST | ST "( expr )"
+echodir: ECHO arbitrarytext linereminder | U_OUT arbitrarytext linereminder
 elseifblock: elseifstatement linereminder directivelist elseifblock? 
-elseifstatement: ELSEIF constexpr| ELSEIFE constexpr| ELSEIFB textitem| ELSEIFNB textitem | ELSEIFDEF id| ELSEIFNDEF id| ELSEIFDIF textitem "," textitem| ELSEIFDIFI textitem "," textitem| ELSEIFIDN textitem "," textitem| ELSEIFIDNI textitem "," textitem| "ELSEIF1" | "ELSEIF2" 
+elseifstatement: ELSEIF constexpr| ELSEIFE constexpr| ELSEIFB textitem| ELSEIFNB textitem | ELSEIFDEF id| ELSEIFNDEF id| ELSEIFDIF textitem "," textitem| ELSEIFDIFI textitem "," textitem| ELSEIFIDN textitem "," textitem| ELSEIFIDNI textitem "," textitem| ELSEIF1 | ELSEIF2 
 enddir: END immexpr?  linereminder
 endpdir: procid ENDP linereminder
 endsdir: id ENDS linereminder
@@ -80,7 +92,6 @@ erroropt: U_ERR textitem? | U_ERRE constexpr opttext? | U_ERRNZ constexpr opttex
 exitdir: U_EXIT expr?  linereminder
 exitmdir: EXITM | EXITM textitem
 exponent: "E"  sign?  decnumber
-expr: SHORT e05| U_TYPE e01| OPATTR e01| e01
 exprlist: expr | expr  ","  exprlist
 altidq: "( altid )"
 externdef: langtype?  id altidq? ":" externtype
@@ -91,7 +102,7 @@ externtype: ABS | qualifiedtype
 fieldalign: constexpr
 fieldinit: initvalue | structinstance
 fieldinitlist: fieldinit ","  linereminder?  fieldinitlist | fieldinit
-filechar: delimiter
+filechar: DELIMITER
 filecharlist: filechar+
 filespec: filecharlist| textliteral
 flagname: ZERO_ | CARRY_ | OVERFLOW_ | SIGN_ | PARITY_
@@ -109,7 +120,7 @@ groupdir : groupid GROUP segidlist
 groupid: id
 idlist: id "," idlist | id
 ifdir: ifstatement linereminder directivelist elseifblock? elsedirectivelist? ENDIF linereminder
-ifstatement: IF constexpr| IFE constexpr| IFB textitem| IFNB textitem| IFDEF id| IFNDEF id| IFDIF textitem "," textitem| IFDIFI textitem "," textitem| IFIDN textitem "," textitem| IFIDNI textitem "," textitem| "IF1" | "IF2" 
+ifstatement: IF constexpr| IFE constexpr| IFB textitem| IFNB textitem| IFDEF id| IFNDEF id| IFDIF textitem "," textitem| IFDIFI textitem "," textitem| IFIDN textitem "," textitem| IFIDNI textitem "," textitem| IF1 | IF2 
 immexpr: expr
 includedir: INCLUDE filespec linereminder
 includelibdir: INCLUDELIB filespec linereminder
@@ -165,17 +176,16 @@ nestedstruct: structhdr  id?  linereminder structbody ENDS linereminder
 offsetdir: offsetdirtype linereminder
 offsetdirtype: EVEN | ORG immexpr| ALIGN constexpr? 
 offsettype: GROUP | SEGMENT | FLAT 
-oldrecordfieldlist: constexpr "," oldrecordfieldlist | constexpr
 optiondir: OPTION optionlist linereminder
 readonly: READONLY
-optionitem: CASEMAP ":" maptype| DOTNAME | NODOTNAME | EMULATOR | NOEMULATOR | EPILOGUE ":" macroid| "EXPR16" | "EXPR32" | LANGUAGE ":" langtype| LJMP | NOLJMP | "M510" | "NOM510" | NOSIGNEXTEND | OFFSET ":" offsettype| OLDMACROS | NOOLDMACROS | OLDSTRUCTS | NOOLDSTRUCTS | PROC ":" ovisibility| PROLOGUE ":" macroid| readonly | NOREADONLY | SCOPED | NOSCOPED | SEGMENT ":" segsize| "SETIF2 :" bool
+optionitem: CASEMAP ":" maptype| DOTNAME | NODOTNAME | EMULATOR | NOEMULATOR | EPILOGUE ":" macroid| EXPR16 | EXPR32 | LANGUAGE ":" langtype| LJMP | NOLJMP | M510 | NOM510 | NOSIGNEXTEND | OFFSET ":" offsettype| OLDMACROS | NOOLDMACROS | OLDSTRUCTS | NOOLDSTRUCTS | PROC ":" ovisibility| PROLOGUE ":" macroid| readonly | NOREADONLY | SCOPED | NOSCOPED | SEGMENT ":" segsize| SETIF2 ":" bool
 optionlist: optionitem| optionitem  "," linereminder?  optionlist
 opttext: "," textitem
 orop: OR | XOR 
 ovisibility: PUBLIC | PRIVATE | EXPORT 
-pagedir: PAGE pageexpr?  linereminder
+pagedir: PAGE pageexpr? linereminder
 commapagewidth: "," pagewidth
-pageexpr: "+"|  pagelength?  commapagewidth?
+pageexpr: "+"|  pagelength commapagewidth? | commapagewidth
 pagelength: constexpr
 pagewidth: constexpr
 dotdotqualifiedtype: ":" qualifiedtype
@@ -183,10 +193,10 @@ parm: parmid  constexpr? dotdotqualifiedtype?
 parmid: id
 parmlist: parm  "," linereminder? parmlist | parm
 parmtype: REQ | "=" textliteral| VARARG 
-poptions: distance?   langtype?   ovisibility? 
+poptions: distance?  langtype?  ovisibility? 
 primary: expr binaryop expr| flagname| expr
 brmacroarglist: "<" macroarglist ">"
-procdir: procid PROC poptions?  brmacroarglist?  usesregs?   procparmlist? 
+procdir: procid PROC poptions  brmacroarglist?  usesregs?   procparmlist? 
 processor: U_8086 | U_186 | U_286 | U_286C | U_286P | U_386 | U_386C | U_386P | U_486 | U_486P | U_586 | U_586P | U_686 | U_686P | U_K3D | U_MMX | U_XMM
 processordir: processor linereminder | coprocessor linereminder
 procid: id
@@ -198,22 +208,21 @@ commaprotolist: ","  linereminder?  protolist
 commaidvararg: ","  linereminder?   id? U_VARARG
 protoarglist: "," commaprotolist? "," commaidvararg?
 protolist: protoarg| protoarg  "," linereminder?  protolist
-protospec: typeid | distance?   langtype?   protoarglist?
+protospec: id | distance?   langtype?   protoarglist?
 prototypedir: id PROTO protospec
 pubdef: langtype?  id
 publicdir: PUBLIC publist linereminder
 publist: pubdef  "," linereminder?  publist | pubdef
 purgedir: PURGE macroidlist
-qualifiedtype: distance? PTR qualifiedtype? | type
+qualifiedtype: distance? PTR qualifiedtype? | distance| datatype
 qualifier: PROTO protospec | qualifiedtype
 quote: "\"" | "'"
 radixdir: U_RADIX constexpr linereminder
-recordconst: recordtag "{" oldrecordfieldlist "}"| recordtag "<" oldrecordfieldlist ">"
-recorddir: recordtag RECORD bitdeflist linereminder 
+recordconst: id "{" recordfieldlist "}"| id "<" recordfieldlist ">"
+recorddir: id RECORD bitdeflist linereminder 
 recordfieldlist: constexpr  ","  linereminder? recordfieldlist | constexpr
-recordinstance: "{"  linereminder?  recordfieldlist  linereminder?  "}"| "<" oldrecordfieldlist ">"| constexpr DUP "(" recordinstance ")"
+recordinstance: "{"  linereminder?  recordfieldlist  linereminder?  "}"| "<" recordfieldlist ">"| constexpr DUP "(" recordinstance ")"
 recordinstlist: recordinstance| recordinstance ","  linereminder?  recordinstlist
-recordtag: id
 register: specialregister| gpregister| byteregister
 reglist: register+
 relop: EQ | NE | LT | LE | GT | GE 
@@ -237,22 +246,21 @@ shiftop: SHR | SHL
 sign: "-" | "+"
 simpleexpr: "(" cexpr ")"| primary
 simplesegdir: segdir linereminder
-sizearg: id| type| e10
-specialregister: "CR0" | "CR2" | "CR3" | "DR0" | "DR1" | "DR2" | "DR3" | "DR6" | "DR7"| "TR3" | "TR4" | "TR5" | "TR6" | "TR7"
+sizearg: distance| datatype | e10
+specialregister: CR0 | CR2 | CR3 | DR0 | DR1 | DR2 | DR3 | DR6 | DR7| TR3 | TR4 | TR5 | TR6 | TR7
 stackoption: NEARSTACK | FARSTACK 
 startupdir: U_STARTUP linereminder
-stext: stringchar+
+stext: STRINGCHAR+
 string: quote  stext?  quote
 structbody: structitem structbody | structitem linereminder
 commanonuniq: "," NONUNIQUE
-structdir: structtag structhdr  fieldalign?  commanonuniq? linereminder structbody structtag ENDS linereminder
+structdir: id structhdr  fieldalign?  commanonuniq? linereminder structbody id ENDS linereminder
 structhdr: STRUC | STRUCT | UNION 
 structinstance: "<"  fieldinitlist?  ">"| "{" linereminder?   fieldinitlist?   linereminder?  "}"| constexpr DUP "( structinstlist )"
 structinstlist: structinstance| structinstance  ","  linereminder?  structinstlist
 structitem : datadir| generaldir| offsetdir| nestedstruct
-structtag: id
 term: "!" simpleexpr | simpleexpr
-text: "!" character text| "!" character| textliteral | character+
+text: "!" CHARACTER text| "!" CHARACTER| textliteral | CHARACTER+
 textdir: id textmacrodir linereminder
 textitem: textliteral| "%" constexpr| textmacroid
 textlen: constexpr
@@ -265,24 +273,11 @@ textmacroid: id
 textstart: constexpr
 titledir: titletype arbitrarytext linereminder
 titletype: TITLE | SUBTITLE | SUBTTL 
-type: structtag| uniontag| recordtag| distance| datatype| typeid
-typedefdir: typeid TYPEDEF qualifier
-typeid: id
-uniontag: id
+typedefdir: id TYPEDEF qualifier
 untildir: U_UNTIL cexpr linereminder U_UNTILCXZ cxzexpr?  linereminder
 usesregs: USES reglist 
 whileblock: U_WHILE cexpr linereminder blockstatements linereminder U_ENDW 
-radixoverride: "H"i | "O"i | "Q"i | "T"i | "Y"i
-decdigit: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-hexdigit: "A"i | "B"i | "C"i | "D"i | "E"i | "F"i
-letter : "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "_"
-id: letter+ | id decdigit
-whitespacecharacter: WS
-endofline: /[\r\n]+/
-character: /[^\r\n]/
 comment: ";" text linereminder
-stringchar: /(\'\')|(\"\")|[^\'\"]/
-delimiter: /[^\t\n\r\s\w]/
 AAA: "AAA"i
 AAD: "AAD"i
 AAM: "AAM"i
@@ -939,5 +934,15 @@ U_XLIST: ".XLIST"i
 U_XMM: ".XMM"i
 U_DOT: "."
 C: "C"i
-WS: /[\b\t\v\f\x1a\s]/
+radixoverride: "H"i | "O"i | "Q"i | "T"i | "Y"i
+decdigit: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+hexdigit: "A"i | "B"i | "C"i | "D"i | "E"i | "F"i
+LETTER : "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "_"
+id: LETTER+ | id decdigit
+WHITESPACECHARACTER: WS
+ENDOFLINE: /[\r\n]+/
+CHARACTER: /[^\r\n]/
+STRINGCHAR: /(\'\')|(\"\")|[^\'\"]/
+DELIMITER: /[^\t\n\r\w\s]/
+WS: /\s+/
 %ignore WS

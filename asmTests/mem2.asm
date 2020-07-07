@@ -5,7 +5,7 @@ a db 1
 ;padding db 10241024 dup(?)
 
 b db 2
-c db 3
+cc db 3
 d db 4
 e db 5
 f db 6
@@ -96,4 +96,4 @@ stackseg   segment para stack 'STACK' ;IGNORE
 db 1000h dup(?)
 stackseg   ends ;IGNORE
 
-end start ;IGNORE
+end _start ;IGNORE

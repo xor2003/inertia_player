@@ -7,6 +7,7 @@ var3 dd 11,-11,2,4000000
 _DATA   ends ;IGNORE
 
 _text segment byte public 'CODE' use16
+assume ds:_DATA
 _start:
 mov al,0
 mov ah,4ch                    ; AH=4Ch - Exit To DOS

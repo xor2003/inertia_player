@@ -40,6 +40,25 @@ typedef uint16_t dw;
 typedef uint32_t dd;
 typedef uint64_t dq;
 
+#ifdef __LIBSDL2__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#endif
+
+#ifdef __LIBRETRO__
+#include "libretro.h"
+extern retro_log_printf_t log_cb;
+#else
+extern FILE * logDebug;
+#endif
+
+void log_error(const char *fmt, ...);
+void log_debug(const char *fmt, ...);
+void log_info(const char *fmt, ...);
+void log_debug2(const char *fmt, ...);
+
+const char* log_spaces(int n);
+
 
 #define VGARAM_SIZE (320*200)
 
@@ -964,24 +983,6 @@ int8_t asm2C_IN(int16_t data);
 	op1 = (op1>>24)|((op1>>8)&0xFF00)|((op1<<8)&0xFF0000)|((op1<<24)&0xFF000000);
 
 
-#ifdef __LIBSDL2__
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#endif
-
-#ifdef __LIBRETRO__
-#include "libretro.h"
-extern retro_log_printf_t log_cb;
-#else
-extern FILE * logDebug;
-#endif
-
-void log_error(const char *fmt, ...);
-void log_debug(const char *fmt, ...);
-void log_info(const char *fmt, ...);
-void log_debug2(const char *fmt, ...);
-
-const char* log_spaces(int n);
 
 #if DEBUG==2
     #define R(a) {log_debug("l:%s%d:%s\n",_state->_str,__LINE__,#a);}; a
@@ -1162,6 +1163,7 @@ void hexDump (void *addr, int len);
 void asm2C_INT(struct _STATE* state, int a);
 void asm2C_init();
 void asm2C_printOffsets(unsigned int offset);
+double realElapsedTime(void);
 
 void realtocurs();
 dw getscan();
@@ -1220,6 +1222,7 @@ extern db vgaPalette[256*3];
 #define LOOPWNE(x) UNIMPLEMENTED
 #define STI UNIMPLEMENTED
 #define CLI UNIMPLEMENTED
+#define ORG(x) 
 // ---------
 
 #endif

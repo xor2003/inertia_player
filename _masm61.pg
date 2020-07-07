@@ -1,6 +1,5 @@
 module: directivelist?  enddir;
 addop: '+' | '-';
-aexpr: term '&&' aexpr | term;
 aliasdir: ALIAS;
 altidq: '(' LABEL ')';
 arbitrarytext: charlist;
@@ -23,7 +22,6 @@ blockstatements: U_CONTINUE ifcexpr? linereminder | U_BREAK ifcexpr? linereminde
 bool: TRUE | FALSE ;
 brmacroarglist: '<' macroarglist '>';
 byteregister: AL | AH | BL | BH | CL | CH | DL | DH ;
-cexpr: aexpr ':' cexpr | aexpr;
 charlist: CHARACTER+;
 classname: STRING;
 commaidvararg: COMMAOEOL   LABEL? U_VARARG;
@@ -52,7 +50,6 @@ controlif: U_IF cexpr linereminder insegdir+ controlelseif? elsedirectivelist? U
 coprocessor: U_8087 | U_287 | U_387 | U_NO87 ;
 crefdir: crefoption linereminder;
 crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? ;
-cxzexpr: '!' expr| expr  '==' expr| expr  '!=' expr | expr;
 datadecl: DB | DW | DD | DF | DQ | DT | datatype;
 datadir: LABEL? dataitem linereminder;
 dataitem: datadecl scalarinstlist| LABEL structinstlist| LABEL recordinstlist;
@@ -81,6 +78,12 @@ dotdotqualifiedtype: ':' qualifiedtype;
 // 12 AND
 // 13 OR , XOR
 // 14 OPATTR , SHORT , .TYPE
+cexpr: aexpr '||' cexpr | aexpr;
+aexpr: term '&&' aexpr | term;
+term: '!' simpleexpr | simpleexpr;
+simpleexpr: '(' cexpr ')'| primary;
+primary: expr binaryop expr| flagname| expr;
+cxzexpr: '!' expr| expr  '==' expr| expr  '!=' expr | expr;
 
 expr: SHORT expr {2,left}
 | U_TYPE expr {2,left}
@@ -214,7 +217,7 @@ modeloptlist: modelopt+[COMMA];
 mulop: '*'| '/' | MOD ;
 namedir: NAME LABEL linereminder;
 nearfar: NEAR | FAR ;
-nestedstruct: structhdr  LABEL?  linereminder structbody ENDS linereminder;
+nestedstruct: structhdr  LABEL?  linereminder ENDS linereminder | structhdr  LABEL?  linereminder structitem+ ENDS linereminder;
 offsetdir: offsetdirtype linereminder;
 offsetdirtype: EVEN | ORG expr| ALIGN expr? ;
 offsettype: GROUP | SEGMENT | FLAT ;
@@ -230,7 +233,6 @@ parm: LABEL  expr? dotdotqualifiedtype?;
 parmlist: parm+[COMMAOEOL];
 parmtype: REQ | '=' textliteral| VARARG ;
 poptions: distance?  langtype?  ovisibility? ;
-primary: expr binaryop expr| flagname| expr;
 procdir: LABEL PROC poptions  brmacroarglist?  usesregs? procparmlist? commaparmidvararg? linereminder;
 processor: U_8086 | U_186 | U_286 | U_286C | U_286P | U_386 | U_386C | U_386P | U_486 | U_486P | U_586 | U_586P | U_686 | U_686P | U_K3D | U_MMX | U_XMM;
 processordir: processor linereminder | coprocessor linereminder;
@@ -282,18 +284,16 @@ segro: readonly;
 segsize : USE16 | USE32 | FLAT;
 shiftop: SHR | SHL ;
 sign: '-' | '+';
-simpleexpr: '(' cexpr ')'| primary;
 simplesegdir: segdir linereminder;
 specialregister: CR0 | CR2 | CR3 | DR0 | DR1 | DR2 | DR3 | DR6 | DR7| TR3 | TR4 | TR5 | TR6 | TR7;
 stackoption: NEARSTACK | FARSTACK ;
 startupdir: U_STARTUP linereminder;
-structbody: structitem | structbody structitem;
-structdir: LABEL structhdr  expr?  commanonuniq? linereminder structbody LABEL ENDS linereminder;
+structbody: structitem+;
+structdir: LABEL structhdr  expr?  commanonuniq? linereminder endsdir | LABEL structhdr  expr?  commanonuniq? linereminder structitem+ endsdir;
 structhdr: STRUC | STRUCT | UNION ;
 structinstance: '<'  fieldinitlist?  '>'| '{' linereminder?   fieldinitlist?   linereminder?  '}'| expr DUP '(' structinstlist ')';
 structinstlist: structinstance+[COMMAOEOL];
 structitem : datadir| generaldir| offsetdir| nestedstruct| linereminder;
-term: '!' simpleexpr | simpleexpr;
 text: CHARACTER+;
 textdir: LABEL textmacrodir linereminder;
 textitem: textliteral| '%' expr| LABEL;

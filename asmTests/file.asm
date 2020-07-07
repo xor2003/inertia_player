@@ -10,7 +10,8 @@ _TEXT   segment use32 dword public 'CODE' ;IGNORE
 assume  cs:_TEXT,ds:_DATA
 _start proc near
 start: ;IGNORE
-mov ds,_DATA
+mov ax,_DATA
+mov ds,ax
 
 mov edx,0
 mov ecx,2
@@ -36,7 +37,8 @@ load_raw proc near ; ecx: offset dans le fichier.
                    ; ebx: nombre de pixels dans le pcx
 
 pushad
-push es ds
+push es 
+push ds
 
 lea edx,fileName
 xor eax,eax
@@ -79,7 +81,8 @@ mov ebx,[load_handle]
 mov ah,03eh
 int 21h
 
-pop ds es
+pop ds
+pop es
 popad
 ret
 load_raw endp
@@ -92,4 +95,4 @@ stackseg   segment para stack 'STACK' ;IGNORE
 db 1000h dup(?)
 stackseg   ends ;IGNORE
 
-end start ;IGNORE
+end _start ;IGNORE

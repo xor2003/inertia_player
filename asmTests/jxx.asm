@@ -11,7 +11,8 @@ assume  cs:_TEXT,ds:_DATA
 start proc near
 _start: ;IGNORE
 
-mov ds,_DATA
+mov ax,_DATA
+mov ds,ax
 
 mov ebp,32
 mov ax,4

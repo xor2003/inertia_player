@@ -21,8 +21,9 @@ db 'OKOKOKOK'
 db 'ABC',0
 dd offset var5
 ASCII DB '00000000',0Dh,0Ah,'$' ; buffer for ASCII string
-doublequote db 'ab''cd'
-
+doublequote db 'ab''cd',"e"
+var7 db 5*5 dup (0,testEqu*2,2*2,3)
+                         
 enddata db 4
 
 _DATA   ends ;IGNORE
@@ -32,7 +33,8 @@ assume  cs:_TEXT,ds:_DATA
 
 _start proc near
 start: ;IGNORE
-MOV ds, _data
+MOV ax, _data
+MOV ds, ax
 
 mov al, 'Z' - 'A' +1
 

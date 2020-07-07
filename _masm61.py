@@ -8,8 +8,8 @@ grammar = Grammar.from_file(file_name, ignore_case=True)
 
 from parglare import Parser
 #parser = Parser(grammar, debug=True, debug_trace=True)
-parser = Parser(grammar, debug=True)
-#parser = Parser(grammar)
+#parser = Parser(grammar, debug=True)
+parser = Parser(grammar)
 
 codeset = 'cp437'
 

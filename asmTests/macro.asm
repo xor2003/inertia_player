@@ -26,8 +26,14 @@ ENDM
 
 MAC2 MACRO arg1
 mov eax,arg1
-push es ds eax ebx
-POP ebx eax ds es
+push es
+push ds 
+push eax 
+push ebx
+POP ebx 
+POP eax 
+POP ds 
+POP es
 ENDM
 
 MAC3 MACRO m,o     
@@ -38,11 +44,11 @@ ENDM
 
 
 MAC5 MACRO arg1
-local c
+local cc
 MAC3 ecx,arg1
-c:
+cc:
 INC EDX
-LOOP c
+LOOP cc
 ENDM
 
 MAC6 MACRO a,b
@@ -113,4 +119,4 @@ stackseg   segment para stack 'STACK' ;IGNORE
 db 1000h dup(?)
 stackseg   ends ;IGNORE
 
-end start ;IGNORE
+end _start ;IGNORE

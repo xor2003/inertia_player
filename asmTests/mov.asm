@@ -3,7 +3,7 @@
 _DATA   segment use32 dword public 'DATA' ;IGNORE
 a db 1
 b dw 2
-c dd 3
+cc dd 3
 d db 4
 e db 5
 f db 6
@@ -18,7 +18,8 @@ assume  cs:_TEXT,ds:_DATA
 _start proc near
 
 start: ;IGNORE
-mov ds,_DATA
+mov ax,_DATA
+mov ds,ax
 
 mov ebx,0aabbccddh
 cmp bl,0ddh
@@ -40,8 +41,8 @@ mov b,ax
 cmp b,256+3
 jne failure
 
-mov c,eax
-cmp c,256+3+65536
+mov cc,eax
+cmp cc,256+3+65536
 jne failure
 
 mov byte ptr [a],5
@@ -137,4 +138,4 @@ stackseg   segment para stack 'STACK' ;IGNORE
 db 1000h dup(?)
 stackseg   ends ;IGNORE
 
-end start ;IGNORE
+end _start ;IGNORE

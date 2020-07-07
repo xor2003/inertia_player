@@ -228,7 +228,7 @@ class Proc(object):
                         cmd.lower()) is not None:
                         cl = getattr(op, '_instruction0')
                 elif re.match(
-                        r"^(dec|inc|pop|push|int|neg|div|idiv|mul|set[a-z]+|not|lods|scas|stos|cmpxchg8b|bswap|fistp|fmul|fadd)$",
+                        r"^(dec|inc|pop|push|int|neg|div|idiv|mul|set[a-z]+|not|lods|scas|stos|cmpxchg8b|bswap|fistp|fmul|fadd|org)$",
                         cmd.lower()) is not None:
                         cl = getattr(op, '_instruction1')
                 elif re.match(r"^(j[a-z]+|loop[a-z]*)$", cmd.lower()) is not None:
