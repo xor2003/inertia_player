@@ -22,12 +22,15 @@ from __future__ import print_function
 #
 import logging
 import os
+import re
+from builtins import str
 
-from parglare import Grammar
-from parglare import Parser
+#from parglare import Grammar
+#from parglare import Parser
 
 
 class Lex(object):
+    '''
     def __new__(cls,*args, **kwargs):
         if not hasattr(cls,'_inst'):
             cls._inst = super(Lex, cls).__new__(cls)
@@ -38,14 +41,10 @@ class Lex(object):
             ## parser = Parser(grammar, debug=True)
             cls._inst.parser = Parser(grammar)
         return cls._inst
+    '''
 
     def __init__(self):
         pass
-        #file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
-        #grammar = Grammar.from_file(file_name, ignore_case=True)
-        ## parser = Parser(grammar, debug=True, debug_trace=True)
-        ## parser = Parser(grammar, debug=True)
-        #self.parser = Parser(grammar)
 
     def parse_args_new_data(self, text):
         # print "parsing: [%s]" %text
@@ -103,6 +102,25 @@ class Lex(object):
         # print result
         return result
 
-# def compile(width, data):
-#        logging.debug(data)
-#        return data
+    # def compile(width, data):
+    #        logging.debug(data)
+    #        return data
+
+    def parse_line_data(self, line):
+            cmd = line.split()
+            cmd1l = cmd[1].lower()
+            cmd0 = str(cmd[0])
+            cmd0 = cmd0.lower()
+            if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
+                name = cmd0
+                cmd0l = cmd0
+                name = re.sub(r'@', "arb", name)
+                arg = line[len(cmd0l):].strip()
+                arg = arg[len(cmd1l):].strip()
+                args = self.parse_args(arg)
+                return name, cmd1l, args
+            else:
+                arg = line[len(cmd0):].strip()
+                args = self.parse_args(arg)
+                return "", cmd0, args
+

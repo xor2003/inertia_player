@@ -36,6 +36,9 @@ import tasm.lex
 
 import sys
 
+#from tasm.lex import parse_line_data, parse_line_name_data
+
+
 class Parser(object):
         def __init__(self, skip_binary_data = []):
                 self.skip_binary_data = skip_binary_data
@@ -681,10 +684,8 @@ class Parser(object):
 
                         if cmd0l in ['db', 'dw', 'dd', 'dq']:
                                 if not skipping_binary_data:
-                                        cmd0 = cmd0.lower()
-                                        arg = line[len(cmd0):].strip()
-                                        logging.debug("%d:1: %s" % (self.cur_seg_offset, arg))
-                                        args = self.lex.parse_args_new_data(arg)
+                                        name, cmd0, args = self.lex.parse_line_data(line)
+                                        logging.debug("%d:1: %s" % (self.cur_seg_offset, str(args)))
                                         self.parse_data("", cmd0, args)
                                 continue
                         elif cmd0l == 'include':
@@ -772,13 +773,9 @@ class Parser(object):
                                         continue
                                 elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
                                         if not (cmd0.lower() in self.skip_binary_data):
-                                                name = cmd0
-                                                name = re.sub(r'@', "arb", name)
                                                 offset = self.cur_seg_offset
-                                                arg = line[len(cmd0l):].strip()
-                                                arg = arg[len(cmd1l):].strip()
-                                                logging.debug("data value %s offset %d" % (arg, offset))
-                                                args = self.lex.parse_args_new_data(arg)
+                                                name, cmd1l, args = self.lex.parse_line_data(line)
+                                                logging.debug("data value %s offset %d" % (str(args), offset))
                                                 binary_width, elements = self.parse_data(name, cmd1l, args)
 
                                                 logging.debug("~size %d elements %d" % (binary_width, elements))
