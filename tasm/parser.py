@@ -684,9 +684,10 @@ class Parser(object):
 
                         if cmd0l in ['db', 'dw', 'dd', 'dq']:
                                 if not skipping_binary_data:
-                                        name, cmd0, args = self.lex.parse_line_data(line)
-                                        logging.debug("%d:1: %s" % (self.cur_seg_offset, str(args)))
-                                        self.parse_data("", cmd0, args)
+                                        c, h, offset_diff = self.parse_data_line_whole(line)
+                                        #name, cmd0, args = self.lex.parse_line_data(line)
+                                        #logging.debug("%d:1: %s" % (self.cur_seg_offset, str(args)))
+                                        #self.parse_data("", cmd0, args)
                                 continue
                         elif cmd0l == 'include':
                                 self.include(os.path.dirname(fname), cmd[1])
@@ -773,14 +774,8 @@ class Parser(object):
                                         continue
                                 elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
                                         if not (cmd0.lower() in self.skip_binary_data):
-                                                offset = self.cur_seg_offset
-                                                name, cmd1l, args = self.lex.parse_line_data(line)
-                                                logging.debug("data value %s offset %d" % (str(args), offset))
-                                                binary_width, elements = self.parse_data(name, cmd1l, args)
+                                                c, h, offset_diff = self.parse_data_line_whole(line)
 
-                                                logging.debug("~size %d elements %d" % (binary_width, elements))
-                                                self.set_global(name, op.var(binary_width, offset, name=name,
-                                                                             segment=self.segment, elements=elements))
                                                 skipping_binary_data = False
                                         else:
                                                 logging.info("skipping binary data for %s" % (cmd0l,))
@@ -793,6 +788,20 @@ class Parser(object):
                                 # print line
                                 pass
 
+        def parse_data_line_whole(self, line):
+                offset = self.cur_seg_offset
+                name, cmd1l, args = self.lex.parse_line_data(line)
+                logging.debug("data value %s offset %d" % (str(args), offset))
+                c, h, binary_width, elements = self.parse_data(name, cmd1l, args)
+                offset2 = self.cur_seg_offset
+
+                logging.debug("~size %d elements %d" % (binary_width, elements))
+                if name:
+                        self.set_global(name, op.var(binary_width, offset, name=name,
+                                             segment=self.segment, elements=elements))
+                #print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str((c, h, offset2 - offset))+")")
+                return c, h, offset2 - offset
+
         def parse_data(self, name, directive, args):
                 binary_width = self.calculate_data_size(directive[1])
                 b = self.convert_data_to_blob(binary_width, args)
@@ -802,7 +811,7 @@ class Parser(object):
                                                         args)
                 self.c_data += c
                 self.h_data += h
-                return binary_width, elements
+                return c, h, binary_width, elements
 
         def calculate_data_size(self, cmd0):
                 binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[cmd0]

@@ -25,23 +25,29 @@ import os
 import re
 from builtins import str
 
-#from parglare import Grammar
-#from parglare import Parser
+#from parglare import Grammar, Parser
 
+def escape(str):
+    if isinstance(str,list):
+        return [escape(i) for i in str]
+    else:
+        return str.translate(str.maketrans({"\\": r"\\"}))
 
 class Lex(object):
-    '''
+
     def __new__(cls,*args, **kwargs):
         if not hasattr(cls,'_inst'):
             cls._inst = super(Lex, cls).__new__(cls)
             logging.debug("Allocated Lex instance")
+            '''
             file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
             grammar = Grammar.from_file(file_name, ignore_case=True)
             ## parser = Parser(grammar, debug=True, debug_trace=True)
             ## parser = Parser(grammar, debug=True)
             cls._inst.parser = Parser(grammar)
+            '''
         return cls._inst
-    '''
+
 
     def __init__(self):
         pass
@@ -123,4 +129,37 @@ class Lex(object):
                 arg = line[len(cmd0):].strip()
                 args = self.parse_args(arg)
                 return "", cmd0, args
+
+    def parse_line_data_new(self, line):
+            #logging.error(line)
+            cmd = line.split()
+            cmd1l = cmd[1].lower()
+            cmd0 = str(cmd[0])
+            cmd0 = cmd0.lower()
+            if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
+                name = cmd0
+                cmd0l = cmd0
+                name = re.sub(r'@', "arb", name)
+                arg = line[len(cmd0l):]
+                #arg = arg[len(cmd1l):].strip()
+                arg = name + " " + arg + '\n'
+                args = self.parse_args_new_data(arg)
+                logging.error(args)
+                argg = [escape(i) for i in args[2]]
+                '''
+                j=[]
+                for i in argg:
+                    if isinstance(i,list):
+                        i=" ".join(i)
+                    j=j+[i]
+                argg = j
+                '''
+                args = (args[0].lower(), args[1].lower(), argg)
+                return args
+            else:
+                #arg = line[len(cmd0):].strip()
+                args = self.parse_args_new_data(line+'\n')
+                logging.error(args[2])
+                args = ("", args[1].lower(), args[2])
+                return args
 

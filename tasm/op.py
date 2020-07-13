@@ -114,20 +114,21 @@ class baseop(object):
     #        return self.cmd+" "+self.command+" "+str(self.line_number)
 
     def parse_arg(self, arg):
-        args = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        args = tasm.lex.Lex().parse_args(arg)
         if len(args) > 0:
             return args[0]
         return ""
 
+    '''
     def split(self, text):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.lex.Lex()
         return lex.parse_args(text)
-        # a, b = lex.parse_args(text)
+    '''
 
-    #               logging.info "a %s b %s" %(a, b)
-    # return self.parse_arg(a), self.parse_arg(b)
     def __str__(self):
         return str(self.__class__)
 
@@ -153,14 +154,20 @@ class _rep(baseop):
 
 class _sub(baseop):
     def __init__(self, arg):
-        self.dst, self.src = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._sub(self.dst, self.src)
 
 class _mul(baseop):
     def __init__(self, arg):
-        self.arg = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.arg = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._mul(self.arg)
@@ -176,7 +183,10 @@ class _div(baseop):
 
 class _xor(baseop):
     def __init__(self, arg):
-        self.dst, self.src = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._xor(self.dst, self.src)
@@ -375,7 +385,10 @@ class label(baseop):
 
 class _lea(baseop):
     def __init__(self, arg):
-        self.dst, self.src = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._lea(self.dst, self.src)
@@ -410,14 +423,20 @@ class _jnbe(basejmp):
 
 class _imul(baseop):
     def __init__(self, arg):
-        self.arg = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.arg = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._imul(self.arg)
 
 class _movs(baseop):
     def __init__(self, arg):
-        self.dst, self.src = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._movs(self.dst, self.src)
@@ -473,7 +492,10 @@ class _jump(baseop):
 
 class _instruction2(baseop):
     def __init__(self, arg):
-        self.dst, self.src = self.split(arg)
+        # print "text %s" %text
+        #               traceback.print_stack(file=sys.stdout)
+        lex = tasm.lex.Lex()
+        self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
         return visitor._instruction2(self.cmd, self.dst, self.src)

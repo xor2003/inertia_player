@@ -1,4 +1,4 @@
-start: scalarinstlist;
+start: datadir;
 module: directivelist?  enddir;
 addop: '+' | '-';
 aliasdir: ALIAS;
@@ -52,8 +52,9 @@ coprocessor: U_8087 | U_287 | U_387 | U_NO87 ;
 crefdir: crefoption linereminder;
 crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? ;
 datadecl: DB | DW | DD | DF | DQ | DT | datatype;
-datadir: LABEL? dataitem linereminder;
-dataitem: datadecl scalarinstlist| LABEL structinstlist| LABEL recordinstlist;
+//datadir: LABEL? dataitem linereminder;
+datadir: LABEL? datadecl scalarinstlist linereminder|LABEL? LABEL structinstlist linereminder|LABEL? LABEL recordinstlist linereminder;
+//dataitem: datadecl scalarinstlist| LABEL structinstlist| LABEL recordinstlist;
 datatype: BYTE | SBYTE | WORD | SWORD | DWORD | SDWORD | FWORD | QWORD | TBYTE | REAL4 | REAL8 | REAL10;
 decnumber: INTEGER;
 digits: decnumber; //decnumber| digits hexdigit;
