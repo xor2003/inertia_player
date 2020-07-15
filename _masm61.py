@@ -1,15 +1,39 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import sys, os
+import sys, os, re
 from parglare import Grammar
 
+globals=[]
+macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
+
+def macro_action(context, nodes, name):
+    globals.insert(0,name.lower())
+    print ("added ~~" + name + "~~")
+
+def macroid(head, input, pos):
+    mtch = macroidre.match(input[pos:])
+    if mtch:
+        result = mtch.group().lower()
+        print ("matched ~^~" + result+"~^~")
+        if result in globals:
+           print (" ~^~ in globals")
+           return result
+        else:
+           return None
+    else:
+        return None
+
+recognizers = {
+    'macroid': macroid
+}
+
 file_name = os.path.dirname(os.path.realpath(__file__))+"/tasm/_masm61.pg"
-grammar = Grammar.from_file(file_name, ignore_case=True)
+grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
 
 from parglare import Parser
-#parser = Parser(grammar, debug=True, debug_trace=True)
-#parser = Parser(grammar, debug=True)
-parser = Parser(grammar)
+#parser = Parser(grammar, debug=True, debug_trace=True, actions={"macrodir": macro_action})
+#parser = Parser(grammar, debug=True, actions={"macrodir": macro_action})
+parser = Parser(grammar, actions={"macrodir": macro_action})
 
 codeset = 'cp437'
 
@@ -30,3 +54,4 @@ for i in sys.argv[1:]:
   f.close()
 
   print(result)
+
