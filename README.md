@@ -54,7 +54,7 @@ See list of DOS games with debug information http://bringerp.free.fr/forum/viewt
 How to run to convert your masm 16 bit source to C:
 -------------------------------
 
-masm-recover <some.asm>
+masm2c.py <some.asm>
 
 (Some source code modification might also required to build)
 

@@ -1,6 +1,7 @@
 test1 EQU (00+38*3)*320+1/2+33*(3-1)
 test3 EQU 1500 ; 8*2*3 ;+1 +19*13*2*4
 TEST2 EQU -13
+testEqu equ 3
 
 .386p
 

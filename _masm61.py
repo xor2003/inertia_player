@@ -3,11 +3,11 @@
 import sys, os, re
 from parglare import Grammar
 
-globals=[]
+macroids=[]
 macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
 
 def macro_action(context, nodes, name):
-    globals.insert(0,name.lower())
+    macroids.insert(0,name.lower())
     print ("added ~~" + name + "~~")
 
 def macroid(head, input, pos):
@@ -15,8 +15,8 @@ def macroid(head, input, pos):
     if mtch:
         result = mtch.group().lower()
         print ("matched ~^~" + result+"~^~")
-        if result in globals:
-           print (" ~^~ in globals")
+        if result in macroids:
+           print (" ~^~ in macroids")
            return result
         else:
            return None
@@ -27,13 +27,17 @@ recognizers = {
     'macroid': macroid
 }
 
+actions = {
+"macrodir": macro_action
+}
+
 file_name = os.path.dirname(os.path.realpath(__file__))+"/tasm/_masm61.pg"
 grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
 
 from parglare import Parser
 #parser = Parser(grammar, debug=True, debug_trace=True, actions={"macrodir": macro_action})
 #parser = Parser(grammar, debug=True, actions={"macrodir": macro_action})
-parser = Parser(grammar, actions={"macrodir": macro_action})
+parser = Parser(grammar, actions=actions)
 
 codeset = 'cp437'
 
