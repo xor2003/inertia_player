@@ -529,6 +529,7 @@ class Parser(object):
         return r, rh, elements
 
     def action_label_(self, line, far="", isproc=False):
+        #logging.info(line)
         m = re.match('([@\w]+)\s*::?', line)
         name = m.group(1).strip()
         logging.debug(name)
@@ -647,17 +648,17 @@ class Parser(object):
 
             logging.debug("%d:      %s" % (self.line_number, line))
 
-            m = re.match('([@\w]+)\s*::?', line)
-            if m is not None:
-                self.action_label_(line)
-                continue
-
             cmd = line.split()
             if len(cmd) == 0:
                 continue
 
             cmd0 = str(cmd[0])
             cmd0l = cmd0.lower()
+
+            m = re.match('([@\w]+)\s*::?', line)
+            if m is not None:
+                self.action_label_(line)
+                continue
 
             m = re.match('(\.\d86[prc]?)', line)
             if m is not None:
@@ -670,9 +671,14 @@ class Parser(object):
                 line = m.group(1).strip()
                 logging.debug(line)
                 continue
+            elif cmd0l == 'align':
+                continue
+            elif cmd0l == 'assume':
+                logging.info("skipping: %s" % line)
+                continue
 
             if cmd0l == 'if':
-                self.action_if(cmd)
+                self.action_if(line)
                 continue
             elif cmd0l == 'else':
                 self.action_else()
@@ -680,17 +686,15 @@ class Parser(object):
             elif cmd0l == 'endif':
                 self.action_endif()
                 continue
-            elif cmd0l == 'align':
-                continue
 
-            if not self.visible():
-                continue
+            #if not self.visible():
+            #    continue
 
             if cmd0l in ['db', 'dw', 'dd', 'dq']:
                 c, h, offset_diff = self.action_data(line)
                 continue
             elif cmd0l == 'include':
-                self.action_include(cmd)
+                self.action_include(line)
                 continue
             elif cmd0l == 'endp' or (len(cmd) >= 2 and str(cmd[1].lower()) == 'endp'):
                 self.action_endp()
@@ -698,25 +702,22 @@ class Parser(object):
             elif cmd0l == 'ends':
                 self.action_endseg()
                 continue
-            elif cmd0l == 'assume':
-                logging.info("skipping: %s" % line)
-                continue
-            elif cmd0l in ['rep', 'repe', 'repne']:
-                self.action_prefix(cmd, cmd0l)
+            elif cmd0l in ['rep', 'repe', 'repne', 'repz', 'repnz']:
+                self.action_prefix(line)
                 continue
             elif cmd0l == 'end':
-                self.action_end(cmd)
+                self.action_end(line)
                 continue
             elif cmd0l == '.code' or cmd0l == '.data' or cmd0l == '.stack':
-                self.action_simplesegment(cmd0l)
+                self.action_simplesegment(line)
                 continue
             if len(cmd) >= 2:
                 cmd1l = cmd[1].lower()
                 if cmd1l == 'proc':
-                    self.action_proc(cmd, cmd0l)
+                    self.action_proc(line)
                     continue
                 elif cmd1l == 'segment':
-                    self.action_segment(cmd0l)
+                    self.action_segment(line)
                     continue
                 elif cmd1l == 'ends':
                     self.action_endsegment()
@@ -726,23 +727,23 @@ class Parser(object):
                 cmd1l = cmd[1].lower()
                 if cmd1l in ['equ', '=']:
                     if cmd1l == 'equ':
-                        self.action_equ(cmd, cmd0)
-
+                        self.action_equ(line)
                     elif cmd1l == '=':
-                        self.action_assign(cmd, cmd0)
-                        continue
+                        self.action_assign(line)
+                    continue
                 elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
                         c, h, offset_diff = self.action_data(line)
                         continue
+            if (self.proc):
+                self.proc.add(line, line_number=self.line_number)
+            else:
+                # print line
+                pass
 
-        if (self.proc):
-            self.proc.add(line, line_number=self.line_number)
-        else:
-            # print line
-            pass
 
-
-    def action_assign(self, cmd, cmd0):
+    def action_assign(self, line):
+            cmd = line.split()
+            cmd0 = str(cmd[0])
             vv = self.parse_equ_line(cmd)
             name = cmd0
             # self.reset_global(cmd0, op.assignment(cmd0.lower(), size=size))
@@ -756,7 +757,9 @@ class Parser(object):
             self.proc.stmts.append(o)
 
 
-    def action_equ(self, cmd, cmd0):
+    def action_equ(self, line):
+            cmd = line.split()
+            cmd0 = str(cmd[0])
             vv = self.parse_equ_line(cmd)
             name = cmd0
             proc = self.get_global("mainproc")
@@ -770,13 +773,19 @@ class Parser(object):
             self.segment = ""
 
 
-    def action_segment(self, cmd0l):
+    def action_segment(self, line):
+            cmd = line.split()
+            cmd0 = str(cmd[0])
+            cmd0l = cmd0.lower()
             name = cmd0l
             self.segment = name
             self.create_segment(name)
 
 
-    def action_proc(self, cmd, cmd0l):
+    def action_proc(self, line):
+            cmd = line.split()
+            cmd0 = str(cmd[0])
+            cmd0l = cmd0.lower()
             cmd2l = ""
             if len(cmd) >= 3:
                 cmd2l = cmd[2].lower()
@@ -788,19 +797,24 @@ class Parser(object):
                                             self.proc_list.append(name)
                                             self.set_global(name, self.proc)
                                             '''
-            self.action_label_(line, far=cmd2l, isproc=True)
+            self.action_label_(cmd0+":", far=cmd2l, isproc=True)
 
 
-    def action_simplesegment(self, cmd0l):
-            self.action_segment(cmd0l[1:])
+    def action_simplesegment(self, line):
+            line = line.lower()
+            self.action_segment(line[1:])
 
 
-    def action_end(self, cmd):
+    def action_end(self, line):
+            cmd = line.split()
             if len(cmd) >= 2:
                 self.entry_point = cmd[1].lower()
 
 
-    def action_prefix(self, cmd, cmd0l):
+    def action_prefix(self, line):
+            cmd = line.split()
+            cmd0 = str(cmd[0])
+            cmd0l = cmd0.lower()
             self.proc.add(cmd0l)
             self.proc.add(" ".join(cmd[1:]))
 
@@ -810,7 +824,8 @@ class Parser(object):
             self.segment = "default_seg"
 
 
-    def action_include(self, cmd):
+    def action_include(self, line):
+            cmd = line.split()
             self.include(os.path.dirname(fname), cmd[1])
 
 
@@ -826,7 +841,8 @@ class Parser(object):
             self.push_else()
 
 
-    def action_if(self, cmd):
+    def action_if(self, line):
+            cmd = line.split()
             self.push_if(cmd[1])
 
 
