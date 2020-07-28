@@ -285,12 +285,12 @@ class Parser(object):
         # print r
         return r
 
-    def convert_data(self, v, base):
-        logging.info("convert_data(%s)" % v)
+    def get_global_value(self, v, base):
+        logging.info("get_global_value(%s)" % v)
         g = self.get_global(v)
         logging.debug(g)
         if isinstance(g, op._equ) or isinstance(g, op._assignment):
-            return g.original_name
+            v = g.original_name
         elif isinstance(g, op.var):
             v = "offset(%s,%s)" % (g.segment, g.name)
         elif isinstance(g, op.label):
@@ -303,23 +303,21 @@ class Parser(object):
     def convert_data_to_c(self, label, width, data):
         """ Generate C formated data """
         logging.debug("convert_data_to_c %s %d %s" % (label, width, data))
-        first = True
         is_string = False
         elements = 0
         data_ctype = {1: 'db', 2: 'dw', 4: 'dd', 8: 'dq', 10: 'dt'}[width]
         r = [""]
         rh = []
-        base = {1: 0x100, 2: 0x10000, 4: 0x100000000, 8: 0x10000000000000000, 8: 0x100000000000000000000}[width]
+        base = 1 << (8 * width)
         for v in data:
             v = v.strip()
-            if width == 1 and (v[0] in ["'", '"']):
-                if v[-1] not in ["'", '"']:
-                    raise Exception("string is not quoted: %s" % v)
-                if width > 1:
-                    raise Exception("string with data width more than 1")  # we could allow it :)
+            # check if there are strings
+            if width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
                 v.replace("''", "'")
+                res = []
                 for i in range(1, len(v) - 1):
-                    r.append(v[i])
+                    res.append(v[i])
+                r += res
 
                 is_string = True
                 continue
@@ -330,23 +328,17 @@ class Parser(object):
             if is_string and v.isdigit():
                     v = "'\\" +str(hex(int(v)))[1:] + "'"
             '''
+
+            #check if dup
             m = re.match(r'([\w\+\*]+)\s+dup\s*\((\s*.+\s*)\)', v, re.IGNORECASE)
             if m is not None:
                 # we should parse that
-                n = self.parse_int(m.group(1))
+                group1 = m.group(1)
                 value = m.group(2)
                 value = value.strip()
-                if value == '?':
-                    value = 0
-                else:
-                    value = self.parse_int(value)
-                # print "n = %d value = %d" %(n, value)
-
-                for i in range(0, n):
-                    v = value
-                    r.append(v)
+                n, res = self.action_dup(group1, value)
+                r += res
                 elements += n
-                first = False
                 continue
 
             try:
@@ -373,17 +365,16 @@ class Parser(object):
                 vv = v.split()
                 logging.debug(vv)
                 if vv[0] == "offset":  # pointer
-                    data_ctype = "dw"
+                    data_ctype = "dw" # TODO for 16 bit only
                     # v = "&" + vv[1] + " - &" + self.segment
                     v = vv[1]
-                    # r.append(v);
 
                 logging.debug("global/expr: ~%s~" % v)
                 try:
                     v.replace('offset ', '')
                     v.replace('seg ', '')
                     v = re.sub(r'@', "arb", v)
-                    v = self.convert_data(v, base)
+                    v = self.get_global_value(v, base)
                 except KeyError:
                     logging.warning("unknown address %s" % (v))
                     logging.warning(self.c_data)
@@ -394,7 +385,6 @@ class Parser(object):
 
             r.append(v)
 
-            first = False
 
         cur_data_type = 0
         if is_string:
@@ -408,24 +398,7 @@ class Parser(object):
             if elements > 1:
                 cur_data_type = 4  # array of numbers
 
-        # if prev array of numbers and current is a number and empty label and current data type equal to previous
-        # if self.prev_data_type == 4 and cur_data_type == 3 and len(label)==0 and data_ctype == self.prev_data_ctype: # if no label and it was same size and number or array
-        #               cur_data_type = 4 # array of numbers
-
-        # print "current data type = %d current data c type = %s" %(cur_data_type, data_ctype)
         logging.debug("current data type = %d current data c type = %s" % (cur_data_type, data_ctype))
-        '''
-        #  if prev data type was set and data format has changed or data type has changed or there is a label or it was 0-term string or it was number
-        if (self.prev_data_type != 0 and (cur_data_type != self.prev_data_type or data_ctype != self.prev_data_ctype)) or len(label) or self.prev_data_type == 1 or self.prev_data_type == 3:
-                # if it was array of numbers or array string
-                if self.prev_data_type == 4 or self.prev_data_type == 2:
-                        vv += "}"
-                vv += ";\n"
-        else: 
-                #  if prev data type was set and it is not a string
-                if self.prev_data_type != 0 and (cur_data_type == 2 or cur_data_type == 3 or cur_data_type == 4):
-                        vv += ","
-        '''
 
         if len(label) == 0:
             self.dummy_enum += 1
@@ -460,8 +433,8 @@ class Parser(object):
                         vv += "\\{:01x}".format(r[i])
                     elif r[i] < 32:
                         vv += "\\x{:02x}".format(r[i])
-                    elif r[i] == "\\":
-                        vv += '\\\\'
+                    #elif r[i] == "\\": probably boolshit
+                    #    vv += '\\\\'
                     else:
                         vv += chr(r[i])
                 else:
@@ -484,7 +457,6 @@ class Parser(object):
                 elif isinstance(r[i], str):
                     # print "~~ " + r[i] + str(ord(r[i]))
                     if r[i] in ["\'", '\"', '\\']:
-                        # print "aaa"
                         r[i] = "\\" + r[i]
                     elif ord(r[i]) > 127:
                         r[i] = hex(ord(r[i].encode('cp437', 'backslashreplace')))
@@ -527,6 +499,19 @@ class Parser(object):
         self.prev_data_ctype = data_ctype
         self.data_started = True
         return r, rh, elements
+
+    def action_dup(self, group1, value):
+        n = self.parse_int(group1)
+        if value == '?':
+            value = 0
+        else:
+            value = self.parse_int(value)
+        # print "n = %d value = %d" %(n, value)
+        res = []
+        for i in range(0, n):
+            # v = value
+            res.append(value)
+        return n, res
 
     def action_label_(self, line, far="", isproc=False):
         #logging.info(line)
@@ -691,7 +676,7 @@ class Parser(object):
             #    continue
 
             if cmd0l in ['db', 'dw', 'dd', 'dq']:
-                c, h, offset_diff = self.action_data(line)
+                self.action_data(line)
                 continue
             elif cmd0l == 'include':
                 self.action_include(line)
@@ -732,7 +717,7 @@ class Parser(object):
                         self.action_assign(line)
                     continue
                 elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
-                        c, h, offset_diff = self.action_data(line)
+                        self.action_data(line)
                         continue
             if (self.proc):
                 self.proc.add(line, line_number=self.line_number)
@@ -922,7 +907,7 @@ class Parser(object):
                     v = expr
                     # if self.has_global('k' + v):
                     #               v = 'k' + v
-                    v = self.convert_data(v, 0x10000)
+                    v = self.get_global_value(v, 0x10000)
 
                     logging.debug("link: patching %04x -> %s" % (addr, v))
                 except:
