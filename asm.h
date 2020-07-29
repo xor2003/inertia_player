@@ -521,6 +521,8 @@ else
 		AFFECT_ZF(a);\
 		AFFECT_SF(a,a);}} // TODO optimize
 
+#define SAL(a,b) SHL(a,b)
+
 
 #define READDDp(a) ((dd *) &m.a)
 #define READDWp(a) ((dw *) &m.a)

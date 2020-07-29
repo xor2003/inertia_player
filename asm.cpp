@@ -7,7 +7,7 @@ extern Memory m;
 
 #ifndef __BORLANDC__
  #ifndef __DJGPP__
-  #include <SDL/SDL.h>
+  #include <SDL2/SDL.h>
  #endif
 // #include <thread>
 #endif
@@ -78,7 +78,8 @@ db vgaRam[VGARAM_SIZE];
 db vgaRamPaddingAfter[VGARAM_SIZE];
 #endif
 
-db vgaPalette[256*3];
+//db vgaPalette[256*3];
+#include "vgapal.h"
 dd selectorsPointer;
 dd selectors[NB_SELECTORS];
 
@@ -502,8 +503,7 @@ X86_REGREF
 		}
 		case 0x02: { // set cursor
 				int y,x;
-				getmaxyx(stdscr,y,x);
-				if (dh >= y || dl >= x)
+				if (dh >= getmaxy(stdscr) || dl >= getmaxx(stdscr))
 				{
 					curs_set(0);
 				}
@@ -547,7 +547,7 @@ X86_REGREF
 #ifndef __BORLANDC__  //TODO
         	    struct tm* loctime;
 		    struct timeval curtime;
-	            gettimeofday(&curtime, NULL);
+	            gettimeofday(&curtime, 0);
     
  //           curtime.tv_sec += cmos.time_diff;
         	    loctime = localtime((time_t*)&curtime.tv_sec);
@@ -1403,8 +1403,8 @@ int main(int argc, char *argv[])
   
 	_state->_indent=0;
 
-	eax = 0x0ffff;
-	ebx=ecx=edx=ebp=esi=edi=DF=0;
+//	eax = 0x0ffff; is it for .exe?
+	eax=ebx=ecx=edx=ebp=esi=edi=DF=0;
 
 try{
 	init(_state);
