@@ -598,6 +598,8 @@ else
 }
 */
 
+#define SALC	{AL=CF?0xff:0;}
+
 #define AAA	{											\
 	SF=((al>=0x7a) && (al<=0xf9));		\
 	if ((al & 0xf) > 9) {								\
