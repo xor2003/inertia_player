@@ -642,9 +642,9 @@ else
 	AFFECT_ZF((al == 0));							\
 	al &= 0x0F;}
 
-#define AAM											\
+#define AAM1(x)											\
 {															\
-	db dv=10;											\
+	db dv=x;											\
 	if (dv!=0) {											\
 		ah=al / dv;									\
 		al=al % dv;									\
@@ -656,10 +656,11 @@ else
 	} \
 }
 
+#define AAM AAM1(10)
 
-#define AAD											\
+#define AAD1(x)											\
 	{														\
-		al = ah * 10 + al;								\
+		al = ah * x + al;								\
 		ah = 0;											\
 		AFFECT_CF(false);								\
 		AFFECT_OF(false);								\
@@ -668,12 +669,20 @@ else
 		AFFECT_ZF(al);							\
 	}
 
+#define AAD AAD1(10)
 
 #define ADD(a,b) {dq t=(dq)a+(dq)b; \
 		AFFECT_CF((t)>MASK[sizeof(a)]); \
 		a=t; \
 		AFFECT_ZF(a); \
 		AFFECT_SF(a,a);}
+
+#define XADD(a,b) {dq t=(dq)a+(dq)b; \
+		AFFECT_CF((t)>MASK[sizeof(a)]); \
+		a=b; \
+		b=t; \
+		AFFECT_ZF(b); \
+		AFFECT_SF(b,b);}
 
 #define SUB(a,b) {dd t=(a-b)& MASK[sizeof(a)]; \
 		AFFECT_CF((t)>(a)); \
@@ -1214,17 +1223,17 @@ extern db vgaPalette[256*3];
 #define BSR(a,b) UNIMPLEMENTED
 
 #define CDQ UNIMPLEMENTED
-//#define CWDE UNIMPLEMENTED
 
 #define CMPXCHG UNIMPLEMENTED
-#define XADD(a,b) UNIMPLEMENTED
 
 #define LOOPW(x) UNIMPLEMENTED
 #define LOOPWE(x) UNIMPLEMENTED
 #define LOOPWNE(x) UNIMPLEMENTED
 #define STI UNIMPLEMENTED
 #define CLI UNIMPLEMENTED
+
 #define ORG(x) 
+#define XLATB XLAT
 // ---------
 
 #endif
