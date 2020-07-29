@@ -1229,6 +1229,79 @@ void test_shr(void)
 void *_test_shr __attribute__ ((unused,__section__ ("initcall"))) = test_shr;
 
 
+void exec_sall(dd s2, dd s0, dd s1, dd iflags)
+{
+    dd res, flags;
+    res = s0;
+    flags = iflags;
+    PUSH(iflags);POPF;SAL(*(dd*)&res, (dd)s1);PUSHF;POP(flags);
+
+    if (s1 != 1)
+      flags &= ~0x0800;
+    printf("%-10s A=%08lx B=%08lx R=%08lx CCIN=%04lx CC=%04lx\n",
+           "sall", s0, s1, res, iflags, flags & (0x0001 | 0x0040 | 0x0080));
+}
+
+void exec_salw(dd s2, dd s0, dd s1, dd iflags)
+{
+    dd res, flags;
+    res = s0;
+    flags = iflags;
+    PUSH(iflags);POPF;SAL(*(dw*)&res, (dw)s1);PUSHF;POP(flags);
+
+    if (s1 != 1)
+      flags &= ~0x0800;
+    printf("%-10s A=%08lx B=%08lx R=%08lx CCIN=%04lx CC=%04lx\n",
+           "salw", s0, s1, res, iflags, flags & (0x0001 | 0x0040 | 0x0080));
+}
+
+void exec_salb(dd s0, dd s1, dd iflags)
+{
+    dd res, flags;
+    res = s0;
+    flags = iflags;
+    PUSH(iflags);POPF;SAL(*(db*)&res, (db)s1);PUSHF;POP(flags);
+
+    if (s1 != 1)
+      flags &= ~0x0800;
+    printf("%-10s A=%08lx B=%08lx R=%08lx CCIN=%04lx CC=%04lx\n",
+           "salb", s0, s1, res, iflags, flags & (0x0001 | 0x0040 | 0x0080));
+}
+
+
+void exec_sal(dd s2, dd s0, dd s1)
+{
+    s2 = i2l(s2);
+    s0 = i2l(s0);
+
+
+
+    exec_sall(s2, s0, s1, 0);
+
+
+
+    exec_salw(s2, s0, s1, 0);
+
+
+    exec_salb(s0, s1, 0);
+
+}
+
+void test_sal(void)
+{
+    int i, n;
+
+
+
+    n = 32;
+
+    for(i = 0; i < n; i++)
+        exec_sal(0x21ad3d34, 0x12345678, i);
+    for(i = 0; i < n; i++)
+        exec_sal(0x813f3421, 0x82345679, i);
+}
+
+void *_test_sal __attribute__ ((unused,__section__ ("initcall"))) = test_sal;
 
 
 
@@ -3545,19 +3618,19 @@ asm("xchgb %b0, %b1" : "=q" (op0), "+m" (op1) : "0" (op0));
 
 
     { dd op0, op1; op0 = i2l(0x12345678); op1 = i2l(0xfbca7654);
-asm("xaddl %k0, %k1" : "=q" (op0), "+q" (op1) : "0" (op0));
+XADD(*(dd*)&op0,*(dd*)&op1);
  printf("%-10s A=%08lx B=%08lx\n", "xaddl", op0, op1);};
     { dd op0, op1; op0 = i2l(0x12345678); op1 = i2l(0xfbca7654);
-asm("xaddw %w0, %w1" : "=q" (op0), "+q" (op1) : "0" (op0));
+XADD(*(dw*)&op0,*(dw*)&op1);
  printf("%-10s A=%08lx B=%08lx\n", "xaddw", op0, op1);};
     { dd op0, op1; op0 = i2l(0x12345678); op1 = i2l(0xfbca7654);
-asm("xaddb %b0, %b1" : "=q" (op0), "+q" (op1) : "0" (op0));
+XADD(*(db*)&op0,*(db*)&op1);
  printf("%-10s A=%08lx B=%08lx\n", "xaddb", op0, op1);};
 
     {
         int res;
         res = 0x12345678;
-        asm("xaddl %1, %0" : "=r" (res) : "0" (res));
+XADD(*(dd*)&res,*(dd*)&res);
         printf("xaddl same res=%08x\n", res);
     }
 
@@ -3565,13 +3638,13 @@ asm("xaddb %b0, %b1" : "=q" (op0), "+q" (op1) : "0" (op0));
 
 
     { dd op0, op1; op0 = i2l(0x12345678); op1 = i2l(0xfbca7654);
-asm("xaddl %k0, %k1" : "=q" (op0), "+m" (op1) : "0" (op0));
+XADD(*(dd*)&op0,*(dd*)&op1);
  printf("%-10s A=%08lx B=%08lx\n", "xaddl", op0, op1);};
     { dd op0, op1; op0 = i2l(0x12345678); op1 = i2l(0xfbca7654);
-asm("xaddw %w0, %w1" : "=q" (op0), "+m" (op1) : "0" (op0));
+XADD(*(dw*)&op0,*(dw*)&op1);
  printf("%-10s A=%08lx B=%08lx\n", "xaddw", op0, op1);};
     { dd op0, op1; op0 = i2l(0x12345678); op1 = i2l(0xfbca7654);
-asm("xaddb %b0, %b1" : "=q" (op0), "+m" (op1) : "0" (op0));
+XADD(*(db*)&op0,*(db*)&op1);
  printf("%-10s A=%08lx B=%08lx\n", "xaddb", op0, op1);};
 
 

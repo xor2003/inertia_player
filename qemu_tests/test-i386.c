@@ -143,6 +143,9 @@ static inline long i2l(long v)
 #define OP shr
 #include "test-i386-shift.h"
 
+#define OP sal
+#include "test-i386-shift.h"
+
 #define OP sar
 #include "test-i386-shift.h"
 
@@ -2334,7 +2337,7 @@ int main(int argc, char **argv)
     test_mul();
     test_jcc();
     test_loop();
-    test_floats();
+//    test_floats();
 #if !defined(__x86_64__)
     test_bcd();
 #endif
