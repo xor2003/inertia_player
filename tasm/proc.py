@@ -224,7 +224,7 @@ class Proc(object):
         def find_op_common_class(self, cmd):
                 logging.info(cmd)
                 if re.match(
-                        r"^(ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|xlat|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde?|cdq|sti|cmc|pushf|popf|nop|pushad?|popad?|da[as]|aa[adsm]|finit|fsin|fldz|hlt|ret[nf]?|iret|leave)$",
+                        r"^(ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|salc|xlatb?|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde?|cdq|sti|cmc|pushf|popf|nop|pushad?|popad?|da[as]|aa[adsm]|finit|fsin|fldz|hlt|ret[nf]?|iret|leave)$",
                         cmd.lower()) is not None:
                         cl = getattr(op, '_instruction0')
                 elif re.match(

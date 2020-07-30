@@ -386,9 +386,9 @@ class Parser(object):
             r.append(v)
 
 
-        cur_data_type = 0
+        #cur_data_type = 0
         if is_string:
-            if len(r) - 1 >= 1 and r[-1] == 0:
+            if len(r) >= 2 and r[-1] == 0:
                 cur_data_type = 1  # 0 terminated string
             else:
                 cur_data_type = 2  # array string
@@ -433,8 +433,6 @@ class Parser(object):
                         vv += "\\{:01x}".format(r[i])
                     elif r[i] < 32:
                         vv += "\\x{:02x}".format(r[i])
-                    #elif r[i] == "\\": probably boolshit
-                    #    vv += '\\\\'
                     else:
                         vv += chr(r[i])
                 else:
@@ -633,17 +631,19 @@ class Parser(object):
 
             logging.debug("%d:      %s" % (self.line_number, line))
 
+            m = re.match('([@\w]+)\s*::?\s*(.*)', line)
+            if m is not None:
+                self.action_label_(line)
+                line = m.group(2).strip()
+                if len(line) != 0:
+                    logging.debug("Line without label %s",line)
+
             cmd = line.split()
             if len(cmd) == 0:
                 continue
 
             cmd0 = str(cmd[0])
             cmd0l = cmd0.lower()
-
-            m = re.match('([@\w]+)\s*::?', line)
-            if m is not None:
-                self.action_label_(line)
-                continue
 
             m = re.match('(\.\d86[prc]?)', line)
             if m is not None:

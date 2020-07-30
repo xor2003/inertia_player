@@ -681,10 +681,10 @@ else
 
 #define XADD(a,b) {dq t=(dq)a+(dq)b; \
 		AFFECT_CF((t)>MASK[sizeof(a)]); \
-		a=b; \
-		b=t; \
-		AFFECT_ZF(b); \
-		AFFECT_SF(b,b);}
+		b=a; \
+		a=t; \
+		AFFECT_ZF(a); \
+		AFFECT_SF(a,a);}
 
 #define SUB(a,b) {dd t=(a-b)& MASK[sizeof(a)]; \
 		AFFECT_CF((t)>(a)); \

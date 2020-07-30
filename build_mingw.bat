@@ -1,5 +1,5 @@
 echo on
-set OPT=-O3 -mno-ms-bitfields -Wno-multichar -Wno-address-of-packed-member -I/msys64/mingw32/include/ncurses -L/msys64/mingw32/lib -I. -L. -lmingw32 -mconsole   -ggdb3 -lSDL2 -lSDL2main 
+set OPT=-O3 -m32 -mno-ms-bitfields -Wno-multichar -Wno-address-of-packed-member -I/msys64/mingw32/include/ncurses -L/msys64/mingw32/lib -I. -L. -lmingw32 -mconsole   -ggdb3 -lSDL2 -lSDL2main 
 rem -DDEBUG=3
 rem set OPT=-Og -mno-ms-bitfields -Wno-multichar -Wno-address-of-packed-member -I/msys64/mingw32/include/pdcurses -L/msys64/mingw32/lib -I. -L. -lmingw32 -mconsole   -ggdb3 -lSDL -lSDLmain
 rem  -mconsole -DSDL_MAIN_HANDLED
