@@ -67,7 +67,7 @@ class Cpp(object):
         self.seg_prefix = ""
         self.codeset = 'cp437'
         self.context = context
-        self.data_seg = context.binary_data
+        #self.data_seg = context.binary_data
         self.cdata_seg = context.c_data
         self.hdata_seg = context.h_data
         self.procs = context.proc_list
@@ -984,7 +984,7 @@ else goto __dispatch_call;
         logging.info(
             "%d ok, %d failed of %d, %3g%% translated" % (done, failed, done + failed, 100.0 * done / (done + failed)))
         logging.info("\n".join(self.failed))
-        data_bin = self.data_seg
+        #data_bin = self.data_seg
         cdata_bin = self.cdata_seg
         hdata_bin = self.hdata_seg
         data_impl = ""

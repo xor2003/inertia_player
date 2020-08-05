@@ -233,16 +233,13 @@ class Parser(object):
 
     def convert_data_to_blob(self, width, data):
         """ Generate blob data """
-        # print "COMPACTING %d %s" %(width, data)
+        logging.debug("convert_data_to_blob %d %s" %(width, data))
         r = []
         base = 0x100 if width == 1 else 0x10000
         for v in data:
             v = v.strip()
-            if v[0] == "'":
-                if v[-1] != "'":
-                    raise Exception("invalid string %s" % v)
-                if width == 2:
-                    raise Exception("string with data width more than 1")  # we could allow it :)
+            if width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
+                v.replace("''", "'")
                 for i in range(1, len(v) - 1):
                     r.append(ord(v[i]))
                 continue
