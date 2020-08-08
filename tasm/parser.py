@@ -59,7 +59,7 @@ class Parser(object):
         self.proc_list.append(nname)
         self.set_global(nname, self.proc)
 
-        self.binary_data = []
+        self.binary_data_size = 0
         self.c_data = []
         self.h_data = []
         self.cur_seg_offset = 0
@@ -68,9 +68,9 @@ class Parser(object):
 
         self.symbols = []
         self.link_later = []
-        self.data_started = False
-        self.prev_data_type = 0
-        self.prev_data_ctype = 0
+        #self.data_started = False
+        #self.prev_data_type = 0
+        #self.prev_data_ctype = 0
         self.line_number = 0
         self.lex = tasm.lex.Lex()
 
@@ -231,56 +231,42 @@ class Parser(object):
         # print "~4~ %s" %v
         return int(v)
 
-    def convert_data_to_blob(self, width, data):
-        """ Generate blob data """
-        logging.debug("convert_data_to_blob %d %s" %(width, data))
-        r = []
-        base = 0x100 if width == 1 else 0x10000
+    def calculate_data_binary_size(self, width, data):
+        logging.debug("calculate_data_binary_size %d %s" %(width, data))
+        s = 0
         for v in data:
             v = v.strip()
             if width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
                 v.replace("''", "'")
-                for i in range(1, len(v) - 1):
-                    r.append(ord(v[i]))
+                s += len(v) - 2
                 continue
 
             m = re.match(r'([\w\*\+]+)\s+dup\s*\((\s*.+\s*)\)', v, re.IGNORECASE)
             if m is not None:
                 # we should parse that
                 n = self.parse_int(m.group(1))
+                '''
                 value = m.group(2)
                 value = value.strip()
                 if value == '?':
                     value = 0
                 else:
                     value = self.parse_int(value)
-                for i in range(0, n):
-                    v = value
-                    for b in range(0, width):
-                        r.append(v & 0xff)
-                        v >>= 8
+                '''
+                s += n * width
                 continue
-
+            '''
             try:
                 v = self.parse_int(v)
-                if v < 0:
-                    v += base
             except:
-                # global name
-                # print "global/expr: %s" %v
                 try:
                     g = self.get_global(v)
                     v = g.offset
                 except:
-                    # print "unknown address %s" %(v)
-                    # self.link_later.append((self.cur_seg_offset + len(r), v))
                     v = 0
-
-            for b in range(0, width):
-                r.append(v & 0xff)
-                v >>= 8
-        # print r
-        return r
+            '''
+            s += width
+        return s
 
     def get_global_value(self, v, base):
         logging.info("get_global_value(%s)" % v)
@@ -306,6 +292,7 @@ class Parser(object):
         r = [""]
         rh = []
         base = 1 << (8 * width)
+
         for v in data:
             v = v.strip()
             # check if there are strings
@@ -338,38 +325,31 @@ class Parser(object):
                 elements += n
                 continue
 
-            try:
+            try: # just number or many
                 elements += 1
-                # print "1: ~%s~" %v
                 v = v.strip()
-                # print "2: ~%s~" %v
                 if v == '?':
                     v = '0'
                 v = self.parse_int(v)
-                # print "3: ~%s~" %v
-                # print "4: ~%s~" %v
 
                 if v < 0:  # negative values
-                    # data_ctype = {1: 'int8_t', 2: 'int16_t', 4: 'int32_t'}[width]
                     v += base
-
-                # print "5: ~%s~" %v
 
             except:
                 # global name
                 # traceback.print_stack(file=sys.stdout)
                 # print "global/expr: ~%s~" %v
                 vv = v.split()
-                logging.debug(vv)
+                logging.warning(vv)
                 if vv[0] == "offset":  # pointer
                     data_ctype = "dw" # TODO for 16 bit only
-                    # v = "&" + vv[1] + " - &" + self.segment
                     v = vv[1]
 
-                logging.debug("global/expr: ~%s~" % v)
+                logging.warning("global/expr: ~%s~" % v)
                 try:
                     v.replace('offset ', '')
                     v.replace('seg ', '')
+                    v = v.strip()
                     v = re.sub(r'@', "arb", v)
                     v = self.get_global_value(v, base)
                 except KeyError:
@@ -490,9 +470,9 @@ class Parser(object):
         logging.debug(r)
         logging.debug(rh)
         logging.debug("returning")
-        self.prev_data_type = cur_data_type
-        self.prev_data_ctype = data_ctype
-        self.data_started = True
+        #self.prev_data_type = cur_data_type
+        #self.prev_data_ctype = data_ctype
+        #self.data_started = True
         return r, rh, elements
 
     def action_dup(self, group1, value):
@@ -547,14 +527,14 @@ class Parser(object):
 
     def create_segment(self, name):
         binary_width = 1
-        offset = len(self.binary_data) // 16
+        offset = self.binary_data_size // 16
         logging.debug("segment %s %x" % (name, offset))
         self.cur_seg_offset = 16
 
-        num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
+        num = (0x10 - (self.binary_data_size & 0xf)) & 0xf
         if num:
             l = ['0'] * num
-            self.binary_data += l
+            self.binary_data_size += num
 
             self.dummy_enum += 1
             labell = "dummy" + str(self.dummy_enum)
@@ -564,7 +544,7 @@ class Parser(object):
 
         num = 0x10
         l = ['0'] * num
-        self.binary_data += l
+        self.binary_data_size += l
 
         self.c_data.append("{" + ",".join(l) + "}, // segment " + name + "\n")
         self.h_data.append(" db " + name + "[" + str(num) + "]; // segment " + name + "\n")
@@ -597,8 +577,7 @@ class Parser(object):
         skipping_binary_data = False
         num = 0x1000
         if num:
-            l = ['0'] * num
-            self.binary_data += l
+            self.binary_data_size += l
 
             self.dummy_enum += 1
             labell = "dummy" + str(self.dummy_enum)
@@ -607,10 +586,9 @@ class Parser(object):
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // protective\n")
         self.parse_file_lines(fd, fname, skipping_binary_data)
 
-        num = (0x10 - (len(self.binary_data) & 0xf)) & 0xf
+        num = (0x10 - (self.binary_data_size & 0xf)) & 0xf
         if num:
-            l = ['0'] * num
-            self.binary_data += l
+            self.binary_data_size += num
 
             self.dummy_enum += 1
             labell = "dummy" + str(self.dummy_enum)
@@ -829,36 +807,32 @@ class Parser(object):
 
 
     def action_data(self, line):
+            name, type, args = self.lex.parse_line_data(line)
+
             offset = self.cur_seg_offset
-            name, cmd1l, args = self.lex.parse_line_data(line)
             logging.debug("data value %s offset %d" % (str(args), offset))
-            c, h, binary_width, elements = self.parse_data(name, cmd1l, args)
-            offset2 = self.cur_seg_offset
+
+            binary_width = self.calculate_type_size(type)
+            s = self.calculate_data_binary_size(binary_width, args)
+            self.binary_data_size += s
+            self.cur_seg_offset += s
+
+            c, h, elements = self.convert_data_to_c(name, binary_width,
+                                                       args)
+            c = "".join(c)
+            h = "".join(h)
+            self.c_data += c
+            self.h_data += h
 
             logging.debug("~size %d elements %d" % (binary_width, elements))
             if name:
                 self.set_global(name, op.var(binary_width, offset, name=name,
                                              segment=self.segment, elements=elements))
             # print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
-            return c, h, offset2 - offset
+            return c, h, s
 
-
-    def parse_data(self, name, directive, args):
-            binary_width = self.calculate_data_size(directive[1])
-            b = self.convert_data_to_blob(binary_width, args)
-            self.binary_data += b
-            self.cur_seg_offset += len(b)
-            c, h, elements = self.convert_data_to_c(name, binary_width,
-                                                    args)
-            c = "".join(c)
-            h = "".join(h)
-            self.c_data += c
-            self.h_data += h
-            return c, h, binary_width, elements
-
-
-    def calculate_data_size(self, cmd0):
-            binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[cmd0]
+    def calculate_type_size(self, type):
+            binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[type[1]]
             return binary_width
 
 
