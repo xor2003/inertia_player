@@ -57,5 +57,5 @@ for i in sys.argv[1:]:
   result = parser.parse(input_str)
   f.close()
 
-  print(result)
+  print(result.name, result.type, result.values)
 

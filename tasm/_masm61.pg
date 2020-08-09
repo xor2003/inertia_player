@@ -1,4 +1,4 @@
-//start: datadir;
+start: datadir;
 module: directivelist?  enddir;
 addop: '+' | '-';
 aliasdir: ALIAS;

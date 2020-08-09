@@ -213,6 +213,15 @@ class Parser(object):
 
     def parse_int(self, v):
         # print "~1~ %s" %v
+        if isinstance(v, list):
+            vv = ""
+            for i in v:
+                try:
+                    i = self.parse_int(i)
+                except:
+                    pass
+                vv += str(i)
+            v = vv
         v = v.strip()
         # print "~2~ %s" %v
         if re.match(r'^[+-]?[0-9][0-9A-Fa-f]*[Hh]$', v):
@@ -235,16 +244,16 @@ class Parser(object):
         logging.debug("calculate_data_binary_size %d %s" %(width, data))
         s = 0
         for v in data:
-            v = v.strip()
-            if width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
+            #v = v.strip()
+            if isinstance(v, str) and width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
                 v.replace("''", "'")
                 s += len(v) - 2
                 continue
 
-            m = re.match(r'([\w\*\+]+)\s+dup\s*\((\s*.+\s*)\)', v, re.IGNORECASE)
-            if m is not None:
+            if isinstance(v,list) and len(v) == 5 and v[1].lower() == 'dup':
+                #logging.error(v)
                 # we should parse that
-                n = self.parse_int(m.group(1))
+                n = self.parse_int(v[0])
                 '''
                 value = m.group(2)
                 value = value.strip()
@@ -294,9 +303,9 @@ class Parser(object):
         base = 1 << (8 * width)
 
         for v in data:
-            v = v.strip()
+            #v = v.strip()
             # check if there are strings
-            if width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
+            if isinstance(v, str) and width == 1 and len(v) >= 2 and (v[0] in ["'", '"']) and v[-1] == v[0]:
                 v.replace("''", "'")
                 res = []
                 for i in range(1, len(v) - 1):
@@ -314,42 +323,49 @@ class Parser(object):
             '''
 
             #check if dup
-            m = re.match(r'([\w\+\*]+)\s+dup\s*\((\s*.+\s*)\)', v, re.IGNORECASE)
-            if m is not None:
+            if isinstance(v,list) and len(v) == 5 and v[1].lower() == 'dup':
                 # we should parse that
-                group1 = m.group(1)
-                value = m.group(2)
-                value = value.strip()
-                n, res = self.action_dup(group1, value)
+                group1 = v[0]
+                if isinstance(group1,list):
+                    group1="".join(group1)
+                values = v[3]
+                #value = value.strip()
+                n, res = self.action_dup(group1, values)
                 r += res
                 elements += n
                 continue
 
-            try: # just number or many
-                elements += 1
-                v = v.strip()
-                if v == '?':
-                    v = '0'
-                v = self.parse_int(v)
-
-                if v < 0:  # negative values
-                    v += base
-
-            except:
-                # global name
-                # traceback.print_stack(file=sys.stdout)
-                # print "global/expr: ~%s~" %v
-                vv = v.split()
-                logging.warning(vv)
-                if vv[0] == "offset":  # pointer
-                    data_ctype = "dw" # TODO for 16 bit only
-                    v = vv[1]
-
-                logging.warning("global/expr: ~%s~" % v)
-                try:
-                    v.replace('offset ', '')
-                    v.replace('seg ', '')
+            elements += 1
+            if isinstance(v, int) or isinstance(v, str):
+                try: # just number or many
                     v = v.strip()
+                    if v == '?':
+                        v = '0'
+                    v = self.parse_int(v)
+
+                    if v < 0:  # negative values
+                        v += base
+
+                except:
+                    # global name
+                    # traceback.print_stack(file=sys.stdout)
+                    # print "global/expr: ~%s~" %v
+                    try:
+                        v = self.get_global_value(v, base)
+                    except KeyError:
+                        v = 0
+
+            #vv = v.split()
+            #logging.warning(vv)
+            #if vv[0] == "offset":  # pointer
+            #    data_ctype = "dw" # TODO for 16 bit only
+            #    v = vv[1]
+
+            logging.warning("global/expr: ~%s~" % v)
+            if isinstance(v, list) and len(v) == 2 and v[0].lower() in ['offset', 'seg']:
+                try:
+                    v = v[1]
+                    data_ctype = "dw"  # TODO for 16 bit only
                     v = re.sub(r'@', "arb", v)
                     v = self.get_global_value(v, base)
                 except KeyError:
@@ -359,6 +375,7 @@ class Parser(object):
                     logging.warning(len(self.c_data) + len(r))
                     self.link_later.append((len(self.c_data) + len(r), v))
                     v = 0
+
 
             r.append(v)
 
@@ -470,21 +487,32 @@ class Parser(object):
         logging.debug(r)
         logging.debug(rh)
         logging.debug("returning")
-        #self.prev_data_type = cur_data_type
-        #self.prev_data_ctype = data_ctype
-        #self.data_started = True
+
+        r = "".join(r)
+        rh = "".join(rh)
         return r, rh, elements
 
-    def action_dup(self, group1, value):
+    def action_dup(self, group1, values):
         n = self.parse_int(group1)
-        if value == '?':
-            value = 0
-        else:
-            value = self.parse_int(value)
-        # print "n = %d value = %d" %(n, value)
         res = []
         for i in range(0, n):
-            # v = value
+            value = values[i % len(values)]
+            if value == '?':
+                value = 0
+            else:
+                if isinstance(value, list):
+                    val=""
+                    for v in value:
+                        try:
+                            v = self.parse_int(v)
+                        except ValueError:
+                            pass
+                        val += str(v)
+                    value = val
+                else:
+                    value = self.parse_int(value)
+            # print "n = %d value = %d" %(n, value)
+
             res.append(value)
         return n, res
 
@@ -807,7 +835,7 @@ class Parser(object):
 
 
     def action_data(self, line):
-            name, type, args = self.lex.parse_line_data(line)
+            name, type, args = self.lex.parse_line_data_new(line)
 
             offset = self.cur_seg_offset
             logging.debug("data value %s offset %d" % (str(args), offset))
@@ -819,8 +847,6 @@ class Parser(object):
 
             c, h, elements = self.convert_data_to_c(name, binary_width,
                                                        args)
-            c = "".join(c)
-            h = "".join(h)
             self.c_data += c
             self.h_data += h
 
@@ -832,7 +858,7 @@ class Parser(object):
             return c, h, s
 
     def calculate_type_size(self, type):
-            binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[type[1]]
+            binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[type[1].lower()]
             return binary_width
 
 

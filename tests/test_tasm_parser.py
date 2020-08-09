@@ -42,6 +42,7 @@ import unittest
 
 class ParserTest(unittest.TestCase):
 
+    '''
     def test_convert_data_to_blob(self):
         parser_instance = Parser([])
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=["'00000000'", '0Dh', '0Ah', "'$'"]), 11)
@@ -326,7 +327,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=["'.MOD.NST.669.STM.S3M.MTM.PSM.WOW.INR.FAR.ULT.OKT.OCT'", '0', '0', '0', '0']), 56)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=2, data=['0']), 2)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=2, data=['100']), 2)
-        self.assertEqual(parser_instance.calculate_data_binary_size(width=2, data=['offset _mysprintf_0_nop']), 2)
+        self.assertEqual(parser_instance.calculate_data_binary_size(width=2, data=[['offset', '_mysprintf_0_nop']]), 2)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=2, data=['152h']), 2)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=2, data=['0']), 2)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['8']), 1)
@@ -405,7 +406,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['78h']), 1)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['20h']), 1)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['20h']), 1)
-        self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['62h dup(0)']), 98)
+        self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['62h','dup','(',['0'],')']), 98)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['0FFh']), 1)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['14h']), 1)
         self.assertEqual(parser_instance.calculate_data_binary_size(width=1, data=['4Bh']), 1)
@@ -750,124 +751,125 @@ class ParserTest(unittest.TestCase):
         #self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'offset var5'],label=''),(['', 'offset(_data,var5)', ', // dummy1\n'], ['dw dummy1', ';\n'], 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'00000000'", u'0Dh', u'0Ah', u"'$'"],label=u'ASCII'),(['{', u"'0','0','0','0','0','0','0','0','\\r','\\n','$'", '}', u', // ASCII\n'], ['char ASCII[11]', ';\n'], 2))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'11', u'-11', u'2', u'4'],label=u'var3'),(u'{11,4294967285,2,4}, // var3\n', u'dd var3[4];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'Hello World From Protected Mode!'", u'10', u'13', u"'$'"],label=u'_msg'),(['{', u"'H','e','l','l','o',' ','W','o','r','l','d',' ','F','r','o','m',' ','P','r','o','t','e','c','t','e','d',' ','M','o','d','e','!','\\n','\\r','$'", '}', u', // _msg\n'], ['char _msg[35]', ';\n'], 2))
+        #self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'offset var5'],label=''),(u'0, // dummy1\n', u'dw dummy1;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'OKOKOKOK'", u'10', u'13'],label=''),(['{', u"'O','K','O','K','O','K','O','K','\\n','\\r'", '}', ', // dummy1\n'], ['char dummy1[10]', ';\n'], 2))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'34'],label=u'var3'),(u'34, // var3\n', u'dd var3;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'OKOKOKOK'"],label=''),(['{', u"'O','K','O','K','O','K','O','K'", '}', ', // dummy1\n'], ['char dummy1[8]', ';\n'], 0))
+        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'2'],label=u'var2'),(u'2, // var2\n', u'dw var2;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'ab''cd'"],label=u'doublequote'),(['{', u"'a','b','\\'','\\'','c','d'", '}', u', // doublequote\n'], ['char doublequote[6]', ';\n'], 0))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=["'*'", '10', '11', '3 * 15 DUP(0)'],label=u'var3'),(u'"*\\n\\x0b", // var3\n', u'char var3[4];\n', 3))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'file.txt'", u'0'],label=u'fileName'),(['', u'"file.txt"', u', // fileName\n'], ['char fileName[9]', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'OKOKOKOK'", u'10', u'13'],label=''),(u"{'O','K','O','K','O','K','O','K','\\n','\\r'}, // dummy1\n", u'char dummy1[10];\n', 2))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'1'],label=u'var1'),(['', '1', u', // var1\n'], [u'db var1', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'111', u'1'],label=''),(u'{111,1}, // dummy1\n', u'dd dummy1[2];\n', 2))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'10 dup (?)'],label=u'var0'),(['{', '0,', '0,', '0,', '0,', '0,', '0,', '0,', '0,', '0,', '0', '}', u', // var0\n'], ['db var0[10]', ';\n'], 10))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'3'],label=u'var3'),(u'3, // var3\n', u'dd var3;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'100 dup (1)'],label=u'var4'),(['{', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1,', '1', '}', u', // var4\n'], ['db var4[100]', ';\n'], 100))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[[u'100', 'dup', '(',['1'],')']],label=u'var4'),(u'{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, // var4\n', u'db var4[100];\n', 100))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'12'],label=''),(['', '12', ', // dummy1\n'], ['db dummy1', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'00000000'", u'0Dh', u'0Ah', u"'$'"],label=u'ASCII'),(u"{'0','0','0','0','0','0','0','0','\\r','\\n','$'}, // ASCII\n", u'char ASCII[11];\n', 2))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'131'],label=u'var4'),(['', '131', u', // var4\n'], [u'db var4', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'1'],label=u'var1'),(u'1, // var1\n', u'db var1;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'141'],label=''),(['', '141', ', // dummy1\n'], ['db dummy1', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'Hello World From Protected Mode!'", u'10', u'13', u"'$'"],label=u'_msg'),(u"{'H','e','l','l','o',' ','W','o','r','l','d',' ','F','r','o','m',' ','P','r','o','t','e','c','t','e','d',' ','M','o','d','e','!','\\n','\\r','$'}, // _msg\n", u'char _msg[35];\n', 2))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'2', u'5', u'6'],label=u'var1'),(['{', '2,', '5,', '6', '}', u', // var1\n'], ['db var1[3]', ';\n'], 3))
+        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'11'],label=u'var2'),(u'11, // var2\n', u'dw var2;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'2'],label=u'var1'),(['', '2', u', // var1\n'], [u'db var1', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'OKOKOKOK'"],label=''),(u"{'O','K','O','K','O','K','O','K'}, // dummy1\n", u'char dummy1[8];\n', 0))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4 dup (5)'],label=''),(['{', '5,', '5,', '5,', '5', '}', ', // dummy1\n'], ['db dummy1[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'file.txt'", u'0'],label=u'fileName'),(u'"file.txt", // fileName\n', u'char fileName[9];\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4 dup (5)'],label=u'var'),(['{', '5,', '5,', '5,', '5', '}', u', // var\n'], ['db var[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'223', u'22'],label=''),(u'{223,22}, // dummy1\n', u'dw dummy1[2];\n', 2))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4'],label=u'beginningdata'),(['', '4', u', // beginningdata\n'], [u'db beginningdata', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'test2'],label=u'var3'),(u'0, // var3\n', u'dd var3;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4'],label=u'enddata'),(['', '4', u', // enddata\n'], [u'db enddata', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'12'],label=''),(u'12, // dummy1\n', u'db dummy1;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5 dup (0)'],label=u'var2'),(['{', '0,', '0,', '0,', '0,', '0', '}', u', // var2\n'], ['db var2[5]', ';\n'], 5))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'2'],label=u'var1'),(u'2, // var1\n', u'db var1;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5*5 dup (0', u'testEqu*2', u'2*2', u'3)'],label=u'var3'),(['{', '0,', '0,', '4,', '0', '}', ', // var3\n'], ['db var3[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'6'],label=u'var1'),(u'6, // var1\n', u'db var1;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'6'],label=u'var1'),(['', '6', u', // var1\n'], [u'db var1', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'2', u'5', u'0'],label=u'var5'),(u'{2,5,0}, // var5\n', u'dw var5[3];\n', 3))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'11'],label=u'var2'),(['', '11', u', // var2\n'], [u'dw var2', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4'],label=u'enddata'),(u'4, // enddata\n', u'db enddata;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'2', u'5', u'0'],label=u'var5'),(['{', '2,', '5,', '0', '}', u', // var5\n'], ['dw var5[3]', ';\n'], 3))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'11', u'-11', u'2', u'4000000'],label=u'var3'),(u'{11,4294967285,2,4000000}, // var3\n', u'dd var3[4];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'2'],label=u'var2'),(['', '2', u', // var2\n'], [u'dw var2', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4 dup (5)'],label=''),(u'{5,5,5,5}, // dummy1\n', u'db dummy1[4];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'223', u'22'],label=''),(['{', '223,', '22', '}', ', // dummy1\n'], ['dw dummy1[2]', ';\n'], 2))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5*5 dup (0', u'testEqu*2', u'2*2', u'3)'],label=u'var3'),(u'{0,0,4,0}, // var3\n', u'db var3[4];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'4', u'6', u'9'],label=u'var2'),(['{', '4,', '6,', '9', '}', u', // var2\n'], ['dw var2[3]', ';\n'], 3))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=["'abcde\x00\x00'"],label=u'var5'),("{'a','b','c','d','e','\\0','\\0'}, // var5\n", 'char var5[7];\n', 0))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'0'],label=u'load_handle'),(['', '0', u', // load_handle\n'], [u'dd load_handle', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'9', u'8', u'7', u'1'],label=u'var6'),(u'{9,8,7,1}, // var6\n', u'dd var6[4];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'10 dup (?)'],label=u'var5'),(['{', '0,', '0,', '0,', '0,', '0,', '0,', '0,', '0,', '0,', '0', '}', u', // var5\n'], ['dd var5[10]', ';\n'], 10))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4 dup (5)'],label=u'var'),(u'{5,5,5,5}, // var\n', u'db var[4];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'11', u'-11', u'2', u'4'],label=u'var3'),(['{', '11,', '4294967285,', '2,', '4', '}', u', // var3\n'], ['dd var3[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'131'],label=u'var4'),(u'131, // var4\n', u'db var4;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'11', u'-11', u'2', u'4000000'],label=u'var3'),(['{', '11,', '4294967285,', '2,', '4000000', '}', u', // var3\n'], ['dd var3[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'5 dup (0)'],label=u'var2'),(u'{0,0,0,0,0}, // var2\n', u'db var2[5];\n', 5))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'111', u'1'],label=''),(['{', '111,', '1', '}', ', // dummy1\n'], ['dd dummy1[2]', ';\n'], 2))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'4'],label=u'beginningdata'),(u'4, // beginningdata\n', u'db beginningdata;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'3'],label=u'var3'),(['', '3', u', // var3\n'], [u'dd var3', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'10 dup (?)'],label=u'var5'),(u'{0,0,0,0,0,0,0,0,0,0}, // var5\n', u'dd var5[10];\n', 10))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'34'],label=u'var3'),(['', '34', u', // var3\n'], [u'dd var3', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'0'],label=u'load_handle'),(u'0, // load_handle\n', u'dd load_handle;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'9', u'8', u'7', u'1'],label=u'var6'),(['{', '9,', '8,', '7,', '1', '}', u', // var6\n'], ['dd var6[4]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'141'],label=''),(u'141, // dummy1\n', u'db dummy1;\n', 1))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'offset var5'],label=''),(['', '0', ', // dummy1\n'], ['dw dummy1', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=["'.MOD.'", '0', '0', '0', '0'],label='_a_mod_nst_669_s'),('".MOD.\\0\\0\\0", // _a_mod_nst_669_s\n', u'char _a_mod_nst_669_s[9];\n', 4))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=4,data=[u'test2'],label=u'var3'),(['', '0', u', // var3\n'], [u'dd var3', ';\n'], 1))
+        self.assertEqual(parser_instance.convert_data_to_c(width=2,data=[u'4', u'6', u'9'],label=u'var2'),(u'{4,6,9}, // var2\n', u'dw var2[3];\n', 3))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=["'abcde\0\0'"],label=u'var5'),(['{', "'a','b','c','d','e','\\0','\\0'", '}', ', // var5\n'], ['char var5[7]', ';\n'], 0))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'2', u'5', u'6'],label=u'var1'),(u'{2,5,6}, // var1\n', u'db var1[3];\n', 3))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,label='_a_mod_nst_669_s',data=["'.MOD.'", '0', '0', '0', '0']),(['', '".MOD.\\0\\0\\0"', ', // _a_mod_nst_669_s\n'], ['char _a_mod_nst_669_s[9]', ';\n'], 4))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'10 dup (?)'],label=u'var0'),(u'{0,0,0,0,0,0,0,0,0,0}, // var0\n', u'db var0[10];\n', 10))
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.convert_data_to_c(width=1,label=u'var3',data=["'*'", '10', '11', '3 * 15 DUP(0)']),(['', '"*\\n\\x0b"', ', // var3\n'], ['char var3[4]', ';\n'], 3))
+        self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u"'ab''cd'"],label=u'doublequote'),(u"{'a','b','\\'','\\'','c','d'}, // doublequote\n", u'char doublequote[6];\n', 0))
 
         #parser_instance = Parser([])
         #self.assertEqual(parser_instance.convert_data_to_c(width=1,data=[u'2*2 dup (0,testEqu*2,2*2,3)']),[0, 0, 0, 0])
+    '''
 
     @patch.object(logging, 'debug')
     @patch.object(logging, 'info')
@@ -2017,11 +2019,10 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.action_data(line="var0 db 10 dup (?)"),('{0,0,0,0,0,0,0,0,0,0}, // var0\n','db var0[10];\n', 10))
         self.assertEqual(parser_instance.action_data(line="var1 db 1,2,3"),('{1,2,3}, // var1\n','db var1[3];\n', 3))
         self.assertEqual(parser_instance.action_data(line="var2 db 5 dup (0)"),('{0,0,0,0,0}, // var2\n','db var2[5];\n', 5))
-        self.assertEqual(parser_instance.action_data(line="var3 db 5*5 dup (0,testEqu*2,2*2,3)"),('{0,0,4,0}, // var3\n','db var3[4];\n', 4))
+        self.assertEqual(parser_instance.action_data(line="var3 db 5*5 dup (0,testEqu*2,2*2,3)"),('{0,testEqu*2,2*2,3,0,testEqu*2,2*2,3,0,testEqu*2,2*2,3,0,testEqu*2,2*2,3,0,testEqu*2,2*2,3,0,testEqu*2,2*2,3,0}, // var3\n', 'db var3[25];\n', 25))
         self.assertEqual(parser_instance.action_data(line="var4 db 131"),('131, // var4\n','db var4;\n', 1))
         self.assertEqual(parser_instance.action_data(line="var5 db 'abcd'"),("{'a','b','c','d'}, // var5\n",'char var5[4];\n', 4))
         self.assertEqual(parser_instance.action_data(line="var6 dd 9,8,7,1"),('{9,8,7,1}, // var6\n','dd var6[4];\n', 16))
-        self.assertEqual(parser_instance.action_data(line="var7 db 5*5 dup (0,testEqu*2,2*2,3)"),('{0,0,4,0}, // var7\n','db var7[4];\n', 4))
         parser_instance = Parser([])
         self.assertEqual(parser_instance.action_data(line="db 000,009,000,000,009,021,000,009,042,000,009,063,009,009,000,009"),('{0,9,0,0,9,21,0,9,42,0,9,63,9,9,0,9}, // dummy1\n','db dummy1[16];\n', 16))
 

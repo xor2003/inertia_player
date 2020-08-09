@@ -25,7 +25,7 @@ import os
 import re
 from builtins import str
 
-#from parglare import Grammar, Parser
+from parglare import Grammar, Parser
 
 def escape(str):
     if isinstance(str,list):
@@ -33,19 +33,48 @@ def escape(str):
     else:
         return str.translate(str.maketrans({"\\": r"\\"}))
 
+macroids=[]
+macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
+
+def macro_action(context, nodes, name):
+    macroids.insert(0,name.lower())
+    print ("added ~~" + name + "~~")
+
+def macroid(head, input, pos):
+    mtch = macroidre.match(input[pos:])
+    if mtch:
+        result = mtch.group().lower()
+        print ("matched ~^~" + result+"~^~")
+        if result in macroids:
+           print (" ~^~ in macroids")
+           return result
+        else:
+           return None
+    else:
+        return None
+
+recognizers = {
+    'macroid': macroid
+}
+
+actions = {
+"macrodir": macro_action
+}
+
+
 class Lex(object):
 
     def __new__(cls,*args, **kwargs):
         if not hasattr(cls,'_inst'):
             cls._inst = super(Lex, cls).__new__(cls)
             logging.debug("Allocated Lex instance")
-            '''
+
             file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
-            grammar = Grammar.from_file(file_name, ignore_case=True)
+            grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
             ## parser = Parser(grammar, debug=True, debug_trace=True)
             ## parser = Parser(grammar, debug=True)
             cls._inst.parser = Parser(grammar)
-            '''
+
         return cls._inst
 
 
@@ -139,13 +168,14 @@ class Lex(object):
             if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
                 name = cmd0
                 cmd0l = cmd0
-                name = re.sub(r'@', "arb", name)
                 arg = line[len(cmd0l):]
                 #arg = arg[len(cmd1l):].strip()
                 arg = name + " " + arg + '\n'
-                args = self.parse_args_new_data(arg)
-                logging.error(args)
-                argg = [escape(i) for i in args[2]]
+                #logging.error(arg)
+                args = self.parse_args_new_data(line+'\n')
+                #logging.error(args.values)
+                argg = [escape(i) for i in args.values]
+                args.name = re.sub(r'@', "arb", args.name).lower() # TODO lower
                 '''
                 j=[]
                 for i in argg:
@@ -154,12 +184,12 @@ class Lex(object):
                     j=j+[i]
                 argg = j
                 '''
-                args = (args[0].lower(), args[1].lower(), argg)
+                args = (args.name, args.type, argg)
                 return args
             else:
                 #arg = line[len(cmd0):].strip()
                 args = self.parse_args_new_data(line+'\n')
-                logging.error(args[2])
-                args = ("", args[1].lower(), args[2])
+                #logging.error(args.values)
+                args = ("", args.type, args.values)
                 return args
 
