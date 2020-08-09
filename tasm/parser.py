@@ -361,7 +361,7 @@ class Parser(object):
             #    data_ctype = "dw" # TODO for 16 bit only
             #    v = vv[1]
 
-            logging.warning("global/expr: ~%s~" % v)
+            logging.debug("global/expr: ~%s~" % v)
             if isinstance(v, list) and len(v) == 2 and v[0].lower() in ['offset', 'seg']:
                 try:
                     v = v[1]
@@ -572,7 +572,7 @@ class Parser(object):
 
         num = 0x10
         l = ['0'] * num
-        self.binary_data_size += l
+        self.binary_data_size += num
 
         self.c_data.append("{" + ",".join(l) + "}, // segment " + name + "\n")
         self.h_data.append(" db " + name + "[" + str(num) + "]; // segment " + name + "\n")
@@ -605,7 +605,7 @@ class Parser(object):
         skipping_binary_data = False
         num = 0x1000
         if num:
-            self.binary_data_size += l
+            self.binary_data_size += num
 
             self.dummy_enum += 1
             labell = "dummy" + str(self.dummy_enum)
@@ -616,6 +616,7 @@ class Parser(object):
 
         num = (0x10 - (self.binary_data_size & 0xf)) & 0xf
         if num:
+            l = num * ['0']
             self.binary_data_size += num
 
             self.dummy_enum += 1
@@ -646,6 +647,9 @@ class Parser(object):
                 continue
 
             cmd0 = str(cmd[0])
+            if cmd0 == ';':
+                continue
+
             cmd0l = cmd0.lower()
 
             m = re.match('(\.\d86[prc]?)', line)
