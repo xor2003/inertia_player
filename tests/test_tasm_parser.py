@@ -2026,6 +2026,43 @@ class ParserTest(unittest.TestCase):
         parser_instance = Parser([])
         self.assertEqual(parser_instance.action_data(line="db 000,009,000,000,009,021,000,009,042,000,009,063,009,009,000,009"),('{0,9,0,0,9,21,0,9,42,0,9,63,9,9,0,9}, // dummy1\n','db dummy1[16];\n', 16))
 
+    @patch.object(logging, 'debug')
+    @patch.object(logging, 'info')
+    # @patch.object(parser, 'get_global')
+    def test_equ(self, mock_info, mock_debug):
+            # mock_get_global.return_value = var()
+            mock_info.return_value = None
+            mock_debug.return_value = None
+            parser_instance = Parser([])
+
+            cpp_instance = cpp.Cpp(parser_instance)
+            proc_instance = Proc('mainproc', 0, False)
+            cpp_instance.proc = proc_instance
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_assign(u'aaa = 1')), '#undef aaa\n#define aaa 1\n')
+
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_assign(u'B = 1')), '#undef B\n#define B 1\n')
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_assign(
+                u'DDD = var1 ; actually it is address of var1')), '#undef DDD\n#define DDD var1\n')
+
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(u'left equ 0')), '#define left 0\n')
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(u'col equ 40')), '#define col 40\n')
+            self.assertEqual(
+                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(u'right equ left+col')), '#define right left+col\n')
+            self.assertEqual(
+                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(u'scale_mod equ -19*32*4; ')), '#define scale_mod -19*32*4\n')
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(
+                u'tempo equ 1193182/256/targetFPS')), '#define tempo 1193182/256/targetFPS\n')
+            self.assertEqual(
+                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(u'sierp_color equ 2Ah')), '#define sierp_color 0x2A\n')
+            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
+                                                          parser_instance.action_equ(u'tilt_plate_pattern equ 4+8+16')), '#define tilt_plate_pattern 4+8+16\n')
+
+            # wrong
+            self.assertEqual(
+                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_equ(u'l equ byte ptr aaa')), '#define l aaa\n')
+            self.assertEqual(
+                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_assign(u'res = edx ; int')), '#undef res\n#define res edx\n')
+
 if __name__ == "__main__":
     unittest.main()
 

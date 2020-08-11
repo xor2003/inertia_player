@@ -637,7 +637,7 @@ class Parser(object):
 
             m = re.match('([@\w]+)\s*::?\s*(.*)', line)
             if m is not None:
-                self.action_label_(line)
+                self.action_label_(line, isproc=False)
                 line = m.group(2).strip()
                 if len(line) != 0:
                     logging.debug("Line without label %s",line)
@@ -712,7 +712,7 @@ class Parser(object):
                     self.action_segment(line)
                     continue
                 elif cmd1l == 'ends':
-                    self.action_endsegment()
+                    self.action_endseg()
                     continue
 
             if len(cmd) >= 3:
@@ -727,7 +727,7 @@ class Parser(object):
                         self.action_data(line)
                         continue
             if (self.proc):
-                self.proc.add(line, line_number=self.line_number)
+                self.proc.action_instruction(line, line_number=self.line_number)
             else:
                 # print line
                 pass
@@ -736,9 +736,9 @@ class Parser(object):
     def action_assign(self, line):
             cmd = line.split()
             cmd0 = str(cmd[0])
-            vv = self.parse_equ_line(cmd)
+            vv = self.get_equ_value(cmd)
             name = cmd0
-            # self.reset_global(cmd0, op.assignment(cmd0.lower(), size=size))
+
             has_global = False
             if self.has_global(name):
                 has_global = True
@@ -747,23 +747,19 @@ class Parser(object):
             if has_global == False:
                 self.set_global(cmd0, o)
             self.proc.stmts.append(o)
+            return o
 
 
     def action_equ(self, line):
             cmd = line.split()
             cmd0 = str(cmd[0])
-            vv = self.parse_equ_line(cmd)
+            vv = self.get_equ_value(cmd)
             name = cmd0
             proc = self.get_global("mainproc")
             o = proc.add_equ_(name, vv, line_number=self.line_number)
             self.set_global(name, o)
             proc.stmts.insert(0, o)
-
-
-    def action_endsegment(self):
-            logging.debug("segment %s ends" % (self.segment))
-            self.segment = ""
-
+            return o
 
     def action_segment(self, line):
             cmd = line.split()
@@ -807,12 +803,12 @@ class Parser(object):
             cmd = line.split()
             cmd0 = str(cmd[0])
             cmd0l = cmd0.lower()
-            self.proc.add(cmd0l)
-            self.proc.add(" ".join(cmd[1:]))
+            self.proc.action_instruction(cmd0l)
+            self.proc.action_instruction(" ".join(cmd[1:]))
 
 
     def action_endseg(self):
-            logging.debug("segement %s ends" % (self.segment))
+            logging.debug("segment %s ends" % (self.segment))
             self.segment = "default_seg"
 
 
@@ -866,34 +862,28 @@ class Parser(object):
             return binary_width
 
 
-    def parse_equ_line(self, cmd):
+    def get_equ_value(self, cmd):
             v = " ".join(cmd[2:])
             logging.debug("%s" % v)
             vv = self.fix_dollar(v)
             vv = " ".join(self.lex.parse_args(vv))
             vv = vv.strip()
             logging.debug("%s" % vv)
-            size = 0
             m = re.match(r'\bbyte\s+ptr\s+(.*)', vv)
             if m is not None:
                 vv = m.group(1).strip()
-                size = 1
             m = re.match(r'\bdword\s+ptr\s+(.*)', vv)
             if m is not None:
                 vv = m.group(1).strip()
-                size = 4
             m = re.match(r'\bqword\s+ptr\s+(.*)', vv)
             if m is not None:
                 vv = m.group(1).strip()
-                size = 8
             m = re.match(r'\btword\s+ptr\s+(.*)', vv)
             if m is not None:
                 vv = m.group(1).strip()
-                size = 10
             m = re.match(r'\bword\s+ptr\s+(.*)', vv)
             if m is not None:
                 vv = m.group(1).strip()
-                size = 2
             vv = tasm.cpp.convert_number_to_c(vv)
             return vv
 
