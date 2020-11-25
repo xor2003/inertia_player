@@ -1,6 +1,7 @@
 MASM x86 to C translator 0.91
 ==============
-(Portable MASM)
+
+Portable MASM or Source-to-source_compiler https://en.wikipedia.org/wiki/Source-to-source_compiler
 Translator may be used to port your DOS x86 (MASM) assembler code to SDL C. (Since there is no working decompiler for 16 bit DOS code yet.
 Because of DOS segmentation model, etc)
 
