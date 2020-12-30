@@ -57,5 +57,7 @@ for i in sys.argv[1:]:
   result = parser.parse(input_str, file_name=file_name)
   f.close()
 
-  print(result.name, result.type, result.values)
+  from pprint import pprint
+
+  pprint(result)
 

@@ -11,8 +11,11 @@ from builtins import object
 from builtins import range
 from builtins import str
 
+from parglare import Grammar, Parser as PGParser
+
 import tasm.cpp
-import tasm.lex
+#import tasm.lex
+#from tasm.lex import Lex, recognizers, escape
 import tasm.proc
 from tasm import op
 
@@ -40,8 +43,60 @@ from tasm import op
 
 # from tasm.lex import parse_line_data, parse_line_name_data
 
+import re
 
-class Parser(object):
+
+def escape(str):
+    if isinstance(str,list):
+        return [escape(i) for i in str]
+    else:
+        return str.translate(str.maketrans({"\\": r"\\"}))
+
+macroids=[]
+macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
+
+def macro_action(context, nodes, name):
+    macroids.insert(0,name.lower())
+    print ("added ~~" + name + "~~")
+
+def macroid(head, input, pos):
+    mtch = macroidre.match(input[pos:])
+    if mtch:
+        result = mtch.group().lower()
+        print ("matched ~^~" + result+"~^~")
+        if result in macroids:
+           print (" ~^~ in macroids")
+           return result
+        else:
+           return None
+    else:
+        return None
+
+recognizers = {
+    'macroid': macroid
+}
+
+actions = {
+"macrodir": macro_action
+}
+
+
+class ParglareParser(object):
+    def __new__(cls,*args, **kwargs):
+        if not hasattr(cls,'_inst'):
+            cls._inst = super(ParglareParser, cls).__new__(cls)
+            logging.debug("Allocated ParglareParser instance")
+
+            file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
+            grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
+            ## parser = Parser(grammar, debug=True, debug_trace=True)
+            ## parser = Parser(grammar, debug=True)
+            cls._inst.parser = PGParser(grammar)
+
+        return cls._inst
+
+
+class Parser():
     def __init__(self, skip_binary_data=[]):
         self.skip_binary_data = skip_binary_data
         self.strip_path = 0
@@ -72,7 +127,7 @@ class Parser(object):
         #self.prev_data_type = 0
         #self.prev_data_ctype = 0
         self.line_number = 0
-        self.lex = tasm.lex.Lex()
+        self.lex = ParglareParser()
 
     def visible(self):
         for i in self.__stack:
@@ -165,7 +220,7 @@ class Parser(object):
         # path = os.path.join(basedir, os.path.pathsep.join(path))
         logging.info("including %s" % (path))
 
-        self.parse(path)
+        self.parse_file(path)
 
     def eval(self, stmt):
         try:
@@ -587,7 +642,7 @@ class Parser(object):
                 self.set_global(name, self.proc)
         '''
 
-    def parse(self, fname):
+    def parse_file(self, fname):
         logging.info("opening file %s..." % (fname))
         if sys.version_info >= (3, 0):
             fd = open(fname, 'rt', encoding="cp437")
@@ -835,7 +890,7 @@ class Parser(object):
 
 
     def action_data(self, line):
-            name, type, args = self.lex.parse_line_data_new(line)
+            name, type, args = self.parse_line_data_new(line)
 
             offset = self.cur_seg_offset
             logging.debug("data value %s offset %d" % (str(args), offset))
@@ -866,7 +921,7 @@ class Parser(object):
             v = " ".join(cmd[2:])
             logging.debug("%s" % v)
             vv = self.fix_dollar(v)
-            vv = " ".join(self.lex.parse_args(vv))
+            vv = " ".join(self.parse_args(vv))
             vv = vv.strip()
             logging.debug("%s" % vv)
             m = re.match(r'\bbyte\s+ptr\s+(.*)', vv)
@@ -907,3 +962,111 @@ class Parser(object):
                 logging.debug("link: addr %s v %s" % (addr, v))
                 self.c_data[addr] = str(v)
             # print self.c_data
+
+    def parse_args_new_data(self, text):
+        # print "parsing: [%s]" %text
+
+        return self.lex.parser.parse(text)
+
+    def parse_args(self, text):
+        # print "parsing: [%s]" %text
+        escape = False
+        string = False
+        result = []
+        token = ""
+        # value = 0
+        for c in text:
+            # print "[%s]%s: %s: %s" %(token, c, escape, string)
+            if c == '\\':
+                token += c
+            #               if c == '\\':
+            #                       escape = True
+            #                       continue
+
+            if escape:
+                if not string:
+                    raise SyntaxError("escape found in no string: %s" % text)
+
+                logging.debug("escaping[%s]" % c)
+                escape = False
+                token += c
+                continue
+
+            if string:
+                if c == '\'' or c == '"':
+                    string = False
+
+                token += c
+                continue
+
+            if c == '\'' or c == '"':
+                string = True
+                token += c
+                continue
+
+            if c == ',':
+                result.append(token.strip())
+                token = ""
+                continue
+
+            if c == ';':  # comment, bailing out
+                break
+
+            token += c
+        token = token.strip()
+        if len(token):
+            result.append(token)
+        # print result
+        return result
+
+    def parse_line_data(self, line):
+            cmd = line.split()
+            cmd1l = cmd[1].lower()
+            cmd0 = str(cmd[0])
+            cmd0 = cmd0.lower()
+            if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
+                name = cmd0
+                cmd0l = cmd0
+                name = re.sub(r'@', "arb", name)
+                arg = line[len(cmd0l):].strip()
+                arg = arg[len(cmd1l):].strip()
+                args = self.parse_args(arg)
+                return name, cmd1l, args
+            else:
+                arg = line[len(cmd0):].strip()
+                args = self.parse_args(arg)
+                return "", cmd0, args
+
+    def parse_line_data_new(self, line):
+            #logging.error(line)
+            cmd = line.split()
+            cmd1l = cmd[1].lower()
+            cmd0 = str(cmd[0])
+            cmd0 = cmd0.lower()
+            if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
+                name = cmd0
+                cmd0l = cmd0
+                arg = line[len(cmd0l):]
+                #arg = arg[len(cmd1l):].strip()
+                arg = name + " " + arg + '\n'
+                #logging.error(arg)
+                args = self.parse_args_new_data(line+'\n')
+                #logging.error(args.values)
+                argg = [escape(i) for i in args.values]
+                args.label = re.sub(r'@', "arb", args.label).lower() # TODO lower
+                '''
+                j=[]
+                for i in argg:
+                    if isinstance(i,list):
+                        i=" ".join(i)
+                    j=j+[i]
+                argg = j
+                '''
+                args = (args.label, args.type, argg)
+                return args
+            else:
+                #arg = line[len(cmd0):].strip()
+                args = self.parse_args_new_data(line+'\n')
+                #logging.error(args.values)
+                args = ("", args.type, args.values)
+                return args

@@ -106,7 +106,7 @@ def process(i):
       #	'characterset1',
    ])
   p.strip_path = 3
-  context = p.parse(name)
+  context = p.parse_file(name)
   p.link()
 
   generator = Cpp(context, outfile = outname, blacklist = [

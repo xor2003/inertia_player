@@ -53,7 +53,7 @@ crefdir: crefoption linereminder;
 crefoption: U_CREF | U_XCREF idlist? | U_NOCREF idlist? ;
 datadecl: DB | DW | DD | DF | DQ | DT | datatype;
 //datadir: LABEL? dataitem linereminder;
-datadir: name=LABEL? type=datadecl values=scalarinstlist linereminder|name=LABEL? type=LABEL values=structinstlist linereminder|name=LABEL? type=LABEL values=recordinstlist linereminder;
+datadir: label=LABEL? type=datadecl values=scalarinstlist linereminder|label=LABEL? type=LABEL values=structinstlist linereminder|label=LABEL? type=LABEL values=recordinstlist linereminder;
 //dataitem: datadecl scalarinstlist| LABEL structinstlist| LABEL recordinstlist;
 datatype: BYTE | SBYTE | WORD | SWORD | DWORD | SDWORD | FWORD | QWORD | TBYTE | REAL4 | REAL8 | REAL10;
 decnumber: INTEGER;
@@ -178,7 +178,7 @@ includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
 | STRING| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber| INTEGER;
-insegdir: labeldef insegmentdir | insegmentdir;
+insegdir: label=labeldef insegmentdir | insegmentdir;
 //insegdirlist: insegdir+;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? endpdir| procdir  localdirlist? insegdir+ endpdir| invokedir| generaldir | linereminder;
 instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;

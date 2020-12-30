@@ -8,13 +8,13 @@ import tasm.lex
 import tasm.op
 import tasm.parser
 import tasm.proc
-from tasm import lex
-from tasm.lex import Lex
+#from tasm import lex
+#from tasm.lex import Lex
 
 
 class LexTest(unittest.TestCase):
     def test_parse_args(self):
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
 
         self.assertEqual(lex.parse_args(text="'%-10s %d',0Ah,0     ; DATA XREF: test_jcc+28\xe2\x86\x91o"),[u"'%-10s %d'", u'0Ah', u'0'])
         self.assertEqual(lex.parse_args(text="'%-10s A=%08lx B=%08lx C=%08lx R=%08lx CCIN=%04lx CC=%04lx',0Ah,0"),[u"'%-10s A=%08lx B=%08lx C=%08lx R=%08lx CCIN=%04lx CC=%04lx'", u'0Ah', u'0'])
@@ -2334,7 +2334,7 @@ class LexTest(unittest.TestCase):
         #self.assertEqual(lex.parse_args_new_data(text=u'2*2 dup (0,testEqu*2,2*2,3)'),[[['2', '*', '2'],'dup', '(', ['0', ['testEqu', '*', '2'], ['2', '*', '2'], '3'], ')']])
 
     def test_parse_line_data(self):
-        lex_instance = Lex()
+        lex_instance = tasm.parser.Parser()
 
         self.assertEqual(lex_instance.parse_line_data(line="ASCII DB '00000000',0Dh,0Ah,'$' ; buffer for ASCII string"),(u'ascii', 'db', ["'00000000'", '0Dh', '0Ah', "'$'"]))
         self.assertEqual(lex_instance.parse_line_data(line="_a070295122642\tdb '07/02/95 12:26:42',0 ; DATA XREF: seg003:off_2462E\x19o"),(u'_a070295122642', 'db', ["'07/02/95 12:26:42'", '0']))

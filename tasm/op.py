@@ -24,7 +24,7 @@ import logging
 from builtins import str
 from builtins import object
 
-import tasm.lex
+import tasm.parser
 
 
 # import traceback
@@ -116,7 +116,7 @@ class baseop(object):
     def parse_arg(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        args = tasm.lex.Lex().parse_args(arg)
+        args = tasm.parser.Parser().parse_args(arg)
         if len(args) > 0:
             return args[0]
         return ""
@@ -125,7 +125,7 @@ class baseop(object):
     def split(self, text):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         return lex.parse_args(text)
     '''
 
@@ -156,7 +156,7 @@ class _sub(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -166,7 +166,7 @@ class _mul(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.arg = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -185,7 +185,7 @@ class _xor(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -230,7 +230,7 @@ class _jnb(basejmp):
 class _push(baseop):
     def __init__(self, arg):
         self.regs = []
-        for r in tasm.lex.Lex().parse_args(arg)[0].split():
+        for r in tasm.parser.Parser().parse_args(arg)[0].split():
             self.regs.append(self.parse_arg(r))
 
     def visit(self, visitor):
@@ -239,7 +239,7 @@ class _push(baseop):
 class _pop(baseop):
     def __init__(self, arg):
         self.regs = []
-        for r in tasm.lex.Lex().parse_args(arg)[0].split():
+        for r in tasm.parser.Parser().parse_args(arg)[0].split():
             self.regs.append(self.parse_arg(r))
 
     def visit(self, visitor):
@@ -387,7 +387,7 @@ class _lea(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -425,7 +425,7 @@ class _imul(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.arg = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -435,7 +435,7 @@ class _movs(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -494,7 +494,7 @@ class _instruction2(baseop):
     def __init__(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        lex = tasm.lex.Lex()
+        lex = tasm.parser.Parser()
         self.dst, self.src = lex.parse_args(arg)
 
     def visit(self, visitor):
@@ -502,7 +502,7 @@ class _instruction2(baseop):
 
 class _instruction3(baseop):
     def __init__(self, arg):
-        self.dst, self.src, self.c = tasm.lex.Lex().parse_args(arg)
+        self.dst, self.src, self.c = tasm.parser.Parser().parse_args(arg)
 
     def visit(self, visitor):
         return visitor._instruction3(self.cmd, self.dst, self.src, self.c)
