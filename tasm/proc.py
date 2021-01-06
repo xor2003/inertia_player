@@ -214,7 +214,7 @@ class Proc(object):
         # o.comments = comments
         o.line = line
         o.cmd = cmd.lower()
-        o.line_number = line_number
+        o.__line_number = line_number
         # logging.info("~1~2~ " + o.command + " ~ " + o.cmd)
         return o
 
@@ -286,8 +286,8 @@ class Proc(object):
             s = self.generate_c_cmd(visitor, stmt)
             visitor.body += s
             try:  # trying to add command and comment
-                if stmt.line or stmt.line_number != 0:
-                    visitor.body = visitor.body[:-1] + "\t// " + str(stmt.line_number) \
+                if stmt.line or stmt.__line_number != 0:
+                    visitor.body = visitor.body[:-1] + "\t// " + str(stmt.__line_number) \
                                    + " " + stmt.line + "\n"
             except AttributeError:
                 pass

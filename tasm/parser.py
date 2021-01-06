@@ -98,11 +98,11 @@ class ParglareParser(object):
 
 class Parser():
     def __init__(self, skip_binary_data=[]):
-        self.skip_binary_data = skip_binary_data
+        self.__skip_binary_data = skip_binary_data
         self.strip_path = 0
         self.__globals = {}
         self.__offsets = {}
-        self.offset_id = 0x1111
+        self.__offset_id = 0x1111
         self.__stack = []
         self.proc_list = []
 
@@ -110,24 +110,24 @@ class Parser():
 
         # self.proc = None
         nname = "mainproc"
-        self.proc = tasm.proc.Proc(nname)
+        self.__proc = tasm.proc.Proc(nname)
         self.proc_list.append(nname)
-        self.set_global(nname, self.proc)
+        self.set_global(nname, self.__proc)
 
-        self.binary_data_size = 0
+        self.__binary_data_size = 0
         self.c_data = []
         self.h_data = []
-        self.cur_seg_offset = 0
-        self.dummy_enum = 0
-        self.segment = "default_seg"
+        self.__cur_seg_offset = 0
+        self.__dummy_enum = 0
+        self.__segment = "default_seg"
 
-        self.symbols = []
-        self.link_later = []
+        self.__symbols = []
+        self.__link_later = []
         #self.data_started = False
         #self.prev_data_type = 0
         #self.prev_data_ctype = 0
-        self.line_number = 0
-        self.lex = ParglareParser()
+        self.__line_number = 0
+        self.__lex = ParglareParser()
 
     def visible(self):
         for i in self.__stack:
@@ -263,8 +263,8 @@ class Parser():
         return text
 
     def fix_dollar(self, v):
-        logging.debug("$ = %d" % self.cur_seg_offset)
-        return re.sub(r'\$', "%d" % self.cur_seg_offset, v)
+        logging.debug("$ = %d" % self.__cur_seg_offset)
+        return re.sub(r'\$', "%d" % self.__cur_seg_offset, v)
 
     def parse_int(self, v):
         # print "~1~ %s" %v
@@ -428,7 +428,7 @@ class Parser():
                     logging.warning(self.c_data)
                     logging.warning(r)
                     logging.warning(len(self.c_data) + len(r))
-                    self.link_later.append((len(self.c_data) + len(r), v))
+                    self.__link_later.append((len(self.c_data) + len(r), v))
                     v = 0
 
 
@@ -450,8 +450,8 @@ class Parser():
         logging.debug("current data type = %d current data c type = %s" % (cur_data_type, data_ctype))
 
         if len(label) == 0:
-            self.dummy_enum += 1
-            label = "dummy" + str(self.dummy_enum)
+            self.__dummy_enum += 1
+            label = "dummy" + str(self.__dummy_enum)
 
         vh = ""
         vc = ""
@@ -584,8 +584,8 @@ class Parser():
             # print "~name: %s" %name
             name = re.sub(r'@', "arb", name)
             # print "~~name: %s" %name
-            if not (name.lower() in self.skip_binary_data):
-                logging.debug("offset %s -> %s" % (name, "&m." + name.lower() + " - &m." + self.segment))
+            if not (name.lower() in self.__skip_binary_data):
+                logging.debug("offset %s -> %s" % (name, "&m." + name.lower() + " - &m." + self.__segment))
                 '''
                 if self.proc is None:
                         nname = "mainproc"
@@ -594,15 +594,15 @@ class Parser():
                         self.proc_list.append(nname)
                         self.set_global(nname, self.proc)
                 '''
-                if self.proc is not None:
-                    self.proc.add_label(name, isproc)
+                if self.__proc is not None:
+                    self.__proc.add_label(name, isproc)
                     # self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, len(self.proc.stmts)))
-                    self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, self.offset_id))
+                    self.set_offset(name, ("&m." + name.lower() + " - &m." + self.__segment, self.__proc, self.__offset_id))
                     farb = False
                     if far == 'far':
                         farb = True
-                    self.set_global(name, op.label(name, tasm.proc.Proc, line_number=self.offset_id, far=farb))
-                    self.offset_id += 1
+                    self.set_global(name, op.label(name, tasm.proc.Proc, line_number=self.__offset_id, far=farb))
+                    self.__offset_id += 1
                 else:
                     logging.error("!!! Label %s is outside the procedure" % name)
             else:
@@ -610,24 +610,24 @@ class Parser():
 
     def create_segment(self, name):
         binary_width = 1
-        offset = self.binary_data_size // 16
+        offset = self.__binary_data_size // 16
         logging.debug("segment %s %x" % (name, offset))
-        self.cur_seg_offset = 16
+        self.__cur_seg_offset = 16
 
-        num = (0x10 - (self.binary_data_size & 0xf)) & 0xf
+        num = (0x10 - (self.__binary_data_size & 0xf)) & 0xf
         if num:
             l = ['0'] * num
-            self.binary_data_size += num
+            self.__binary_data_size += num
 
-            self.dummy_enum += 1
-            labell = "dummy" + str(self.dummy_enum)
+            self.__dummy_enum += 1
+            labell = "dummy" + str(self.__dummy_enum)
 
             self.c_data.append("{" + ",".join(l) + "}, // padding\n")
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
 
         num = 0x10
         l = ['0'] * num
-        self.binary_data_size += num
+        self.__binary_data_size += num
 
         self.c_data.append("{" + ",".join(l) + "}, // segment " + name + "\n")
         self.h_data.append(" db " + name + "[" + str(num) + "]; // segment " + name + "\n")
@@ -656,39 +656,39 @@ class Parser():
         return self
 
     def parse_(self, fd, fname):
-        self.line_number = 0
+        self.__line_number = 0
         skipping_binary_data = False
         num = 0x1000
         if num:
-            self.binary_data_size += num
+            self.__binary_data_size += num
 
-            self.dummy_enum += 1
-            labell = "dummy" + str(self.dummy_enum)
+            self.__dummy_enum += 1
+            labell = "dummy" + str(self.__dummy_enum)
 
             self.c_data.append("{0}, // padding\n")
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // protective\n")
         self.parse_file_lines(fd, fname, skipping_binary_data)
 
-        num = (0x10 - (self.binary_data_size & 0xf)) & 0xf
+        num = (0x10 - (self.__binary_data_size & 0xf)) & 0xf
         if num:
             l = num * ['0']
-            self.binary_data_size += num
+            self.__binary_data_size += num
 
-            self.dummy_enum += 1
-            labell = "dummy" + str(self.dummy_enum)
+            self.__dummy_enum += 1
+            labell = "dummy" + str(self.__dummy_enum)
 
             self.c_data.append("{" + ",".join(l) + "}, // padding\n")
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
 
     def parse_file_lines(self, fd, fname, skipping_binary_data):
         for line in fd:
-            self.line_number += 1
+            self.__line_number += 1
             # line = line.decode("cp1251")
             line = line.strip()
             if len(line) == 0 or line[0] == ';' or line[0] == chr(0x1a):
                 continue
 
-            logging.debug("%d:      %s" % (self.line_number, line))
+            logging.debug("%d:      %s" % (self.__line_number, line))
 
             m = re.match('([@\w]+)\s*::?\s*(.*)', line)
             if m is not None:
@@ -781,8 +781,8 @@ class Parser():
                 elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
                         self.action_data(line)
                         continue
-            if (self.proc):
-                self.proc.action_instruction(line, line_number=self.line_number)
+            if (self.__proc):
+                self.__proc.action_instruction(line, line_number=self.__line_number)
             else:
                 # print line
                 pass
@@ -798,10 +798,10 @@ class Parser():
             if self.has_global(name):
                 has_global = True
                 name = self.get_global(name).original_name
-            o = self.proc.add_assignment(name, vv, line_number=self.line_number)
+            o = self.__proc.add_assignment(name, vv, line_number=self.__line_number)
             if has_global == False:
                 self.set_global(cmd0, o)
-            self.proc.stmts.append(o)
+            self.__proc.stmts.append(o)
             return o
 
 
@@ -811,7 +811,7 @@ class Parser():
             vv = self.get_equ_value(cmd)
             name = cmd0
             proc = self.get_global("mainproc")
-            o = proc.add_equ_(name, vv, line_number=self.line_number)
+            o = proc.add_equ_(name, vv, line_number=self.__line_number)
             self.set_global(name, o)
             proc.stmts.insert(0, o)
             return o
@@ -821,7 +821,7 @@ class Parser():
             cmd0 = str(cmd[0])
             cmd0l = cmd0.lower()
             name = cmd0l
-            self.segment = name
+            self.__segment = name
             self.create_segment(name)
 
 
@@ -858,13 +858,13 @@ class Parser():
             cmd = line.split()
             cmd0 = str(cmd[0])
             cmd0l = cmd0.lower()
-            self.proc.action_instruction(cmd0l)
-            self.proc.action_instruction(" ".join(cmd[1:]))
+            self.__proc.action_instruction(cmd0l)
+            self.__proc.action_instruction(" ".join(cmd[1:]))
 
 
     def action_endseg(self):
-            logging.debug("segment %s ends" % (self.segment))
-            self.segment = "default_seg"
+            logging.debug("segment %s ends" % (self.__segment))
+            self.__segment = "default_seg"
 
 
     def action_include(self, line):
@@ -873,7 +873,7 @@ class Parser():
 
 
     def action_endp(self):
-            self.proc = self.get_global('mainproc')
+            self.__proc = self.get_global('mainproc')
 
 
     def action_endif(self):
@@ -892,13 +892,13 @@ class Parser():
     def action_data(self, line):
             name, type, args = self.parse_line_data_new(line)
 
-            offset = self.cur_seg_offset
+            offset = self.__cur_seg_offset
             logging.debug("data value %s offset %d" % (str(args), offset))
 
             binary_width = self.calculate_type_size(type)
             s = self.calculate_data_binary_size(binary_width, args)
-            self.binary_data_size += s
-            self.cur_seg_offset += s
+            self.__binary_data_size += s
+            self.__cur_seg_offset += s
 
             c, h, elements = self.convert_data_to_c(name, binary_width,
                                                        args)
@@ -908,7 +908,7 @@ class Parser():
             logging.debug("~size %d elements %d" % (binary_width, elements))
             if name:
                 self.set_global(name, op.var(binary_width, offset, name=name,
-                                             segment=self.segment, elements=elements))
+                                             segment=self.__segment, elements=elements))
             # print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
             return c, h, s
 
@@ -946,7 +946,7 @@ class Parser():
     def link(self):
             logging.debug("link()")
             # print self.c_data
-            for addr, expr in self.link_later:
+            for addr, expr in self.__link_later:
                 logging.debug("addr %s expr %s" % (addr, expr))
                 try:
                     # v = self.eval_expr(expr)
@@ -966,7 +966,7 @@ class Parser():
     def parse_args_new_data(self, text):
         # print "parsing: [%s]" %text
 
-        return self.lex.parser.parse(text)
+        return self.__lex.parser.parse(text)
 
     def parse_args(self, text):
         # print "parsing: [%s]" %text

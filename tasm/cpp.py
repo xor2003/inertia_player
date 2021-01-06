@@ -58,40 +58,40 @@ class Cpp(object):
                  skip_addr_constants=False, header_omit_blacklisted=False, function_name_remapping={}):
         FORMAT = "%(filename)s:%(lineno)d %(message)s"
         logging.basicConfig(format=FORMAT)
-        self.logger = logging.getLogger('cpp')
+        self.__logger = logging.getLogger('cpp')
         # self.logger.info('Protocol problem: %s', 'connection reset')
 
-        self.namespace = outfile
-        self.indirection = 0
-        self.current_size = 0
-        self.seg_prefix = ""
-        self.codeset = 'cp437'
-        self.context = context
-        #self.data_seg = context.binary_data
-        self.cdata_seg = context.c_data
-        self.hdata_seg = context.h_data
-        self.procs = context.proc_list
-        self.skip_first = skip_first
-        self.proc_queue = []
-        self.proc_done = []
-        self.blacklist = blacklist
-        self.failed = list(blacklist)
-        self.skip_output = skip_output
-        self.skip_dispatch_call = skip_dispatch_call
-        self.skip_addr_constants = skip_addr_constants
-        self.header_omit_blacklisted = header_omit_blacklisted
-        self.function_name_remapping = function_name_remapping
-        self.translated = list()  # []
-        self.proc_addr = []
-        self.used_data_offsets = set()
-        self.methods = []
-        self.temps_count = 0
-        self.pointer_flag = False
+        self.__namespace = outfile
+        self.__indirection = 0
+        self.__current_size = 0
+        self.__seg_prefix = ""
+        self.__codeset = 'cp437'
+        self.__context = context
+        #self.data_seg = __context.binary_data
+        self.__cdata_seg = context.c_data
+        self.__hdata_seg = context.h_data
+        self.__procs = context.proc_list
+        self.__skip_first = skip_first
+        self.__proc_queue = []
+        self.__proc_done = []
+        self.__blacklist = blacklist
+        self.__failed = list(blacklist)
+        self.__skip_output = skip_output
+        self.__skip_dispatch_call = skip_dispatch_call
+        self.__skip_addr_constants = skip_addr_constants
+        self.__header_omit_blacklisted = header_omit_blacklisted
+        self.__function_name_remapping = function_name_remapping
+        self.__translated = list()  # []
+        self.__proc_addr = []
+        self.__used_data_offsets = set()
+        self.__methods = []
+        self.__temps_count = 0
+        self.__pointer_flag = False
         self.lea = False
-        self.expr_size = 0
-        self.far = False
+        self.__expr_size = 0
+        self.__far = False
         self.body = ""
-        self.unbounded = []
+        self.__unbounded = []
 
     def expand_cb(self, match):
         name_original = match.group(0)
@@ -99,23 +99,23 @@ class Cpp(object):
 
     def expand_cb_(self, name_original):
         name = name_original.lower()
-        logging.debug("expand_cb name = %s indirection = %u" % (name, self.indirection))
+        logging.debug("expand_cb name = %s indirection = %u" % (name, self.__indirection))
         if self.is_register(name) != 0:
             return name
 
-        if self.indirection == -1:
+        if self.__indirection == -1:
             try:
-                offset, p, p = self.context.get_offset(name)
+                offset, p, p = self.__context.get_offset(name)
             except:
                 pass
             else:
                 logging.debug("OFFSET = %s" % offset)
-                self.indirection = 0
-                self.used_data_offsets.add((name, offset))
+                self.__indirection = 0
+                self.__used_data_offsets.add((name, offset))
                 return "offset_%s" % (name,)
 
         try:
-            g = self.context.get_global(name)
+            g = self.__context.get_global(name)
         except:
             #logging.warning("expand_cb() global '%s' is missing" % name)
             return name_original
@@ -133,26 +133,26 @@ class Cpp(object):
             logging.debug("assignment %s = %s" % (name, value))
         elif isinstance(g, proc_module.Proc):
             logging.debug("it is proc")
-            if self.indirection != -1:
+            if self.__indirection != -1:
                 logging.error("proc %s offset %s" % (str(proc_module.Proc), str(g.offset)))
                 raise Exception("invalid proc label usage")
             value = str(g.offset)
-            self.indirection = 0
+            self.__indirection = 0
         elif isinstance(g, op.var):
             logging.debug("it is var " + str(g.size))
             size = g.size
-            self.current_size = size
+            self.__current_size = size
             if size == 0:
                 raise Exception("invalid var '%s' size %u" % (name, size))
             if g.issegment:
                 value = "seg_offset(%s)" % (name_original.lower())
-                self.indirection = 0
+                self.__indirection = 0
                 return value
             else:
                 value = "offset(%s,%s)" % (g.segment, g.name)
-                if self.seg_prefix == 'cs':
+                if self.__seg_prefix == 'cs':
                     self.body += '\tcs=seg_offset(' + g.segment + ');\n'
-            self.indirection = 1
+            self.__indirection = 1
             #       self.indirection = 0
         elif isinstance(g, op.label):
             value = "k" + g.name.lower()  # .capitalize()
@@ -160,10 +160,10 @@ class Cpp(object):
             size = g.size
             if size == 0:
                 raise Exception("invalid var '%s' size %u" % (name, size))
-            if self.indirection == 0 or self.indirection == 1:  # x0r self.indirection == 1 ??
+            if self.__indirection == 0 or self.__indirection == 1:  # x0r self.indirection == 1 ??
                 '''
-                                if (self.expr_size != 0 and self.expr_size != size) or g.elements > 1:
-                                        self.pointer_flag = True
+                                if (self.__expr_size != 0 and self.__expr_size != size) or g.elements > 1:
+                                        self.__pointer_flag = True
                                         if self.lea == False:
                                                 value = "(db*)&m.%s" %(name_original)
                                         else:
@@ -176,13 +176,13 @@ class Cpp(object):
                                                 value = "offsetof(struct Mem,%s)" %(name_original)
                                 '''
                 value = "offsetof(struct Mem,%s)" % (name_original)
-                if self.indirection == 1:
-                    self.indirection = 0
-            elif self.indirection == -1:
+                if self.__indirection == 1:
+                    self.__indirection = 0
+            elif self.__indirection == -1:
                 value = "%s" % g.offset
-                self.indirection = 0
+                self.__indirection = 0
             else:
-                raise Exception("invalid indirection %d name '%s' size %u" % (self.indirection, name, size))
+                raise Exception("invalid indirection %d name '%s' size %u" % (self.__indirection, name, size))
         return value
 
     def is_register(self, expr):
@@ -203,7 +203,7 @@ class Cpp(object):
         logging.debug('get_size("%s")' % expr)
 
         try:
-            v = self.context.parse_int(expr)
+            v = self.__context.parse_int(expr)
             size = 0
             if v < 0:
                 raise Exception("negative not handled yet")
@@ -263,7 +263,7 @@ class Cpp(object):
             name = m.group(0)
             logging.debug('name = %s' % name)
             try:
-                g = self.context.get_global(name)
+                g = self.__context.get_global(name)
                 if isinstance(g, op._equ) or isinstance(g, op._assignment):
                     if g.value != origexpr:  # prevent loop
                         return self.get_size(g.value)
@@ -287,7 +287,7 @@ class Cpp(object):
         name = match.group(0).lower()
         logging.debug("expand_equ_cb %s" % name)
         try:
-            g = self.context.get_global(name)
+            g = self.__context.get_global(name)
             if isinstance(g, op.equ) or isinstance(g, op.assignment):
                 return g.value
             return str(g.offset)
@@ -307,7 +307,7 @@ class Cpp(object):
 
     def expand(self, expr, def_size=0, destination=False):
         logging.debug("EXPAND(expr:\"%s\")" % expr)
-        self.seg_prefix = ""
+        self.__seg_prefix = ""
 
         expr = expr.strip()
         origexpr = expr
@@ -319,7 +319,7 @@ class Cpp(object):
 
         size = self.get_size(expr) if def_size == 0 else def_size
 
-        self.expr_size = size
+        self.__expr_size = size
         # print "expr \"%s\" %d" %(expr, size)
         indirection = 0
         seg = None
@@ -340,7 +340,7 @@ class Cpp(object):
             return expr
 
         try:
-            g = self.context.get_global(expr)
+            g = self.__context.get_global(expr)
             logging.debug("found global %s" % expr)
             if not self.lea and isinstance(g, op.var):
                 logging.debug("it is not lea and it is var")
@@ -386,7 +386,7 @@ class Cpp(object):
             indirection -= 1
             size = 2  # x0r dos 16 bit
             expr = m.group(1).strip()
-            self.current_size = 0
+            self.__current_size = 0
             expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', self.expand_cb, expr)  # parse each item
             # expr = "offsetof(struct Mem,%s)" %expr
 
@@ -418,11 +418,11 @@ class Cpp(object):
 
         m = re.match(r'(\w{2,2}):(.*)$', expr)
         if m is not None:
-            self.seg_prefix = m.group(1)
+            self.__seg_prefix = m.group(1)
             expr = m.group(2).strip()
-            logging.debug("SEGMENT %s, remains: %s" % (self.seg_prefix, expr))
+            logging.debug("SEGMENT %s, remains: %s" % (self.__seg_prefix, expr))
         else:
-            self.seg_prefix = "ds"
+            self.__seg_prefix = "ds"
 
         m = re.match(r'\[(.*)\]$', expr)
         if m is not None:
@@ -434,9 +434,9 @@ class Cpp(object):
             reg = m.group(1)
             plus = m.group(3)
             if plus is not None and plus != ']':
-                seg_prefix = self.seg_prefix
+                seg_prefix = self.__seg_prefix
                 plus = self.expand(plus)
-                self.seg_prefix = seg_prefix
+                self.__seg_prefix = seg_prefix
             else:
                 plus = ""
             match_id = False
@@ -457,40 +457,40 @@ class Cpp(object):
             expr = re.sub(r'\bword\s+ptr\s*', '', expr)
 
             logging.debug("EXPAND() BEFORE: %d %s" % (indirection, expr))
-            self.indirection = indirection
-            self.pointer_flag = False
-            self.current_size = 0
+            self.__indirection = indirection
+            self.__pointer_flag = False
+            self.__current_size = 0
             expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
-            if size == 0 and self.current_size != 0:
-                size = self.current_size
-                self.expr_size = size
-            logging.debug("EXPAND() AFTER: %d %s" % (self.indirection, expr))
-            logging.debug("is a pointer %d expr_size %d" % (self.pointer_flag, self.expr_size))
+            if size == 0 and self.__current_size != 0:
+                size = self.__current_size
+                self.__expr_size = size
+            logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
+            logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
             '''
                         if destination and not self.lea:
-                                if self.expr_size == 1:  # x0r
+                                if self.__expr_size == 1:  # x0r
                                         expr = "*(db*)(%s)" %(expr)
-                                elif self.expr_size == 2:
+                                elif self.__expr_size == 2:
                                         expr = "*(dw*)(%s)" %(expr)
-                                elif self.expr_size == 4:
+                                elif self.__expr_size == 4:
                                         expr = "*(dd*)(%s)" %(expr)
                         '''
-            self.pointer_flag = False
-            indirection = self.indirection
+            self.__pointer_flag = False
+            indirection = self.__indirection
             logging.debug("AFTER: %d %s" % (indirection, expr))
             # traceback.print_stack(file=sys.stdout)
 
         if indirection == 1:
             if not (self.lea and not destination):
                 if size == 1:
-                    expr = "*(raddr(%s,%s))" % (self.seg_prefix, expr)
+                    expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
                 elif size == 2:
-                    expr = "*(dw*)(raddr(%s,%s))" % (self.seg_prefix, expr)
+                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
                 elif size == 4:
-                    expr = "*(dd*)(raddr(%s,%s))" % (self.seg_prefix, expr)
+                    expr = "*(dd*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
                 else:
                     logging.debug("~%s~ @invalid size 0" % expr)
-                    expr = "*(dw*)(raddr(%s,%s))" % (self.seg_prefix, expr)
+                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
                 logging.debug("expr: %s" % expr)
         elif indirection == 0:
             pass
@@ -510,11 +510,11 @@ class Cpp(object):
 
         if not name in self.proc.labels:
             try:
-                offset, proc, pos = self.context.get_offset(name)
+                offset, proc, pos = self.__context.get_offset(name)
             except:
                 logging.debug("no label %s, trying procedure" % name)
                 try:
-                    proc = self.context.get_global(name)
+                    proc = self.__context.get_global(name)
                 except:
                     logging.warning("resolve_label exception "+name)
                     return name
@@ -523,13 +523,13 @@ class Cpp(object):
                 if not isinstance(proc, proc_module.Proc):
                     raise CrossJump("cross-procedure jump to non label and non procedure %s" % (name))
             self.proc.labels.add(name)
-            for i in range(0, len(self.unbounded)):
-                u = self.unbounded[i]
+            for i in range(0, len(self.__unbounded)):
+                u = self.__unbounded[i]
                 if u[1] == proc:
                     if pos < u[2]:
-                        self.unbounded[i] = (name, proc, pos)
+                        self.__unbounded[i] = (name, proc, pos)
                 return self.mangle_label(name)
-            self.unbounded.append((name, proc, pos))
+            self.__unbounded.append((name, proc, pos))
 
         return self.mangle_label(name)
 
@@ -538,7 +538,7 @@ class Cpp(object):
         name = name.strip()
         jump_proc = False
 
-        self.far = False
+        self.__far = False
         name_original = name
 
         prog = re.compile(r'^\s*(near|far|short)\s*(ptr)?\s*', re.I)  # x0r TODO
@@ -546,18 +546,18 @@ class Cpp(object):
         name = self.resolve_label(name)
         logging.debug("label %s" % name)
         hasglobal = False
-        if name in self.blacklist:
+        if name in self.__blacklist:
             jump_proc = True
 
-        if self.context.has_global(name):
+        if self.__context.has_global(name):
             hasglobal = True
-            g = self.context.get_global(name)
+            g = self.__context.get_global(name)
             if isinstance(g, proc_module.Proc):
                 jump_proc = True
 
         if jump_proc:
-            if name in self.function_name_remapping:
-                return "%s" % self.function_name_remapping[name]
+            if name in self.__function_name_remapping:
+                return "%s" % self.__function_name_remapping[name]
             else:
                 return "%s" % name
         else:
@@ -571,14 +571,14 @@ class Cpp(object):
                 name = "__dispatch_call"
             else:
                 if isinstance(g, op.label) and g.far:
-                    self.far = True  # make far calls to far procs
+                    self.__far = True  # make __far calls to __far __procs
 
             m = re.match(r'far\s+ptr', name_original)
             if m is not None:
-                self.far = True
+                self.__far = True
             m = re.match(r'near\s+ptr', name_original)
             if m is not None:
-                self.far = False
+                self.__far = False
 
             return name
 
@@ -591,10 +591,10 @@ class Cpp(object):
 
     def schedule(self, name):
         name = name.lower()
-        if name in self.proc_queue or name in self.proc_done or name in self.failed:
+        if name in self.__proc_queue or name in self.__proc_done or name in self.__failed:
             return
         logging.debug("+scheduling function %s..." % name)
-        self.proc_queue.append(name)
+        self.__proc_queue.append(name)
 
     def _call(self, name):
         logging.debug("cpp._call(%s)" % name)
@@ -606,7 +606,7 @@ class Cpp(object):
         else:
             dst = "__disp"
 
-        if self.far:
+        if self.__far:
             ret += "\tR(CALLF(%s));\n" % (dst)
         else:
             ret += "\tR(CALL(%s));\n" % (dst)
@@ -615,8 +615,8 @@ class Cpp(object):
                 if self.is_register(name):
                         ret += "\t__dispatch_call(%s);\n" %self.expand(name, 2)
                         return
-                if name in self.function_name_remapping:
-                        ret += "\tR(CALL(%s));\n" %self.function_name_remapping[name]
+                if name in self.__function_name_remapping:
+                        ret += "\tR(CALL(%s));\n" %self.__function_name_remapping[name]
                 else:
                         ret += "\tR(CALL(%s));\n" %name
                 self.schedule(name)
@@ -665,7 +665,7 @@ class Cpp(object):
         for i in src:
             res.append(self.expand(i, size))
         if size == 0:
-            size = self.current_size
+            size = self.__current_size
         return "\tR(MUL%d_%d(%s));\n" % (len(src), size, ",".join(res))
 
     def _imul(self, src):
@@ -679,7 +679,7 @@ class Cpp(object):
         for i in src:
             res.append(self.expand(i, size))
         if size == 0:
-            size = self.current_size
+            size = self.__current_size
         return "\tR(IMUL%d_%d(%s));\n" % (len(src), size, ",".join(res))
 
     def _div(self, src):
@@ -722,7 +722,7 @@ class Cpp(object):
         p = ""
         for r in regs:
             if self.get_size(r):
-                self.temps_count += 1
+                self.__temps_count += 1
                 r = self.expand(r)
                 p += "\tR(PUSH(%s));\n" % (r)
         return p
@@ -730,7 +730,7 @@ class Cpp(object):
     def _pop(self, regs):
         p = ""
         for r in regs:
-            self.temps_count -= 1
+            self.__temps_count -= 1
             r = self.expand(r)
             p += "\tR(POP(%s));\n" % r
         return p
@@ -787,13 +787,13 @@ class Cpp(object):
         # traceback.print_stack(file=sys.stdout)
         try:
             skip = def_skip
-            self.temps_count = 0
+            self.__temps_count = 0
             self.temps_max = 0
-            if self.context.has_global(name):
-                self.proc = self.context.get_global(name)
+            if self.__context.has_global(name):
+                self.proc = self.__context.get_global(name)
             else:
                 logging.debug("No procedure named %s, trying label" % name)
-                off, src_proc, skip = self.context.get_offset(name)
+                off, src_proc, skip = self.__context.get_offset(name)
 
                 self.proc = proc_module.Proc(name)
                 self.proc.stmts = copy(src_proc.stmts)
@@ -802,20 +802,20 @@ class Cpp(object):
                 # for p in xrange(skip, len(self.proc.stmts)):
                 #       s = self.proc.stmts[p]
                 #       if isinstance(s, op.basejmp):
-                #               o, p, s = self.context.get_offset(s.label)
+                #               o, p, s = self.__context.get_offset(s.label)
                 #               if p == src_proc and s < skip:
                 #                       skip = s
 
-            self.proc_addr.append((name, self.proc.offset))
+            self.__proc_addr.append((name, self.proc.offset))
             self.body = ""
             '''
-                        if name in self.function_name_remapping:
-                                self.body += "void %sContext::%s() {\n" %(self.namespace, self.function_name_remapping[name]);
+                        if name in self.__function_name_remapping:
+                                self.body += "void %sContext::%s() {\n" %(self.namespace, self.__function_name_remapping[name]);
                         else:
                                 self.body += "void %sContext::%s() {\n" %(self.namespace, name);
                         '''
-            if name in self.function_name_remapping:
-                self.body += "int %s() {\ngoto %s;\n" % (self.function_name_remapping[name], self.context.entry_point)
+            if name in self.__function_name_remapping:
+                self.body += "int %s() {\ngoto %s;\n" % (self.__function_name_remapping[name], self.__context.entry_point)
             else:
                 self.body += """
 int init(struct _STATE* _state)
@@ -865,16 +865,16 @@ X86_REGREF
 __disp=_i;
 if (__disp==kbegin) goto %s;
 else goto __dispatch_call;
-""" % (self.namespace, name, self.context.entry_point)
+""" % (self.__namespace, name, self.__context.entry_point)
 
             logging.info(name)
             self.proc.optimize()
-            self.unbounded = []
+            self.__unbounded = []
             self.proc.visit(self, skip)
             '''
                         #adding remaining labels:
-                        for i in xrange(0, len(self.unbounded)):
-                                u = self.unbounded[i]
+                        for i in xrange(0, len(self.__unbounded)):
+                                u = self.__unbounded[i]
                                 logging.info "UNBOUNDED: ", u
                                 proc = u[1]
                                 for p in xrange(u[2], len(proc.stmts)):
@@ -884,9 +884,9 @@ else goto __dispatch_call;
 
                         #adding statements
                         #BIG FIXME: this is quite ugly to handle code analysis from the code generation. rewrite me!
-                        for label, proc, offset in self.unbounded:
+                        for label, proc, offset in self.__unbounded:
                                 self.body += "\tR(return);\n" #we need to return before calling code from the other proc
-                                self.body += "/*continuing to unbounded code: %s from %s:%d-%d*/\n" %(label, proc.name, offset, len(proc.stmts))
+                                self.body += "/*continuing to __unbounded code: %s from %s:%d-%d*/\n" %(label, proc.name, offset, len(proc.stmts))
                                 start = len(self.proc.stmts)
                                 self.proc.add_label(label)
                                 for s in proc.stmts[offset:]:
@@ -900,15 +900,15 @@ else goto __dispatch_call;
                                 self.proc.visit(self, start)
                         '''
             # self.body += "}\n"; # x0r function end
-            if name not in self.skip_output:
-                self.translated.insert(0, self.body)
+            if name not in self.__skip_output:
+                self.__translated.insert(0, self.body)
             self.proc = None
-            if self.temps_count > 0:
-                logging.warning("temps count == %d at the exit of proc" % self.temps_count)
+            if self.__temps_count > 0:
+                logging.warning("temps count == %d at the exit of proc" % self.__temps_count)
             return True
         except (CrossJump, op.Unsupported) as e:
             logging.error("%s: ERROR: %s" % (name, e))
-            self.failed.append(name)
+            self.__failed.append(name)
         except:
             raise
 
@@ -917,25 +917,25 @@ else goto __dispatch_call;
 
     def write_stubs(self, fname, procs):
         if sys.version_info >= (3, 0):
-            fd = open(fname, "wt", encoding=self.codeset)
+            fd = open(fname, "wt", encoding=self.__codeset)
         else:
             fd = open(fname, "wt")
 
-        fd.write("//namespace %s {\n" % self.namespace)
+        fd.write("//namespace %s {\n" % self.__namespace)
         for p in procs:
-            if p in self.function_name_remapping:
+            if p in self.__function_name_remapping:
                 fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" % (
-                    self.namespace, self.function_name_remapping[p], self.function_name_remapping[p]))
+                    self.__namespace, self.__function_name_remapping[p], self.__function_name_remapping[p]))
             else:
-                fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" % (self.namespace, p, p))
-        fd.write("//} // End of namespace  %s\n" % self.namespace)
+                fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" % (self.__namespace, p, p))
+        fd.write("//} // End of namespace  %s\n" % self.__namespace)
         fd.close()
 
     def generate(self, start):
         # print self.prologue()
-        # print context
-        fname = self.namespace.lower() + ".cpp"
-        header = self.namespace.lower() + ".h"
+        # print __context
+        fname = self.__namespace.lower() + ".cpp"
+        header = self.__namespace.lower() + ".h"
         banner = """/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
 
 /* 
@@ -943,12 +943,12 @@ else goto __dispatch_call;
  */
 """
         if sys.version_info >= (3, 0):
-            self.fd = open(fname, "wt", encoding=self.codeset)
-            self.hd = open(header, "wt", encoding=self.codeset)
+            self.fd = open(fname, "wt", encoding=self.__codeset)
+            self.hd = open(header, "wt", encoding=self.__codeset)
         else:
             self.fd = open(fname, "wt")
             self.hd = open(header, "wt")
-        hid = "TASMRECOVER_%s_STUBS_H__" % self.namespace.upper().replace('-', '_')
+        hid = "TASMRECOVER_%s_STUBS_H__" % self.__namespace.upper().replace('-', '_')
         self.hd.write("""#ifndef %s
 #define %s
 
@@ -958,42 +958,42 @@ else goto __dispatch_call;
 #include <curses.h>
 
 //namespace %s {
-""" % (banner, header, self.namespace))
+""" % (banner, header, self.__namespace))
 
-        self.proc_queue.append(start)
-        while len(self.proc_queue):
-            name = self.proc_queue.pop()
-            if name in self.failed or name in self.proc_done:
+        self.__proc_queue.append(start)
+        while len(self.__proc_queue):
+            name = self.__proc_queue.pop()
+            if name in self.__failed or name in self.__proc_done:
                 continue
-            if len(self.proc_queue) == 0 and len(self.procs) > 0:
-                logging.info("queue's empty, adding remaining procs:")
-                for p in self.procs:
+            if len(self.__proc_queue) == 0 and len(self.__procs) > 0:
+                logging.info("queue's empty, adding remaining __procs:")
+                for p in self.__procs:
                     self.schedule(p)
-                self.procs = []
+                self.__procs = []
             logging.info("continuing on %s" % name)
-            self.proc_done.append(name)
+            self.__proc_done.append(name)
             self.__proc(name)
-            self.methods.append(name)
-        # self.write_stubs("_stubs.cpp", self.failed)
-        self.methods += self.failed
-        done, failed = len(self.proc_done), len(self.failed)
+            self.__methods.append(name)
+        # self.write_stubs("_stubs.cpp", self.__failed)
+        self.__methods += self.__failed
+        done, failed = len(self.__proc_done), len(self.__failed)
 
         self.fd.write("\n")
-        self.fd.write("\n".join(self.translated))
+        self.fd.write("\n".join(self.__translated))
         self.fd.write("\n")
         logging.info(
-            "%d ok, %d failed of %d, %3g%% translated" % (done, failed, done + failed, 100.0 * done / (done + failed)))
-        logging.info("\n".join(self.failed))
+            "%d ok, %d __failed of %d, %3g%% __translated" % (done, failed, done + failed, 100.0 * done / (done + failed)))
+        logging.info("\n".join(self.__failed))
         #data_bin = self.data_seg
-        cdata_bin = self.cdata_seg
-        hdata_bin = self.hdata_seg
+        cdata_bin = self.__cdata_seg
+        hdata_bin = self.__hdata_seg
         data_impl = ""
         n = 0
         #comment = ""
 
         self.fd.write("\nreturn;\n__dispatch_call:\nswitch (__disp) {\n")
         offsets = []
-        for k, v in list(self.context.get_globals().items()):
+        for k, v in list(self.__context.get_globals().items()):
             k = re.sub(r'[^A-Za-z0-9_]', '_', k)
             if isinstance(v, op.label):
                 offsets.append((k.lower(), k))
@@ -1036,17 +1036,17 @@ else goto __dispatch_call;
 //namespace %s {
 
 """
-            % (self.namespace))
+            % (self.__namespace))
 
-        if self.skip_addr_constants == False:
-            for name, addr in self.proc_addr:
+        if self.__skip_addr_constants == False:
+            for name, addr in self.__proc_addr:
                 self.hd.write("static const uint16_t addr_%s = 0x%04x;\n" % (name, addr))
 
-        # for name,addr in self.used_data_offsets:
+        # for name,addr in self.__used_data_offsets:
         #       self.hd.write("static const uint16_t offset_%s = 0x%04x;\n" %(name, addr))
 
         offsets = []
-        for k, v in list(self.context.get_globals().items()):
+        for k, v in list(self.__context.get_globals().items()):
             k = re.sub(r'[^A-Za-z0-9_]', '_', k)
             if isinstance(v, op.var):
                 pass  # offsets.append((k.capitalize(), hex(v.offset)))
@@ -1062,7 +1062,7 @@ else goto __dispatch_call;
 
         # self.hd.write("\nenum _offsets MYINT_ENUM {\n")
         offsets = []
-        for k, v in list(self.context.get_globals().items()):
+        for k, v in list(self.__context.get_globals().items()):
             k = re.sub(r'[^A-Za-z0-9_]', '_', k)
             if isinstance(v, op.var):
                 pass  # offsets.append((k.capitalize(), hex(v.offset)))
@@ -1099,19 +1099,19 @@ else goto __dispatch_call;
 
 //      void _start();
 """
-            % (self.namespace, self.namespace))
-        if self.skip_dispatch_call == False:
+            % (self.__namespace, self.__namespace))
+        if self.__skip_dispatch_call == False:
             self.hd.write(
                 """     
 """)
         '''
-                for p in set(self.methods):
-                        if p in self.blacklist:
-                                if self.header_omit_blacklisted == False:
+                for p in set(self.__methods):
+                        if p in self.__blacklist:
+                                if self.__header_omit_blacklisted == False:
                                         self.hd.write("\t//void %s();\n" %p)
                         else:
-                                if p in self.function_name_remapping:
-                                        self.hd.write("\tvoid %s();\n" %self.function_name_remapping[p])
+                                if p in self.__function_name_remapping:
+                                        self.hd.write("\tvoid %s();\n" %self.__function_name_remapping[p])
                                 else:
                                         self.hd.write("\tvoid %s();\n" %p)
                 '''
@@ -1121,10 +1121,10 @@ else goto __dispatch_call;
         # self.fd.write("void %sContext::__start() { %s\t%s(); \n}\n" %(self.namespace, data_impl, start))
         self.fd.write(" %s\n" % data_impl)
 
-        if self.skip_dispatch_call == False:
-            self.fd.write("\nvoid %sContext::__dispatch_call(uint16_t addr) {\n\tswitch(addr) {\n" % self.namespace)
-            self.proc_addr.sort(cmp=lambda x, y: x[1] - y[1])
-            for name, addr in self.proc_addr:
+        if self.__skip_dispatch_call == False:
+            self.fd.write("\nvoid %sContext::__dispatch_call(uint16_t addr) {\n\tswitch(addr) {\n" % self.__namespace)
+            self.__proc_addr.sort(cmp=lambda x, y: x[1] - y[1])
+            for name, addr in self.__proc_addr:
                 self.fd.write("\t\tcase addr_%s: %s(); break;\n" % (name, name))
             self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16_t)ax);")
             self.fd.write("\n\t}\n}")

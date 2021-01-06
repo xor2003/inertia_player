@@ -34,7 +34,6 @@ data segment
     delaytime db 5
 data ends
 
-
 text segment
 main proc far
 	assume ds: data, es: nothing
