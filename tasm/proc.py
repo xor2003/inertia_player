@@ -39,15 +39,14 @@ class Proc(object):
     def __init__(self, name, line_number=0, far=False):
         self.name = name
         self.original_name = name
-        self.calls = []
+        self.__calls = []
         self.stmts = []
         self.labels = set()
         self.retlabels = set()
         self.__label_re = re.compile(r'^([\S@]+)::?(.*)$')
         self.offset = Proc.last_addr
         Proc.last_addr += 4
-        self.line_number = 0
-        self.line_number = line_number
+        self.__line_number = line_number
         self.far = far
 
     def add_label(self, label, proc, line_number=0):

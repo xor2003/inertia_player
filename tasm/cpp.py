@@ -571,7 +571,7 @@ class Cpp(object):
                 name = "__dispatch_call"
             else:
                 if isinstance(g, op.label) and g.far:
-                    self.__far = True  # make __far calls to __far __procs
+                    self.__far = True  # make far calls to far procs
 
             m = re.match(r'far\s+ptr', name_original)
             if m is not None:
@@ -982,7 +982,7 @@ else goto __dispatch_call;
         self.fd.write("\n".join(self.__translated))
         self.fd.write("\n")
         logging.info(
-            "%d ok, %d __failed of %d, %3g%% __translated" % (done, failed, done + failed, 100.0 * done / (done + failed)))
+            "%d ok, %d failed of %d, %3g%% translated" % (done, failed, done + failed, 100.0 * done / (done + failed)))
         logging.info("\n".join(self.__failed))
         #data_bin = self.data_seg
         cdata_bin = self.__cdata_seg
