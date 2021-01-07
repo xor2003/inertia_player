@@ -186,6 +186,7 @@ class Cpp(object):
         return value
 
     def is_register(self, expr):
+        expr = expr.lower()
         if len(expr) == 2 and expr[0] in ['a', 'b', 'c', 'd'] and expr[1] in ['h', 'l']:
             logging.debug('is reg res 1')
             return 1
@@ -416,7 +417,7 @@ class Cpp(object):
             indirection += 1
             expr = m.group(1).strip()
 
-        m = re.match(r'(\w{2,2}):(.*)$', expr)
+        m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
         if m is not None:
             self.__seg_prefix = m.group(1)
             expr = m.group(2).strip()

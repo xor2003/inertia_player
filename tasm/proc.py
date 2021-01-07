@@ -30,7 +30,7 @@ from tasm import op
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-
+label_re = re.compile(r'^([\S@]+)::?(.*)$') # speed
 
 class Proc(object):
     last_addr = 0xc000
@@ -43,7 +43,6 @@ class Proc(object):
         self.stmts = []
         self.labels = set()
         self.retlabels = set()
-        self.__label_re = re.compile(r'^([\S@]+)::?(.*)$')
         self.offset = Proc.last_addr
         Proc.last_addr += 4
         self.__line_number = line_number
@@ -192,7 +191,7 @@ class Proc(object):
         return o
 
     def parse_extract_label(self, stmt):
-        r = self.__label_re.search(stmt)
+        r = label_re.search(stmt)
         if r is not None:
             logging.info("add label %s" % r.group(1))
             # label

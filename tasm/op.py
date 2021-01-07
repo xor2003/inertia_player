@@ -40,7 +40,8 @@ class var(object):
         #logging.debug("op.var(%d, %d, %s, %s, %s, %d)" %(size, offset, name, segment, issegment, elements))
         self.size = size
         self.offset = offset
-        self.name = name
+        self.original_name = name
+        self.name = name.lower()
         self.segment = segment
         self.issegment = issegment
         self.elements = elements

@@ -3837,7 +3837,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('cmp     ebx, esi')), u'\tR(CMP(ebx, esi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'cmp     ebx, offset unk_40F064')), u'\tR(CMP(ebx, offset(initcall,unk_40F064)));\n')
+            'cmp     ebx, offset unk_40F064')), u'\tR(CMP(ebx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('cmp     ecx, 1')), u'\tR(CMP(ecx, 1));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('cmp     edi, ebx')), u'\tR(CMP(edi, ebx));\n')
@@ -3905,7 +3905,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('cmp byte ptr [esi],4')), u'\tR(CMP(*(raddr(ds,esi)), 4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'cmp byte ptr [testOVerlap+1],1')), u'\tR(CMP(*(raddr(ds,offset(_data,testOVerlap)+1)), 1));\n')
+            'cmp byte ptr [testOVerlap+1],1')), u'\tR(CMP(*(raddr(ds,offset(_data,testoverlap)+1)), 1));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('cmp byte ptr [var1+1],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
         self.assertEqual(
@@ -4295,10 +4295,10 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edi,buffer')), u'\tR(edi = offset(_data,buffer));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edi,f')), u'\tR(edi = offset(_data,f));\n')
         self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edi,testOVerlap')), u'\tR(edi = offset(_data,testOVerlap));\n')
+            proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edi,testOVerlap')), u'\tR(edi = offset(_data,testoverlap));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edi,var1')), u'\tR(edi = offset(_data,var1));\n')
         self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edx,fileName')), u'\tR(edx = offset(_data,fileName));\n')
+            proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea edx,fileName')), u'\tR(edx = offset(_data,filename));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea esi,b')), u'\tR(esi = offset(_data,b));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea esi,f')), u'\tR(esi = offset(_data,f));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('lea esi,var2')), u'\tR(esi = offset(_data,var2));\n')
@@ -4465,7 +4465,7 @@ class ProcTest(unittest.TestCase):
                                                       proc_instance.action_instruction('mov     [esp], edi      ; s2')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov     dl, al')), u'\tR(MOV(dl, al));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     ds:byte_41411F[eax], dl')), u'\tR(MOV(*(raddr(ds,offset(_bss,byte_41411F)+eax)), dl));\n')
+            'mov     ds:byte_41411F[eax], dl')), u'\tR(MOV(*(raddr(ds,offset(_bss,byte_41411f)+eax)), dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
             'mov     dword ptr [ebp+var_20+4], 0FBCA7h')), u'\tR(MOV(*(dd*)(raddr(ds,ebp+var_20+4)), 0x0FBCA7));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
@@ -4591,7 +4591,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
             'mov     dword ptr [esp+4], 82345679h ; s0')), u'\tR(MOV(*(dd*)(raddr(ds,esp+4)), 0x82345679));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     dword ptr [esp+4], offset aXorw ; "xorw"')), u'\tR(MOV(*(dd*)(raddr(ds,esp+4)), offset(_rdata,aXorw)));\n')
+            'mov     dword ptr [esp+4], offset aXorw ; "xorw"')), u'\tR(MOV(*(dd*)(raddr(ds,esp+4)), offset(_rdata,axorw)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
             'mov     dword ptr [esp+8], 0 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ds,esp+8)), 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
@@ -4815,13 +4815,13 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
             'mov     dword ptr [esp], 813F3421h ; s2')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), 0x813F3421));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     dword ptr [esp], offset a10sA08lxB08lx ; "%-10s A=%08lx B=%08lx\\n"')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sA08lxB08lx)));\n')
+            'mov     dword ptr [esp], offset a10sA08lxB08lx ; "%-10s A=%08lx B=%08lx\\n"')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sa08lxb08lx)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     dword ptr [esp], offset a10sAh08lxAl08l ; "%-10s AH=%08lx AL=%08lx B=%08lx RH=%08l"...')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sAh08lxAl08l)));\n')
+            'mov     dword ptr [esp], offset a10sAh08lxAl08l ; "%-10s AH=%08lx AL=%08lx B=%08lx RH=%08l"...')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sah08lxal08l)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     dword ptr [esp], offset a10sD ; "%-10s %d\\n"')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sD)));\n')
+            'mov     dword ptr [esp], offset a10sD ; "%-10s %d\\n"')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sd)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     dword ptr [esp], offset a10sEax08lxA08l ; "%-10s EAX=%08lx A=%08lx C=%08lx CC=%02l"...')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10sEax08lxA08l)));\n')
+            'mov     dword ptr [esp], offset a10sEax08lxA08l ; "%-10s EAX=%08lx A=%08lx C=%08lx CC=%02l"...')), u'\tR(MOV(*(dd*)(raddr(ds,esp)), offset(_rdata,a10seax08lxa08l)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov     eax, 0')), u'\tR(MOV(eax, 0));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov     eax, 0FFFF7FFFh')), u'\tR(MOV(eax, 0x0FFFF7FFF));\n')
@@ -4990,7 +4990,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov     esi, esi_0')), u'\tR(MOV(esi, esi_0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov     esi, offset unk_40E008')), u'\tR(MOV(esi, offset(_data,unk_40E008)));\n')
+            'mov     esi, offset unk_40E008')), u'\tR(MOV(esi, offset(_data,unk_40e008)));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov     esi_0, ebx')), u'\tR(MOV(esi_0, ebx));\n')
         self.assertEqual(
@@ -5195,7 +5195,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edi,1')), u'\tR(MOV(edi, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edi,8')), u'\tR(MOV(edi, 8));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov edi,OFFSET AsCii ; get the offset address')), u'\tR(MOV(edi, offset(_data,ASCII)));\n')
+            'mov edi,OFFSET AsCii ; get the offset address')), u'\tR(MOV(edi, offset(_data,ascii)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edi,esi')), u'\tR(MOV(edi, esi));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edi,offset str2')), u'\tR(MOV(edi, offset(_data,str2)));\n')
@@ -5213,7 +5213,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edx,2')), u'\tR(MOV(edx, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edx,4')), u'\tR(MOV(edx, 4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'mov edx,OFFSET ASCiI ; DOS 1+ WRITE STRING TO STANDARD OUTPUT')), u'\tR(MOV(edx, offset(_data,ASCII)));\n')
+            'mov edx,OFFSET ASCiI ; DOS 1+ WRITE STRING TO STANDARD OUTPUT')), u'\tR(MOV(edx, offset(_data,ascii)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov edx,edi')), u'\tR(MOV(edx, edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
             'mov edx,offset _msg             ; DS:EDX -> $ Terminated String')), u'\tR(MOV(edx, offset(_data,_msg)));\n')
@@ -5223,7 +5223,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov esi,offset str1')), u'\tR(MOV(esi, offset(_data,str1)));\n')
         self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov esi,offset testOVerlap')), u'\tR(MOV(esi, offset(_data,testOVerlap)));\n')
+            proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov esi,offset testOVerlap')), u'\tR(MOV(esi, offset(_data,testoverlap)));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mov esi,offset var1')), u'\tR(MOV(esi, offset(_data,var1)));\n')
         self.assertEqual(
@@ -5240,7 +5240,7 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('movsx bx,byte ptr [h]')), u'\tR(MOVSX(bx, *(raddr(ds,offset(_data,h)))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('movsx ecx,cx')), u'\tR(MOVSX(ecx, cx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('movzx eax, DDD')), u'\tR(MOVZX(eax, DDD));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('movzx eax, DDD')), u'\tR(MOVZX(eax, DDD));\n') # ERROR
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('movzx ecx,bx')), u'\tR(MOVZX(ecx, bx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mul     cl')), u'\tR(MUL1_1(cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction('mul     cx')), u'\tR(MUL1_2(cx));\n')
@@ -5464,13 +5464,13 @@ class ProcTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(u'iret')), '\tR(IRET);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(u'retf')), '\tR(RETF);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'lds     bx, offset unk_40F064')), u'\tR(LDS(bx, offset(initcall,unk_40F064)));\n')
+            'lds     bx, offset unk_40F064')), u'\tR(LDS(bx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'les     bx, offset unk_40F064')), u'\tR(LES(bx, offset(initcall,unk_40F064)));\n')
+            'les     bx, offset unk_40F064')), u'\tR(LES(bx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'lfs     bx, offset unk_40F064')), u'\tR(LFS(bx, offset(initcall,unk_40F064)));\n')
+            'lfs     bx, offset unk_40F064')), u'\tR(LFS(bx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(
-            'lgs     bx, offset unk_40F064')), u'\tR(LGS(bx, offset(initcall,unk_40F064)));\n')
+            'lgs     bx, offset unk_40F064')), u'\tR(LGS(bx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(u'pusha')), '\tR(PUSHA);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(u'popa')), '\tR(POPA);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, proc_instance.action_instruction(u'cli')), '\tR(CLI);\n')

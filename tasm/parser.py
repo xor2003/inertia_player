@@ -210,8 +210,7 @@ class Parser():
         self.__offsets[name] = value
 
     def get_offset(self, name):
-        name = name.lower()
-        return self.__offsets[name]
+        return self.__offsets[name.lower()]
 
     def include(self, basedir, fname):
         logging.info("file: %s" % (fname))
@@ -350,6 +349,8 @@ class Parser():
     def convert_data_to_c(self, label, width, data):
         """ Generate C formated data """
         logging.debug("convert_data_to_c %s %d %s" % (label, width, data))
+        original_label = label
+        label = label.lower()
         is_string = False
         elements = 0
         data_ctype = {1: 'db', 2: 'dw', 4: 'dd', 8: 'dq', 10: 'dt'}[width]
@@ -536,7 +537,7 @@ class Parser():
         if cur_data_type == 4 or cur_data_type == 2:
             r.append("}")
 
-        r.append(", // " + label + "\n")
+        r.append(", // " + label + "\n") # TODO can put original_label
         rh.append(";\n")
 
         logging.debug(r)
@@ -907,7 +908,7 @@ class Parser():
 
             logging.debug("~size %d elements %d" % (binary_width, elements))
             if name:
-                self.set_global(name, op.var(binary_width, offset, name=name,
+                self.set_global(name.lower(), op.var(binary_width, offset, name=name,
                                              segment=self.__segment, elements=elements))
             # print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
             return c, h, s
@@ -1053,7 +1054,7 @@ class Parser():
                 args = self.parse_args_new_data(line+'\n')
                 #logging.error(args.values)
                 argg = [escape(i) for i in args.values]
-                args.label = re.sub(r'@', "arb", args.label).lower() # TODO lower
+                args.label = re.sub(r'@', "arb", args.label)
                 '''
                 j=[]
                 for i in argg:
