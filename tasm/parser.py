@@ -12,6 +12,9 @@ from builtins import range
 from builtins import str
 
 from parglare import Grammar, Parser as PGParser
+from parglare.parser import Context as PGContext
+from parglare import get_collector
+action = get_collector()
 
 import tasm.cpp
 #import tasm.lex
@@ -55,10 +58,6 @@ def escape(str):
 macroids=[]
 macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
 
-def macro_action(context, nodes, name):
-    macroids.insert(0,name.lower())
-    print ("added ~~" + name + "~~")
-
 def macroid(head, input, pos):
     mtch = macroidre.match(input[pos:])
     if mtch:
@@ -72,13 +71,27 @@ def macroid(head, input, pos):
     else:
         return None
 
+@action
+def macrodir(_, nodes, name):
+    macroids.insert(0,name.lower())
+    print ("added ~~" + name + "~~")
+
+@action
+def datadir(context, nodes, label, type, values):
+    if label == None:
+        label = ""
+    label = re.sub(r'@', "arb", label)
+    argg = [escape(i) for i in values]
+    return context.extra.datadir_action(label.lower(), type, argg)
+
+
 recognizers = {
     'macroid': macroid
 }
 
-actions = {
-"macrodir": macro_action
-}
+#actions = {
+#"macrodir": macro_action
+#}
 
 
 class ParglareParser(object):
@@ -89,9 +102,9 @@ class ParglareParser(object):
 
             file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
             grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
-            ## parser = Parser(grammar, debug=True, debug_trace=True)
-            ## parser = Parser(grammar, debug=True)
-            cls._inst.parser = PGParser(grammar)
+            ## cls._inst.parser = PGParser(grammar, debug=True, debug_trace=True, actions=action.all)
+            ## cls._inst.parser = PGParser(grammar, debug=True, actions=action.all)
+            cls._inst.parser = PGParser(grammar, actions=action.all)
 
         return cls._inst
 
@@ -128,6 +141,7 @@ class Parser():
         #self.prev_data_ctype = 0
         self.__line_number = 0
         self.__lex = ParglareParser()
+        self.__pgcontext = PGContext(extra = self)
 
     def visible(self):
         for i in self.__stack:
@@ -739,7 +753,8 @@ class Parser():
             #    continue
 
             if cmd0l in ['db', 'dw', 'dd', 'dq']:
-                self.action_data(line)
+                args = self.parse_args_new_data(line + '\n')
+                #self.action_data_(line)
                 continue
             elif cmd0l == 'include':
                 self.action_include(line)
@@ -780,8 +795,9 @@ class Parser():
                         self.action_assign(line)
                     continue
                 elif cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
-                        self.action_data(line)
-                        continue
+                     args = self.parse_args_new_data(line + '\n')
+                     #self.action_data_(line)
+                     continue
             if (self.__proc):
                 self.__proc.action_instruction(line, line_number=self.__line_number)
             else:
@@ -891,27 +907,25 @@ class Parser():
 
 
     def action_data(self, line):
-            name, type, args = self.parse_line_data_new(line)
+            return self.parse_args_new_data(line+'\n')
 
-            offset = self.__cur_seg_offset
-            logging.debug("data value %s offset %d" % (str(args), offset))
-
-            binary_width = self.calculate_type_size(type)
-            s = self.calculate_data_binary_size(binary_width, args)
-            self.__binary_data_size += s
-            self.__cur_seg_offset += s
-
-            c, h, elements = self.convert_data_to_c(name, binary_width,
-                                                       args)
-            self.c_data += c
-            self.h_data += h
-
-            logging.debug("~size %d elements %d" % (binary_width, elements))
-            if name:
-                self.set_global(name.lower(), op.var(binary_width, offset, name=name,
-                                             segment=self.__segment, elements=elements))
-            # print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
-            return c, h, s
+    def datadir_action(self, name, type, args):
+        offset = self.__cur_seg_offset
+        logging.debug("data value %s offset %d" % (str(args), offset))
+        binary_width = self.calculate_type_size(type)
+        s = self.calculate_data_binary_size(binary_width, args)
+        self.__binary_data_size += s
+        self.__cur_seg_offset += s
+        c, h, elements = self.convert_data_to_c(name, binary_width,
+                                                args)
+        self.c_data += c
+        self.h_data += h
+        logging.debug("~size %d elements %d" % (binary_width, elements))
+        if name:
+            self.set_global(name.lower(), op.var(binary_width, offset, name=name,
+                                                 segment=self.__segment, elements=elements))
+        # print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
+        return c, h, s
 
     def calculate_type_size(self, type):
             binary_width = {'b': 1, 'w': 2, 'd': 4, 'q': 8, 't': 10}[type[1].lower()]
@@ -967,7 +981,10 @@ class Parser():
     def parse_args_new_data(self, text):
         # print "parsing: [%s]" %text
 
-        return self.__lex.parser.parse(text)
+        self.__pgcontext = PGContext(extra = self)
+        result = self.__lex.parser.parse(text, context = self.__pgcontext)
+        logging.debug(str(result))
+        return result
 
     def parse_args(self, text):
         # print "parsing: [%s]" %text
@@ -1052,9 +1069,10 @@ class Parser():
                 arg = name + " " + arg + '\n'
                 #logging.error(arg)
                 args = self.parse_args_new_data(line+'\n')
-                #logging.error(args.values)
-                argg = [escape(i) for i in args.values]
-                args.label = re.sub(r'@', "arb", args.label)
+                #logging.info(str(args))
+                #argg = args.values
+                #argg = [escape(i) for i in args.values]
+                #args.label = re.sub(r'@', "arb", args.label)
                 '''
                 j=[]
                 for i in argg:
@@ -1063,7 +1081,7 @@ class Parser():
                     j=j+[i]
                 argg = j
                 '''
-                args = (args.label, args.type, argg)
+                #args = (args.label, args.type, argg)
                 return args
             else:
                 #arg = line[len(cmd0):].strip()
