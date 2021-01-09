@@ -62,9 +62,9 @@ def macroid(head, input, pos):
     mtch = macroidre.match(input[pos:])
     if mtch:
         result = mtch.group().lower()
-        print ("matched ~^~" + result+"~^~")
+        #print ("matched ~^~" + result+"~^~")
         if result in macroids:
-           print (" ~^~ in macroids")
+           print (" ~^~" + result+"~^~ in macroids")
            return result
         else:
            return None
@@ -74,7 +74,7 @@ def macroid(head, input, pos):
 @action
 def macrodir(_, nodes, name):
     macroids.insert(0,name.lower())
-    print ("added ~~" + name + "~~")
+    print ("macroid added ~~" + name + "~~")
 
 @action
 def datadir(context, nodes, label, type, values):
@@ -82,8 +82,31 @@ def datadir(context, nodes, label, type, values):
         label = ""
     label = re.sub(r'@', "arb", label)
     argg = [escape(i) for i in values]
+    print ("datadir " + str(nodes) + " ~~")
     return context.extra.datadir_action(label.lower(), type, argg)
 
+@action
+def labeldef(context, nodes, name):
+    print ("labeldef " + str(nodes) + " ~~")
+    return context.extra.proc.add_label(name, context.extra.proc)
+
+@action
+def instrprefix(context, nodes):
+    print ("prefix " + str(nodes) + " ~~")
+    o = context.extra.proc.create_instruction_object(nodes[0])
+    o.line = " ".join(nodes)
+    o.line_number = context.extra.line_number
+    context.extra.proc.stmts.append(o)
+    return o
+
+@action
+def asminstruction(context, nodes, instruction, args):
+    print ("instruction " + str(nodes) + " ~~")
+    o = context.extra.proc.create_instruction_object(instruction, args)
+    o.line = str(nodes)
+    o.line_number = context.extra.line_number
+    context.extra.proc.stmts.append(o)
+    return o
 
 recognizers = {
     'macroid': macroid
@@ -123,9 +146,9 @@ class Parser():
 
         # self.proc = None
         nname = "mainproc"
-        self.__proc = tasm.proc.Proc(nname)
+        self.proc = tasm.proc.Proc(nname)
         self.proc_list.append(nname)
-        self.set_global(nname, self.__proc)
+        self.set_global(nname, self.proc)
 
         self.__binary_data_size = 0
         self.c_data = []
@@ -139,7 +162,7 @@ class Parser():
         #self.data_started = False
         #self.prev_data_type = 0
         #self.prev_data_ctype = 0
-        self.__line_number = 0
+        self.line_number = 0
         self.__lex = ParglareParser()
         self.__pgcontext = PGContext(extra = self)
 
@@ -609,10 +632,10 @@ class Parser():
                         self.proc_list.append(nname)
                         self.set_global(nname, self.proc)
                 '''
-                if self.__proc is not None:
-                    self.__proc.add_label(name, isproc)
+                if self.proc is not None:
+                    self.proc.add_label(name, isproc)
                     # self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, len(self.proc.stmts)))
-                    self.set_offset(name, ("&m." + name.lower() + " - &m." + self.__segment, self.__proc, self.__offset_id))
+                    self.set_offset(name, ("&m." + name.lower() + " - &m." + self.__segment, self.proc, self.__offset_id))
                     farb = False
                     if far == 'far':
                         farb = True
@@ -671,7 +694,7 @@ class Parser():
         return self
 
     def parse_(self, fd, fname):
-        self.__line_number = 0
+        self.line_number = 0
         skipping_binary_data = False
         num = 0x1000
         if num:
@@ -696,14 +719,17 @@ class Parser():
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
 
     def parse_file_lines(self, fd, fname, skipping_binary_data):
+        self.parse_args_new_data(fd.read())
+        return
+
         for line in fd:
-            self.__line_number += 1
+            self.line_number += 1
             # line = line.decode("cp1251")
             line = line.strip()
             if len(line) == 0 or line[0] == ';' or line[0] == chr(0x1a):
                 continue
 
-            logging.debug("%d:      %s" % (self.__line_number, line))
+            logging.debug("%d:      %s" % (self.line_number, line))
 
             m = re.match('([@\w]+)\s*::?\s*(.*)', line)
             if m is not None:
@@ -798,8 +824,15 @@ class Parser():
                      args = self.parse_args_new_data(line + '\n')
                      #self.action_data_(line)
                      continue
-            if (self.__proc):
-                self.__proc.action_instruction(line, line_number=self.__line_number)
+            if (self.proc):
+                '''
+                o = self.proc.action_instruction(line)
+                o.line = line
+                o.line_number = self.line_number
+                self.proc.stmts.append(o)
+                '''
+                self.action_data(line)
+
             else:
                 # print line
                 pass
@@ -815,10 +848,10 @@ class Parser():
             if self.has_global(name):
                 has_global = True
                 name = self.get_global(name).original_name
-            o = self.__proc.add_assignment(name, vv, line_number=self.__line_number)
+            o = self.proc.add_assignment(name, vv, line_number=self.line_number)
             if has_global == False:
                 self.set_global(cmd0, o)
-            self.__proc.stmts.append(o)
+            self.proc.stmts.append(o)
             return o
 
 
@@ -828,7 +861,7 @@ class Parser():
             vv = self.get_equ_value(cmd)
             name = cmd0
             proc = self.get_global("mainproc")
-            o = proc.add_equ_(name, vv, line_number=self.__line_number)
+            o = proc.add_equ_(name, vv, line_number=self.line_number)
             self.set_global(name, o)
             proc.stmts.insert(0, o)
             return o
@@ -875,9 +908,16 @@ class Parser():
             cmd = line.split()
             cmd0 = str(cmd[0])
             cmd0l = cmd0.lower()
-            self.__proc.action_instruction(cmd0l)
-            self.__proc.action_instruction(" ".join(cmd[1:]))
 
+            o = self.proc.action_instruction(cmd0l)
+            o.line = cmd0l
+            o.line_number = self.line_number
+            self.proc.stmts.append(o)
+
+            o = self.proc.action_instruction(" ".join(cmd[1:]))
+            o.line = " ".join(cmd[1:])
+            o.line_number = self.line_number
+            self.proc.stmts.append(o)
 
     def action_endseg(self):
             logging.debug("segment %s ends" % (self.__segment))
@@ -890,7 +930,7 @@ class Parser():
 
 
     def action_endp(self):
-            self.__proc = self.get_global('mainproc')
+            self.proc = self.get_global('mainproc')
 
 
     def action_endif(self):
@@ -987,6 +1027,7 @@ class Parser():
         return result
 
     def parse_args(self, text):
+        return text
         # print "parsing: [%s]" %text
         escape = False
         string = False

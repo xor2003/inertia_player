@@ -199,6 +199,7 @@ class Cpp(object):
         return 0
 
     def get_size(self, expr):
+        print (expr)
         expr = expr.strip()
         origexpr = expr
         logging.debug('get_size("%s")' % expr)

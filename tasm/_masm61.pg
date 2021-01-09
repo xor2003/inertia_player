@@ -1,5 +1,5 @@
-start: datadir;
-module: directivelist?  enddir;
+start: asminstruction;
+module: directivelist?  enddir?;
 addop: '+' | '-';
 aliasdir: ALIAS;
 altidq: '(' LABEL ')';
@@ -186,7 +186,7 @@ instruction: asminstruction=asminstruction linereminder | prefix=instrprefix  as
 invokearg: anyregister '::' register| ADDR expr | expr;
 invokedir: INVOKE expr commainvokelist? linereminder;
 invokelist: invokearg+[COMMAOEOL];
-labeldef: LABEL ':' | LABEL '::' | MONKEY ':';
+labeldef: name=LABEL ':' | name=LABEL '::' | name=MONKEY ':';
 labeldir: LABEL LABELKW qualifiedtype linereminder;
 langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL ;
 linereminder: ENDOFLINE | COMMENTTERM ENDOFLINE;

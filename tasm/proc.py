@@ -36,7 +36,7 @@ class Proc(object):
     last_addr = 0xc000
     elements = 1  # how many
 
-    def __init__(self, name, line_number=0, far=False):
+    def __init__(self, name, far=False):
         self.name = name
         self.original_name = name
         self.__calls = []
@@ -45,7 +45,7 @@ class Proc(object):
         self.retlabels = set()
         self.offset = Proc.last_addr
         Proc.last_addr += 4
-        self.__line_number = line_number
+        #self.__line_number = line_number
         self.far = far
 
     def add_label(self, label, proc, line_number=0):
@@ -172,7 +172,7 @@ class Proc(object):
         # self.optimize_sequence(op._movsb);
         # self.optimize_sequence(op._movsw);
 
-    def action_instruction(self, stmt, line_number=0):
+    def action_instruction(self, stmt):
         # print stmt
         # comment = stmt.find(';')
         # comments = ""
@@ -186,8 +186,10 @@ class Proc(object):
         if len(stmt) == 0:
             return
 
-        o = self.add_(line, line_number, stmt)
-        self.stmts.append(o)
+        o = self.split_create_instruction(stmt)
+        #o.line = line
+        #o.line_number = line_number
+        #self.stmts.append(o)
         return o
 
     def parse_extract_label(self, stmt):
@@ -200,19 +202,20 @@ class Proc(object):
             stmt = r.group(2).strip()
         return stmt
 
-    def add_(self, line, line_number, stmt):
+    def split_create_instruction(self, stmt):
         # s = [stmt.replace("\x00", " ") for stmt in
         #     re.sub('["\'].+?["\']', lambda m: m.group(0).replace(" ", "\x00"), stmt).split()]
-        s = stmt.split(None, 1)
-        cmd = s[0]
-        cl = self.find_op_class(cmd)
+        s = stmt.split()
+        o = self.create_instruction_object(s[0], s[1:])
+        return o
+
+    def create_instruction_object(self, instruction, args):
+        cl = self.find_op_class(instruction)
         # print "args %s" %s[1:]
-        arg = " ".join(s[1:]) if len(s) > 1 else ""
-        o = cl(arg)
+        #arg = " ".join(args) if len(args) > 0 else ""
+        o = cl(args)
         # o.comments = comments
-        o.line = line
-        o.cmd = cmd.lower()
-        o.__line_number = line_number
+        o.cmd = instruction.lower()
         # logging.info("~1~2~ " + o.command + " ~ " + o.cmd)
         return o
 
@@ -284,8 +287,8 @@ class Proc(object):
             s = self.generate_c_cmd(visitor, stmt)
             visitor.body += s
             try:  # trying to add command and comment
-                if stmt.line or stmt.__line_number != 0:
-                    visitor.body = visitor.body[:-1] + "\t// " + str(stmt.__line_number) \
+                if stmt.line or stmt.line_number != 0:
+                    visitor.body = visitor.body[:-1] + "\t// " + str(stmt.line_number) \
                                    + " " + stmt.line + "\n"
             except AttributeError:
                 pass

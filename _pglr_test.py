@@ -37,7 +37,8 @@ grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers
 from parglare import Parser
 #parser = Parser(grammar, debug=True, debug_trace=True, actions={"macrodir": macro_action})
 #parser = Parser(grammar, debug=True, actions={"macrodir": macro_action})
-parser = Parser(grammar, actions=actions)
+parser = Parser(grammar, debug=True, actions=actions)
+#parser = Parser(grammar, actions=actions)
 
 codeset = 'cp437'
 
