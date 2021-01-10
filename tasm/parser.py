@@ -99,9 +99,22 @@ def instrprefix(context, nodes):
     context.extra.proc.stmts.append(o)
     return o
 
+def listtostring(l):
+    if isinstance(l, list):
+        l = [listtostring(i) for i in l]
+        s=""
+        for i in l:
+            if s!="" and re.match(r'[A-Za-z_]',s[-1]) != None and (re.match(r'[A-Za-z_]',i[0]) != None or i[0] == '['):
+                s = s + ' '
+            s = s + i
+        l = s
+    return l
+
 @action
 def asminstruction(context, nodes, instruction, args):
     print ("instruction " + str(nodes) + " ~~")
+    if args != None:
+        args = [listtostring(i) for i in args] # TODO temporary workaround
     o = context.extra.proc.create_instruction_object(instruction, args)
     o.line = str(nodes)
     o.line_number = context.extra.line_number
@@ -1019,10 +1032,10 @@ class Parser():
             # print self.c_data
 
     def parse_args_new_data(self, text):
-        # print "parsing: [%s]" %text
+        print ("parsing: [%s]" % text)
 
         self.__pgcontext = PGContext(extra = self)
-        result = self.__lex.parser.parse(text, context = self.__pgcontext)
+        result = self.__lex.parser.parse(text, context = self.__pgcontext).asminstruction
         logging.debug(str(result))
         return result
 
