@@ -958,9 +958,21 @@ class Parser():
             cmd = line.split()
             self.push_if(cmd[1])
 
+    def action_code(self, line):
+        result = self.parse_args_new_data_('''.model tiny
+    .code
+    ''' + line + '''
+    end
+    ''').asminstruction
+        return result
 
     def action_data(self, line):
-            return self.parse_args_new_data(line+'\n')
+        result = self.parse_args_new_data_('''.model tiny
+.code
+'''+line+'''
+end
+''')
+        return result
 
     def datadir_action(self, name, type, args):
         offset = self.__cur_seg_offset
@@ -1031,11 +1043,14 @@ class Parser():
                 self.c_data[addr] = str(v)
             # print self.c_data
 
+    def parse_args_new_data_(self, text):
+        return self.parse_args_new_data(text)[0][1][1][0].insegmentdir
+
     def parse_args_new_data(self, text):
         print ("parsing: [%s]" % text)
 
         self.__pgcontext = PGContext(extra = self)
-        result = self.__lex.parser.parse(text, context = self.__pgcontext).asminstruction
+        result = self.__lex.parser.parse(text, context = self.__pgcontext)
         logging.debug(str(result))
         return result
 

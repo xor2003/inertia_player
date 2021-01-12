@@ -1,4 +1,3 @@
-start: instruction;
 module: directivelist?  enddir?;
 addop: '+' | '-';
 aliasdir: ALIAS;
@@ -178,7 +177,7 @@ includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
 | STRING| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber| INTEGER;
-insegdir: label=labeldef insegmentdir | insegmentdir;
+insegdir: label=labeldef insegmentdir=insegmentdir | insegmentdir=insegmentdir;
 //insegdirlist: insegdir+;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? endpdir| procdir  localdirlist? insegdir+ endpdir| invokedir| generaldir | linereminder;
 instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;
