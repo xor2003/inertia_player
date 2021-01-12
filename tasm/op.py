@@ -230,18 +230,14 @@ class _jnb(basejmp):
 
 class _push(baseop):
     def __init__(self, arg):
-        self.regs = []
-        for r in tasm.parser.Parser().parse_args(arg)[0].split():
-            self.regs.append(self.parse_arg(r))
+        self.regs = arg
 
     def visit(self, visitor):
         return visitor._push(self.regs)
 
 class _pop(baseop):
     def __init__(self, arg):
-        self.regs = []
-        for r in tasm.parser.Parser().parse_args(arg)[0].split():
-            self.regs.append(self.parse_arg(r))
+        self.regs = arg
 
     def visit(self, visitor):
         return visitor._pop(self.regs)

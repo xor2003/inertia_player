@@ -2063,6 +2063,13 @@ class ParserTest(unittest.TestCase):
             self.assertEqual(
                 proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_assign(u'res = edx ; int')), '#undef res\n#define res edx\n')
 
+    def test_generate_c_cmddd(self):
+        p = Parser([])
+        cpp_instance = cpp.Cpp(p)
+        proc_instance = Proc('mainproc', False)
+        cpp_instance.proc = proc_instance
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
+            'mov     edx, dword ptr [ebp+var_20]')), u'\tR(MOV(edx, *(dd*)(raddr(ds,ebp+var_20))));\n')
 
     def test_generate_c_cmd(self):
         p = Parser([])
@@ -5681,6 +5688,8 @@ class ParserTest(unittest.TestCase):
         p.action_label(far='near', name=u'test_xchg', isproc=True)
         p.action_label(far='near', name=u'test_xor', isproc=True)
 
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop ax bx')), u'\tR(POP(ax));\n\tR(POP(bx));\n')
+
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP eax,1')), u'\tR(CMP(eax, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp ebx,'dcba'")), u'\tR(CMP(ebx, 0x64636261));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("sub dl,'a'")), u"\tR(SUB(dl, 'a'));\n")
@@ -6974,7 +6983,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, resh')), u'\tR(MOV(edx, resh));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     edx_0_0, dword ptr [ebp+var_20]')), u'\tR(MOV(edx_0_0, *(dd*)(raddr(ds,ebp+var_20))));\n')
+            'mov     edx, dword ptr [ebp+var_20]')), u'\tR(MOV(edx, *(dd*)(raddr(ds,ebp+var_20))));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 0FFFEFDFCh')), u'\tR(MOV(esi, 0x0FFFEFDFC));\n')
         self.assertEqual(

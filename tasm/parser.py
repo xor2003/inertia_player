@@ -21,6 +21,7 @@ import tasm.cpp
 #from tasm.lex import Lex, recognizers, escape
 import tasm.proc
 from tasm import op
+import parglare
 
 
 # ScummVM - Graphic Adventure Engine
@@ -58,13 +59,19 @@ def escape(str):
 macroids=[]
 macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
 
+def get_line(context):
+    return parglare.pos_to_line_col(context.input_str, context.start_position)[0]
+
+def get_raw(context):
+    return context.input_str[context.start_position: context.end_position]
+
 def macroid(head, input, pos):
     mtch = macroidre.match(input[pos:])
     if mtch:
         result = mtch.group().lower()
-        #print ("matched ~^~" + result+"~^~")
+        #logging.debug ("matched ~^~" + result+"~^~")
         if result in macroids:
-           print (" ~^~" + result+"~^~ in macroids")
+           logging.debug (" ~^~" + result+"~^~ in macroids")
            return result
         else:
            return None
@@ -74,7 +81,7 @@ def macroid(head, input, pos):
 @action
 def macrodir(_, nodes, name):
     macroids.insert(0,name.lower())
-    print ("macroid added ~~" + name + "~~")
+    logging.debug ("macroid added ~~" + name + "~~")
 
 @action
 def datadir(context, nodes, label, type, values):
@@ -82,8 +89,26 @@ def datadir(context, nodes, label, type, values):
         label = ""
     label = re.sub(r'@', "arb", label)
     argg = [escape(i) for i in values]
-    print ("datadir " + str(nodes) + " ~~")
+    logging.debug ("datadir " + str(nodes) + " ~~")
     return context.extra.datadir_action(label.lower(), type, argg)
+
+@action
+def segdir(context, nodes, type, name):
+    print ("segdir " + str(nodes) + " ~~")
+    context.extra.action_simplesegment(type, name)
+    return nodes
+
+@action
+def segmentdir(context, nodes, name):
+    print ("segmentdir " + str(name) + " ~~")
+    context.extra.action_segment(name)
+    return nodes
+
+@action
+def endsdir(context, nodes, name):
+    print ("ends " + str(name) + " ~~")
+    context.extra.action_endseg()
+    return nodes
 
 @action
 def labeldef(context, nodes, name):
@@ -94,8 +119,8 @@ def labeldef(context, nodes, name):
 def instrprefix(context, nodes):
     print ("prefix " + str(nodes) + " ~~")
     o = context.extra.proc.create_instruction_object(nodes[0])
-    o.line = " ".join(nodes)
-    o.line_number = context.extra.line_number
+    o.line = get_raw(context)
+    o.line_number = get_line(context)
     context.extra.proc.stmts.append(o)
     return o
 
@@ -116,10 +141,17 @@ def asminstruction(context, nodes, instruction, args):
     if args != None:
         args = [listtostring(i) for i in args] # TODO temporary workaround
     o = context.extra.proc.create_instruction_object(instruction, args)
-    o.line = str(nodes)
-    o.line_number = context.extra.line_number
+    o.line = get_raw(context)
+    o.line_number = get_line(context)
     context.extra.proc.stmts.append(o)
     return o
+
+@action
+def enddir(context, nodes, label):
+    print ("end " + str(label) + " ~~")
+    if label != None:
+        context.extra.entry_point = label.lower()
+    return nodes
 
 recognizers = {
     'macroid': macroid
@@ -187,15 +219,15 @@ class Parser():
 
     def push_if(self, text):
         value = self.eval(text)
-        # print "if %s -> %s" %(text, value)
+        # logging.debug "if %s -> %s" %(text, value)
         self.__stack.append(value)
 
     def push_else(self):
-        # print "else"
+        # logging.debug "else"
         self.__stack[-1] = not self.__stack[-1]
 
     def pop_if(self):
-        # print "endif"
+        # logging.debug "endif"
         return self.__stack.pop()
 
     def set_global(self, name, value):
@@ -291,7 +323,7 @@ class Parser():
         n = 1
         while n > 0:
             expr, n = re.subn(r'\b([a-zA-Z_]+[a-zA-Z0-9_]*)', self.expr_callback, expr)
-        # print "~%s~" %(expr)
+        # logging.debug "~%s~" %(expr)
         expr = expr.strip()
         # exprr = expr.lower()
         expr = cpp.convert_number_to_c(expr)
@@ -316,7 +348,7 @@ class Parser():
         return re.sub(r'\$', "%d" % self.__cur_seg_offset, v)
 
     def parse_int(self, v):
-        # print "~1~ %s" %v
+        # logging.debug "~1~ %s" %v
         if isinstance(v, list):
             vv = ""
             for i in v:
@@ -327,13 +359,13 @@ class Parser():
                 vv += str(i)
             v = vv
         v = v.strip()
-        # print "~2~ %s" %v
+        # logging.debug "~2~ %s" %v
         if re.match(r'^[+-]?[0-9][0-9A-Fa-f]*[Hh]$', v):
             v = int(v[:-1], 16)
-            # print "~3~ %i" %v
+            # logging.debug "~3~ %i" %v
         elif re.match(r'^[01]+[Bb]$', v):
             v = int(v[:-1], 2)
-            # print "~2~ %i" %v
+            # logging.debug "~2~ %i" %v
 
         try:
             vv = eval(v)
@@ -341,7 +373,7 @@ class Parser():
         except:
             pass
 
-        # print "~4~ %s" %v
+        # logging.debug "~4~ %s" %v
         return int(v)
 
     def calculate_data_binary_size(self, width, data):
@@ -455,7 +487,7 @@ class Parser():
                 except:
                     # global name
                     # traceback.print_stack(file=sys.stdout)
-                    # print "global/expr: ~%s~" %v
+                    # logging.debug "global/expr: ~%s~" %v
                     try:
                         v = self.get_global_value(v, base)
                     except KeyError:
@@ -553,7 +585,7 @@ class Parser():
                     else:
                         vv += str(r[i])
                 elif isinstance(r[i], str):
-                    # print "~~ " + r[i] + str(ord(r[i]))
+                    # logging.debug "~~ " + r[i] + str(ord(r[i]))
                     if r[i] in ["\'", '\"', '\\']:
                         r[i] = "\\" + r[i]
                     elif ord(r[i]) > 127:
@@ -617,7 +649,7 @@ class Parser():
                     value = val
                 else:
                     value = self.parse_int(value)
-            # print "n = %d value = %d" %(n, value)
+            # logging.debug "n = %d value = %d" %(n, value)
 
             res.append(value)
         return n, res
@@ -632,16 +664,16 @@ class Parser():
     def action_label(self, name, far="", isproc=False):
             #if self.visible():
             # name = m.group(1)
-            # print "~name: %s" %name
+            # logging.debug "~name: %s" %name
             name = re.sub(r'@', "arb", name)
-            # print "~~name: %s" %name
+            # logging.debug "~~name: %s" %name
             if not (name.lower() in self.__skip_binary_data):
                 logging.debug("offset %s -> %s" % (name, "&m." + name.lower() + " - &m." + self.__segment))
                 '''
                 if self.proc is None:
                         nname = "mainproc"
                         self.proc = proc(nname)
-                        #print "procedure %s, #%d" %(name, len(self.proc_list))
+                        #logging.debug "procedure %s, #%d" %(name, len(self.proc_list))
                         self.proc_list.append(nname)
                         self.set_global(nname, self.proc)
                 '''
@@ -688,7 +720,7 @@ class Parser():
         if self.proc == None:
                 name = "mainproc"
                 self.proc = proc(name)
-                #print "procedure %s, #%d" %(name, len(self.proc_list))
+                #logging.debug "procedure %s, #%d" %(name, len(self.proc_list))
                 self.proc_list.append(name)
                 self.set_global(name, self.proc)
         '''
@@ -847,7 +879,7 @@ class Parser():
                 self.action_data(line)
 
             else:
-                # print line
+                # logging.debug line
                 pass
 
 
@@ -879,11 +911,8 @@ class Parser():
             proc.stmts.insert(0, o)
             return o
 
-    def action_segment(self, line):
-            cmd = line.split()
-            cmd0 = str(cmd[0])
-            cmd0l = cmd0.lower()
-            name = cmd0l
+    def action_segment(self, name):
+            name = name.lower()
             self.__segment = name
             self.create_segment(name)
 
@@ -906,9 +935,13 @@ class Parser():
             self.action_label_(cmd0+":", far=cmd2l, isproc=True)
 
 
-    def action_simplesegment(self, line):
-            line = line.lower()
-            self.action_segment(line[1:])
+    def action_simplesegment(self, type, name):
+            if name == None:
+                name = ""
+            else:
+                type = type + "_"
+            type = type[1:] + name
+            self.action_segment(type)
 
 
     def action_end(self, line):
@@ -960,18 +993,20 @@ class Parser():
 
     def action_code(self, line):
         result = self.parse_args_new_data_('''.model tiny
-    .code
+    .code supertest
     ''' + line + '''
     end
     ''').asminstruction
+        del self.__globals['code_supertest']
         return result
 
     def action_data(self, line):
         result = self.parse_args_new_data_('''.model tiny
-.code
+.code supertest
 '''+line+'''
 end
 ''')
+        del self.__globals['code_supertest']
         return result
 
     def datadir_action(self, name, type, args):
@@ -989,7 +1024,7 @@ end
         if name:
             self.set_global(name.lower(), op.var(binary_width, offset, name=name,
                                                  segment=self.__segment, elements=elements))
-        # print("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
+        # logging.debug("~~        self.assertEqual(parser_instance.parse_data_line_whole(line='"+str(line)+"'),"+str(("".join(c), "".join(h), offset2 - offset))+")")
         return c, h, s
 
     def calculate_type_size(self, type):
@@ -1025,7 +1060,7 @@ end
 
     def link(self):
             logging.debug("link()")
-            # print self.c_data
+            # logging.debug self.c_data
             for addr, expr in self.__link_later:
                 logging.debug("addr %s expr %s" % (addr, expr))
                 try:
@@ -1041,13 +1076,13 @@ end
                     continue
                 logging.debug("link: addr %s v %s" % (addr, v))
                 self.c_data[addr] = str(v)
-            # print self.c_data
+            # logging.debug self.c_data
 
     def parse_args_new_data_(self, text):
         return self.parse_args_new_data(text)[0][1][1][0].insegmentdir
 
     def parse_args_new_data(self, text):
-        print ("parsing: [%s]" % text)
+        logging.debug ("parsing: [%s]" % text)
 
         self.__pgcontext = PGContext(extra = self)
         result = self.__lex.parser.parse(text, context = self.__pgcontext)
@@ -1056,14 +1091,14 @@ end
 
     def parse_args(self, text):
         return text
-        # print "parsing: [%s]" %text
+        # logging.debug "parsing: [%s]" %text
         escape = False
         string = False
         result = []
         token = ""
         # value = 0
         for c in text:
-            # print "[%s]%s: %s: %s" %(token, c, escape, string)
+            # logging.debug "[%s]%s: %s: %s" %(token, c, escape, string)
             if c == '\\':
                 token += c
             #               if c == '\\':
@@ -1103,7 +1138,7 @@ end
         token = token.strip()
         if len(token):
             result.append(token)
-        # print result
+        # logging.debug result
         return result
 
     def parse_line_data(self, line):
