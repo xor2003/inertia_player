@@ -111,9 +111,34 @@ def endsdir(context, nodes, name):
     return nodes
 
 @action
+def procdir(context, nodes, name, type):
+    print ("procdir " + str(nodes) + " ~~")
+    context.extra.action_proc(name, type)
+    return nodes
+
+@action
+def endpdir(context, nodes, name):
+    print ("endp " + str(name) + " ~~")
+    context.extra.action_endp()
+    return nodes
+
+@action
+def equdir(context, nodes, name, value):
+    print ("equdir " + str(nodes) + " ~~")
+    context.extra.action_equ(name, listtostring(value))
+    return nodes
+
+
+@action
+def assdir(context, nodes, name, value):
+    print ("assdir " + str(nodes) + " ~~")
+    context.extra.action_assign(name, listtostring(value))
+    return nodes
+
+@action
 def labeldef(context, nodes, name):
     print ("labeldef " + str(nodes) + " ~~")
-    return context.extra.proc.add_label(name, context.extra.proc)
+    return context.extra.action_label(name)
 
 @action
 def instrprefix(context, nodes):
@@ -124,7 +149,7 @@ def instrprefix(context, nodes):
     context.extra.proc.stmts.append(o)
     return o
 
-def listtostring(l):
+def listtostring(l): # TODO remove
     if isinstance(l, list):
         l = [listtostring(i) for i in l]
         s=""
@@ -654,14 +679,14 @@ class Parser():
             res.append(value)
         return n, res
 
-    def action_label_(self, line, far="", isproc=False):
+    def action_label_(self, line, far=False, isproc=False):
         #logging.info(line)
         m = re.match('([@\w]+)\s*::?', line)
         name = m.group(1).strip()
         logging.debug(name)
-        self.action_label(name, far=far, isproc=isproc)
+        self.action_label(name=name, far=far, isproc=isproc)
 
-    def action_label(self, name, far="", isproc=False):
+    def action_label(self, name, far=False, isproc=False):
             #if self.visible():
             # name = m.group(1)
             # logging.debug "~name: %s" %name
@@ -681,10 +706,7 @@ class Parser():
                     self.proc.add_label(name, isproc)
                     # self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, len(self.proc.stmts)))
                     self.set_offset(name, ("&m." + name.lower() + " - &m." + self.__segment, self.proc, self.__offset_id))
-                    farb = False
-                    if far == 'far':
-                        farb = True
-                    self.set_global(name, op.label(name, tasm.proc.Proc, line_number=self.__offset_id, far=farb))
+                    self.set_global(name, op.label(name, tasm.proc.Proc, line_number=self.__offset_id, far=far))
                     self.__offset_id += 1
                 else:
                     logging.error("!!! Label %s is outside the procedure" % name)
@@ -883,11 +905,8 @@ class Parser():
                 pass
 
 
-    def action_assign(self, line):
-            cmd = line.split()
-            cmd0 = str(cmd[0])
-            vv = self.get_equ_value(cmd)
-            name = cmd0
+    def action_assign(self, name, value):
+            vv = self.get_equ_value(value)
 
             has_global = False
             if self.has_global(name):
@@ -900,11 +919,8 @@ class Parser():
             return o
 
 
-    def action_equ(self, line):
-            cmd = line.split()
-            cmd0 = str(cmd[0])
-            vv = self.get_equ_value(cmd)
-            name = cmd0
+    def action_equ(self, name, value):
+            vv = self.get_equ_value(value)
             proc = self.get_global("mainproc")
             o = proc.add_equ_(name, vv, line_number=self.line_number)
             self.set_global(name, o)
@@ -917,14 +933,13 @@ class Parser():
             self.create_segment(name)
 
 
-    def action_proc(self, line):
-            cmd = line.split()
-            cmd0 = str(cmd[0])
-            cmd0l = cmd0.lower()
-            cmd2l = ""
-            if len(cmd) >= 3:
-                cmd2l = cmd[2].lower()
-            logging.info("procedure name %s" % cmd0l)
+    def action_proc(self, name, type):
+            logging.info("procedure name %s" % name)
+            name = name.lower()
+            far = ''
+            for i in type:
+                if i != None and i.lower() == 'far':
+                    far = True
             '''
                                             name = cmd0l
                                             self.proc = proc(name)
@@ -932,7 +947,7 @@ class Parser():
                                             self.proc_list.append(name)
                                             self.set_global(name, self.proc)
                                             '''
-            self.action_label_(cmd0+":", far=cmd2l, isproc=True)
+            self.action_label(name, far=far, isproc=True)
 
 
     def action_simplesegment(self, type, name):
@@ -1032,11 +1047,10 @@ end
             return binary_width
 
 
-    def get_equ_value(self, cmd):
-            v = " ".join(cmd[2:])
+    def get_equ_value(self, v):
             logging.debug("%s" % v)
             vv = self.fix_dollar(v)
-            vv = " ".join(self.parse_args(vv))
+            #? vv = " ".join(self.parse_args(vv))
             vv = vv.strip()
             logging.debug("%s" % vv)
             m = re.match(r'\bbyte\s+ptr\s+(.*)', vv)
@@ -1079,12 +1093,12 @@ end
             # logging.debug self.c_data
 
     def parse_args_new_data_(self, text):
+        self.__pgcontext = PGContext(extra = self)
         return self.parse_args_new_data(text)[0][1][1][0].insegmentdir
 
     def parse_args_new_data(self, text):
         logging.debug ("parsing: [%s]" % text)
 
-        self.__pgcontext = PGContext(extra = self)
         result = self.__lex.parser.parse(text, context = self.__pgcontext)
         logging.debug(str(result))
         return result
