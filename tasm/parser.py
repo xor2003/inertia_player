@@ -125,15 +125,12 @@ def endpdir(context, nodes, name):
 @action
 def equdir(context, nodes, name, value):
     print ("equdir " + str(nodes) + " ~~")
-    context.extra.action_equ(name, listtostring(value))
-    return nodes
-
+    return context.extra.action_equ(name, listtostring(value))
 
 @action
 def assdir(context, nodes, name, value):
     print ("assdir " + str(nodes) + " ~~")
-    context.extra.action_assign(name, listtostring(value))
-    return nodes
+    return context.extra.action_assign(name, listtostring(value))
 
 @action
 def labeldef(context, nodes, name):
@@ -914,7 +911,7 @@ class Parser():
                 name = self.get_global(name).original_name
             o = self.proc.add_assignment(name, vv, line_number=self.line_number)
             if has_global == False:
-                self.set_global(cmd0, o)
+                self.set_global(name, o)
             self.proc.stmts.append(o)
             return o
 
