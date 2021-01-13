@@ -163,8 +163,8 @@ def listtostring(l): # TODO remove
 @action
 def asminstruction(context, nodes, instruction, args):
     print ("instruction " + str(nodes) + " ~~")
-    if args != None:
-        args = [listtostring(i) for i in args] # TODO temporary workaround
+    #if args != None:
+    #    args = [listtostring(i) for i in args] # TODO temporary workaround
     o = context.extra.proc.create_instruction_object(instruction, args)
     o.line = get_raw(context)
     o.line_number = get_line(context)
@@ -1008,20 +1008,22 @@ class Parser():
 
     def action_code(self, line):
         result = self.parse_args_new_data_('''.model tiny
-    .code supertest
+default_seg segment
     ''' + line + '''
+default_seg ends
     end
     ''').asminstruction
-        del self.__globals['code_supertest']
+        del self.__globals['default_seg']
         return result
 
     def action_data(self, line):
         result = self.parse_args_new_data_('''.model tiny
-.code supertest
+default_seg segment
 '''+line+'''
+default_seg ends
 end
 ''')
-        del self.__globals['code_supertest']
+        del self.__globals['default_seg']
         return result
 
     def datadir_action(self, name, type, args):
@@ -1094,6 +1096,8 @@ end
 
     def parse_args_new_data_(self, text):
         self.__pgcontext = PGContext(extra = self)
+        self.__binary_data_size = 0
+        self.__dummy_enum = 0 # one dummy number is used for "default_seg" creation
         return self.parse_args_new_data(text)[0][1][1][0].insegmentdir
 
     def parse_args_new_data(self, text):
