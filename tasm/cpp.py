@@ -1,5 +1,5 @@
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
 
 import logging
 import re
@@ -10,8 +10,9 @@ from builtins import range
 from builtins import str
 from copy import copy
 
-from tasm import op
 import tasm.proc as proc_module
+from tasm import op
+from tasm.Token import Token
 
 
 # ScummVM - Graphic Adventure Engine
@@ -34,7 +35,6 @@ import tasm.proc as proc_module
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-
 
 class CrossJump(Exception):
     pass
@@ -67,7 +67,7 @@ class Cpp(object):
         self.__seg_prefix = ""
         self.__codeset = 'cp437'
         self.__context = context
-        #self.data_seg = __context.binary_data
+        # self.data_seg = __context.binary_data
         self.__cdata_seg = context.c_data
         self.__hdata_seg = context.h_data
         self.__procs = context.proc_list
@@ -117,7 +117,7 @@ class Cpp(object):
         try:
             g = self.__context.get_global(name)
         except:
-            #logging.warning("expand_cb() global '%s' is missing" % name)
+            # logging.warning("expand_cb() global '%s' is missing" % name)
             return name_original
 
         # print g
@@ -190,97 +190,113 @@ class Cpp(object):
         if len(expr) == 2 and expr[0] in ['a', 'b', 'c', 'd'] and expr[1] in ['h', 'l']:
             logging.debug('is reg res 1')
             return 1
-        if expr in ['ax', 'bx', 'cx', 'dx', 'si', 'di', 'sp', 'bp', 'ds', 'cs', 'es', 'fs', 'gs', 'ss']:
+        elif expr in ['ax', 'bx', 'cx', 'dx', 'si', 'di', 'sp', 'bp', 'ds', 'cs', 'es', 'fs', 'gs', 'ss']:
             logging.debug('is reg res 2')
             return 2
-        if expr in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'esp', 'ebp']:
+        elif expr in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'esp', 'ebp']:
             logging.debug('is reg res 4')
             return 4
         return 0
 
     def get_size(self, expr):
-        print (expr)
-        expr = expr.strip()
-        origexpr = expr
         logging.debug('get_size("%s")' % expr)
+        # if isinstance(expr, string):
+        #    expr = expr.strip()
+        origexpr = expr
 
-        try:
-            v = self.__context.parse_int(expr)
-            size = 0
-            if v < 0:
-                raise Exception("negative not handled yet")
-            elif v < 256:
-                size = 1
-            elif v < 65536:
-                size = 2
-            elif v < 4294967296:
-                size = 4
-            logging.debug('get_size res %d' % size)
-            return size
-        except:
-            pass
+        if isinstance(expr, list) and any(i in ['[', ']'] for i in expr):
+            return 0
 
-        if re.search(r'byte\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 1')
-            return 1
+        if isinstance(expr, list) and all(
+                isinstance(i, str) or (isinstance(i, Token) and i.type == 'INTEGER') for i in expr):
+            s = "".join([x.value if isinstance(x, Token) else x for x in expr])
+            try:
+                s = eval(s)
+                expr = Token('INTEGER', str(s))
+            except:
+                pass
 
-        if re.search(r'\bword\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 2')
-            return 2
+        if isinstance(expr, Token):
+            if expr.type in ('register','segmentregister'):
+                return self.is_register(expr.value)
+            elif expr.type == 'INTEGER':
+                try:
+                    # v = self.__context.parse_int(expr.value)
+                    v = int(expr.value)
+                    size = 0
+                    if v < 0:
+                        v = -2 * v - 1
+                    if v < 256:
+                        size = 1
+                    elif v < 65536:
+                        size = 2
+                    elif v < 4294967296:
+                        size = 4
+                    logging.debug('get_size res %d' % size)
+                    return size
+                except:
+                    pass
+            elif expr.type == 'STRING':
+                m = re.match(r'\'(.+)\'$', expr.value)  # char constants
+                if m is not None:
+                    return len(m.group(1))
+            elif expr.type == 'LABEL':
+                name = expr.value
+                logging.debug('name = %s' % name)
+                try:
+                    g = self.__context.get_global(name)
+                    if isinstance(g, op._equ) or isinstance(g, op._assignment):
+                        if g.value != origexpr:  # prevent loop
+                            return self.get_size(g.value)
+                        else:
+                            return 0
+                    logging.debug('get_size res %d' % g.size)
+                    return g.size
+                except:
+                    pass
+        elif isinstance(expr, list) and len(expr) > 2 and \
+             isinstance(expr[1], str) and expr[1].lower() == 'ptr':
+                expr[0] = expr[0].lower()
+                #logging.debug('get_size res 1')
+                return {'byte':1,'word':2,'dword':4,'qword':8,'tword':10}[expr[0]]
+        elif isinstance(expr, list) and len(expr) > 1 and isinstance(expr[0], str):
+            if expr[0].lower() == 'small':
+                return 2
+            elif expr[0].lower() == 'large':
+                return 4
 
-        if re.search(r'dword\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 4')
-            return 4
+        if isinstance(expr, list):
+            return max([self.get_size(i) for i in expr])
 
-        if re.search(r'qword\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 8')
-            return 8
+        if isinstance(expr, str) and expr.lower() == 'offset':
+            return 2  # TODO 16 bit word size
 
-        if re.search(r'tword\s+ptr\s', expr) is not None:
-            logging.debug('get_size res 10')
-            return 10
+        #if isinstance(expr, str):  # in ('+','-','*','(',')','/'):
+        #    return 0
 
-        size = self.is_register(expr)
-        if size:
-            return size
-
+        return 0
         m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
         if m is not None:
             expr = m.group(2).strip()
-            logging.debug('segment name removed '+expr)
+            logging.debug('segment name removed ' + expr)
 
         m = re.match(r'\[([a-zA-Z_]\w*)\]', expr)
         if m is not None:
             expr = m.group(1).strip()
-            logging.debug('square braces removed '+expr)
+            logging.debug('square braces removed ' + expr)
 
         m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
         if m is not None:
             expr = m.group(2).strip()
-            logging.debug('segment name removed '+expr)
+            logging.debug('segment name removed ' + expr)
 
         m = re.match(r'[a-zA-Z_]\w*', expr)
         if m is not None:
             logging.debug('expr match some a-z')
             name = m.group(0)
-            logging.debug('name = %s' % name)
-            try:
-                g = self.__context.get_global(name)
-                if isinstance(g, op._equ) or isinstance(g, op._assignment):
-                    if g.value != origexpr:  # prevent loop
-                        return self.get_size(g.value)
-                    else:
-                        return 0
-                logging.debug('get_size res %d' % g.size)
-                return g.size
-            except:
-                pass
 
         ex = expr
         ex.replace("\\\\", "\\")
-        m = re.match(r'\'(.+)\'$', ex)  # char constants
-        if m is not None:
-            return len(m.group(1))
 
         logging.debug('get_size res 0')
         return 0
@@ -518,7 +534,7 @@ class Cpp(object):
                 try:
                     proc = self.__context.get_global(name)
                 except:
-                    logging.warning("resolve_label exception "+name)
+                    logging.warning("resolve_label exception " + name)
                     return name
 
                 pos = 0
@@ -695,7 +711,7 @@ class Cpp(object):
         return "\tR(IDIV%d(%s));\n" % (size, src)
 
     def _jz(self, label):
-        if re.match('.*?(\$\+2)', label) is None: # skip jz $+2
+        if re.match('.*?(\$\+2)', label) is None:  # skip jz $+2
             label = self.jump_to_label(label)
             return "\t\tR(JZ(%s));\n" % label
         return "\n"
@@ -817,7 +833,8 @@ class Cpp(object):
                                 self.body += "void %sContext::%s() {\n" %(self.namespace, name);
                         '''
             if name in self.__function_name_remapping:
-                self.body += "int %s() {\ngoto %s;\n" % (self.__function_name_remapping[name], self.__context.entry_point)
+                self.body += "int %s() {\ngoto %s;\n" % (
+                    self.__function_name_remapping[name], self.__context.entry_point)
             else:
                 self.body += """
 int init(struct _STATE* _state)
@@ -986,12 +1003,12 @@ else goto __dispatch_call;
         logging.info(
             "%d ok, %d failed of %d, %3g%% translated" % (done, failed, done + failed, 100.0 * done / (done + failed)))
         logging.info("\n".join(self.__failed))
-        #data_bin = self.data_seg
+        # data_bin = self.data_seg
         cdata_bin = self.__cdata_seg
         hdata_bin = self.__hdata_seg
         data_impl = ""
         n = 0
-        #comment = ""
+        # comment = ""
 
         self.fd.write("\nreturn;\n__dispatch_call:\nswitch (__disp) {\n")
         offsets = []
@@ -1171,9 +1188,9 @@ else goto __dispatch_call;
         return "\tR(%s(%s));\n" % (cmd.upper(), dst)
 
     def _jump(self, cmd, label):
-        if re.match('.*?(\$\+2)', label) is None: # skip j* $+2
-           label = self.jump_to_label(label)
-           return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
+        if re.match('.*?(\$\+2)', label) is None:  # skip j* $+2
+            label = self.jump_to_label(label)
+            return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
         return "\n"
 
     def _instruction2(self, cmd, dst, src):

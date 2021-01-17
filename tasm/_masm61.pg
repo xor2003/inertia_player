@@ -1,4 +1,4 @@
-module: directivelist?  enddir?;
+module: directivelist?  enddir;
 addop: '+' | '-';
 aliasdir: ALIAS;
 altidq: '(' LABEL ')';
@@ -21,7 +21,6 @@ bitfieldid : LABEL ;
 blockstatements: U_CONTINUE ifcexpr? linereminder | U_BREAK ifcexpr? linereminder| insegdir+;
 bool: TRUE | FALSE ;
 brmacroarglist: '<' macroarglist '>';
-byteregister: AL | AH | BL | BH | CL | CH | DL | DH ;
 charlist: CHARACTER+;
 classname: STRING;
 commaidvararg: COMMAOEOL   LABEL? U_VARARG;
@@ -96,18 +95,21 @@ expr: SHORT expr {2,left}
 | expr addop expr {12,left}
 | expr mulop expr {14,left}
 | expr shiftop expr {14,left}
-| expr addop expr {16,right}
+| addop expr {16,right}
 | HIGH expr {18,left}
 | LOW expr {18,left}
 | HIGHWORD expr {18,left}
 | LOWWORD expr {18,left}
+| segmentregister {19,left}
 | OFFSET expr {20,left}
 | SEG expr {20,left}
 | LROFFSET expr {20,left}
 | TYPE expr {20,left}
 | THIS expr {20,left}
-| expr PTR expr {20,left}
-| expr ":" expr {20,left}
+| datatype PTR expr {21,left}
+| SMALL expr {21,left}
+| LARGE expr {21,left}
+| segoverride expr {21,left}
 | expr U_DOT expr {22,left}
 | expr '[' expr ']' {22,left}
 | WIDTH LABEL {23,left}
@@ -119,20 +121,18 @@ expr: SHORT expr {2,left}
 | recordconst {23,left}
 | STRING {23,left}
 | INTEGER {23,left}
-| type {23,left}
 | LABEL {23,left}
 | MONKEY {23,left}
 | "$" {23,left}
 | ST  {23,left}
 | ST "(" expr ")" {23,left}
-| segmentregister {24,left}
 | register {24,left}
 | "[" expr "]" {25,left}
 | "(" expr ")" {25,left}
   ; 
-sizearg: LABEL| type
-| expr {left};
+sizearg: LABEL| type| expr {left};
 
+segoverride: segmentregister ":" {21};
 echodir: ECHO arbitrarytext linereminder | U_OUT arbitrarytext linereminder;
 elsedirectivelist: U_ELSE linereminder insegdir+;
 elseifblock: elseifstatement linereminder insegdir+ elseifblock? ;
@@ -167,7 +167,6 @@ forparm: LABEL dotdotforparmtype?;
 forparmtype: REQ | '=' textliteral;
 frameexpr: SEG LABEL | DGROUP ':' LABEL| segmentregister ':' LABEL| LABEL;
 generaldir: modeldir | segorderdir | namedir| includelibdir | commentdir| groupdir | assumedir| structdir | typedefdir| externdir | publicdir | commdir | prototypedir| equdir | assdir | textdir| contextdir | optiondir | processordir| radixdir | titledir | pagedir | listdir | crefdir | echodir| ifdir | errordir | includedir | macrodir | macrocall | macrorepeat | purgedir| macrowhile | macrofor | macroforc| aliasdir | recorddir;
-gpregister: AX | EAX | BX | EBX | CX | ECX | DX | EDX| BP | EBP | SP | ESP | DI | EDI | SI | ESI;
 groupdir : LABEL GROUP segidlist;
 idlist: LABEL+[COMMA];
 ifcexpr: U_IF cexpr;
@@ -262,8 +261,8 @@ recordfieldlist: scalarinstlist;
 recordinstance_: '{'  linereminder? recordfieldlist linereminder?  '}';
 recordinstance: recordinstance_ | oldrecordinstance | expr DUP '(' recordinstance ')';
 recordinstlist: recordinstance+[COMMAOEOL];
-register: specialregister| gpregister| byteregister;
-anyregister: segmentregister | register;
+register: AX | EAX | BX | EBX | CX | ECX | DX | EDX| BP | EBP | SP | ESP | DI | EDI | SI | ESI | AL | AH | BL | BH | CL | CH | DL | DH;
+anyregister: segmentregister | register | specialregister;
 reglist: register+;
 allreglist: anyregister+;
 relop: EQ | NE | LT | LE | GT | GE ;
