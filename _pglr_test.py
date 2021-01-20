@@ -67,6 +67,7 @@ def make_token(context, nodes):
        nodes = Token(context.production.rhs[0].name, nodes[0])
     if context.production.rhs[0].name in ('type','e01','e02','e03','e04','e05','e06','e07','e08','e09','e10','e11'):
        nodes = nodes[0]
+    print("~"+str(nodes)+"~")
     return nodes
 
 cur_segment = 'ds' #!
@@ -81,7 +82,10 @@ def segoverride(context, nodes):
     return [Token('segoverride', nodes[0]), nodes[2]]
 
 def ptrdir(context, nodes):
-    return [Token('ptrdir', nodes[0]), nodes[2]]
+    if len(nodes) == 3:
+        return [Token('ptrdir', nodes[0]), nodes[2]]
+    else:
+        return [Token('ptrdir', nodes[0]), nodes[1]]
 
 
 def asminstruction(context, nodes, instruction, args):
@@ -131,18 +135,6 @@ def sqexpr(context, nodes):
     #print("~"+str(res)+"~")
     return Token('sqexpr', res)
 
-
-def sqexprlist(context, nodes):
-    res = []
-    if nodes[0] != None:
-       res.append(nodes[0])
-       res.append('+')
-    res.append(nodes[1])
-    if nodes[2] != None:
-       res.append('+')
-       res.append(nodes[2])
-    return res
-
 def offsetdir(context, nodes):
     #print("offset /~"+str(nodes)+"~\\")
     #global indirection
@@ -158,6 +150,9 @@ def segmdir(context, nodes):
 def LABEL(context, nodes):
     return Token('LABEL', nodes)
 
+def STRING(context, nodes):
+    return Token('STRING', nodes)
+
 recognizers = {
     'macroid': macroid
 }
@@ -166,6 +161,7 @@ actions = {
     "macrodir": macro_action,
     "asminstruction": asminstruction,
     "expr": make_token,
+    "STRING": STRING,
     "LABEL": LABEL,
     "aexpr": make_token,
     "cexpr": make_token,
@@ -182,7 +178,6 @@ actions = {
     "segmdir": segmdir,
     "register": register,
     "sqexpr": sqexpr,
-#    "sqexprlist": sqexprlist,
     "NOT": NOT,
     "OR": OR,
     "XOR": XOR,

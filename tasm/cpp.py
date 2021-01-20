@@ -41,15 +41,21 @@ class CrossJump(Exception):
 
 
 def parse_bin(s):
-    b = s.group(1)
+    sign = s.group(1)
+    b = s.group(2)
     v = hex(int(b, 2))
+    if sign != None:
+        v = sign + v
     # print "BINARY: %s -> %s" %(b, v)
     return v
 
 
 def convert_number_to_c(expr):
-    expr = re.sub(r'\b([0-9][0-9A-Fa-f]*)[Hh]', '0x\\1', expr)
-    expr = re.sub(r'\b([0-1]+)[Bb]', parse_bin, expr)  # convert binary
+    expr = re.sub(r'^([+-]?)([0-8]+)[OoQq]$', '\g<1>0\g<2>', expr)
+    expr = re.sub(r'^([+-]?)([0-9][0-9A-Fa-f]*)[Hh]$', '\g<1>0x\g<2>', expr)
+    # expr = re.sub(r'^([0-1]+)[BbYy]$', '0b\\1', expr)
+    expr = re.sub(r'^([+-]?)([0-9]+)[Dd]$', '\g<1>\g<2>', expr)
+    expr = re.sub(r'^([+-]?)([0-1]+)[Bb]', parse_bin, expr)  # convert binary
     return expr
 
 
@@ -198,14 +204,31 @@ class Cpp(object):
             return 4
         return 0
 
+    def find_token(self, expr, lookfor, remove=False):
+        if isinstance(expr, Token):
+            if expr.type == lookfor:
+                return (expr, expr)
+            else:
+                return (expr, None)
+        elif isinstance(expr, list):
+            for i in range(0, len(expr)):
+                _, result = self.find_token(expr[i], lookfor, remove=remove)
+                if result != None:
+                    if remove:
+                        del expr[i]
+                    return (expr, result)
+        return (expr, None)
+
     def get_size(self, expr):
         logging.debug('get_size("%s")' % expr)
         # if isinstance(expr, string):
         #    expr = expr.strip()
         origexpr = expr
 
-        if isinstance(expr, list) and any(i in ['[', ']'] for i in expr):
+        expr, issqexpr = self.find_token(expr, 'sqexpr')
+        if issqexpr:
             return 0
+        expr, ptrdir = self.find_token(expr, 'ptrdir')
 
         if isinstance(expr, list) and all(
                 isinstance(i, str) or (isinstance(i, Token) and i.type == 'INTEGER') for i in expr):
@@ -217,22 +240,13 @@ class Cpp(object):
                 pass
 
         if isinstance(expr, Token):
-            if expr.type in ('register','segmentregister'):
+            if expr.type in ('register', 'segmentregister'):
                 return self.is_register(expr.value)
             elif expr.type == 'INTEGER':
                 try:
                     # v = self.__context.parse_int(expr.value)
                     v = int(expr.value)
-                    size = 0
-                    if v < 0:
-                        v = -2 * v - 1
-                    if v < 256:
-                        size = 1
-                    elif v < 65536:
-                        size = 2
-                    elif v < 4294967296:
-                        size = 4
-                    logging.debug('get_size res %d' % size)
+                    size = self.guess_int_size(v)
                     return size
                 except:
                     pass
@@ -254,52 +268,35 @@ class Cpp(object):
                     return g.size
                 except:
                     pass
-        elif isinstance(expr, list) and len(expr) > 2 and \
-             isinstance(expr[1], str) and expr[1].lower() == 'ptr':
-                expr[0] = expr[0].lower()
-                #logging.debug('get_size res 1')
-                return {'byte':1,'word':2,'dword':4,'qword':8,'tword':10}[expr[0]]
-        elif isinstance(expr, list) and len(expr) > 1 and isinstance(expr[0], str):
-            if expr[0].lower() == 'small':
-                return 2
-            elif expr[0].lower() == 'large':
-                return 4
+            elif ptrdir:
+                value = ptrdir.lower()
+                # logging.debug('get_size res 1')
+                return {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[expr[0]]
 
         if isinstance(expr, list):
             return max([self.get_size(i) for i in expr])
 
-        if isinstance(expr, str) and expr.lower() == 'offset':
+        _, offsetdir = self.find_token(expr, 'offsetdir')
+        if offsetdir:
             return 2  # TODO 16 bit word size
 
-        #if isinstance(expr, str):  # in ('+','-','*','(',')','/'):
+        # if isinstance(expr, str):  # in ('+','-','*','(',')','/'):
         #    return 0
 
         return 0
-        m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
-        if m is not None:
-            expr = m.group(2).strip()
-            logging.debug('segment name removed ' + expr)
 
-        m = re.match(r'\[([a-zA-Z_]\w*)\]', expr)
-        if m is not None:
-            expr = m.group(1).strip()
-            logging.debug('square braces removed ' + expr)
-
-        m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
-        if m is not None:
-            expr = m.group(2).strip()
-            logging.debug('segment name removed ' + expr)
-
-        m = re.match(r'[a-zA-Z_]\w*', expr)
-        if m is not None:
-            logging.debug('expr match some a-z')
-            name = m.group(0)
-
-        ex = expr
-        ex.replace("\\\\", "\\")
-
-        logging.debug('get_size res 0')
-        return 0
+    def guess_int_size(self, v):
+        size = 0
+        if v < 0:
+            v = -2 * v - 1
+        if v < 256:
+            size = 1
+        elif v < 65536:
+            size = 2
+        elif v < 4294967296:
+            size = 4
+        logging.debug('get_size res %d' % size)
+        return size
 
     def expand_equ_cb(self, match):
         name = match.group(0).lower()
@@ -327,15 +324,16 @@ class Cpp(object):
         logging.debug("EXPAND(expr:\"%s\")" % expr)
         self.__seg_prefix = ""
 
-        expr = expr.strip()
+        # expr = expr.strip()
         origexpr = expr
 
-        expr = re.sub(r'^\(\s*(.*?)\s*\)$', '\\1', expr)  # (expr)
+        expr = re.sub(r'^\(\s*(.*?)\s*\)$', '\\1', expr)  # extract expr from (expr)
         logging.debug("wo curls " + expr)
-        expr = re.sub(r'\bnot\b', '~', expr)
+
+        expr = re.sub(r'\bnot\b', '~', expr)  # replace asm bit operations with C
         expr = re.sub(r'\band\b', '&', expr)
 
-        size = self.get_size(expr) if def_size == 0 else def_size
+        size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
 
         self.__expr_size = size
         # print "expr \"%s\" %d" %(expr, size)
@@ -345,10 +343,11 @@ class Cpp(object):
 
         ex = expr
         ex.replace("\\\\", "\\")
-        m = re.match(r'\'(.+)\'$', ex)  # char constants
+
+        m = re.match(r'\'(.+)\'$', ex)  # char constants 'abcd'
         if m is not None:
             ex = m.group(1)
-            if len(ex) == 4:
+            if len(ex) == 4:  # convert 'abcd' to 0x12345678
                 expr = '0x'
                 for i in range(0, 4):
                     # logging.debug("constant %s %d" %(ex,i))
@@ -383,12 +382,6 @@ class Cpp(object):
         m = re.match(r'\'(.+)\'$', ex)  # char constants
         if m is not None:
             return expr
-            '''
-                        s = ""
-                        for c in m.group(1):
-                                s = '{:02X}'.format(ord(c)) + s
-                        expr = "0x" + s
-                        '''
 
         m = re.match(r'seg\s+(.*?)$', expr)
         if m is not None:
@@ -484,15 +477,192 @@ class Cpp(object):
                 self.__expr_size = size
             logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
             logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
-            '''
-                        if destination and not self.lea:
-                                if self.__expr_size == 1:  # x0r
-                                        expr = "*(db*)(%s)" %(expr)
-                                elif self.__expr_size == 2:
-                                        expr = "*(dw*)(%s)" %(expr)
-                                elif self.__expr_size == 4:
-                                        expr = "*(dd*)(%s)" %(expr)
-                        '''
+            self.__pointer_flag = False
+            indirection = self.__indirection
+            logging.debug("AFTER: %d %s" % (indirection, expr))
+            # traceback.print_stack(file=sys.stdout)
+
+        if indirection == 1:
+            if not (self.lea and not destination):
+                if size == 1:
+                    expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
+                elif size == 2:
+                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
+                elif size == 4:
+                    expr = "*(dd*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
+                else:
+                    logging.debug("~%s~ @invalid size 0" % expr)
+                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
+                logging.debug("expr: %s" % expr)
+        elif indirection == 0:
+            pass
+        elif indirection == -1:
+            expr = "&%s" % expr
+        else:
+            raise Exception("invalid indirection %d" % indirection)
+        return expr
+
+    def unpack(self, expr):
+        if isinstance(expr, list):
+            result = "".join([self.unpack(i) for i in expr])
+            return result
+        elif isinstance(expr, Token):
+            return expr.value
+        return expr
+
+    def expand_new(self, expr, def_size=0, destination=False):
+        logging.debug("EXPAND(expr:\"%s\")" % expr)
+        self.__seg_prefix = ""
+
+        # expr = expr.strip()
+        origexpr = expr
+        expr = self.unpack(expr)
+        return expr
+
+        size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
+
+        self.__expr_size = size
+        # print "expr \"%s\" %d" %(expr, size)
+        indirection = 0
+        seg = None
+        reg = True
+
+        ex = expr
+        ex.replace("\\\\", "\\")
+
+        m = re.match(r'\'(.+)\'$', ex)  # char constants 'abcd'
+        if m is not None:
+            ex = m.group(1)
+            if len(ex) == 4:  # convert 'abcd' to 0x12345678
+                expr = '0x'
+                for i in range(0, 4):
+                    # logging.debug("constant %s %d" %(ex,i))
+                    ss = str(hex(ord(ex[i])))
+                    # logging.debug("constant %s" %ss)
+                    expr += ss[2:]
+            return expr
+
+        try:
+            g = self.__context.get_global(expr)
+            logging.debug("found global %s" % expr)
+            if not self.lea and isinstance(g, op.var):
+                logging.debug("it is not lea and it is var")
+                if g.issegment:
+                    return "seg_offset(%s)" % expr.lower()
+                else:
+                    if g.elements == 1:
+                        # traceback.print_stack(file=sys.stdout)
+                        return "m." + expr
+                    else:
+                        s = {1: "*(db*)", 2: "*(dw*)", 4: "*(dd*)"}[size]
+                        return s + "&m." + expr
+            if isinstance(g, op.equ) or isinstance(g, op.assignment):
+                logging.debug("it is equ")
+                return self.expand(g.value)
+
+        except:
+            pass
+
+        ex = expr
+        ex.replace("\\\\", "\\")
+        m = re.match(r'\'(.+)\'$', ex)  # char constants
+        if m is not None:
+            return expr
+
+        m = re.match(r'seg\s+(.*?)$', expr)
+        if m is not None:
+            return m.group(1)
+
+        expr = convert_number_to_c(expr)  # convert hex
+
+        match_id = True
+        # print "is it offset ~%s~" %expr
+        prog = re.compile(r'offset\s+(.*?)$', re.I)
+        m = prog.match(expr)
+        if m is not None:
+            indirection -= 1
+            size = 2  # x0r dos 16 bit
+            expr = m.group(1).strip()
+            self.__current_size = 0
+            expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', self.expand_cb, expr)  # parse each item
+            # expr = "offsetof(struct Mem,%s)" %expr
+
+            logging.debug("after it is offset ~%s~" % expr)
+            return expr
+
+        logging.debug("1:\"%s\")" % expr)
+        m = re.match(r'byte\s+ptr\s+(.*)', expr)
+        if m is not None:
+            expr = m.group(1).strip()
+            size = 1
+
+        m = re.match(r'dword\s+ptr\s+(.*)', expr)
+        if m is not None:
+            expr = m.group(1).strip()
+            size = 4
+
+        m = re.match(r'word\s+ptr\s+(.*)', expr)
+        if m is not None:
+            expr = m.group(1).strip()
+            size = 2
+
+        logging.debug("2:\"%s\")" % expr)
+
+        m = re.match(r'\[(.*)\]$', expr)
+        if m is not None:
+            indirection += 1
+            expr = m.group(1).strip()
+
+        m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
+        if m is not None:
+            self.__seg_prefix = m.group(1)
+            expr = m.group(2).strip()
+            logging.debug("SEGMENT %s, remains: %s" % (self.__seg_prefix, expr))
+        else:
+            self.__seg_prefix = "ds"
+
+        m = re.match(r'\[(.*)\]$', expr)
+        if m is not None:
+            indirection += 1
+            expr = m.group(1).strip()
+
+        m = re.match(r'(\[?e?([abcd][xhl])|si|di|bp|sp)([+-\]].*)?$', expr)  # var[bx+]
+        if m is not None:
+            reg = m.group(1)
+            plus = m.group(3)
+            if plus is not None and plus != ']':
+                seg_prefix = self.__seg_prefix
+                plus = self.expand(plus)
+                self.__seg_prefix = seg_prefix
+            else:
+                plus = ""
+            match_id = False
+            # print "COMMON_REG: ", reg, plus
+            expr = "%s%s" % (reg, plus)
+
+        logging.debug("~~ " + expr)
+        expr = re.sub(r'"(.)"', '\'\\1\'', expr)  # convert string
+        expr = re.sub(r'\[((0x)?[0-9][a-fA-F0-9]*)\]', '+\\1', expr)  # convert [num]
+
+        expr = re.sub(r'\[(((e?([abcd][xhl])|si|di|bp|sp)|([+-]))+)\]', '+\\1', expr)  # name[bs+si]
+        expr = re.sub(r'\[(e?([abcd][xhl])|si|di|bp|sp)', '+\\1', expr)  # name[bs+si]
+        expr = re.sub(r'\]', '', expr)  # name[bs+si]
+
+        if match_id:
+            expr = re.sub(r'\bbyte\s+ptr\s*', '', expr)
+            expr = re.sub(r'\b[dqt]word\s+ptr\s*', '', expr)
+            expr = re.sub(r'\bword\s+ptr\s*', '', expr)
+
+            logging.debug("EXPAND() BEFORE: %d %s" % (indirection, expr))
+            self.__indirection = indirection
+            self.__pointer_flag = False
+            self.__current_size = 0
+            expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
+            if size == 0 and self.__current_size != 0:
+                size = self.__current_size
+                self.__expr_size = size
+            logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
+            logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
             self.__pointer_flag = False
             indirection = self.__indirection
             logging.debug("AFTER: %d %s" % (indirection, expr))

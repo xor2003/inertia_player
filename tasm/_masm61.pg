@@ -2,7 +2,7 @@ module: directivelist?  enddir;
 aliasdir: ALIAS;
 altidq: '(' LABEL ')';
 arbitrarytext: charlist;
-asminstruction: instruction=mnemonic  args=exprlist? | instruction=PUSH args=allreglist | instruction=POP args=allreglist;
+asminstruction: instruction=mnemonic  args=exprlist? | instruction=PUSH args=exprspacelist | instruction=POP args=exprspacelist;
 assdir: name=LABEL '=' value=expr linereminder;
 assumedir: ASSUME assumelist linereminder| ASSUMENOTHING linereminder;
 assumelist : assumeregister| assumeregister COMMA assumelist;
@@ -89,7 +89,9 @@ sqexpr: '[' expr ']';
 offsetdir: OFFSET e10;
 segmdir: SEG e10;
 segoverride: e09 ':' e10;
-ptrdir: e09 PTR e10;
+ptrdir: e09 PTR e10
+| LARGE e10
+| SMALL e10;
 
 e01: e01 orop e02
 | e02;
@@ -161,6 +163,7 @@ erroropt: U_ERR textitem? | U_ERRE expr opttext? | U_ERRNZ expr opttext? | U_ERR
 exitdir: U_EXIT expr?  linereminder;
 exitmdir: EXITM textitem? linereminder;
 exprlist: expr+[COMMA];
+exprspacelist: expr+[SPACE];
 externdef: langtype?  LABEL altidq? ':' externtype;
 externdir: externkey externlist linereminder;
 externkey: EXTRN | EXTERN | EXTERNDEF ;
@@ -985,7 +988,7 @@ C: 'C';
 U_DOT: '.';
 COMMA: ',';
 CHARACTER: /[^\r\n]/;
-STRING: /\'{1}.+?\'{1}|\"{1}.+?\"{1}/;
+STRING: /((?<!\')\'(?!\').+?(?<!\')\'(?!\'))|((?<!\")\"(?!\").+?(?<!\")\"(?!\"))/;
 macroid: {prefer};
 LABEL: /[A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*/;
 MONKEY: /@@|@B|@F/ ;
@@ -994,7 +997,8 @@ addop: /[+-]/;
 //DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
 ENDOFLINE: /[\r\n]+[\t \r\n]*/;
 FLOAT: /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b/;
-INTEGER: /\-?[0-9][0-9A-Fa-f]*[HOQTYhoqty]?\b/ {prefer};
+INTEGER: /[-+]?[0-9][0-9A-Fa-f]*[HOQTYhoqty]?\b/ {prefer};
 WS: /([\t \b\v\f\x1a]+)|(\\;?[^\r\n]*[\r\n\t \b\v\f\x1a]+)/;
+SPACE: /[\t ]+/;
 Comment: /;[^\r\n]*/;
 KEYWORD: /\w+/;

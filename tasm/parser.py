@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import logging
 import os
+import re
 import sys
 from builtins import chr
 from builtins import hex
@@ -10,18 +11,17 @@ from builtins import object
 from builtins import range
 from builtins import str
 
+import parglare
 from parglare import Grammar, Parser as PGParser
-# from parglare.parser import Context as PGContext
-from parglare import get_collector
-
-#action = get_collector()
 
 import tasm.cpp
 import tasm.proc
-from tasm.Token import Token
 from tasm import op
-import parglare
+from tasm.Token import Token
 
+
+# from parglare.parser import Context as PGContext
+# action = get_collector()
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -42,21 +42,21 @@ import parglare
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-
 # from tasm.lex import parse_line_data, parse_line_name_data
-
-import re
 
 
 def escape(str):
     if isinstance(str, list):
         return [escape(i) for i in str]
+    elif isinstance(str, Token):
+        return escape(str.value)
     else:
-        return str.translate(str.maketrans({"\\": r"\\"}))
+        return str.translate(str.maketrans({"\\": r"\\"})).replace("''", "'").replace('""', '"')
 
 
 macroids = []
-macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*)')
+macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z0-9@_\$\?]*)')
+
 
 def get_line_number(context):
     return parglare.pos_to_line_col(context.input_str, context.start_position)[0]
@@ -64,6 +64,7 @@ def get_line_number(context):
 
 def get_raw(context):
     return context.input_str[context.start_position: context.end_position]
+
 
 '''
 def build_ast(nodes, type=''):
@@ -80,23 +81,38 @@ def build_ast(nodes, type=''):
         return Node(name=nodes.symbol.name, type=type, keyword=nodes.symbol.keyword, value=nodes.value)
 '''
 
+'''
 def make_token(context, nodes):
     if len(nodes) == 1 and context.production.rhs[0].name not in ('type'):
-       nodes = Token(context.production.rhs[0].name, nodes[0])
+        nodes = Token(context.production.rhs[0].name, nodes[0])
     if context.production.rhs[0].name in ('type'):
-       nodes = nodes[0]
+        nodes = nodes[0]
     return nodes
+'''
 
 def make_token(context, nodes):
-    type = context.production.rhs[0].name
-    if len(nodes) == 1 and type not in ('type'):
-       nodes = Token(type, nodes[0])
-
-    if type in ('type'):
+    if len(nodes) == 1 and context.production.rhs[0].name not in ('type','e01','e02','e03','e04','e05','e06','e07','e08','e09','e10','e11'):
+       nodes = Token(context.production.rhs[0].name, nodes[0])
+    if context.production.rhs[0].name in ('type','e01','e02','e03','e04','e05','e06','e07','e08','e09','e10','e11'):
        nodes = nodes[0]
-    if type == 'INTEGER':
-        nodes.value = str(context.extra.parse_int(nodes.value))
     return nodes
+
+def segoverride(context, nodes):
+    global cur_segment
+    if isinstance(nodes[0], list):
+        cur_segment = nodes[0][-1]
+        return nodes[0][:-1] + [Token('segoverride', nodes[0][-1]), nodes[2]]
+    cur_segment = nodes[0] #!
+    return [Token('segoverride', nodes[0]), nodes[2]]
+
+def ptrdir(context, nodes):
+    if len(nodes) == 3:
+        return [Token('ptrdir', nodes[0]), nodes[2]]
+    else:
+        return [Token('ptrdir', nodes[0]), nodes[1]]
+
+def INTEGER(context, nodes):
+    return tasm.cpp.convert_number_to_c(nodes)
 
 def expr(context, nodes):
     return make_token(context, nodes)
@@ -114,65 +130,76 @@ def macroid(head, input, pos):
     else:
         return None
 
-
 def macrodir(_, nodes, name):
     macroids.insert(0, name.lower())
     logging.debug("macroid added ~~" + name + "~~")
 
-
 def datadir(context, nodes, label, type, values):
-    if label == None:
+    if label != None:
+        label = label.value
+    else:
         label = ""
     label = re.sub(r'@', "arb", label)
-    argg = [escape(i) for i in values]
-    logging.debug("datadir " + str(nodes) + " ~~")
-    return context.extra.datadir_action(label.lower(), type, argg)
 
+    # if isinstance(values, list) and len(values) == 1:
+    #    values = values[0]
+
+    if isinstance(values, list):
+        s = []
+        for x in values:
+            # if isinstance(x, list):
+            #    values = [i for i in values]
+            if isinstance(x, Token):
+                s = s + [x.value]
+            else:  # if isinstance(x, str):
+                s = s + [x]
+        values = s
+    elif isinstance(values, Token):
+        values = values.value
+
+    values = escape(values)
+    # if isinstance(values, str):
+    #    values = [values]
+
+    logging.debug("datadir " + str(nodes) + " ~~")
+    return context.extra.datadir_action(label.lower(), type, values)
 
 def segdir(context, nodes, type, name):
-    print("segdir " + str(nodes) + " ~~")
+    #print("segdir " + str(nodes) + " ~~")
     context.extra.action_simplesegment(type, name)
     return nodes
 
-
 def segmentdir(context, nodes, name):
-    print("segmentdir " + str(nodes) + " ~~")
-    context.extra.action_segment(name)
+    #print("segmentdir " + str(nodes) + " ~~")
+    context.extra.action_segment(name.value)
     return nodes
-
 
 def endsdir(context, nodes, name):
-    print("ends " + str(nodes) + " ~~")
+    #print("ends " + str(nodes) + " ~~")
     context.extra.action_endseg()
     return nodes
-
 
 def procdir(context, nodes, name, type):
     print("procdir " + str(nodes) + " ~~")
     context.extra.action_proc(name, type)
     return nodes
 
-
 def endpdir(context, nodes, name):
     print("endp " + str(name) + " ~~")
     context.extra.action_endp()
     return nodes
 
-
 def equdir(context, nodes, name, value):
     print("equdir " + str(nodes) + " ~~")
     return context.extra.action_equ(name, value)
-
 
 def assdir(context, nodes, name, value):
     print("assdir " + str(nodes) + " ~~")
     return context.extra.action_assign(name, value)
 
-
 def labeldef(context, nodes, name):
     print("labeldef " + str(nodes) + " ~~")
-    return context.extra.action_label(name)
-
+    return context.extra.action_label(name.value)
 
 def instrprefix(context, nodes):
     print("prefix " + str(nodes) + " ~~")
@@ -181,7 +208,6 @@ def instrprefix(context, nodes):
     o.line_number = get_line_number(context)
     context.extra.proc.stmts.append(o)
     return o
-
 
 def listtostring(l):  # TODO remove
     if isinstance(l, list):
@@ -195,25 +221,66 @@ def listtostring(l):  # TODO remove
         l = s
     return l
 
-
 def asminstruction(context, nodes, instruction, args):
     print("instruction " + str(nodes) + " ~~")
     # if args != None:
     #    args = [listtostring(i) for i in args] # TODO temporary workaround
-    #args = build_ast(args)
+    # args = build_ast(args)
     o = context.extra.proc.create_instruction_object(instruction, args)
     o.line = get_raw(context)
     o.line_number = get_line_number(context)
     context.extra.proc.stmts.append(o)
     return o
 
-
 def enddir(context, nodes, label):
-    print("end " + str(nodes) + " ~~")
+    #print("end " + str(nodes) + " ~~")
     if label != None:
         context.extra.entry_point = label.value.lower()
     return nodes
 
+def NOT(context, nodes):
+    nodes[0] = '~'
+    return nodes
+
+def OR(context, nodes):
+    nodes[1] = '|'
+    return nodes
+
+def XOR(context, nodes):
+    nodes[1] = '^'
+    return nodes
+
+def AND(context, nodes):
+    nodes[1] = ' & '
+    return nodes
+
+def register(context, nodes):
+    return Token('register', nodes[0].lower())
+
+def sqexpr(context, nodes):
+    #global indirection
+    #indirection = 1
+    #print("/~"+str(nodes)+"~\\")
+    res = nodes[1]
+    return Token('sqexpr', res)
+
+def offsetdir(context, nodes):
+    #print("offset /~"+str(nodes)+"~\\")
+    #global indirection
+    #indirection = -1
+    return Token('offsetdir', nodes[1])
+
+def segmdir(context, nodes):
+    #print("offset /~"+str(nodes)+"~\\")
+    #global indirection
+    #indirection = -1
+    return Token('segmdir', nodes[1])
+
+def LABEL(context, nodes):
+    return Token('LABEL', nodes)
+
+def STRING(context, nodes):
+    return Token('STRING', nodes)
 
 actions = {
     "asminstruction": asminstruction,
@@ -229,22 +296,37 @@ actions = {
     "procdir": procdir,
     "segdir": segdir,
     "segmentdir": segmentdir,
+    "INTEGER": INTEGER,
+    "register": register,
+    "NOT": NOT,
+    "OR": OR,
+    "XOR": XOR,
+    "AND": AND,
     "expr": make_token,
-#    "addop": make_token,
+    "LABEL": LABEL,
+    "STRING": STRING,
+    #    "addop": make_token,
+    #    "binaryop": make_token,
+    #    "mulop": make_token,
+    #    "orop": make_token,
+    #    "relop": make_token,
+    #    "shiftop": make_token,
     "aexpr": make_token,
-#    "binaryop": make_token,
     "cexpr": make_token,
     "cxzexpr": make_token,
     "flagname": make_token,
-#    "mulop": make_token,
-#    "orop": make_token,
     "primary": make_token,
     "recordconst": make_token,
-#    "relop": make_token,
-#    "shiftop": make_token,
     "simpleexpr": make_token,
     "sizearg": make_token,
-    "term": expr
+    "term": expr,
+    "segoverride": segoverride,
+    "ptrdir": ptrdir,
+    "offsetdir": offsetdir,
+    "segmdir": segmdir,
+    "register": register,
+    "sqexpr": sqexpr
+
 }
 
 recognizers = {
@@ -968,9 +1050,18 @@ class Parser():
                 # logging.debug line
                 pass
 
-    def action_assign(self, name, value):
-        vv = self.get_equ_value(value)
+    def tokenstostring(self, l):  # TODO remove
+        if isinstance(l, str):
+            return l
+        elif isinstance(l, list):
+            return " ".join([self.tokenstostring(i) for i in l])
+        elif isinstance(l, Token):
+            return l.value
 
+    def action_assign(self, name, value):
+        name = name.value
+        value = self.tokenstostring(value)
+        vv = self.get_equ_value(value)
         has_global = False
         if self.has_global(name):
             has_global = True
@@ -982,6 +1073,8 @@ class Parser():
         return o
 
     def action_equ(self, name, value):
+        name = name.value
+        value = self.tokenstostring(value)
         vv = self.get_equ_value(value)
         proc = self.get_global("mainproc")
         o = proc.add_equ_(name, vv, line_number=self.line_number)
@@ -1070,14 +1163,14 @@ default_seg ends
         return result
 
     def test_size(self, line):
-            result = self.parse_args_new_data_('''.model tiny
+        result = self.parse_args_new_data_('''.model tiny
     default_seg segment
-    inc    ''' + line + '''
+    push    ''' + line + '''
     default_seg ends
         end start
-        ''').asminstruction.arg
-            del self.__globals['default_seg']
-            return result
+        ''').asminstruction.regs
+        del self.__globals['default_seg']
+        return result
 
     def action_data(self, line):
         result = self.parse_args_new_data_('''.model tiny
@@ -1086,6 +1179,16 @@ default_seg segment
 default_seg ends
 end startd
 ''')
+        del self.__globals['default_seg']
+        return result
+
+    def parse_arg(self, line):
+        result = self.parse_args_new_data_('''.model tiny
+    default_seg segment
+    inc ''' + line + '''
+    default_seg ends
+    end startd
+    ''').asminstruction.arg
         del self.__globals['default_seg']
         return result
 
