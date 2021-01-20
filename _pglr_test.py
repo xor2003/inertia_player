@@ -43,6 +43,10 @@ class Token:
         from pprint import pformat
         return pformat(vars(self))
 
+
+def get_raw(context):
+    return context.input_str[context.start_position: context.end_position]
+
 '''
 def build_ast(nodes, type=''):
     if isinstance(nodes, parglare.parser.NodeNonTerm) and nodes.children:
@@ -59,26 +63,100 @@ def build_ast(nodes, type=''):
 '''
 
 def make_token(context, nodes):
-    if len(nodes) == 1 and context.production.rhs[0].name not in ('type'):
+    if len(nodes) == 1 and context.production.rhs[0].name not in ('type','e01','e02','e03','e04','e05','e06','e07','e08','e09','e10','e11'):
        nodes = Token(context.production.rhs[0].name, nodes[0])
-    if context.production.rhs[0].name in ('type'):
+    if context.production.rhs[0].name in ('type','e01','e02','e03','e04','e05','e06','e07','e08','e09','e10','e11'):
        nodes = nodes[0]
     return nodes
 
-def addop(context, nodes):
-    return make_token(context, nodes)
+cur_segment = 'ds' #!
+indirection = 0 #!
 
-def expr(context, nodes):
-    return make_token(context, nodes)
+def segoverride(context, nodes):
+    global cur_segment
+    if isinstance(nodes[0], list):
+        cur_segment = nodes[0][-1]
+        return nodes[0][:-1] + [Token('segoverride', nodes[0][-1]), nodes[2]]
+    cur_segment = nodes[0] #!
+    return [Token('segoverride', nodes[0]), nodes[2]]
+
+def ptrdir(context, nodes):
+    return [Token('ptrdir', nodes[0]), nodes[2]]
+
 
 def asminstruction(context, nodes, instruction, args):
-    print("instruction " + str(nodes) + " ~~")
+    global cur_segment
+    global indirection
+    print("instruction " + get_raw(context) + " "+ str(nodes) + " ~~ "+str(cur_segment)+" "+str(indirection))
+    cur_segment = 'ds' #!
+    indirection = 0 #!
     # if args != None:
     #    args = [listtostring(i) for i in args] # TODO temporary workaround
     #args = build_ast(args)
     #print(instruction.children[0].value, str(args))
     return nodes
 
+
+def NOT(context, nodes):
+    nodes[0] = '~'
+    return nodes
+
+def OR(context, nodes):
+    nodes[1] = '|'
+    return nodes
+
+def XOR(context, nodes):
+    nodes[1] = '^'
+    return nodes
+
+def AND(context, nodes):
+    nodes[1] = ' & '
+    return nodes
+
+def register(context, nodes):
+    return Token('register', nodes[0].lower())
+
+def sqexpr(context, nodes):
+    global indirection
+    indirection = 1
+    print("/~"+str(nodes)+"~\\")
+    #print("/~"+str(nodes[1][1])+"~\\")
+    res = nodes[1]
+    #res = [i[1] for i in nodes[1]]
+
+    #if isinstance(res, list):
+    #   res = res[0]
+    #else:
+    #   res = sum([[i, '+'] for i in res.value], [])[:-1]
+    #print("~"+str(res)+"~")
+    return Token('sqexpr', res)
+
+
+def sqexprlist(context, nodes):
+    res = []
+    if nodes[0] != None:
+       res.append(nodes[0])
+       res.append('+')
+    res.append(nodes[1])
+    if nodes[2] != None:
+       res.append('+')
+       res.append(nodes[2])
+    return res
+
+def offsetdir(context, nodes):
+    #print("offset /~"+str(nodes)+"~\\")
+    #global indirection
+    #indirection = -1
+    return Token('offsetdir', nodes[1])
+
+def segmdir(context, nodes):
+    #print("offset /~"+str(nodes)+"~\\")
+    #global indirection
+    #indirection = -1
+    return Token('segmdir', nodes[1])
+
+def LABEL(context, nodes):
+    return Token('LABEL', nodes)
 
 recognizers = {
     'macroid': macroid
@@ -87,23 +165,30 @@ recognizers = {
 actions = {
     "macrodir": macro_action,
     "asminstruction": asminstruction,
-    "expr": expr,
-#    "addop": expr,
-    "aexpr": expr,
-#    "binaryop": expr,
-    "cexpr": expr,
-    "cxzexpr": expr,
-    "flagname": expr,
-#    "mulop": expr,
-#    "orop": expr,
-    "primary": expr,
-    "recordconst": expr,
-#    "relop": expr,
-#    "shiftop": expr,
-    "simpleexpr": expr,
-    "sizearg": expr,
-    "term": expr
+    "expr": make_token,
+    "LABEL": LABEL,
+    "aexpr": make_token,
+    "cexpr": make_token,
+    "cxzexpr": make_token,
+    "flagname": make_token,
+    "primary": make_token,
+    "recordconst": make_token,
+    "simpleexpr": make_token,
+    "sizearg": make_token,
+    "term": make_token,
+    "segoverride": segoverride,
+    "ptrdir": ptrdir,
+    "offsetdir": offsetdir,
+    "segmdir": segmdir,
+    "register": register,
+    "sqexpr": sqexpr,
+#    "sqexprlist": sqexprlist,
+    "NOT": NOT,
+    "OR": OR,
+    "XOR": XOR,
+    "AND": AND
 }
+
 
 file_name = os.path.dirname(os.path.realpath(__file__)) + "/tasm/_masm61.pg"
 grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
@@ -112,7 +197,7 @@ from parglare import Parser
 
 # parser = Parser(grammar, debug=True, debug_trace=True, actions={"macrodir": macro_action})
 # parser = Parser(grammar, debug=True, actions={"macrodir": macro_action})
-#parser = Parser(grammar, debug=True, actions=actions)
+#parser = Parser(grammar, debug=True, actions=actions, debug_colors=True)
 parser = Parser(grammar, actions=actions) #, build_tree=True, call_actions_during_tree_build=True)
 
 codeset = 'cp437'

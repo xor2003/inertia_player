@@ -1,5 +1,4 @@
 module: directivelist?  enddir;
-addop: '+' | '-';
 aliasdir: ALIAS;
 altidq: '(' LABEL ')';
 arbitrarytext: charlist;
@@ -37,7 +36,7 @@ commdir: COMM commlist linereminder;
 //commentdir: COMMENTKW DELIMITER text text DELIMITER text linereminder; TODO
 commentdir: COMMENTKW text linereminder;
 commlist: commdecl+[COMMA];
-commtype: type | expr;
+commtype: expr;
 //constant: digits  radixoverride? ;
 contextdir: PUSHCONTEXT contextitemlist linereminder| POPCONTEXT contextitemlist linereminder;
 contextitem: ASSUMES | RADIX | LISTING | CPU | ALL ;
@@ -85,54 +84,68 @@ simpleexpr: '(' cexpr ')'| primary;
 primary: expr binaryop expr| flagname| expr;
 cxzexpr: '!' expr| expr  '==' expr| expr  '!=' expr | expr;
 
-expr: SHORT expr {2,left}
-| U_TYPE expr {2,left}
-| OPATTR expr {2,left}
-| expr orop expr {4,left}
-| expr AND expr {6,left}
-| NOT expr {8,left}
-| expr relop expr {10,left}
-| expr addop expr {12,left}
-| expr mulop expr {14,left}
-| expr shiftop expr {14,left}
-| addop expr {16,right}
-| HIGH expr {18,left}
-| LOW expr {18,left}
-| HIGHWORD expr {18,left}
-| LOWWORD expr {18,left}
-| segmentregister {19,left}
-| OFFSET expr {20,left}
-| SEG expr {20,left}
-| LROFFSET expr {20,left}
-| TYPE expr {20,left}
-| THIS expr {20,left}
-| datatype PTR expr {21,left}
-| SMALL expr {21,left}
-| LARGE expr {21,left}
-| segoverride expr {21,left}
-| expr U_DOT expr {22,left}
-| expr '[' expr ']' {22,left}
-| WIDTH LABEL {23,left}
-| MASK LABEL {23,left}
-| SIZE sizearg {23,left}
-| SIZEOF sizearg {23,left}
-| LENGTH LABEL {23,left}
-| LENGTHOF LABEL  {23,left}
-| recordconst {23,left}
-| STRING {23,left}
-| INTEGER {23,left}
-| LABEL {23,left}
-| MONKEY {23,left}
-| "$" {23,left}
-| ST  {23,left}
-| ST "(" expr ")" {23,left}
-| register {24,left}
-| "[" expr "]" {25,left}
-| "(" expr ")" {25,left}
-  ; 
-sizearg: LABEL| type| expr {left};
+sqexpr: '[' expr ']';
+//sqexprlist: LABEL? sqexpr sqexpr?;
+offsetdir: OFFSET e10;
+segmdir: SEG e10;
+segoverride: e09 ':' e10;
+ptrdir: e09 PTR e10;
 
-segoverride: segmentregister ":" {21};
+e01: e01 orop e02
+| e02;
+e02: e02 AND e03
+| e03;
+e03: NOT e04
+| e04;
+e04: e04 relop e05
+| e05;
+e05: e05 addop e06
+| e06;
+e06: e06 mulop e07
+| e06 shiftop e07
+| e07;
+e07: e07 addop e08
+| e08;
+e08: HIGH e09
+| LOW e09
+| HIGHWORD e09
+| LOWWORD e09
+| e09;
+e09: offsetdir
+| segmdir
+| LROFFSET e10
+| TYPE e10
+| THIS e10
+| ptrdir
+| segoverride
+//| e09 ':' e10
+| e10;
+e10: e10 U_DOT e11
+| e10 expr?
+| e11;
+e11: '(' expr ')'
+| sqexpr
+| WIDTH LABEL
+| MASK LABEL
+| SIZE sizearg
+| SIZEOF sizearg
+| LENGTH LABEL
+| LENGTHOF LABEL
+| recordconst
+| STRING
+| INTEGER
+| type
+| '$'
+| segmentregister
+| register
+| ST
+| ST '(' expr ')';
+expr: SHORT e05
+| U_TYPE e01
+| OPATTR e01
+| e01;
+sizearg: e10;
+
 echodir: ECHO arbitrarytext linereminder | U_OUT arbitrarytext linereminder;
 elsedirectivelist: U_ELSE linereminder insegdir+;
 elseifblock: elseifstatement linereminder insegdir+ elseifblock? ;
@@ -175,7 +188,7 @@ ifstatement: IF expr| IFE expr| IFB textitem| IFNB textitem| IFDEF LABEL| IFNDEF
 includedir: INCLUDE filespec linereminder;
 includelibdir: INCLUDELIB filespec linereminder;
 initvalue: expr {15,left}
-| STRING| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber| INTEGER;
+| '?'| expr  DUP '(' scalarinstlist ')'| floatnumber;
 insegdir: label=labeldef insegmentdir=insegmentdir | insegmentdir=insegmentdir;
 //insegdirlist: insegdir+;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? endpdir| procdir  localdirlist? insegdir+ endpdir| invokedir| generaldir | linereminder;
@@ -187,14 +200,14 @@ invokelist: invokearg+[COMMAOEOL];
 labeldef: name=LABEL ':' | name=LABEL '::' | name=MONKEY ':';
 labeldir: LABEL LABELKW qualifiedtype linereminder;
 langtype: C | PASCAL | FORTRAN | BASIC | SYSCALL | STDCALL ;
-linereminder: ENDOFLINE | COMMENTTERM ENDOFLINE;
+linereminder: ENDOFLINE | Comment ENDOFLINE;
 listdir: listoption linereminder;
 listoption: U_LIST | U_NOLIST | U_XLIST | U_LISTALL | U_LISTIF | U_LFCOND | U_NOLISTIF | U_SFCOND | U_TFCOND | U_LISTMACROALL | U_LALL | U_NOLISTMACRO | U_SALL | U_LISTMACRO | U_XALL ;
 localdef: LOCAL idlist linereminder;
 localdir: LOCAL parmlist linereminder;
 localdirlist: localdir+;
 locallist: localdef+;
-macroarg: '%' expr| '%' LABEL| '%' LABEL '(' macroarglist ')'| STRING| '<' arbitrarytext '>' | arbitrarytext;
+macroarg: '%' expr| '%' LABEL '(' macroarglist ')'| STRING| '<' arbitrarytext '>' | arbitrarytext;
 macroarglist: macroarg+[COMMA];
 macrobody: locallist? macrostmtlist;
 macrocall: macroid  '(' macroarglist ')' | macroid macroarglist? linereminder;
@@ -283,7 +296,7 @@ segorderdir: U_ALPHA | U_SEQ | U_DOSSEG | DOSSEG ;
 segro: readonly;
 segsize : USE16 | USE32 | FLAT;
 shiftop: SHR | SHL ;
-sign: '-' | '+';
+// sign: '-' | '+';
 simplesegdir: segdir linereminder;
 specialregister: CR0 | CR2 | CR3 | DR0 | DR1 | DR2 | DR3 | DR6 | DR7| TR3 | TR4 | TR5 | TR6 | TR7;
 stackoption: NEARSTACK | FARSTACK ;
@@ -972,15 +985,16 @@ C: 'C';
 U_DOT: '.';
 COMMA: ',';
 CHARACTER: /[^\r\n]/;
-STRING: /((?<!\')\'(?!\').+?(?<!\')\'(?!\'))|((?<!\")\"(?!\").+?(?<!\")\"(?!\"))/;
+STRING: /\'{1}.+?\'{1}|\"{1}.+?\"{1}/;
 macroid: {prefer};
 LABEL: /[A-Za-z@_\$\?][A-Za-z@_\$\?0-9]*/;
 MONKEY: /@@|@B|@F/ ;
+addop: /[+-]/;
 
 //DELIMITER: /[^\t\n\rA-Za-z0-9 ]/;
 ENDOFLINE: /[\r\n]+[\t \r\n]*/;
 FLOAT: /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b/;
-INTEGER: /[-+]?[0-9][0-9A-F]*[hoqtyHOQTY]?\b/ {prefer};
+INTEGER: /\-?[0-9][0-9A-Fa-f]*[HOQTYhoqty]?\b/ {prefer};
 WS: /([\t \b\v\f\x1a]+)|(\\;?[^\r\n]*[\r\n\t \b\v\f\x1a]+)/;
-COMMENTTERM: /;[^\r\n]*/;
+Comment: /;[^\r\n]*/;
 KEYWORD: /\w+/;
