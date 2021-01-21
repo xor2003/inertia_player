@@ -257,6 +257,9 @@ def AND(context, nodes):
 def register(context, nodes):
     return Token('register', nodes[0].lower())
 
+def segmentregister(context, nodes):
+    return Token('segmentregister', nodes[0].lower())
+
 def sqexpr(context, nodes):
     #global indirection
     #indirection = 1
@@ -298,6 +301,7 @@ actions = {
     "segmentdir": segmentdir,
     "INTEGER": INTEGER,
     "register": register,
+"segmentregister": segmentregister,
     "NOT": NOT,
     "OR": OR,
     "XOR": XOR,

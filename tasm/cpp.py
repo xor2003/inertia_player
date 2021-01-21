@@ -225,14 +225,21 @@ class Cpp(object):
         #    expr = expr.strip()
         origexpr = expr
 
+
+        expr, ptrdir = self.find_token(expr, 'ptrdir')
+        if ptrdir:
+            value = ptrdir.value.lower()
+            # logging.debug('get_size res 1')
+            return {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
+
         expr, issqexpr = self.find_token(expr, 'sqexpr')
         if issqexpr:
             return 0
-        expr, ptrdir = self.find_token(expr, 'ptrdir')
 
         if isinstance(expr, list) and all(
                 isinstance(i, str) or (isinstance(i, Token) and i.type == 'INTEGER') for i in expr):
             s = "".join([x.value if isinstance(x, Token) else x for x in expr])
+            s = re.sub(r'^0+(?=\d)', '', s) # TODO put it to parser
             try:
                 s = eval(s)
                 expr = Token('INTEGER', str(s))
@@ -268,10 +275,6 @@ class Cpp(object):
                     return g.size
                 except:
                     pass
-            elif ptrdir:
-                value = ptrdir.lower()
-                # logging.debug('get_size res 1')
-                return {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[expr[0]]
 
         if isinstance(expr, list):
             return max([self.get_size(i) for i in expr])
