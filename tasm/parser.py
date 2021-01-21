@@ -98,12 +98,12 @@ def make_token(context, nodes):
     return nodes
 
 def segoverride(context, nodes):
-    global cur_segment
+    #global cur_segment
     if isinstance(nodes[0], list):
         cur_segment = nodes[0][-1]
         return nodes[0][:-1] + [Token('segoverride', nodes[0][-1]), nodes[2]]
-    cur_segment = nodes[0] #!
-    return [Token('segoverride', nodes[0]), nodes[2]]
+    #cur_segment = nodes[0] #!
+    return [Token('segoverride', nodes[0].value), nodes[2]]
 
 def ptrdir(context, nodes):
     if len(nodes) == 3:
@@ -112,7 +112,7 @@ def ptrdir(context, nodes):
         return [Token('ptrdir', nodes[0]), nodes[1]]
 
 def INTEGER(context, nodes):
-    return tasm.cpp.convert_number_to_c(nodes)
+    return Token('INTEGER', tasm.cpp.convert_number_to_c(nodes))
 
 def expr(context, nodes):
     return make_token(context, nodes)

@@ -112,7 +112,7 @@ static const uint32_t MASK[]={0, 0xff, 0xffff, 0xffffff, 0xffffffff};
  #define offset(segment,name) ((dd)(db*)&m.name)
 #else
  typedef dw MWORDSIZE;
- #define offset(segment,name) offsetof(struct Memory,name)-offsetof(struct Memory,segment)
+ #define offset(segment,name) (offsetof(struct Memory,name)-offsetof(struct Memory,segment))
 #endif
 
 #define seg_offset(segment) ((offsetof(struct Memory,segment))>>4)

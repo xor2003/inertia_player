@@ -228,6 +228,13 @@ class _jnb(basejmp):
     def visit(self, visitor):
         return visitor._jnc(self.label)
 
+def flatten(S):
+    if S == []:
+        return S
+    if isinstance(S[0], list):
+        return flatten(S[0]) + flatten(S[1:])
+    return S[:1] + flatten(S[1:])
+
 class _push(baseop):
     def __init__(self, arg):
         self.regs = arg

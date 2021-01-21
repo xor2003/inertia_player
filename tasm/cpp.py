@@ -94,16 +94,16 @@ class Cpp(object):
         self.__temps_count = 0
         self.__pointer_flag = False
         self.lea = False
-        self.__expr_size = 0
+        #self.__expr_size = 0
         self.__far = False
         self.body = ""
         self.__unbounded = []
 
     def expand_cb(self, match):
         name_original = match.group(0)
-        return self.expand_cb_(name_original)
+        return self.convert_label(name_original)
 
-    def expand_cb_(self, name_original):
+    def convert_label(self, name_original):
         name = name_original.lower()
         logging.debug("expand_cb name = %s indirection = %u" % (name, self.__indirection))
         if self.is_register(name) != 0:
@@ -204,20 +204,64 @@ class Cpp(object):
             return 4
         return 0
 
-    def find_token(self, expr, lookfor, remove=False):
+    def find_and_call_tokens(self, expr, lookfor, call=None):
+        l = []
         if isinstance(expr, Token):
             if expr.type == lookfor:
-                return (expr, expr)
-            else:
-                return (expr, None)
+                if call:
+                    expr.value = call(expr.value)
+                l.append(expr.value)
+
+            result = None
+            if not isinstance(expr.value, str):
+                result = self.find_and_call_tokens(expr.value, lookfor, call)
+            if result != None:
+                l = l + result
         elif isinstance(expr, list):
             for i in range(0, len(expr)):
-                _, result = self.find_token(expr[i], lookfor, remove=remove)
+                result = self.find_and_call_tokens(expr[i], lookfor, call)
                 if result != None:
-                    if remove:
-                        del expr[i]
-                    return (expr, result)
-        return (expr, None)
+                    l = l + result
+        if l == []:
+            l = None
+        return l
+
+    def remove_squere_bracets(self, expr, index=0):
+        index += 1
+        if isinstance(expr, Token):
+            expr.value = self.remove_squere_bracets(expr.value, index)
+            if expr.type == 'sqexpr':
+                expr = expr.value
+                if index != 1:
+                    expr = ['+', expr]
+            return expr
+        elif isinstance(expr, list):
+            for i in range(0, len(expr)):
+                expr[i] = self.remove_squere_bracets(expr[i], index)
+        return expr
+
+    def remove_tokens(self, expr, lookfor):
+        if isinstance(expr, Token):
+            if expr.type in lookfor:
+                if isinstance(expr.value, str):
+                    expr = None
+                else:
+                    expr = expr.value
+                    expr = self.remove_tokens(expr, lookfor)
+                return expr
+            else:
+                expr.value = self.remove_tokens(expr.value, lookfor)
+                return expr
+        elif isinstance(expr, list):
+            l = []
+            for i in range(0, len(expr)):
+                result = self.remove_tokens(expr[i], lookfor)
+                if result != None:
+                    l.append(result)
+            if l == []:
+                l = None
+            return l
+        return expr
 
     def get_size(self, expr):
         logging.debug('get_size("%s")' % expr)
@@ -226,13 +270,13 @@ class Cpp(object):
         origexpr = expr
 
 
-        expr, ptrdir = self.find_token(expr, 'ptrdir')
+        ptrdir = self.find_and_call_tokens(expr, 'ptrdir')
         if ptrdir:
-            value = ptrdir.value.lower()
+            value = ptrdir[0].lower()
             # logging.debug('get_size res 1')
             return {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
 
-        expr, issqexpr = self.find_token(expr, 'sqexpr')
+        issqexpr = self.find_and_call_tokens(expr, 'sqexpr')
         if issqexpr:
             return 0
 
@@ -279,7 +323,7 @@ class Cpp(object):
         if isinstance(expr, list):
             return max([self.get_size(i) for i in expr])
 
-        _, offsetdir = self.find_token(expr, 'offsetdir')
+        offsetdir = self.find_and_call_tokens(expr, 'offsetdir')
         if offsetdir:
             return 2  # TODO 16 bit word size
 
@@ -323,7 +367,7 @@ class Cpp(object):
         expr = convert_number_to_c(expr)
         return "(%s)" % expr
 
-    def expand(self, expr, def_size=0, destination=False):
+    def expand_old(self, expr, def_size=0, destination=False):
         logging.debug("EXPAND(expr:\"%s\")" % expr)
         self.__seg_prefix = ""
 
@@ -338,7 +382,7 @@ class Cpp(object):
 
         size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
 
-        self.__expr_size = size
+        #self.__expr_size = size
         # print "expr \"%s\" %d" %(expr, size)
         indirection = 0
         seg = None
@@ -477,26 +521,16 @@ class Cpp(object):
             expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
             if size == 0 and self.__current_size != 0:
                 size = self.__current_size
-                self.__expr_size = size
+                #self.__expr_size = size
             logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
-            logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
-            self.__pointer_flag = False
+            #logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
+            #self.__pointer_flag = False
             indirection = self.__indirection
             logging.debug("AFTER: %d %s" % (indirection, expr))
             # traceback.print_stack(file=sys.stdout)
 
         if indirection == 1:
-            if not (self.lea and not destination):
-                if size == 1:
-                    expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                elif size == 2:
-                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                elif size == 4:
-                    expr = "*(dd*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                else:
-                    logging.debug("~%s~ @invalid size 0" % expr)
-                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                logging.debug("expr: %s" % expr)
+            expr = self.convert_sqbr_reference(expr, destination, size)
         elif indirection == 0:
             pass
         elif indirection == -1:
@@ -505,26 +539,95 @@ class Cpp(object):
             raise Exception("invalid indirection %d" % indirection)
         return expr
 
-    def unpack(self, expr):
+    def convert_sqbr_reference(self, expr, destination, size):
+        if not (self.lea and not destination):
+            if size == 1:
+                expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
+            elif size == 2:
+                expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
+            elif size == 4:
+                expr = "*(dd*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
+            else:
+                logging.debug("~%s~ @invalid size 0" % expr)
+                expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
+            logging.debug("expr: %s" % expr)
+        return expr
+
+    def tokenstostring(self, expr):
         if isinstance(expr, list):
-            result = "".join([self.unpack(i) for i in expr])
+            result = "".join([self.tokenstostring(i) for i in expr])
             return result
         elif isinstance(expr, Token):
+
+            if expr.type == 'STRING':
+                m = re.match(r'^[\'\"](....)[\'\"]$', expr.value)  # char constants 'abcd'
+                if m is not None:
+                    ex = m.group(1)
+                    expr.value = '0x'
+                    for i in range(0, 4):
+                        # logging.debug("constant %s %d" %(ex,i))
+                        ss = str(hex(ord(ex[i])))
+                        # logging.debug("constant %s" %ss)
+                        expr.value += ss[2:]
+
             return expr.value
         return expr
 
-    def expand_new(self, expr, def_size=0, destination=False):
+    def expand(self, expr, def_size=0, destination=False):
         logging.debug("EXPAND(expr:\"%s\")" % expr)
-        self.__seg_prefix = ""
-
-        # expr = expr.strip()
         origexpr = expr
-        expr = self.unpack(expr)
+        self.__seg_prefix = "ds"
+        self.__current_size = 0
+        indirection = 0
+        size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
+        #self.__expr_size = size
+
+        segoverride = self.find_and_call_tokens(expr, 'segoverride')
+        if segoverride:
+            self.__seg_prefix = segoverride[0]
+        else:
+            issqexpr = self.find_and_call_tokens(expr, 'sqexpr')
+            if issqexpr:
+                indirection = 1
+                for i in reversed(issqexpr):
+                    if isinstance(i, Token) and i.value== 'register' and i.value.value in ['bp','ebp','sp','esp']:
+                        self.__seg_prefix = "ss"
+                    else:
+                        self.__seg_prefix = "ds"
+
+        offsetdir = self.find_and_call_tokens(expr, 'offsetdir')
+        if offsetdir:
+            indirection = -1
+            expr = offsetdir.value
+
+        ptrdir = self.find_and_call_tokens(expr, 'ptrdir')
+        if ptrdir:
+            indirection = 1
+
+        expr = self.remove_tokens(expr, ['ptrdir','offsetdir','segoverride'])
+
+        expr = self.remove_squere_bracets(expr)
+
+        self.__indirection = indirection
+        self.find_and_call_tokens(expr, 'LABEL', self.convert_label)
+        if self.__current_size != 0:
+            size = self.__current_size
+
+        if ptrdir:
+            value = ptrdir[0].lower()
+            # logging.debug('get_size res 1')
+            size = {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
+
+        expr = self.tokenstostring(expr)
+
+        if indirection == 1:
+            expr = self.convert_sqbr_reference(expr, destination, size)
+
         return expr
 
         size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
 
-        self.__expr_size = size
+        #self.__expr_size = size
         # print "expr \"%s\" %d" %(expr, size)
         indirection = 0
         seg = None
@@ -533,17 +636,6 @@ class Cpp(object):
         ex = expr
         ex.replace("\\\\", "\\")
 
-        m = re.match(r'\'(.+)\'$', ex)  # char constants 'abcd'
-        if m is not None:
-            ex = m.group(1)
-            if len(ex) == 4:  # convert 'abcd' to 0x12345678
-                expr = '0x'
-                for i in range(0, 4):
-                    # logging.debug("constant %s %d" %(ex,i))
-                    ss = str(hex(ord(ex[i])))
-                    # logging.debug("constant %s" %ss)
-                    expr += ss[2:]
-            return expr
 
         try:
             g = self.__context.get_global(expr)
@@ -663,26 +755,16 @@ class Cpp(object):
             expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
             if size == 0 and self.__current_size != 0:
                 size = self.__current_size
-                self.__expr_size = size
+                #self.__expr_size = size
             logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
-            logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
-            self.__pointer_flag = False
+            #logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
+            #self.__pointer_flag = False
             indirection = self.__indirection
             logging.debug("AFTER: %d %s" % (indirection, expr))
             # traceback.print_stack(file=sys.stdout)
 
         if indirection == 1:
-            if not (self.lea and not destination):
-                if size == 1:
-                    expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                elif size == 2:
-                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                elif size == 4:
-                    expr = "*(dd*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                else:
-                    logging.debug("~%s~ @invalid size 0" % expr)
-                    expr = "*(dw*)(raddr(%s,%s))" % (self.__seg_prefix, expr)
-                logging.debug("expr: %s" % expr)
+            expr = self.convert_sqbr_reference(expr, destination, size)
         elif indirection == 0:
             pass
         elif indirection == -1:

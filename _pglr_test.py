@@ -156,6 +156,9 @@ def LABEL(context, nodes):
 def STRING(context, nodes):
     return Token('STRING', nodes)
 
+def INTEGER(context, nodes):
+    return Token('INTEGER', nodes)
+
 recognizers = {
     'macroid': macroid
 }
@@ -166,6 +169,7 @@ actions = {
     "expr": make_token,
     "STRING": STRING,
     "LABEL": LABEL,
+    "INTEGER": INTEGER,
     "aexpr": make_token,
     "cexpr": make_token,
     "cxzexpr": make_token,
