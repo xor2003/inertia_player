@@ -903,7 +903,7 @@ class Cpp(object):
                 return "return /* (%s) */" % (name)
             ## x0r return "goto %s" %self.resolve_label(name)
             if not hasglobal:
-                name = self.expand_old(name, destination=True)  # TODO
+                ##name = self.expand_old(name, destination=True)  # TODO
                 self.body += "__disp = (dw)(" + name + ");\n"
                 name = "__dispatch_call"
             else:
@@ -1474,7 +1474,7 @@ else goto __dispatch_call;
 
     def _lea(self, dst, src):
         self.lea = True
-        r = "\tR(%s = %s);\n" % (dst, self.expand(src))
+        r = "\tR(%s = %s);\n" % (self.expand(dst, destination=True), self.expand(src))
         self.lea = False
         return r
 
