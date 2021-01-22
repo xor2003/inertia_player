@@ -92,12 +92,16 @@ segoverride: e09 ':' e10;
 ptrdir: e09 PTR e10
 | LARGE e10
 | SMALL e10;
+ordir: e01 OR e02;
+xordir: e01 XOR e02;
+anddir: e02 AND e03;
+notdir: NOT e04;
 
-e01: e01 orop e02
+e01: ordir | xordir
 | e02;
-e02: e02 AND e03
+e02: anddir
 | e03;
-e03: NOT e04
+e03: notdir
 | e04;
 e04: e04 relop e05
 | e05;

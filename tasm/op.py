@@ -237,17 +237,17 @@ def flatten(S):
 
 class _push(baseop):
     def __init__(self, arg):
-        self.regs = arg
+        self.arg = arg
 
     def visit(self, visitor):
-        return visitor._push(self.regs)
+        return visitor._push(self.arg)
 
 class _pop(baseop):
     def __init__(self, arg):
-        self.regs = arg
+        self.arg = arg
 
     def visit(self, visitor):
-        return visitor._pop(self.regs)
+        return visitor._pop(self.arg)
 
 class _ret(baseop):
     def __init__(self, arg):

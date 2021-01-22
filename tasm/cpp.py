@@ -106,12 +106,12 @@ class Cpp(object):
     def convert_label(self, name_original):
         name = name_original.lower()
         logging.debug("expand_cb name = %s indirection = %u" % (name, self.__indirection))
-        if self.is_register(name) != 0:
-            return name
+        #if self.is_register(name) != 0:
+        #    return name
 
         if self.__indirection == -1:
             try:
-                offset, p, p = self.__context.get_offset(name)
+                offset, _, _ = self.__context.get_offset(name)
             except:
                 pass
             else:
@@ -158,8 +158,7 @@ class Cpp(object):
                 value = "offset(%s,%s)" % (g.segment, g.name)
                 if self.__seg_prefix == 'cs':
                     self.body += '\tcs=seg_offset(' + g.segment + ');\n'
-            self.__indirection = 1
-            #       self.indirection = 0
+            #?self.__indirection = 1
         elif isinstance(g, op.label):
             value = "k" + g.name.lower()  # .capitalize()
         else:
@@ -227,18 +226,20 @@ class Cpp(object):
         return l
 
     def remove_squere_bracets(self, expr, index=0):
-        index += 1
         if isinstance(expr, Token):
-            expr.value = self.remove_squere_bracets(expr.value, index)
+            index += 1
+            expr.value, _ = self.remove_squere_bracets(expr.value, index)
             if expr.type == 'sqexpr':
                 expr = expr.value
                 if index != 1:
                     expr = ['+', expr]
-            return expr
+            return expr, index
         elif isinstance(expr, list):
             for i in range(0, len(expr)):
-                expr[i] = self.remove_squere_bracets(expr[i], index)
-        return expr
+                expr[i], index = self.remove_squere_bracets(expr[i], index)
+        else:
+            index += 1
+        return expr, index
 
     def remove_tokens(self, expr, lookfor):
         if isinstance(expr, Token):
@@ -272,9 +273,9 @@ class Cpp(object):
 
         ptrdir = self.find_and_call_tokens(expr, 'ptrdir')
         if ptrdir:
-            value = ptrdir[0].lower()
+            value = ptrdir[0]
             # logging.debug('get_size res 1')
-            return {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
+            return self.typetosize(value)
 
         issqexpr = self.find_and_call_tokens(expr, 'sqexpr')
         if issqexpr:
@@ -403,26 +404,9 @@ class Cpp(object):
                     expr += ss[2:]
             return expr
 
-        try:
-            g = self.__context.get_global(expr)
-            logging.debug("found global %s" % expr)
-            if not self.lea and isinstance(g, op.var):
-                logging.debug("it is not lea and it is var")
-                if g.issegment:
-                    return "seg_offset(%s)" % expr.lower()
-                else:
-                    if g.elements == 1:
-                        # traceback.print_stack(file=sys.stdout)
-                        return "m." + expr
-                    else:
-                        s = {1: "*(db*)", 2: "*(dw*)", 4: "*(dd*)"}[size]
-                        return s + "&m." + expr
-            if isinstance(g, op.equ) or isinstance(g, op.assignment):
-                logging.debug("it is equ")
-                return self.expand(g.value)
-
-        except:
-            pass
+        result = self.get_var_equ_value(expr, size)
+        if result:
+            return result
 
         ex = expr
         ex.replace("\\\\", "\\")
@@ -539,6 +523,30 @@ class Cpp(object):
             raise Exception("invalid indirection %d" % indirection)
         return expr
 
+    def get_var_equ_value(self, expr, size):
+        result = None
+        try:
+            g = self.__context.get_global(expr)
+            logging.debug("found global %s" % expr)
+            if not self.lea and isinstance(g, op.var):
+                logging.debug("it is not lea and it is var")
+                if g.issegment:
+                    result = "seg_offset(%s)" % expr.lower()
+                else:
+                    if g.elements == 1:
+                        # traceback.print_stack(file=sys.stdout)
+                        result = "m." + expr
+                    else:
+                        s = {1: "*(db*)", 2: "*(dw*)", 4: "*(dd*)"}[size]
+                        result = s + "&m." + expr
+            if isinstance(g, op.equ) or isinstance(g, op.assignment):
+                logging.debug("it is equ")
+                result = self.expand(g.value)
+
+        except:
+            pass
+        return result
+
     def convert_sqbr_reference(self, expr, destination, size):
         if not (self.lea and not destination):
             if size == 1:
@@ -584,7 +592,8 @@ class Cpp(object):
 
         segoverride = self.find_and_call_tokens(expr, 'segoverride')
         if segoverride:
-            self.__seg_prefix = segoverride[0]
+            self.__seg_prefix = segoverride[0].value
+            expr = self.remove_tokens(expr, ['segmentregister'])
         else:
             issqexpr = self.find_and_call_tokens(expr, 'sqexpr')
             if issqexpr:
@@ -598,7 +607,7 @@ class Cpp(object):
         offsetdir = self.find_and_call_tokens(expr, 'offsetdir')
         if offsetdir:
             indirection = -1
-            expr = offsetdir.value
+            expr = offsetdir
 
         ptrdir = self.find_and_call_tokens(expr, 'ptrdir')
         if ptrdir:
@@ -606,17 +615,22 @@ class Cpp(object):
 
         expr = self.remove_tokens(expr, ['ptrdir','offsetdir','segoverride'])
 
-        expr = self.remove_squere_bracets(expr)
+        expr, _ = self.remove_squere_bracets(expr)
+
+        islabel = self.find_and_call_tokens(expr, 'LABEL')
+        if islabel and not offsetdir and all(self.__context.has_global(i) for i in islabel):
+            indirection = 1
 
         self.__indirection = indirection
         self.find_and_call_tokens(expr, 'LABEL', self.convert_label)
+        indirection = self.__indirection
         if self.__current_size != 0:
             size = self.__current_size
 
         if ptrdir:
-            value = ptrdir[0].lower()
+            value = ptrdir[0]
             # logging.debug('get_size res 1')
-            size = {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
+            size = self.typetosize(value)
 
         expr = self.tokenstostring(expr)
 
@@ -773,6 +787,11 @@ class Cpp(object):
             raise Exception("invalid indirection %d" % indirection)
         return expr
 
+    def typetosize(self, value):
+        value = value.lower()
+        size = {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
+        return size
+
     def mangle_label(self, name):
         name = name.lower()
         return re.sub(r'\$', '_tmp', name)
@@ -839,7 +858,7 @@ class Cpp(object):
                 return "return /* (%s) */" % (name)
             ## x0r return "goto %s" %self.resolve_label(name)
             if not hasglobal:
-                name = self.expand(name, destination=True)
+                name = self.expand_old(name, destination=True)  #TODO
                 self.body += "__disp = (dw)(" + name + ");\n"
                 name = "__dispatch_call"
             else:
@@ -870,9 +889,9 @@ class Cpp(object):
         self.__proc_queue.append(name)
 
     def _call(self, name):
-        logging.debug("cpp._call(%s)" % name)
+        logging.debug("cpp._call(%s)" % str(name))
         ret = ""
-        # dst = self.expand(name, destination = True)
+        #dst = self.expand(name, destination = False)
         dst = self.jump_to_label(name)
         if dst != "__dispatch_call":
             dst = "k" + dst
@@ -966,29 +985,30 @@ class Cpp(object):
         return "\tR(IDIV%d(%s));\n" % (size, src)
 
     def _jz(self, label):
-        if re.match('.*?(\$\+2)', label) is None:  # skip jz $+2
-            label = self.jump_to_label(label)
+        if isinstance(label, Token) and re.match('.*?(\$\+2)', label.value):  # skip j* $+2
+            return "\n"
+        else:
+            label = self.jump_to_label(label.value) #TODO
             return "\t\tR(JZ(%s));\n" % label
-        return "\n"
 
     def _jnz(self, label):
-        label = self.jump_to_label(label)
+        label = self.jump_to_label(label.value)
         return "\t\tR(JNZ(%s));\n" % label
 
     def _jbe(self, label):
-        label = self.jump_to_label(label)
+        label = self.jump_to_label(label.value)
         return "\t\tR(JBE(%s));\n" % label
 
     def _ja(self, label):
-        label = self.jump_to_label(label)
+        label = self.jump_to_label(label.value)
         return "\t\tR(JA(%s));\n" % label
 
     def _jc(self, label):
-        label = self.jump_to_label(label)
+        label = self.jump_to_label(label.value)
         return "\t\tR(JC(%s));\n" % label
 
     def _jnc(self, label):
-        label = self.jump_to_label(label)
+        label = self.jump_to_label(label.value)
         return "\t\tR(JNC(%s));\n" % label
 
     def _push(self, regs):
@@ -1443,10 +1463,11 @@ else goto __dispatch_call;
         return "\tR(%s(%s));\n" % (cmd.upper(), dst)
 
     def _jump(self, cmd, label):
-        if re.match('.*?(\$\+2)', label) is None:  # skip j* $+2
-            label = self.jump_to_label(label)
+        if isinstance(label, Token) and re.match('.*?(\$\+2)', label.value):  # skip j* $+2
+            return "\n"
+        else:
+            label = self.jump_to_label(label.value) #TODO
             return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
-        return "\n"
 
     def _instruction2(self, cmd, dst, src):
         self.a, self.b = self.parse2(dst, src)

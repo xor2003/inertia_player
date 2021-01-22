@@ -101,19 +101,19 @@ def asminstruction(context, nodes, instruction, args):
     return nodes
 
 
-def NOT(context, nodes):
+def notdir(context, nodes):
     nodes[0] = '~'
     return nodes
 
-def OR(context, nodes):
+def ordir(context, nodes):
     nodes[1] = '|'
     return nodes
 
-def XOR(context, nodes):
+def xordir(context, nodes):
     nodes[1] = '^'
     return nodes
 
-def AND(context, nodes):
+def anddir(context, nodes):
     nodes[1] = ' & '
     return nodes
 
@@ -186,10 +186,10 @@ actions = {
     "register": register,
 "segmentregister": segmentregister,
     "sqexpr": sqexpr,
-    "NOT": NOT,
-    "OR": OR,
-    "XOR": XOR,
-    "AND": AND
+    "notdir": notdir,
+    "ordir": ordir,
+    "xordir": xordir,
+    "anddir": anddir
 }
 
 

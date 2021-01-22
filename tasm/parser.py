@@ -103,7 +103,7 @@ def segoverride(context, nodes):
         cur_segment = nodes[0][-1]
         return nodes[0][:-1] + [Token('segoverride', nodes[0][-1]), nodes[2]]
     #cur_segment = nodes[0] #!
-    return [Token('segoverride', nodes[0].value), nodes[2]]
+    return [Token('segoverride', nodes[0]), nodes[2]]
 
 def ptrdir(context, nodes):
     if len(nodes) == 3:
@@ -209,6 +209,7 @@ def instrprefix(context, nodes):
     context.extra.proc.stmts.append(o)
     return o
 
+'''
 def listtostring(l):  # TODO remove
     if isinstance(l, list):
         l = [listtostring(i) for i in l]
@@ -220,9 +221,10 @@ def listtostring(l):  # TODO remove
             s = s + i
         l = s
     return l
+'''
 
 def asminstruction(context, nodes, instruction, args):
-    print("instruction " + str(nodes) + " ~~")
+    logging.debug("instruction " + str(nodes) + " ~~")
     # if args != None:
     #    args = [listtostring(i) for i in args] # TODO temporary workaround
     # args = build_ast(args)
@@ -238,19 +240,19 @@ def enddir(context, nodes, label):
         context.extra.entry_point = label.value.lower()
     return nodes
 
-def NOT(context, nodes):
+def notdir(context, nodes):
     nodes[0] = '~'
     return nodes
 
-def OR(context, nodes):
+def ordir(context, nodes):
     nodes[1] = '|'
     return nodes
 
-def XOR(context, nodes):
+def xordir(context, nodes):
     nodes[1] = '^'
     return nodes
 
-def AND(context, nodes):
+def anddir(context, nodes):
     nodes[1] = ' & '
     return nodes
 
@@ -302,10 +304,10 @@ actions = {
     "INTEGER": INTEGER,
     "register": register,
 "segmentregister": segmentregister,
-    "NOT": NOT,
-    "OR": OR,
-    "XOR": XOR,
-    "AND": AND,
+    "notdir": notdir,
+    "ordir": ordir,
+    "xordir": xordir,
+    "anddir": anddir,
     "expr": make_token,
     "LABEL": LABEL,
     "STRING": STRING,
@@ -448,7 +450,7 @@ class Parser():
             logging.debug(g)
         except KeyError:
             logging.debug("get_global KeyError %s" % (name))
-            raise KeyError
+            raise
         g.used = True
         return g
 
@@ -1172,7 +1174,7 @@ default_seg ends
     push    ''' + line + '''
     default_seg ends
         end start
-        ''').asminstruction.regs
+        ''').asminstruction.arg
         del self.__globals['default_seg']
         return result
 
@@ -1189,7 +1191,7 @@ end startd
     def parse_arg(self, line):
         result = self.parse_args_new_data_('''.model tiny
     default_seg segment
-    inc ''' + line + '''
+    push ''' + line + '''
     default_seg ends
     end startd
     ''').asminstruction.arg

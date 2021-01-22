@@ -5709,16 +5709,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts eax,0')), u'\tR(BTS(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts eax,2')), u'\tR(BTS(eax, 2));\n')
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    dword ptr [ebx-4]')), '\tR(CALL(__disp));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    exec_adc')), u'\tR(CALL(kexec_adc));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    printf')), '\tR(CALL(__disp));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    test_bcd')), u'\tR(CALL(ktest_bcd));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call [cs:table+ax]')), '\tR(CALL(__disp));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call printeax')), u'\tR(CALL(kprinteax));\n')
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cbw')), '\tR(CBW);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cdq')), '\tR(CDQ);\n')
@@ -5761,23 +5751,21 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var0+5],0')), u'\tR(CMP(*(raddr(ds,offset(_data,var0)+5)), 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var1+1],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var1],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1))), 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2+2],6')), u'\tR(CMP(*(raddr(ds,offset(_data,var2)+2)), 6));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2-1],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var2)-1)), 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2+2],6')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2)+2)), 6));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2-1],5')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2)-1)), 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2],4')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2))), 4));\n')
         self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+3*4],4000000')), u'\tR(CMP(*(dd*)(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+3*4],4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
         self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+ebp],4000000')), u'\tR(CMP(*(dd*)(raddr(ds,offset(_data,var3)+ebp)), 4000000));\n')
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+ebp],4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+ebp)), 4000000));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var4+t],1')), u'\tR(CMP(*(raddr(ds,offset(_data,var4)+t)), 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var4],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var4))), 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var))), 5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp a,1')), u'\tR(CMP(*(db*)&m.a, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ah,-1')), u'\tR(CMP(ah, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ah,0ffh')), u'\tR(CMP(ah, 0x0ff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp al,2')), u'\tR(CMP(al, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp al,ah')), u'\tR(CMP(al, ah));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ax,-5')), u'\tR(CMP(ax, -5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp b,256+3')), u'\tR(CMP(m.b, 256+3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bh,0cch')), u'\tR(CMP(bh, 0x0cc));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,001111111B')), u'\tR(CMP(bl, 0x7f));\n')
@@ -5896,16 +5884,10 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx+si],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx+si)), 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx)), 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,2')), u'\tR(CMP(*(dw*)&m.var2, 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,bx')), u'\tR(CMP(*(dw*)&m.var2, bx));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3+3*4,4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3+ebp,4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+ebp)), 4000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-12')), u'\tR(CMP(*(db*)&m.var3, -12));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-13')), u'\tR(CMP(*(db*)&m.var3, -13));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,3')), u'\tR(CMP(*(db*)&m.var3, 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,ecx')), u'\tR(CMP(*(db*)&m.var3, ecx));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr [var5+2],25')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5)+2)), 25));\n')
         self.assertEqual(
@@ -5989,7 +5971,6 @@ class ParserTest(unittest.TestCase):
             'inc edi              ; increase target address')), u'\tR(INC(edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc edi')), u'\tR(INC(edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc edx')), u'\tR(INC(edx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc var3')), u'\tR(INC(*(db*)&m.var3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('int 10h')), u'\tR(_INT(0x10));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
             'int 21h                         ; DOS INT 21h')), u'\tR(_INT(0x21));\n')
@@ -6893,9 +6874,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov [a],5')), u'\tR(MOV(*(raddr(ds,offset(_data,a))), 5));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov [load_handle],eax')), u'\tR(MOV(*(dd*)(raddr(ds,offset(_data,load_handle))), eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,5')), u'\tR(MOV(*(db*)&m.a, 5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,ah')), u'\tR(MOV(*(db*)&m.a, ah));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,al')), u'\tR(MOV(*(db*)&m.a, al));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,03dh')), u'\tR(MOV(ah, 0x03d));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,03eh')), u'\tR(MOV(ah, 0x03e));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,03fh')), u'\tR(MOV(ah, 0x03f));\n')
@@ -7393,6 +7371,28 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'rep')), '\tREP\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repe')), '\tREPE\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repne')), '\tREPNE\n')
+        self.assertEqual(
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    dword ptr [ebx-4]')), '\tR(CALL(__disp));\n')
+        self.assertEqual(
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    exec_adc')), u'\tR(CALL(kexec_adc));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    printf')), '\tR(CALL(__disp));\n')
+        self.assertEqual(
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    test_bcd')), u'\tR(CALL(ktest_bcd));\n')
+        self.assertEqual(
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call [cs:table+ax]')), '\tR(CALL(__disp));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call printeax')), u'\tR(CALL(kprinteax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp a,1')), u'\tR(CMP(*(db*)&m.a, 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp b,256+3')), u'\tR(CMP(m.b, 256+3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,2')), u'\tR(CMP(*(dw*)&m.var2, 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,bx')), u'\tR(CMP(*(dw*)&m.var2, bx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-12')), u'\tR(CMP(*(db*)&m.var3, -12));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-13')), u'\tR(CMP(*(db*)&m.var3, -13));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,3')), u'\tR(CMP(*(db*)&m.var3, 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,ecx')), u'\tR(CMP(*(db*)&m.var3, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc var3')), u'\tR(INC(*(db*)&m.var3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,5')), u'\tR(MOV(*(db*)&m.a, 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,ah')), u'\tR(MOV(*(db*)&m.a, ah));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,al')), u'\tR(MOV(*(db*)&m.a, al));\n')
 
 if __name__ == "__main__":
     unittest.main()
