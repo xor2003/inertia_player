@@ -5802,8 +5802,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],57')), u'\tR(CMP(*(raddr(es,0)), 57));\n')
         self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp c,256+3+65536')), u'\tR(CMP(m.c, 256+3+65536));\n')
-        self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ch,001111111B')), u'\tR(CMP(ch, 0x7f));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ch,011111100B')), u'\tR(CMP(ch, 0xfc));\n')
@@ -5878,8 +5876,6 @@ class ParserTest(unittest.TestCase):
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,offset var1+1')), u'\tR(CMP(esi, offset(_data,var1)+1));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,offset var3+4')), u'\tR(CMP(esi, offset(_data,var3)+4));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,1')), u'\tR(CMP(m.var1, 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,al')), u'\tR(CMP(m.var1, al));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[1],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 2));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx+si],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx+si)), 2));\n')
@@ -6907,7 +6903,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,501h')), u'\tR(MOV(ax, 0x501));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,6')), u'\tR(MOV(ax, 6));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,bp')), u'\tR(MOV(ax, bp));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov b,ax')), u'\tR(MOV(m.b, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,-1')), u'\tR(MOV(bl, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,0')), u'\tR(MOV(bl, 0));\n')
         self.assertEqual(
@@ -6944,7 +6939,6 @@ class ParserTest(unittest.TestCase):
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr es:[0],55')), u'\tR(MOV(*(raddr(es,0)), 55));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr es:[0],56')), u'\tR(MOV(*(raddr(es,0)), 56));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov c,eax')), u'\tR(MOV(m.c, eax));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ch,011111111B')), u'\tR(MOV(ch, 0xff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cl,2')), u'\tR(MOV(cl, 2));\n')
@@ -6958,7 +6952,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cx,ax')), u'\tR(MOV(cx, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,[edi+1]')), u'\tR(MOV(dl, *(raddr(ds,edi+1))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,[edi]')), u'\tR(MOV(dl, *(raddr(ds,edi))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,var1')), u'\tR(MOV(dl, m.var1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ds, _data')), u'\tR(MOV(ds, seg_offset(_data)));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ds:[edi],cl')), u'\tR(MOV(*(raddr(ds,edi)), cl));\n')
@@ -7037,7 +7030,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,[load_handle]')), u'\tR(MOV(ebx, *(dd*)(raddr(ds,offset(_data,load_handle)))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,eax')), u'\tR(MOV(ebx, eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,g')), u'\tR(MOV(ebx, m.g));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,-1')), u'\tR(MOV(ecx, -1));\n')
         self.assertEqual(
             proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,000ff00ffh')), u'\tR(MOV(ecx, 0x000ff00ff));\n')
@@ -7393,6 +7385,14 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,5')), u'\tR(MOV(*(db*)&m.a, 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,ah')), u'\tR(MOV(*(db*)&m.a, ah));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,al')), u'\tR(MOV(*(db*)&m.a, al));\n')
+        self.assertEqual(
+            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp c,256+3+65536')), u'\tR(CMP(m.c, 256+3+65536));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,1')), u'\tR(CMP(m.var1, 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,al')), u'\tR(CMP(m.var1, al));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov b,ax')), u'\tR(MOV(m.b, ax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov c,eax')), u'\tR(MOV(m.c, eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,var1')), u'\tR(MOV(dl, m.var1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,g')), u'\tR(MOV(ebx, m.g));\n')
 
 if __name__ == "__main__":
     unittest.main()

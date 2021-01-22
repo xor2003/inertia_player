@@ -91,7 +91,8 @@ segmdir: SEG e10;
 segoverride: e09 ':' e10;
 ptrdir: e09 PTR e10
 | LARGE e10
-| SMALL e10;
+| SMALL e10
+| SHORT e10;
 ordir: e01 OR e02;
 xordir: e01 XOR e02;
 anddir: e02 AND e03;
@@ -146,8 +147,7 @@ e11: '(' expr ')'
 | register
 | ST
 | ST '(' expr ')';
-expr: SHORT e05
-| U_TYPE e01
+expr: U_TYPE e01
 | OPATTR e01
 | e01;
 sizearg: e10;

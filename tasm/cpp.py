@@ -44,7 +44,7 @@ def parse_bin(s):
     sign = s.group(1)
     b = s.group(2)
     v = hex(int(b, 2))
-    if sign != None:
+    if sign:
         v = sign + v
     # print "BINARY: %s -> %s" %(b, v)
     return v
@@ -94,7 +94,7 @@ class Cpp(object):
         self.__temps_count = 0
         self.__pointer_flag = False
         self.lea = False
-        #self.__expr_size = 0
+        # self.__expr_size = 0
         self.__far = False
         self.body = ""
         self.__unbounded = []
@@ -106,7 +106,7 @@ class Cpp(object):
     def convert_label(self, name_original):
         name = name_original.lower()
         logging.debug("expand_cb name = %s indirection = %u" % (name, self.__indirection))
-        #if self.is_register(name) != 0:
+        # if self.is_register(name) != 0:
         #    return name
 
         if self.__indirection == -1:
@@ -158,7 +158,7 @@ class Cpp(object):
                 value = "offset(%s,%s)" % (g.segment, g.name)
                 if self.__seg_prefix == 'cs':
                     self.body += '\tcs=seg_offset(' + g.segment + ');\n'
-            #?self.__indirection = 1
+            # ?self.__indirection = 1
         elif isinstance(g, op.label):
             value = "k" + g.name.lower()  # .capitalize()
         else:
@@ -214,12 +214,12 @@ class Cpp(object):
             result = None
             if not isinstance(expr.value, str):
                 result = self.find_and_call_tokens(expr.value, lookfor, call)
-            if result != None:
+            if result:
                 l = l + result
         elif isinstance(expr, list):
             for i in range(0, len(expr)):
                 result = self.find_and_call_tokens(expr[i], lookfor, call)
-                if result != None:
+                if result:
                     l = l + result
         if l == []:
             l = None
@@ -257,7 +257,7 @@ class Cpp(object):
             l = []
             for i in range(0, len(expr)):
                 result = self.remove_tokens(expr[i], lookfor)
-                if result != None:
+                if result:
                     l.append(result)
             if l == []:
                 l = None
@@ -269,7 +269,6 @@ class Cpp(object):
         # if isinstance(expr, string):
         #    expr = expr.strip()
         origexpr = expr
-
 
         ptrdir = self.find_and_call_tokens(expr, 'ptrdir')
         if ptrdir:
@@ -284,7 +283,7 @@ class Cpp(object):
         if isinstance(expr, list) and all(
                 isinstance(i, str) or (isinstance(i, Token) and i.type == 'INTEGER') for i in expr):
             s = "".join([x.value if isinstance(x, Token) else x for x in expr])
-            s = re.sub(r'^0+(?=\d)', '', s) # TODO put it to parser
+            s = re.sub(r'^0+(?=\d)', '', s)  # TODO put it to parser
             try:
                 s = eval(s)
                 expr = Token('INTEGER', str(s))
@@ -304,7 +303,7 @@ class Cpp(object):
                     pass
             elif expr.type == 'STRING':
                 m = re.match(r'\'(.+)\'$', expr.value)  # char constants
-                if m is not None:
+                if m:
                     return len(m.group(1))
             elif expr.type == 'LABEL':
                 name = expr.value
@@ -383,7 +382,7 @@ class Cpp(object):
 
         size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
 
-        #self.__expr_size = size
+        # self.__expr_size = size
         # print "expr \"%s\" %d" %(expr, size)
         indirection = 0
         seg = None
@@ -393,7 +392,7 @@ class Cpp(object):
         ex.replace("\\\\", "\\")
 
         m = re.match(r'\'(.+)\'$', ex)  # char constants 'abcd'
-        if m is not None:
+        if m:
             ex = m.group(1)
             if len(ex) == 4:  # convert 'abcd' to 0x12345678
                 expr = '0x'
@@ -411,11 +410,11 @@ class Cpp(object):
         ex = expr
         ex.replace("\\\\", "\\")
         m = re.match(r'\'(.+)\'$', ex)  # char constants
-        if m is not None:
+        if m:
             return expr
 
         m = re.match(r'seg\s+(.*?)$', expr)
-        if m is not None:
+        if m:
             return m.group(1)
 
         expr = convert_number_to_c(expr)  # convert hex
@@ -424,7 +423,7 @@ class Cpp(object):
         # print "is it offset ~%s~" %expr
         prog = re.compile(r'offset\s+(.*?)$', re.I)
         m = prog.match(expr)
-        if m is not None:
+        if m:
             indirection -= 1
             size = 2  # x0r dos 16 bit
             expr = m.group(1).strip()
@@ -437,29 +436,29 @@ class Cpp(object):
 
         logging.debug("1:\"%s\")" % expr)
         m = re.match(r'byte\s+ptr\s+(.*)', expr)
-        if m is not None:
+        if m:
             expr = m.group(1).strip()
             size = 1
 
         m = re.match(r'dword\s+ptr\s+(.*)', expr)
-        if m is not None:
+        if m:
             expr = m.group(1).strip()
             size = 4
 
         m = re.match(r'word\s+ptr\s+(.*)', expr)
-        if m is not None:
+        if m:
             expr = m.group(1).strip()
             size = 2
 
         logging.debug("2:\"%s\")" % expr)
 
         m = re.match(r'\[(.*)\]$', expr)
-        if m is not None:
+        if m:
             indirection += 1
             expr = m.group(1).strip()
 
         m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
-        if m is not None:
+        if m:
             self.__seg_prefix = m.group(1)
             expr = m.group(2).strip()
             logging.debug("SEGMENT %s, remains: %s" % (self.__seg_prefix, expr))
@@ -467,15 +466,15 @@ class Cpp(object):
             self.__seg_prefix = "ds"
 
         m = re.match(r'\[(.*)\]$', expr)
-        if m is not None:
+        if m:
             indirection += 1
             expr = m.group(1).strip()
 
         m = re.match(r'(\[?e?([abcd][xhl])|si|di|bp|sp)([+-\]].*)?$', expr)  # var[bx+]
-        if m is not None:
+        if m:
             reg = m.group(1)
             plus = m.group(3)
-            if plus is not None and plus != ']':
+            if plus and plus != ']':
                 seg_prefix = self.__seg_prefix
                 plus = self.expand(plus)
                 self.__seg_prefix = seg_prefix
@@ -505,10 +504,10 @@ class Cpp(object):
             expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
             if size == 0 and self.__current_size != 0:
                 size = self.__current_size
-                #self.__expr_size = size
+                # self.__expr_size = size
             logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
-            #logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
-            #self.__pointer_flag = False
+            # logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
+            # self.__pointer_flag = False
             indirection = self.__indirection
             logging.debug("AFTER: %d %s" % (indirection, expr))
             # traceback.print_stack(file=sys.stdout)
@@ -569,7 +568,7 @@ class Cpp(object):
 
             if expr.type == 'STRING':
                 m = re.match(r'^[\'\"](....)[\'\"]$', expr.value)  # char constants 'abcd'
-                if m is not None:
+                if m:
                     ex = m.group(1)
                     expr.value = '0x'
                     for i in range(0, 4):
@@ -588,8 +587,9 @@ class Cpp(object):
         self.__current_size = 0
         indirection = 0
         size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
-        #self.__expr_size = size
+        # self.__expr_size = size
 
+        # calculate the segment register
         segoverride = self.find_and_call_tokens(expr, 'segoverride')
         if segoverride:
             self.__seg_prefix = segoverride[0].value
@@ -613,12 +613,14 @@ class Cpp(object):
         if ptrdir:
             indirection = 1
 
-        expr = self.remove_tokens(expr, ['ptrdir','offsetdir','segoverride'])
+        if ptrdir or offsetdir or segoverride:
+            expr = self.remove_tokens(expr, ['ptrdir', 'offsetdir', 'segoverride'])
 
         expr, _ = self.remove_squere_bracets(expr)
 
         islabel = self.find_and_call_tokens(expr, 'LABEL')
-        if islabel and not offsetdir and all(self.__context.has_global(i) for i in islabel):
+        if islabel and not offsetdir and all(self.__context.has_global(i) and \
+                                             isinstance(self.__context.get_global(i), op.var) for i in islabel):
             indirection = 1
 
         self.__indirection = indirection
@@ -641,7 +643,7 @@ class Cpp(object):
 
         size = self.get_size(expr) if def_size == 0 else def_size  # calculate size if it not provided
 
-        #self.__expr_size = size
+        # self.__expr_size = size
         # print "expr \"%s\" %d" %(expr, size)
         indirection = 0
         seg = None
@@ -649,7 +651,6 @@ class Cpp(object):
 
         ex = expr
         ex.replace("\\\\", "\\")
-
 
         try:
             g = self.__context.get_global(expr)
@@ -675,11 +676,11 @@ class Cpp(object):
         ex = expr
         ex.replace("\\\\", "\\")
         m = re.match(r'\'(.+)\'$', ex)  # char constants
-        if m is not None:
+        if m:
             return expr
 
         m = re.match(r'seg\s+(.*?)$', expr)
-        if m is not None:
+        if m:
             return m.group(1)
 
         expr = convert_number_to_c(expr)  # convert hex
@@ -688,7 +689,7 @@ class Cpp(object):
         # print "is it offset ~%s~" %expr
         prog = re.compile(r'offset\s+(.*?)$', re.I)
         m = prog.match(expr)
-        if m is not None:
+        if m:
             indirection -= 1
             size = 2  # x0r dos 16 bit
             expr = m.group(1).strip()
@@ -701,29 +702,29 @@ class Cpp(object):
 
         logging.debug("1:\"%s\")" % expr)
         m = re.match(r'byte\s+ptr\s+(.*)', expr)
-        if m is not None:
+        if m:
             expr = m.group(1).strip()
             size = 1
 
         m = re.match(r'dword\s+ptr\s+(.*)', expr)
-        if m is not None:
+        if m:
             expr = m.group(1).strip()
             size = 4
 
         m = re.match(r'word\s+ptr\s+(.*)', expr)
-        if m is not None:
+        if m:
             expr = m.group(1).strip()
             size = 2
 
         logging.debug("2:\"%s\")" % expr)
 
         m = re.match(r'\[(.*)\]$', expr)
-        if m is not None:
+        if m:
             indirection += 1
             expr = m.group(1).strip()
 
         m = re.match(r'(cs|ss|ds|es|fs|gs):(.*)', expr)
-        if m is not None:
+        if m:
             self.__seg_prefix = m.group(1)
             expr = m.group(2).strip()
             logging.debug("SEGMENT %s, remains: %s" % (self.__seg_prefix, expr))
@@ -731,15 +732,15 @@ class Cpp(object):
             self.__seg_prefix = "ds"
 
         m = re.match(r'\[(.*)\]$', expr)
-        if m is not None:
+        if m:
             indirection += 1
             expr = m.group(1).strip()
 
         m = re.match(r'(\[?e?([abcd][xhl])|si|di|bp|sp)([+-\]].*)?$', expr)  # var[bx+]
-        if m is not None:
+        if m:
             reg = m.group(1)
             plus = m.group(3)
-            if plus is not None and plus != ']':
+            if plus and plus != ']':
                 seg_prefix = self.__seg_prefix
                 plus = self.expand(plus)
                 self.__seg_prefix = seg_prefix
@@ -769,10 +770,10 @@ class Cpp(object):
             expr = re.sub(r'(?<![\'\"])\b[a-zA-Z_][a-zA-Z0-9_]*\b(?![\'\"])', self.expand_cb, expr)  # parse each item
             if size == 0 and self.__current_size != 0:
                 size = self.__current_size
-                #self.__expr_size = size
+                # self.__expr_size = size
             logging.debug("EXPAND() AFTER: %d %s" % (self.__indirection, expr))
-            #logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
-            #self.__pointer_flag = False
+            # logging.debug("is a pointer %d __expr_size %d" % (self.__pointer_flag, self.__expr_size))
+            # self.__pointer_flag = False
             indirection = self.__indirection
             logging.debug("AFTER: %d %s" % (indirection, expr))
             # traceback.print_stack(file=sys.stdout)
@@ -789,7 +790,12 @@ class Cpp(object):
 
     def typetosize(self, value):
         value = value.lower()
-        size = {'byte': 1, 'word': 2, 'small': 2, 'dword': 4, 'large': 4, 'qword': 8, 'tword': 10}[value]
+        try:
+            size = {'byte': 1, 'sbyte': 1, 'word': 2, 'sword': 2, 'small': 2, 'dword': 4, 'sdword': 4, \
+                    'large': 4, 'fword': 6, 'qword': 8, 'tbyte': 10}[value]
+        except KeyError:
+            logging.debug("Cannot find size for %s" % value)
+            size = 0
         return size
 
     def mangle_label(self, name):
@@ -800,6 +806,8 @@ class Cpp(object):
         name = name.lower()
         name = re.sub(r'@', "arb", name)
 
+        return name
+        #????
         if not name in self.proc.labels:
             try:
                 offset, proc, pos = self.__context.get_offset(name)
@@ -827,15 +835,52 @@ class Cpp(object):
 
     def jump_to_label(self, name):
         logging.debug("jump_to_label(%s)" % name)
-        name = name.strip()
+        # name = name.strip()
         jump_proc = False
 
         self.__far = False
         name_original = name
 
-        prog = re.compile(r'^\s*(near|far|short)\s*(ptr)?\s*', re.I)  # x0r TODO
-        name = re.sub(prog, '', name)
-        name = self.resolve_label(name)
+        # prog = re.compile(r'^\s*(near|far|short)\s*(ptr)?\s*', re.I)  # x0r TODO
+        # name = re.sub(prog, '', name)
+        indirection = -5
+
+        #segoverride = self.find_and_call_tokens(name, 'segoverride')
+        #if segoverride:
+        #   self.__seg_prefix = segoverride[0].value
+        #    name = self.remove_tokens(name, ['segoverride', 'segmentregister'])
+
+        if isinstance(name, Token) and name.type =='register':
+            indirection = 0 # based register value
+
+        labeldir = self.find_and_call_tokens(name, 'LABEL')
+        if labeldir:
+            labeldir[0] = self.resolve_label(labeldir[0])
+            if self.__context.has_global(labeldir[0]):
+                if isinstance(self.__context.get_global(labeldir[0]), op.var):
+                    indirection = 1# []
+                elif isinstance(self.__context.get_global(labeldir[0]), op.label):
+                    indirection = -1# direct using number
+
+        ptrdir = self.find_and_call_tokens(name, 'ptrdir')
+        if ptrdir:
+            if ptrdir[0].lower() in ['near', 'far', 'short']:
+                indirection = -1#
+            else:
+                indirection = 1
+
+        sqexpr = self.find_and_call_tokens(name, 'sqexpr')
+        if sqexpr:
+                indirection = 1
+
+        if indirection == 1:
+            name = self.expand(name)
+
+        if indirection == -1:
+            if labeldir:
+                name = labeldir[0]
+
+        #name = self.resolve_label(name)
         logging.debug("label %s" % name)
         hasglobal = False
         if name in self.__blacklist:
@@ -851,26 +896,26 @@ class Cpp(object):
             if name in self.__function_name_remapping:
                 return "%s" % self.__function_name_remapping[name]
             else:
-                return "%s" % name
+                return name
         else:
             # TODO: name or self.resolve_label(name) or self.mangle_label(name)??
             if name in self.proc.retlabels:
                 return "return /* (%s) */" % (name)
             ## x0r return "goto %s" %self.resolve_label(name)
             if not hasglobal:
-                name = self.expand_old(name, destination=True)  #TODO
+                name = self.expand_old(name, destination=True)  # TODO
                 self.body += "__disp = (dw)(" + name + ");\n"
                 name = "__dispatch_call"
             else:
                 if isinstance(g, op.label) and g.far:
                     self.__far = True  # make far calls to far procs
 
-            m = re.match(r'far\s+ptr', name_original)
-            if m is not None:
-                self.__far = True
-            m = re.match(r'near\s+ptr', name_original)
-            if m is not None:
-                self.__far = False
+            if ptrdir:
+                ptrdir[0] = ptrdir[0].lower()
+                if ptrdir[0] == 'far':
+                    self.__far = True
+                elif ptrdir[0] == 'near':
+                    self.__far = False
 
             return name
 
@@ -891,7 +936,7 @@ class Cpp(object):
     def _call(self, name):
         logging.debug("cpp._call(%s)" % str(name))
         ret = ""
-        #dst = self.expand(name, destination = False)
+        # dst = self.expand(name, destination = False)
         dst = self.jump_to_label(name)
         if dst != "__dispatch_call":
             dst = "k" + dst
@@ -985,30 +1030,31 @@ class Cpp(object):
         return "\tR(IDIV%d(%s));\n" % (size, src)
 
     def _jz(self, label):
-        if isinstance(label, Token) and re.match('.*?(\$\+2)', label.value):  # skip j* $+2
+        result = self.isrelativejump(label)
+        if result:
             return "\n"
         else:
-            label = self.jump_to_label(label.value) #TODO
+            label = self.jump_to_label(label)  # TODO
             return "\t\tR(JZ(%s));\n" % label
 
     def _jnz(self, label):
-        label = self.jump_to_label(label.value)
+        label = self.jump_to_label(label)
         return "\t\tR(JNZ(%s));\n" % label
 
     def _jbe(self, label):
-        label = self.jump_to_label(label.value)
+        label = self.jump_to_label(label)
         return "\t\tR(JBE(%s));\n" % label
 
     def _ja(self, label):
-        label = self.jump_to_label(label.value)
+        label = self.jump_to_label(label)
         return "\t\tR(JA(%s));\n" % label
 
     def _jc(self, label):
-        label = self.jump_to_label(label.value)
+        label = self.jump_to_label(label)
         return "\t\tR(JC(%s));\n" % label
 
     def _jnc(self, label):
-        label = self.jump_to_label(label.value)
+        label = self.jump_to_label(label)
         return "\t\tR(JNC(%s));\n" % label
 
     def _push(self, regs):
@@ -1463,11 +1509,17 @@ else goto __dispatch_call;
         return "\tR(%s(%s));\n" % (cmd.upper(), dst)
 
     def _jump(self, cmd, label):
-        if isinstance(label, Token) and re.match('.*?(\$\+2)', label.value):  # skip j* $+2
+        result = self.isrelativejump(label)
+        if result:
             return "\n"
         else:
-            label = self.jump_to_label(label.value) #TODO
+            label = self.jump_to_label(label)  # TODO
             return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
+
+    def isrelativejump(self, label):
+        labeldir = self.find_and_call_tokens(label, 'LABEL')
+        result = labeldir and re.match('.*?(\$\+2)', labeldir[0])  # skip j* $+2
+        return result
 
     def _instruction2(self, cmd, dst, src):
         self.a, self.b = self.parse2(dst, src)

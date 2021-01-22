@@ -135,7 +135,7 @@ def macrodir(_, nodes, name):
     logging.debug("macroid added ~~" + name + "~~")
 
 def datadir(context, nodes, label, type, values):
-    if label != None:
+    if label:
         label = label.value
     else:
         label = ""
@@ -215,8 +215,8 @@ def listtostring(l):  # TODO remove
         l = [listtostring(i) for i in l]
         s = ""
         for i in l:
-            if s != "" and re.match(r'[A-Za-z_]', s[-1]) != None and (
-                    re.match(r'[A-Za-z_]', i[0]) != None or i[0] == '['):
+            if s != "" and re.match(r'[A-Za-z_]', s[-1]) and (
+                    re.match(r'[A-Za-z_]', i[0]) or i[0] == '['):
                 s = s + ' '
             s = s + i
         l = s
@@ -225,7 +225,7 @@ def listtostring(l):  # TODO remove
 
 def asminstruction(context, nodes, instruction, args):
     logging.debug("instruction " + str(nodes) + " ~~")
-    # if args != None:
+    # if args:
     #    args = [listtostring(i) for i in args] # TODO temporary workaround
     # args = build_ast(args)
     o = context.extra.proc.create_instruction_object(instruction, args)
@@ -236,7 +236,7 @@ def asminstruction(context, nodes, instruction, args):
 
 def enddir(context, nodes, label):
     #print("end " + str(nodes) + " ~~")
-    if label != None:
+    if label:
         context.extra.entry_point = label.value.lower()
     return nodes
 
@@ -854,7 +854,7 @@ class Parser():
                     self.proc_list.append(nname)
                     self.set_global(nname, self.proc)
             '''
-            if self.proc is not None:
+            if self.proc:
                 self.proc.add_label(name, isproc)
                 # self.set_offset(name, ("&m." + name.lower() + " - &m." + self.segment, self.proc, len(self.proc.stmts)))
                 self.set_offset(name, ("&m." + name.lower() + " - &m." + self.__segment, self.proc, self.__offset_id))
@@ -1098,7 +1098,7 @@ class Parser():
         name = name.lower()
         far = ''
         for i in type:
-            if i != None and i.lower() == 'far':
+            if i and i.lower() == 'far':
                 far = True
         '''
                                         name = cmd0l

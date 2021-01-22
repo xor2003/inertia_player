@@ -194,7 +194,7 @@ class Proc(object):
 
     def parse_extract_label(self, stmt):
         r = label_re.search(stmt)
-        if r is not None:
+        if r:
             logging.info("add label %s" % r.group(1))
             # label
             self.add_label(r.group(1).lower())
@@ -230,19 +230,19 @@ class Proc(object):
         logging.info(cmd)
         if re.match(
                 r"^(ins[bwd]|outs[bwd]|scas[bwd]|cmps[bwd]|movs[bwd]|salc|xlatb?|lods[bwd]|stos[bwd]|aad|repne|repe|rep|std|stc|cld|clc|cli|cbw|cwde?|cdq|sti|cmc|pushf|popf|nop|pushad?|popad?|da[as]|aa[adsm]|finit|fsin|fldz|hlt|ret[nf]?|iret|leave)$",
-                cmd.lower()) is not None:
+                cmd.lower()):
             cl = getattr(op, '_instruction0')
         elif re.match(
                 r"^(dec|inc|pop|push|int|neg|div|idiv|mul|set[a-z]+|not|lods|scas|stos|cmpxchg8b|bswap|fistp|fmul|fadd|org)$",
-                cmd.lower()) is not None:
+                cmd.lower()):
             cl = getattr(op, '_instruction1')
-        elif re.match(r"^(j[a-z]+|loop[a-z]*)$", cmd.lower()) is not None:
+        elif re.match(r"^(j[a-z]+|loop[a-z]*)$", cmd.lower()):
             cl = getattr(op, '_jump')
         elif re.match(
                 r"^(xchg|cmp|cmpxchg|mov[sz]x|mov|or|xor|and|ad[cd]|sbb|r[oc][lr]|sub|sh[lr]|test|in|out|lea|l[defg]s|sa[rl]|bt[rsc]?|movs|xadd|cmov[a-z]+|enter|bs[rf])$",
-                cmd.lower()) is not None:
+                cmd.lower()):
             cl = getattr(op, '_instruction2')
-        elif re.match(r"^(shrd|shld)$", cmd.lower()) is not None:
+        elif re.match(r"^(shrd|shld)$", cmd.lower()):
             cl = getattr(op, '_instruction3')
         else:
             raise Exception("unknown command: " + cmd.lower())

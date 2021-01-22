@@ -20,9 +20,8 @@ def macroid(head, input, pos):
     mtch = macroidre.match(input[pos:])
     if mtch:
         result = mtch.group().lower()
-        print("matched ~^~" + result + "~^~")
         if result in macroids:
-            print(" ~^~ in macroids")
+            print("matched ~^~" + result + "~^~ in macroids")
             return result
         else:
             return None
@@ -67,7 +66,7 @@ def make_token(context, nodes):
        nodes = Token(context.production.rhs[0].name, nodes[0])
     if context.production.rhs[0].name in ('type','e01','e02','e03','e04','e05','e06','e07','e08','e09','e10','e11'):
        nodes = nodes[0]
-    print("~"+str(nodes)+"~")
+    #print("~"+str(nodes)+"~")
     return nodes
 
 cur_segment = 'ds' #!
@@ -94,8 +93,6 @@ def asminstruction(context, nodes, instruction, args):
     print("instruction " + get_raw(context) + " "+ str(nodes) + " ~~ "+str(cur_segment)+" "+str(indirection))
     cur_segment = 'ds' #!
     indirection = 0 #!
-    # if args != None:
-    #    args = [listtostring(i) for i in args] # TODO temporary workaround
     #args = build_ast(args)
     #print(instruction.children[0].value, str(args))
     return nodes
@@ -126,7 +123,7 @@ def segmentregister(context, nodes):
 def sqexpr(context, nodes):
     global indirection
     indirection = 1
-    print("/~"+str(nodes)+"~\\")
+    #print("/~"+str(nodes)+"~\\")
     #print("/~"+str(nodes[1][1])+"~\\")
     res = nodes[1]
     #res = [i[1] for i in nodes[1]]
