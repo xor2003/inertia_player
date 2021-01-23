@@ -1095,7 +1095,7 @@ class Parser():
 
     def action_proc(self, name, type):
         logging.info("procedure name %s" % name)
-        name = name.lower()
+        name = name.value.lower()
         far = ''
         for i in type:
             if i and i.lower() == 'far':

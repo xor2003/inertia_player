@@ -156,7 +156,7 @@ class Cpp(object):
                 self.__indirection = 0
                 return value
             else:
-                if g.elements == 1 and self.__isjustlabel and not self.lea and g.size==self.__current_size:
+                if g.elements == 1 and self.__isjustlabel and not self.lea and g.size == self.__current_size:
                     # traceback.print_stack(file=sys.stdout)
                     value = "m." + g.name
                     self.__indirection = 0
@@ -554,7 +554,7 @@ class Cpp(object):
         return result
 
     def convert_sqbr_reference(self, expr, destination, size, lea=False):
-        if not (lea and not destination):
+        if not lea or destination:
             if size == 1:
                 expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
             elif size == 2:
@@ -607,7 +607,7 @@ class Cpp(object):
         else:
             if sqexpr:
                 regs = self.find_and_call_tokens(sqexpr, 'register')
-                if regs and any([i in ['bp', 'ebp', 'sp', 'esp'] for i in regs]): #TODO doublecheck
+                if regs and any([i in ['bp', 'ebp', 'sp', 'esp'] for i in regs]):  # TODO doublecheck
                     self.__seg_prefix = "ss"
 
         offsetdir = self.find_and_call_tokens(expr, 'offsetdir')
@@ -627,17 +627,16 @@ class Cpp(object):
         islabel = self.find_and_call_tokens(expr, 'LABEL')
         if islabel and not offsetdir:
             for i in islabel:
-                if self.__context.has_global(i):
-                    g = self.__context.get_global(i)
-                    if isinstance(g, op.var):
-                        size = g.size
-                        indirection = 1
-                        break
+                res = self.get_var_size(i)
+                if res:
+                     size = res
+                     indirection = 1
+                     break
 
         # for "label" or "[label]" get size
         self.__isjustlabel = (isinstance(origexpr, Token) and origexpr.type == 'LABEL') \
-        or (isinstance(origexpr, Token) and origexpr.type == 'sqexpr' and \
-            isinstance(origexpr.value, Token) and origexpr.value.type == 'LABEL')
+                             or (isinstance(origexpr, Token) and origexpr.type == 'sqexpr' and \
+                                 isinstance(origexpr.value, Token) and origexpr.value.type == 'LABEL')
 
         self.__indirection = indirection
         self.__current_size = size
@@ -805,6 +804,14 @@ class Cpp(object):
             raise Exception("invalid indirection %d" % indirection)
         return expr
 
+    def get_var_size(self, name):
+        size = 0
+        if self.__context.has_global(name):
+            g = self.__context.get_global(name)
+            if isinstance(g, op.var):
+                size = g.size
+        return size
+
     def typetosize(self, value):
         value = value.lower()
         try:
@@ -864,7 +871,7 @@ class Cpp(object):
 
         segoverride = self.find_and_call_tokens(name, 'segoverride')
         if segoverride:
-             self.__seg_prefix = segoverride[0].value
+            self.__seg_prefix = segoverride[0].value
         #    name = self.remove_tokens(name, ['segoverride', 'segmentregister'])
 
         if isinstance(name, Token) and name.type == 'register':
@@ -1537,7 +1544,8 @@ else goto __dispatch_call;
             return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
 
     def isrelativejump(self, label):
-        result = isinstance(label, list) and label[0] == '$' and isinstance(label[1], Token) and label[1].type == 'INTEGER'
+        result = isinstance(label, list) and label[0] == '$' and isinstance(label[1], Token) and label[
+            1].type == 'INTEGER'
         # skip j* $+2
         return result
 

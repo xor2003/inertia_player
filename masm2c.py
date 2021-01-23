@@ -76,7 +76,7 @@ def process(i):
   '''
   numeric_level = logging.INFO
   ##if i == '-d':
-  #numeric_level = logging.DEBUG
+  numeric_level = logging.DEBUG
   logging.basicConfig(
      handlers=[logging.FileHandler(name+'.log', 'w', 'utf-8')], 
      format="[%(filename)s:%(lineno)s - %(funcName)20s()] %(message)s",

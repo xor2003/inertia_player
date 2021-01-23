@@ -25,6 +25,7 @@ from builtins import str
 from builtins import object
 
 import tasm.parser
+from tasm.Token import Token
 
 
 # import traceback
@@ -235,16 +236,29 @@ def flatten(S):
         return flatten(S[0]) + flatten(S[1:])
     return S[:1] + flatten(S[1:])
 
+def flattenpush(S): # TODO will work most of the time
+    S = flatten(S)
+    res = []
+    ressec = []
+    for i in S:
+        ressec.append(i)
+        if isinstance(i, Token) and i.type in ['sqexpr','register','segmentregister']:
+            res.append(ressec)
+            ressec = []
+    if ressec:
+        res.append(ressec)
+    return res
+
 class _push(baseop):
     def __init__(self, arg):
-        self.arg = arg
+        self.arg = flattenpush(arg)
 
     def visit(self, visitor):
         return visitor._push(self.arg)
 
 class _pop(baseop):
     def __init__(self, arg):
-        self.arg = arg
+        self.arg = flattenpush(arg)
 
     def visit(self, visitor):
         return visitor._pop(self.arg)
