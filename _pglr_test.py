@@ -147,6 +147,10 @@ def segmdir(context, nodes):
     #indirection = -1
     return Token('segmdir', nodes[1])
 
+def instrprefix(context, nodes):
+    print("instrprefix /~"+str(nodes)+"~\\")
+    return nodes
+
 def LABEL(context, nodes):
     return Token('LABEL', nodes)
 
@@ -161,6 +165,7 @@ recognizers = {
 }
 
 actions = {
+    "instrprefix": instrprefix,
     "macrodir": macro_action,
     "asminstruction": asminstruction,
     "expr": make_token,

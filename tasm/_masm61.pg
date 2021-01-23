@@ -2,7 +2,6 @@ module: directivelist?  enddir;
 aliasdir: ALIAS;
 altidq: '(' LABEL ')';
 arbitrarytext: charlist;
-asminstruction: instruction=mnemonic  args=exprlist? | instruction=PUSH args=exprspacelist | instruction=POP args=exprspacelist;
 assdir: name=LABEL '=' value=expr linereminder;
 assumedir: ASSUME assumelist linereminder| ASSUMENOTHING linereminder;
 assumelist : assumeregister| assumeregister COMMA assumelist;
@@ -200,7 +199,12 @@ insegdir: label=labeldef insegmentdir=insegmentdir | insegmentdir=insegmentdir;
 //insegdirlist: insegdir+;
 insegmentdir: instruction| datadir| controldir| startupdir| exitdir| offsetdir| labeldir| procdir  localdirlist? endpdir| procdir  localdirlist? insegdir+ endpdir| invokedir| generaldir | linereminder;
 instrprefix: REP | REPE | REPZ | REPNE | REPNZ | LOCK ;
-instruction: asminstruction=asminstruction linereminder | prefix=instrprefix  asminstruction=asminstruction linereminder;
+
+asminstruction: instruction=instrprefix args=''?
+| instruction=mnemonic  args=exprlist?
+| instrprefix instruction=mnemonic  args=exprlist? | instruction=PUSH args=exprspacelist | instruction=POP args=exprspacelist;
+instruction: asminstruction=asminstruction linereminder;
+
 invokearg: anyregister '::' register| ADDR expr | expr;
 invokedir: INVOKE expr commainvokelist? linereminder;
 invokelist: invokearg+[COMMAOEOL];

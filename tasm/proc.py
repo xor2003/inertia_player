@@ -9,7 +9,6 @@ from builtins import str
 
 from tasm import op
 
-
 # ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
@@ -30,7 +29,8 @@ from tasm import op
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-label_re = re.compile(r'^([\S@]+)::?(.*)$') # speed
+label_re = re.compile(r'^([\S@]+)::?(.*)$')  # speed
+
 
 class Proc(object):
     last_addr = 0xc000
@@ -45,7 +45,7 @@ class Proc(object):
         self.retlabels = set()
         self.offset = Proc.last_addr
         Proc.last_addr += 4
-        #self.__line_number = line_number
+        # self.__line_number = line_number
         self.far = far
 
     def add_label(self, label, proc, line_number=0):
@@ -187,9 +187,9 @@ class Proc(object):
             return
 
         o = self.split_create_instruction(stmt)
-        #o.line = line
-        #o.line_number = line_number
-        #self.stmts.append(o)
+        # o.line = line
+        # o.line_number = line_number
+        # self.stmts.append(o)
         return o
 
     def parse_extract_label(self, stmt):
@@ -209,10 +209,10 @@ class Proc(object):
         o = self.create_instruction_object(s[0], s[1:])
         return o
 
-    def create_instruction_object(self, instruction, args):
+    def create_instruction_object(self, instruction, args=[]):
         cl = self.find_op_class(instruction)
         # print "args %s" %s[1:]
-        #arg = " ".join(args) if len(args) > 0 else ""
+        # arg = " ".join(args) if len(args) > 0 else ""
         o = cl(args)
         # o.comments = comments
         o.cmd = instruction.lower()

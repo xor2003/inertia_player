@@ -40,8 +40,8 @@ from tasm.proc import Proc
 import traceback
 import unittest
 
-class ParserTest(unittest.TestCase):
 
+class ParserTest(unittest.TestCase):
     '''
     def test_convert_data_to_blob(self):
         parser_instance = Parser([])
@@ -873,9 +873,9 @@ class ParserTest(unittest.TestCase):
 
     @patch.object(logging, 'debug')
     @patch.object(logging, 'info')
-    #@patch.object(parser, 'get_global')
+    # @patch.object(parser, 'get_global')
     def test_convert_data(self, mock_info, mock_debug):
-        #mock_get_global.return_value = var()
+        # mock_get_global.return_value = var()
         mock_info.return_value = None
         mock_debug.return_value = None
         parser_instance = Parser([])
@@ -910,47 +910,47 @@ class ParserTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             parser_instance.get_global_value(base=65536, v=u'testEqu*2')
 
-        #self.assertEqual(parser_instance.convert_data(base=4294967296,v=u'var5'),u'offset(_data,var5)')
+        # self.assertEqual(parser_instance.convert_data(base=4294967296,v=u'var5'),u'offset(_data,var5)')
 
     @patch.object(logging, 'debug')
     def test_fix_dollar(self, mock_debug):
         mock_debug.return_value = None
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='3'),'3')
+        self.assertEqual(parser_instance.fix_dollar(v='3'), '3')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='1'),'1')
+        self.assertEqual(parser_instance.fix_dollar(v='1'), '1')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='-13'),'-13')
+        self.assertEqual(parser_instance.fix_dollar(v='-13'), '-13')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='13'),'13')
+        self.assertEqual(parser_instance.fix_dollar(v='13'), '13')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='4'),'4')
+        self.assertEqual(parser_instance.fix_dollar(v='4'), '4')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='var1'),'var1')
+        self.assertEqual(parser_instance.fix_dollar(v='var1'), 'var1')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='1'),'1')
+        self.assertEqual(parser_instance.fix_dollar(v='1'), '1')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='2'),'2')
+        self.assertEqual(parser_instance.fix_dollar(v='2'), '2')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='(00+38*3)*320+1/2+33*(3-1)'),'(00+38*3)*320+1/2+33*(3-1)')
+        self.assertEqual(parser_instance.fix_dollar(v='(00+38*3)*320+1/2+33*(3-1)'), '(00+38*3)*320+1/2+33*(3-1)')
 
         parser_instance = Parser([])
-        self.assertEqual(parser_instance.fix_dollar(v='1500 ; 8*2*3 ;+1 +19*13*2*4'),'1500 ; 8*2*3 ;+1 +19*13*2*4')
+        self.assertEqual(parser_instance.fix_dollar(v='1500 ; 8*2*3 ;+1 +19*13*2*4'), '1500 ; 8*2*3 ;+1 +19*13*2*4')
 
     def test_parse_int(self):
         parser_instance = Parser([])
 
         with self.assertRaises(ValueError):
             parser_instance.parse_int(v=u"'Z' - 'A' +1")
-        
+
         with self.assertRaises(ValueError):
             parser_instance.parse_int(v=u"'a'")
 
@@ -1167,54 +1167,54 @@ class ParserTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             parser_instance.parse_int(v=u'ah')
 
-        self.assertEqual(parser_instance.parse_int(v=u'14*320'),4480)
-        self.assertEqual(parser_instance.parse_int(v=u'2*2'),4)
-        self.assertEqual(parser_instance.parse_int(v=u'3*4'),12)
-        self.assertEqual(parser_instance.parse_int(v=u'-1-(-2+3)'),-2)
-        self.assertEqual(parser_instance.parse_int(v=u'-1'),-1)
-        self.assertEqual(parser_instance.parse_int(v=u'-11'),-11)
-        self.assertEqual(parser_instance.parse_int(v=u'-2'),-2)
-        self.assertEqual(parser_instance.parse_int(v=u'0'),0)
-        self.assertEqual(parser_instance.parse_int(v=u'00h'),0)
-        self.assertEqual(parser_instance.parse_int(v=u'03dh'),61)
-        self.assertEqual(parser_instance.parse_int(v=u'03eh'),62)
-        self.assertEqual(parser_instance.parse_int(v=u'03fh'),63)
-        self.assertEqual(parser_instance.parse_int(v=u'042h'),66)
-        self.assertEqual(parser_instance.parse_int(v=u'0Ah'),10)
-        self.assertEqual(parser_instance.parse_int(v=u'0Dh'),13)
-        self.assertEqual(parser_instance.parse_int(v=u'0Fh'),15)
-        self.assertEqual(parser_instance.parse_int(v=u'0ffffff00h'),4294967040)
-        self.assertEqual(parser_instance.parse_int(v=u'1'),1)
-        self.assertEqual(parser_instance.parse_int(v=u'10'),10)
-        self.assertEqual(parser_instance.parse_int(v=u'100'),100)
-        self.assertEqual(parser_instance.parse_int(v=u'1000h'),4096)
-        self.assertEqual(parser_instance.parse_int(v=u'11'),11)
-        self.assertEqual(parser_instance.parse_int(v=u'111'),111)
-        self.assertEqual(parser_instance.parse_int(v=u'12'),12)
-        self.assertEqual(parser_instance.parse_int(v=u'13'),13)
-        self.assertEqual(parser_instance.parse_int(v=u'131'),131)
-        self.assertEqual(parser_instance.parse_int(v=u'16'),16)
-        self.assertEqual(parser_instance.parse_int(v=u'2'),2)
-        self.assertEqual(parser_instance.parse_int(v=u'21h'),33)
-        self.assertEqual(parser_instance.parse_int(v=u'22'),22)
-        self.assertEqual(parser_instance.parse_int(v=u'223'),223)
-        self.assertEqual(parser_instance.parse_int(v=u'25'),25)
-        self.assertEqual(parser_instance.parse_int(v=u'3'),3)
-        self.assertEqual(parser_instance.parse_int(v=u'30h'),48)
-        self.assertEqual(parser_instance.parse_int(v=u'34'),34)
-        self.assertEqual(parser_instance.parse_int(v=u'35'),35)
-        self.assertEqual(parser_instance.parse_int(v=u'37'),37)
-        self.assertEqual(parser_instance.parse_int(v=u'39h'),57)
-        self.assertEqual(parser_instance.parse_int(v=u'4'),4)
-        self.assertEqual(parser_instance.parse_int(v=u'4000000'),4000000)
-        self.assertEqual(parser_instance.parse_int(v=u'4ch'),76)
-        self.assertEqual(parser_instance.parse_int(v=u'5'),5)
-        self.assertEqual(parser_instance.parse_int(v=u'50'),50)
-        self.assertEqual(parser_instance.parse_int(v=u'6'),6)
-        self.assertEqual(parser_instance.parse_int(v=u'64000'),64000)
-        self.assertEqual(parser_instance.parse_int(v=u'7'),7)
-        self.assertEqual(parser_instance.parse_int(v=u'0h'),0)
-        self.assertEqual(parser_instance.parse_int(v=u'0b'),0)
+        self.assertEqual(parser_instance.parse_int(v=u'14*320'), 4480)
+        self.assertEqual(parser_instance.parse_int(v=u'2*2'), 4)
+        self.assertEqual(parser_instance.parse_int(v=u'3*4'), 12)
+        self.assertEqual(parser_instance.parse_int(v=u'-1-(-2+3)'), -2)
+        self.assertEqual(parser_instance.parse_int(v=u'-1'), -1)
+        self.assertEqual(parser_instance.parse_int(v=u'-11'), -11)
+        self.assertEqual(parser_instance.parse_int(v=u'-2'), -2)
+        self.assertEqual(parser_instance.parse_int(v=u'0'), 0)
+        self.assertEqual(parser_instance.parse_int(v=u'00h'), 0)
+        self.assertEqual(parser_instance.parse_int(v=u'03dh'), 61)
+        self.assertEqual(parser_instance.parse_int(v=u'03eh'), 62)
+        self.assertEqual(parser_instance.parse_int(v=u'03fh'), 63)
+        self.assertEqual(parser_instance.parse_int(v=u'042h'), 66)
+        self.assertEqual(parser_instance.parse_int(v=u'0Ah'), 10)
+        self.assertEqual(parser_instance.parse_int(v=u'0Dh'), 13)
+        self.assertEqual(parser_instance.parse_int(v=u'0Fh'), 15)
+        self.assertEqual(parser_instance.parse_int(v=u'0ffffff00h'), 4294967040)
+        self.assertEqual(parser_instance.parse_int(v=u'1'), 1)
+        self.assertEqual(parser_instance.parse_int(v=u'10'), 10)
+        self.assertEqual(parser_instance.parse_int(v=u'100'), 100)
+        self.assertEqual(parser_instance.parse_int(v=u'1000h'), 4096)
+        self.assertEqual(parser_instance.parse_int(v=u'11'), 11)
+        self.assertEqual(parser_instance.parse_int(v=u'111'), 111)
+        self.assertEqual(parser_instance.parse_int(v=u'12'), 12)
+        self.assertEqual(parser_instance.parse_int(v=u'13'), 13)
+        self.assertEqual(parser_instance.parse_int(v=u'131'), 131)
+        self.assertEqual(parser_instance.parse_int(v=u'16'), 16)
+        self.assertEqual(parser_instance.parse_int(v=u'2'), 2)
+        self.assertEqual(parser_instance.parse_int(v=u'21h'), 33)
+        self.assertEqual(parser_instance.parse_int(v=u'22'), 22)
+        self.assertEqual(parser_instance.parse_int(v=u'223'), 223)
+        self.assertEqual(parser_instance.parse_int(v=u'25'), 25)
+        self.assertEqual(parser_instance.parse_int(v=u'3'), 3)
+        self.assertEqual(parser_instance.parse_int(v=u'30h'), 48)
+        self.assertEqual(parser_instance.parse_int(v=u'34'), 34)
+        self.assertEqual(parser_instance.parse_int(v=u'35'), 35)
+        self.assertEqual(parser_instance.parse_int(v=u'37'), 37)
+        self.assertEqual(parser_instance.parse_int(v=u'39h'), 57)
+        self.assertEqual(parser_instance.parse_int(v=u'4'), 4)
+        self.assertEqual(parser_instance.parse_int(v=u'4000000'), 4000000)
+        self.assertEqual(parser_instance.parse_int(v=u'4ch'), 76)
+        self.assertEqual(parser_instance.parse_int(v=u'5'), 5)
+        self.assertEqual(parser_instance.parse_int(v=u'50'), 50)
+        self.assertEqual(parser_instance.parse_int(v=u'6'), 6)
+        self.assertEqual(parser_instance.parse_int(v=u'64000'), 64000)
+        self.assertEqual(parser_instance.parse_int(v=u'7'), 7)
+        self.assertEqual(parser_instance.parse_int(v=u'0h'), 0)
+        self.assertEqual(parser_instance.parse_int(v=u'0b'), 0)
 
     def test_calculate_data_size(self):
         parser_instance = Parser([])
@@ -1563,7 +1563,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.action_data(line="_dword_3063D	dd ?			; DATA XREF: _ult_module+225r"), ('0, // _dword_3063d\n', 'dd _dword_3063d;\n', 4))
         self.assertEqual(parser_instance.action_data(line="_eModuleNotFound	db 'Module not found',0Dh,0Ah,0 ; DATA XREF: _moduleread+1Co"), ('"Module not found\\r\\n", // _emodulenotfound\n', 'char _emodulenotfound[19];\n', 19))
 
-        #self.assertEqual(parser_instance.action_data(line="_effoff_18F60	dw offset _eff_nullsub	; DATA XREF: sub_137D5+16r"),('k_eff_nullsub, // _effoff_18f60\n','dw _effoff_18f60;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="_effoff_18F60	dw offset _eff_nullsub	; DATA XREF: sub_137D5+16r"),('k_eff_nullsub, // _effoff_18f60\n','dw _effoff_18f60;\n', 2))
 
         self.assertEqual(parser_instance.action_data(line="_ems_enabled	db 0			; DATA XREF: _ems_initw	_ems_init+78w ..."), ('0, // _ems_enabled\n', 'db _ems_enabled;\n', 1))
         self.assertEqual(parser_instance.action_data(line="_ems_handle	dw 0			; DATA XREF: _ems_init+74w"), ('0, // _ems_handle\n', 'dw _ems_handle;\n', 2))
@@ -1618,7 +1618,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.action_data(line="_myseg_24698	dw 0			; DATA XREF: _alloc_dma_buf+31w"), ('0, // _myseg_24698\n', 'dw _myseg_24698;\n', 2))
         self.assertEqual(parser_instance.action_data(line="_mystr		db 42h dup(0)		; DATA XREF: _start:loc_192E0o"), ('{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // _mystr\n', 'db _mystr[66];\n', 66))
         self.assertEqual(parser_instance.action_data(line="_notes		db '  C-C#D-D#E-F-F#G-G#A-A#B-' ; DATA XREF: seg001:1930r"), ("{' ',' ','C','-','C','#','D','-','D','#','E','-','F','-','F','#','G','-','G','#','A','-','A','#','B','-'}, // _notes\n", 'char _notes[26];\n', 26))
-        #self.assertEqual(parser_instance.action_data(line="_offs_draw	dw offset loc_19050	; DATA XREF: _keyb_screen_loop+32r"),('kloc_19050, // _offs_draw\n','dw _offs_draw;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="_offs_draw	dw offset loc_19050	; DATA XREF: _keyb_screen_loop+32r"),('kloc_19050, // _offs_draw\n','dw _offs_draw;\n', 2))
         self.assertEqual(parser_instance.action_data(line="_oint24_1C1AC	dd 0			; DATA XREF: _start+115w _start+1D4r ..."), ('0, // _oint24_1c1ac\n', 'dd _oint24_1c1ac;\n', 4))
         self.assertEqual(parser_instance.action_data(line="_oint2f_1C1B4	dd 0			; DATA XREF: _start+124w _start+1C8r ..."), ('0, // _oint2f_1c1b4\n', 'dd _oint2f_1c1b4;\n', 4))
         self.assertEqual(parser_instance.action_data(line="_oint8off_1DE14	dw 0			; DATA XREF: _start+F9w"), ('0, // _oint8off_1de14\n', 'dw _oint8off_1de14;\n', 2))
@@ -1669,7 +1669,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.action_data(line="_table_25221	db  0, 4, 8,0Ch,10h,14h,18h,1Ch,20h,24h,28h,2Ch,30h,34h"), ('{0,4,8,12,16,20,24,28,32,36,40,44,48,52}, // _table_25221\n', 'db _table_25221[14];\n', 14))
         self.assertEqual(parser_instance.action_data(line="_table_25261	db  0, 4, 8,0Ch,10h,14h,18h,1Ch,20h,24h,28h,2Ch,30h,34h"), ('{0,4,8,12,16,20,24,28,32,36,40,44,48,52}, // _table_25261\n', 'db _table_25261[14];\n', 14))
 
-        #self.assertEqual(parser_instance.action_data(line="_table_sndcrdname dw offset _aGravisUltrasou ; DATA XREF:	_text_init2+19Dr"),('0, // _table_sndcrdname\n','dw _table_sndcrdname;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="_table_sndcrdname dw offset _aGravisUltrasou ; DATA XREF:	_text_init2+19Dr"),('0, // _table_sndcrdname\n','dw _table_sndcrdname;\n', 2))
         self.assertEqual(parser_instance.action_data(line="_tabledword_24526 dd    0,65536,46340,25079,12785,6423,3215,1608, 804, 402"), ('{0,65536,46340,25079,12785,6423,3215,1608,804,402}, // _tabledword_24526\n', 'dd _tabledword_24526[10];\n', 40))
         self.assertEqual(parser_instance.action_data(line="_tabledword_24562 dd -131072,-65536,-19196,-4989,-1260,-316, -79, -20,  -5"), ('{4294836224,4294901760,4294948100,4294962307,4294966036,4294966980,4294967217,4294967276,4294967291}, // _tabledword_24562\n', 'dd _tabledword_24562[9];\n', 36))
         self.assertEqual(parser_instance.action_data(line="_timer_word_14F6E dw 0			; DATA XREF: _set_timerw _text:4F59r"), ('0, // _timer_word_14f6e\n', 'dw _timer_word_14f6e;\n', 2))
@@ -1825,7 +1825,7 @@ class ParserTest(unittest.TestCase):
         parser_instance = Parser([])
         self.assertEqual(parser_instance.action_data(line="dd 111,1"), ('{111,1}, // dummy1\n', 'dd dummy1[2];\n', 8))
         parser_instance = Parser([])
-        #self.assertEqual(parser_instance.action_data(line="dd offset var5"),('offset(_data,var5), // dummy1\n','dw dummy1;\n', 4))
+        # self.assertEqual(parser_instance.action_data(line="dd offset var5"),('offset(_data,var5), // dummy1\n','dw dummy1;\n', 4))
         parser_instance = Parser([])
         self.assertEqual(parser_instance.action_data(line="dd unk_24453"), ('0, // dummy1\n', 'dd dummy1;\n', 4))
         parser_instance = Parser([])
@@ -1843,11 +1843,11 @@ class ParserTest(unittest.TestCase):
         parser_instance = Parser([])
         self.assertEqual(parser_instance.action_data(line="dw 32Ah"), ('810, // dummy1\n', 'dw dummy1;\n', 2))
         parser_instance = Parser([])
-        #self.assertEqual(parser_instance.action_data(line="dw @df@@@@8"),('karbdfarbarbarbarb8, // dummy1\n','dw dummy1;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="dw @df@@@@8"),('karbdfarbarbarbarb8, // dummy1\n','dw dummy1;\n', 2))
         parser_instance = Parser([])
-        #self.assertEqual(parser_instance.action_data(line="dw offset __2stm_module	; 2STM"),('k__2stm_module, // dummy1\n','dw dummy1;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="dw offset __2stm_module	; 2STM"),('k__2stm_module, // dummy1\n','dw dummy1;\n', 2))
         parser_instance = Parser([])
-        #self.assertEqual(parser_instance.action_data(line="dw offset loc_17BEB"),('kloc_17beb, // dummy1\n','dw dummy1;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="dw offset loc_17BEB"),('kloc_17beb, // dummy1\n','dw dummy1;\n', 2))
         self.assertEqual(parser_instance.action_data(line="e db 5"), ('5, // e\n', 'db e;\n', 1))
         self.assertEqual(parser_instance.action_data(line="enddata db 4"), ('4, // enddata\n', 'db enddata;\n', 1))
         self.assertEqual(parser_instance.action_data(line="f db 6"), ('6, // f\n', 'db f;\n', 1))
@@ -1857,8 +1857,8 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.action_data(line="h2 db 1"), ('1, // h2\n', 'db h2;\n', 1))
         self.assertEqual(parser_instance.action_data(line="load_handle dd 0"), ('0, // load_handle\n', 'dd load_handle;\n', 4))
         self.assertEqual(parser_instance.action_data(line="myoffs		dw offset label2"), ('0, // myoffs\n', 'dw myoffs;\n', 2))
-        #self.assertEqual(parser_instance.action_data(line="off_18E00	dw offset loc_16A89	; DATA XREF: sub_1609F:loc_16963r"),('kloc_16a89, // off_18e00\n','dw off_18e00;\n', 2))
-        #self.assertEqual(parser_instance.action_data(line="off_25326	dw offset _inr_module	; DATA XREF: _moduleread:loc_10040o"),('k_inr_module, // off_25326\n','dw off_25326;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="off_18E00	dw offset loc_16A89	; DATA XREF: sub_1609F:loc_16963r"),('kloc_16a89, // off_18e00\n','dw off_18e00;\n', 2))
+        # self.assertEqual(parser_instance.action_data(line="off_25326	dw offset _inr_module	; DATA XREF: _moduleread:loc_10040o"),('k_inr_module, // off_25326\n','dw off_25326;\n', 2))
         self.assertEqual(parser_instance.action_data(line="pal_jeu db 000,000,000,000,000,021,000,000,042,000,000,063,009,000,000,009"), ('{0,0,0,0,0,21,0,0,42,0,0,63,9,0,0,9}, // pal_jeu\n', 'db pal_jeu[16];\n', 16))
         self.assertEqual(parser_instance.action_data(line="pas_de_mem  db 'NOT enought memory for VGA display, controls work for network games',13,10,'$'"), ("{'N','O','T',' ','e','n','o','u','g','h','t',' ','m','e','m','o','r','y',' ','f','o','r',' ','V','G','A',' ','d','i','s','p','l','a','y',',',' ','c','o','n','t','r','o','l','s',' ','w','o','r','k',' ','f','o','r',' ','n','e','t','w','o','r','k',' ','g','a','m','e','s','\\r','\\n','$'}, // pas_de_mem\n", 'char pas_de_mem[70];\n', 70))
         self.assertEqual(parser_instance.action_data(line="pbs1        db 'probleme dans allocation de descriptor..',13,10,'$'"), ("{'p','r','o','b','l','e','m','e',' ','d','a','n','s',' ','a','l','l','o','c','a','t','i','o','n',' ','d','e',' ','d','e','s','c','r','i','p','t','o','r','.','.','\\r','\\n','$'}, // pbs1\n", 'char pbs1[43];\n', 43))
@@ -1896,38 +1896,31 @@ class ParserTest(unittest.TestCase):
     @patch.object(logging, 'info')
     # @patch.object(parser, 'get_global')
     def test_equ(self, mock_info, mock_debug):
-            # mock_get_global.return_value = var()
-            mock_info.return_value = None
-            mock_debug.return_value = None
-            parser_instance = Parser([])
+        # mock_get_global.return_value = var()
+        mock_info.return_value = None
+        mock_debug.return_value = None
+        parser_instance = Parser([])
 
-            cpp_instance = cpp.Cpp(parser_instance)
-            proc_instance = Proc('mainproc', False)
-            cpp_instance.proc = proc_instance
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'aaaa = 1')), '#undef aaaa\n#define aaaa 1\n')
+        cpp_instance = cpp.Cpp(parser_instance)
+        proc_instance = Proc('mainproc', False)
+        cpp_instance.proc = proc_instance
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'aaaa = 1')), '#undef aaaa\n#define aaaa 1\n')
 
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'B = 1')), '#undef B\n#define B 1\n')
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(
-                u'DDD = var1 ; actually it is address of var1')), '#undef DDD\n#define DDD var1\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'B = 1')), '#undef B\n#define B 1\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'DDD = var1 ; actually it is address of var1')), '#undef DDD\n#define DDD var1\n')
 
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'left equ 0')), '#define left 0\n')
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'col equ 40')), '#define col 40\n')
-            self.assertEqual(
-                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'right equ left+col')), '#define right left + col\n')
-            self.assertEqual(
-                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'scale_mod equ -19*32*4; ')), '#define scale_mod -19 * 32 * 4\n')
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(
-                u'tempo equ 1193182/256/targetFPS')), '#define tempo 1193182 / 256 / targetFPS\n')
-            self.assertEqual(
-                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'sierp_color equ 2Ah')), '#define sierp_color 0x2A\n')
-            self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                          parser_instance.action_data(u'tilt_plate_pattern equ 4+8+16')), '#define tilt_plate_pattern 4 +8 +16\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'left equ 0')), '#define left 0\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'col equ 40')), '#define col 40\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'right equ left+col')), '#define right left + col\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'scale_mod equ -19*32*4; ')), '#define scale_mod -19 * 32 * 4\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'tempo equ 1193182/256/targetFPS')), '#define tempo 1193182 / 256 / targetFPS\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'sierp_color equ 2Ah')), '#define sierp_color 0x2A\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'tilt_plate_pattern equ 4+8+16')), '#define tilt_plate_pattern 4 +8 +16\n')
 
-            # wrong
-            # TODO
-            #self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'l equ byte ptr aaa')), '#define l byte aaa\n')
-            self.assertEqual(
-                proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'res = edx ; int')), '#undef res\n#define res edx\n')
+        # wrong
+        # TODO
+        # self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'l equ byte ptr aaa')), '#define l byte aaa\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, parser_instance.action_data(u'res = edx ; int')), '#undef res\n#define res edx\n')
 
     '''
     def test_generate_c_cmddd(self):
@@ -2596,7 +2589,7 @@ class ParserTest(unittest.TestCase):
         p.set_global('_mousecolumn', op.var(name=u'_mousecolumn', offset=1, segment=u'dseg', size=2))
         p.set_global('_mouserow', op.var(name=u'_mouserow', offset=1, segment=u'dseg', size=2))
         p.set_global('_msg', op.var(elements=2, name=u'_msg', offset=1, segment=u'_data', size=1))
-        #p.set_global('_msg', op.var(name=u'_msg', offset=1, segment=u'dseg', size=1))
+        # p.set_global('_msg', op.var(name=u'_msg', offset=1, segment=u'dseg', size=1))
         p.set_global('_multip_244cc', op.var(name=u'_multip_244CC', offset=1, segment=u'dseg', size=4))
         p.set_global('_multip_244d0', op.var(name=u'_multip_244D0', offset=1, segment=u'dseg', size=4))
         p.set_global('_my_in', op.var(name=u'_my_in', offset=1, segment=u'seg003', size=1))
@@ -5071,7 +5064,7 @@ class ParserTest(unittest.TestCase):
         p.action_label(far=False, name='next', isproc=False)
         p.action_label(far=False, name='nn', isproc=False)
         p.action_label(far=False, name='noerror', isproc=False)
-        #p.add_label(far=False,name='ok',isproc=False)
+        # p.add_label(far=False,name='ok',isproc=False)
         p.action_label(far=False, name='start', isproc=False)
         p.action_label(far=False, name='toto', isproc=False)
         p.action_label(far=False, name='toto1', isproc=False)
@@ -5110,498 +5103,521 @@ class ParserTest(unittest.TestCase):
         p.action_label(far=True, name=u'sub_12da8', isproc=True)
         p.action_label(far=True, name=u'sub_12eba', isproc=True)
         p.action_label(far=True, name=u'sub_12f56', isproc=True)
-        p.action_label(far='near', name=u'__2stm_module', isproc=True)
-        p.action_label(far='near', name=u'_adlib_18389', isproc=True)
-        p.action_label(far='near', name=u'_adlib_18395', isproc=True)
-        p.action_label(far='near', name=u'_adlib_clean', isproc=True)
-        p.action_label(far='near', name=u'_adlib_init', isproc=True)
-        p.action_label(far='near', name=u'_adlib_set', isproc=True)
-        p.action_label(far='near', name=u'_adlib_sndoff', isproc=True)
-        p.action_label(far='near', name=u'_alloc_dma_buf', isproc=True)
-        p.action_label(far='near', name=u'_calc_14043', isproc=True)
-        p.action_label(far='near', name=u'_callsubx', isproc=True)
-        p.action_label(far='near', name=u'_checksb', isproc=True)
-        p.action_label(far='near', name=u'_clean_int8_mem_timr', isproc=True)
-        p.action_label(far='near', name=u'_clean_timer', isproc=True)
-        p.action_label(far='near', name=u'_configure_timer', isproc=True)
-        p.action_label(far='near', name=u'_copy_printable', isproc=True)
-        p.action_label(far='near', name=u'_covox_deinit', isproc=True)
-        p.action_label(far='near', name=u'_covox_init', isproc=True)
-        p.action_label(far='near', name=u'_covox_off', isproc=True)
-        p.action_label(far='near', name=u'_covox_on', isproc=True)
-        p.action_label(far='near', name=u'_cpy_printable', isproc=True)
-        p.action_label(far='near', name=u'_dma_186e3', isproc=True)
-        p.action_label(far='near', name=u'_doschdir', isproc=True)
-        p.action_label(far='near', name=u'_dosexec', isproc=True)
-        p.action_label(far='near', name=u'_dosfindnext', isproc=True)
-        p.action_label(far='near', name=u'_dosfread', isproc=True)
-        p.action_label(far='near', name=u'_dosgetcurdir', isproc=True)
-        p.action_label(far='near', name=u'_dosseek', isproc=True)
-        p.action_label(far='near', name=u'_draw_frame', isproc=True)
-        p.action_label(far='near', name=u'_e669_module', isproc=True)
-        p.action_label(far='near', name=u'_eff_1387f', isproc=True)
-        p.action_label(far='near', name=u'_eff_13886', isproc=True)
-        p.action_label(far='near', name=u'_eff_1389d', isproc=True)
-        p.action_label(far='near', name=u'_eff_138a4', isproc=True)
-        p.action_label(far='near', name=u'_eff_138d2', isproc=True)
-        p.action_label(far='near', name=u'_eff_1392f', isproc=True)
-        p.action_label(far='near', name=u'_eff_139ac', isproc=True)
-        p.action_label(far='near', name=u'_eff_139b2', isproc=True)
-        p.action_label(far='near', name=u'_eff_139b9', isproc=True)
-        p.action_label(far='near', name=u'_eff_13a43', isproc=True)
-        p.action_label(far='near', name=u'_eff_13a94', isproc=True)
-        p.action_label(far='near', name=u'_eff_13ad7', isproc=True)
-        p.action_label(far='near', name=u'_eff_13b06', isproc=True)
-        p.action_label(far='near', name=u'_eff_13b78', isproc=True)
-        p.action_label(far='near', name=u'_eff_13b88', isproc=True)
-        p.action_label(far='near', name=u'_eff_13ba3', isproc=True)
-        p.action_label(far='near', name=u'_eff_13bb2', isproc=True)
-        p.action_label(far='near', name=u'_eff_13bc0', isproc=True)
-        p.action_label(far='near', name=u'_eff_13bc8', isproc=True)
-        p.action_label(far='near', name=u'_eff_13c02', isproc=True)
-        p.action_label(far='near', name=u'_eff_13c34', isproc=True)
-        p.action_label(far='near', name=u'_eff_13c3f', isproc=True)
-        p.action_label(far='near', name=u'_eff_13c64', isproc=True)
-        p.action_label(far='near', name=u'_eff_13c88', isproc=True)
-        p.action_label(far='near', name=u'_eff_13c95', isproc=True)
-        p.action_label(far='near', name=u'_eff_13ca2', isproc=True)
-        p.action_label(far='near', name=u'_eff_13cb3', isproc=True)
-        p.action_label(far='near', name=u'_eff_13cc9', isproc=True)
-        p.action_label(far='near', name=u'_eff_13cdd', isproc=True)
-        p.action_label(far='near', name=u'_eff_13ce8', isproc=True)
-        p.action_label(far='near', name=u'_eff_13de5', isproc=True)
-        p.action_label(far='near', name=u'_eff_13def', isproc=True)
-        p.action_label(far='near', name=u'_eff_13e1e', isproc=True)
-        p.action_label(far='near', name=u'_eff_13e2d', isproc=True)
-        p.action_label(far='near', name=u'_eff_13e32', isproc=True)
-        p.action_label(far='near', name=u'_eff_13e7f', isproc=True)
-        p.action_label(far='near', name=u'_eff_13e84', isproc=True)
-        p.action_label(far='near', name=u'_eff_13e8c', isproc=True)
-        p.action_label(far='near', name=u'_eff_13f05', isproc=True)
-        p.action_label(far='near', name=u'_eff_13f3b', isproc=True)
-        p.action_label(far='near', name=u'_eff_13fbe', isproc=True)
-        p.action_label(far='near', name=u'_eff_14020', isproc=True)
-        p.action_label(far='near', name=u'_eff_14030', isproc=True)
-        p.action_label(far='near', name=u'_eff_14067', isproc=True)
-        p.action_label(far='near', name=u'_eff_nullsub', isproc=True)
-        p.action_label(far='near', name=u'_ems_deinit', isproc=True)
-        p.action_label(far='near', name=u'_ems_init', isproc=True)
-        p.action_label(far='near', name=u'_ems_mapmem', isproc=True)
-        p.action_label(far='near', name=u'_ems_mapmem2', isproc=True)
-        p.action_label(far='near', name=u'_ems_mapmemx', isproc=True)
-        p.action_label(far='near', name=u'_ems_mapmemy', isproc=True)
-        p.action_label(far='near', name=u'_ems_realloc', isproc=True)
-        p.action_label(far='near', name=u'_ems_realloc2', isproc=True)
-        p.action_label(far='near', name=u'_ems_release', isproc=True)
-        p.action_label(far='near', name=u'_ems_restore_mapctx', isproc=True)
-        p.action_label(far='near', name=u'_ems_save_mapctx', isproc=True)
-        p.action_label(far='near', name=u'_f1_draw', isproc=True)
-        p.action_label(far='near', name=u'_f1_help', isproc=True)
-        p.action_label(far='near', name=u'_f2_draw_waves', isproc=True)
-        p.action_label(far='near', name=u'_f2_draw_waves2', isproc=True)
-        p.action_label(far='near', name=u'_f2_waves', isproc=True)
-        p.action_label(far='near', name=u'_f3_draw', isproc=True)
-        p.action_label(far='near', name=u'_f3_textmetter', isproc=True)
-        p.action_label(far='near', name=u'_f4_draw', isproc=True)
-        p.action_label(far='near', name=u'_f4_patternnae', isproc=True)
-        p.action_label(far='near', name=u'_f5_draw_spectr', isproc=True)
-        p.action_label(far='near', name=u'_f5_graphspectr', isproc=True)
-        p.action_label(far='near', name=u'_f6_undoc', isproc=True)
-        p.action_label(far='near', name=u'_far_module', isproc=True)
-        p.action_label(far='near', name=u'_filelist_198b8', isproc=True)
-        p.action_label(far='near', name=u'_find_mods', isproc=True)
-        p.action_label(far='near', name=u'_get_comspec', isproc=True)
-        p.action_label(far='near', name=u'_get_keybsw', isproc=True)
-        p.action_label(far='near', name=u'_getexename', isproc=True)
-        p.action_label(far='near', name=u'_getint_vect', isproc=True)
-        p.action_label(far='near', name=u'_getmemallocstrat', isproc=True)
-        p.action_label(far='near', name=u'_graph_1c070', isproc=True)
-        p.action_label(far='near', name=u'_hex_1be39', isproc=True)
-        p.action_label(far='near', name=u'_init_f5_spectr', isproc=True)
-        p.action_label(far='near', name=u'_init_vga_waves', isproc=True)
-        p.action_label(far='near', name=u'_init_vga_waves_chunk', isproc=True)
-        p.action_label(far='near', name=u'_initclockfromrtc', isproc=True)
-        p.action_label(far='near', name=u'_inr_module', isproc=True)
-        p.action_label(far='near', name=u'_inr_read_118b0', isproc=True)
-        p.action_label(far='near', name=u'_inr_read_119b7', isproc=True)
-        p.action_label(far='near', name=u'_int1a_timer', isproc=True)
-        p.action_label(far='near', name=u'_keyb_screen_loop', isproc=True)
-        p.action_label(far='near', name=u'_loadcfg', isproc=True)
-        p.action_label(far='near', name=u'_mem_reallocx', isproc=True)
-        p.action_label(far='near', name=u'_memalloc', isproc=True)
-        p.action_label(far='near', name=u'_memalloc12k', isproc=True)
-        p.action_label(far='near', name=u'_memclean', isproc=True)
-        p.action_label(far='near', name=u'_memfill8080', isproc=True)
-        p.action_label(far='near', name=u'_memfree', isproc=True)
-        p.action_label(far='near', name=u'_memfree_18a28', isproc=True)
-        p.action_label(far='near', name=u'_memrealloc', isproc=True)
-        p.action_label(far='near', name=u'_message_1be77', isproc=True)
-        p.action_label(far='near', name=u'_midi_153c0', isproc=True)
-        p.action_label(far='near', name=u'_midi_153d6', isproc=True)
-        p.action_label(far='near', name=u'_midi_153f1', isproc=True)
-        p.action_label(far='near', name=u'_midi_15413', isproc=True)
-        p.action_label(far='near', name=u'_midi_15442', isproc=True)
-        p.action_label(far='near', name=u'_midi_1544d', isproc=True)
-        p.action_label(far='near', name=u'_midi_15466', isproc=True)
-        p.action_label(far='near', name=u'_midi_154ac', isproc=True)
-        p.action_label(far='near', name=u'_midi_154da', isproc=True)
-        p.action_label(far='near', name=u'_midi_154de', isproc=True)
-        p.action_label(far='near', name=u'_midi_clean', isproc=True)
-        p.action_label(far='near', name=u'_midi_set', isproc=True)
-        p.action_label(far='near', name=u'_midi_sndoff', isproc=True)
-        p.action_label(far='near', name=u'_mod_1021e', isproc=True)
-        p.action_label(far='near', name=u'_mod_1024a', isproc=True)
-        p.action_label(far='near', name=u'_mod_102f5', isproc=True)
-        p.action_label(far='near', name=u'_mod_n_t_module', isproc=True)
-        p.action_label(far='near', name=u'_mod_read_10311', isproc=True)
-        p.action_label(far='near', name=u'_mod_readfile_12247', isproc=True)
-        p.action_label(far='near', name=u'_mod_sub_12220', isproc=True)
-        p.action_label(far='near', name=u'_modules_search', isproc=True)
-        p.action_label(far='near', name=u'_mouse_1c7a9', isproc=True)
-        p.action_label(far='near', name=u'_mouse_1c7cf', isproc=True)
-        p.action_label(far='near', name=u'_mouse_deinit', isproc=True)
-        p.action_label(far='near', name=u'_mouse_getpos', isproc=True)
-        p.action_label(far='near', name=u'_mouse_hide', isproc=True)
-        p.action_label(far='near', name=u'_mouse_hide2', isproc=True)
-        p.action_label(far='near', name=u'_mouse_init', isproc=True)
-        p.action_label(far='near', name=u'_mouse_show', isproc=True)
-        p.action_label(far='near', name=u'_mouse_showcur', isproc=True)
-        p.action_label(far='near', name=u'_mtm_module', isproc=True)
-        p.action_label(far='near', name=u'_my_i16toa10_0', isproc=True)
-        p.action_label(far='near', name=u'_my_i32toa10_0', isproc=True)
-        p.action_label(far='near', name=u'_my_i8toa10', isproc=True)
-        p.action_label(far='near', name=u'_my_i8toa10_0', isproc=True)
-        p.action_label(far='near', name=u'_my_pnt_u32toa_fill', isproc=True)
-        p.action_label(far='near', name=u'_my_putdigit', isproc=True)
-        p.action_label(far='near', name=u'_my_u16toa10', isproc=True)
-        p.action_label(far='near', name=u'_my_u16toa_10', isproc=True)
-        p.action_label(far='near', name=u'_my_u16tox', isproc=True)
-        p.action_label(far='near', name=u'_my_u32toa', isproc=True)
-        p.action_label(far='near', name=u'_my_u32toa10', isproc=True)
-        p.action_label(far='near', name=u'_my_u32toa10_0', isproc=True)
-        p.action_label(far='near', name=u'_my_u32toa_0', isproc=True)
-        p.action_label(far='near', name=u'_my_u32toa_fill', isproc=True)
-        p.action_label(far='near', name=u'_my_u32tox', isproc=True)
-        p.action_label(far='near', name=u'_my_u4tox', isproc=True)
-        p.action_label(far='near', name=u'_my_u8toa10', isproc=True)
-        p.action_label(far='near', name=u'_my_u8toa_10', isproc=True)
-        p.action_label(far='near', name=u'_my_u8tox', isproc=True)
-        p.action_label(far='near', name=u'_myasmsprintf', isproc=True)
-        p.action_label(far='near', name=u'_myputdigit', isproc=True)
-        p.action_label(far='near', name=u'_mystrlen', isproc=True)
-        p.action_label(far='near', name=u'_mystrlen_0', isproc=True)
-        p.action_label(far='near', name=u'_nongravis_182e7', isproc=True)
-        p.action_label(far='near', name=u'_nullsub_2', isproc=True)
-        p.action_label(far='near', name=u'_nullsub_3', isproc=True)
-        p.action_label(far='near', name=u'_nullsub_4', isproc=True)
-        p.action_label(far='near', name=u'_nullsub_5', isproc=True)
-        p.action_label(far='near', name=u'_parse_cmdline', isproc=True)
-        p.action_label(far='near', name=u'_pcspeaker_deinit', isproc=True)
-        p.action_label(far='near', name=u'_pcspeaker_init', isproc=True)
-        p.action_label(far='near', name=u'_pcspeaker_off', isproc=True)
-        p.action_label(far='near', name=u'_pcspeaker_on', isproc=True)
-        p.action_label(far='near', name=u'_psm_module', isproc=True)
-        p.action_label(far='near', name=u'_put_message', isproc=True)
-        p.action_label(far='near', name=u'_put_message2', isproc=True)
-        p.action_label(far='near', name=u'_read2buffer', isproc=True)
-        p.action_label(far='near', name=u'_read_module', isproc=True)
-        p.action_label(far='near', name=u'_readallmoules', isproc=True)
-        p.action_label(far='near', name=u'_readmixersb', isproc=True)
-        p.action_label(far='near', name=u'_readsb', isproc=True)
-        p.action_label(far='near', name=u'_recolortxt', isproc=True)
-        p.action_label(far='near', name=u'_rereadrtc_settmr', isproc=True)
-        p.action_label(far='near', name=u'_restore_intvector', isproc=True)
-        p.action_label(far='near', name=u'_s3m_module', isproc=True)
-        p.action_label(far='near', name=u'_sb16_18540', isproc=True)
-        p.action_label(far='near', name=u'_sb16_deinit', isproc=True)
-        p.action_label(far='near', name=u'_sb16_detect_port', isproc=True)
-        p.action_label(far='near', name=u'_sb16_init', isproc=True)
-        p.action_label(far='near', name=u'_sb16_off', isproc=True)
-        p.action_label(far='near', name=u'_sb16_on', isproc=True)
-        p.action_label(far='near', name=u'_sb16_sound_off', isproc=True)
-        p.action_label(far='near', name=u'_sb16_sound_on', isproc=True)
-        p.action_label(far='near', name=u'_set_dmachn_mask', isproc=True)
-        p.action_label(far='near', name=u'_set_egasequencer', isproc=True)
-        p.action_label(far='near', name=u'_set_keybsw', isproc=True)
-        p.action_label(far='near', name=u'_set_timer', isproc=True)
-        p.action_label(far='near', name=u'_set_timer_int', isproc=True)
-        p.action_label(far='near', name=u'_setint_vect', isproc=True)
-        p.action_label(far='near', name=u'_setmemalloc1', isproc=True)
-        p.action_label(far='near', name=u'_setmemalloc2', isproc=True)
-        p.action_label(far='near', name=u'_setmemallocstrat', isproc=True)
-        p.action_label(far='near', name=u'_setsnd_handler', isproc=True)
-        p.action_label(far='near', name=u'_setvideomode', isproc=True)
-        p.action_label(far='near', name=u'_snd_deinit', isproc=True)
-        p.action_label(far='near', name=u'_snd_initialze', isproc=True)
-        p.action_label(far='near', name=u'_snd_off', isproc=True)
-        p.action_label(far='near', name=u'_snd_off_chunk', isproc=True)
-        p.action_label(far='near', name=u'_snd_on', isproc=True)
-        p.action_label(far='near', name=u'_someplaymode', isproc=True)
-        p.action_label(far='near', name=u'_spectr_1b084', isproc=True)
-        p.action_label(far='near', name=u'_spectr_1b406', isproc=True)
-        p.action_label(far='near', name=u'_spectr_1bbc1', isproc=True)
-        p.action_label(far='near', name=u'_spectr_1bc2d', isproc=True)
-        p.action_label(far='near', name=u'_spectr_1bce9', isproc=True)
-        p.action_label(far='near', name=u'_spectr_1c4f8', isproc=True)
-        #p.add_label(far='near',name=u'_start',isproc=True)
-        p.action_label(far='near', name=u'_stereo_clean', isproc=True)
-        p.action_label(far='near', name=u'_stereo_init', isproc=True)
-        p.action_label(far='near', name=u'_stereo_set', isproc=True)
-        p.action_label(far='near', name=u'_stereo_sndoff', isproc=True)
-        p.action_label(far='near', name=u'_strcpy_count', isproc=True)
-        p.action_label(far='near', name=u'_strcpy_count_0', isproc=True)
-        p.action_label(far='near', name=u'_text_1bf69', isproc=True)
-        p.action_label(far='near', name=u'_text_init', isproc=True)
-        p.action_label(far='near', name=u'_text_init2', isproc=True)
-        p.action_label(far='near', name=u'_txt_1abae', isproc=True)
-        p.action_label(far='near', name=u'_txt_blinkingoff', isproc=True)
-        p.action_label(far='near', name=u'_txt_draw_bottom', isproc=True)
-        p.action_label(far='near', name=u'_txt_draw_top_title', isproc=True)
-        p.action_label(far='near', name=u'_txt_enableblink', isproc=True)
-        p.action_label(far='near', name=u'_u16tox', isproc=True)
-        p.action_label(far='near', name=u'_u32tox', isproc=True)
-        p.action_label(far='near', name=u'_u4tox', isproc=True)
-        p.action_label(far='near', name=u'_u8tox', isproc=True)
-        p.action_label(far='near', name=u'_ult_1150b', isproc=True)
-        p.action_label(far='near', name=u'_ult_module', isproc=True)
-        p.action_label(far='near', name=u'_ult_read', isproc=True)
-        p.action_label(far='near', name=u'_video_prp_mtr_positn', isproc=True)
-        p.action_label(far='near', name=u'_vlm_141df', isproc=True)
-        p.action_label(far='near', name=u'_volume_prepare_waves', isproc=True)
-        p.action_label(far='near', name=u'_write_scr', isproc=True)
-        p.action_label(far='near', name=u'_writemixersb', isproc=True)
-        p.action_label(far='near', name=u'_writesb', isproc=True)
-        p.action_label(far='near', name=u'affpal', isproc=True)
-        p.action_label(far='near', name=u'aincecx', isproc=True)
-        p.action_label(far='near', name=u'aincedx', isproc=True)
-        p.action_label(far='near', name=u'chanl_2_eff_13813', isproc=True)
-        p.action_label(far='near', name=u'exec_adc', isproc=True)
-        p.action_label(far='near', name=u'exec_adcb', isproc=True)
-        p.action_label(far='near', name=u'exec_adcl', isproc=True)
-        p.action_label(far='near', name=u'exec_adcw', isproc=True)
-        p.action_label(far='near', name=u'exec_add', isproc=True)
-        p.action_label(far='near', name=u'exec_addb', isproc=True)
-        p.action_label(far='near', name=u'exec_addl', isproc=True)
-        p.action_label(far='near', name=u'exec_addw', isproc=True)
-        p.action_label(far='near', name=u'exec_and', isproc=True)
-        p.action_label(far='near', name=u'exec_andb', isproc=True)
-        p.action_label(far='near', name=u'exec_andl', isproc=True)
-        p.action_label(far='near', name=u'exec_andw', isproc=True)
-        p.action_label(far='near', name=u'exec_bt', isproc=True)
-        p.action_label(far='near', name=u'exec_btc', isproc=True)
-        p.action_label(far='near', name=u'exec_btcl', isproc=True)
-        p.action_label(far='near', name=u'exec_btcw', isproc=True)
-        p.action_label(far='near', name=u'exec_btl', isproc=True)
-        p.action_label(far='near', name=u'exec_btr', isproc=True)
-        p.action_label(far='near', name=u'exec_btrl', isproc=True)
-        p.action_label(far='near', name=u'exec_btrw', isproc=True)
-        p.action_label(far='near', name=u'exec_bts', isproc=True)
-        p.action_label(far='near', name=u'exec_btsl', isproc=True)
-        p.action_label(far='near', name=u'exec_btsw', isproc=True)
-        p.action_label(far='near', name=u'exec_btw', isproc=True)
-        p.action_label(far='near', name=u'exec_cmp', isproc=True)
-        p.action_label(far='near', name=u'exec_cmpb', isproc=True)
-        p.action_label(far='near', name=u'exec_cmpl', isproc=True)
-        p.action_label(far='near', name=u'exec_cmpw', isproc=True)
-        p.action_label(far='near', name=u'exec_dec', isproc=True)
-        p.action_label(far='near', name=u'exec_decb', isproc=True)
-        p.action_label(far='near', name=u'exec_decl', isproc=True)
-        p.action_label(far='near', name=u'exec_decw', isproc=True)
-        p.action_label(far='near', name=u'exec_inc', isproc=True)
-        p.action_label(far='near', name=u'exec_incb', isproc=True)
-        p.action_label(far='near', name=u'exec_incl', isproc=True)
-        p.action_label(far='near', name=u'exec_incw', isproc=True)
-        p.action_label(far='near', name=u'exec_neg', isproc=True)
-        p.action_label(far='near', name=u'exec_negb', isproc=True)
-        p.action_label(far='near', name=u'exec_negl', isproc=True)
-        p.action_label(far='near', name=u'exec_negw', isproc=True)
-        p.action_label(far='near', name=u'exec_not', isproc=True)
-        p.action_label(far='near', name=u'exec_notb', isproc=True)
-        p.action_label(far='near', name=u'exec_notl', isproc=True)
-        p.action_label(far='near', name=u'exec_notw', isproc=True)
-        p.action_label(far='near', name=u'exec_or', isproc=True)
-        p.action_label(far='near', name=u'exec_orb', isproc=True)
-        p.action_label(far='near', name=u'exec_orl', isproc=True)
-        p.action_label(far='near', name=u'exec_orw', isproc=True)
-        p.action_label(far='near', name=u'exec_rcl', isproc=True)
-        p.action_label(far='near', name=u'exec_rclb', isproc=True)
-        p.action_label(far='near', name=u'exec_rcll', isproc=True)
-        p.action_label(far='near', name=u'exec_rclw', isproc=True)
-        p.action_label(far='near', name=u'exec_rcr', isproc=True)
-        p.action_label(far='near', name=u'exec_rcrb', isproc=True)
-        p.action_label(far='near', name=u'exec_rcrl', isproc=True)
-        p.action_label(far='near', name=u'exec_rcrw', isproc=True)
-        p.action_label(far='near', name=u'exec_rol', isproc=True)
-        p.action_label(far='near', name=u'exec_rolb', isproc=True)
-        p.action_label(far='near', name=u'exec_roll', isproc=True)
-        p.action_label(far='near', name=u'exec_rolw', isproc=True)
-        p.action_label(far='near', name=u'exec_ror', isproc=True)
-        p.action_label(far='near', name=u'exec_rorb', isproc=True)
-        p.action_label(far='near', name=u'exec_rorl', isproc=True)
-        p.action_label(far='near', name=u'exec_rorw', isproc=True)
-        p.action_label(far='near', name=u'exec_sar', isproc=True)
-        p.action_label(far='near', name=u'exec_sarb', isproc=True)
-        p.action_label(far='near', name=u'exec_sarl', isproc=True)
-        p.action_label(far='near', name=u'exec_sarw', isproc=True)
-        p.action_label(far='near', name=u'exec_sbb', isproc=True)
-        p.action_label(far='near', name=u'exec_sbbb', isproc=True)
-        p.action_label(far='near', name=u'exec_sbbl', isproc=True)
-        p.action_label(far='near', name=u'exec_sbbw', isproc=True)
-        p.action_label(far='near', name=u'exec_shl', isproc=True)
-        p.action_label(far='near', name=u'exec_shlb', isproc=True)
-        p.action_label(far='near', name=u'exec_shld', isproc=True)
-        p.action_label(far='near', name=u'exec_shldl', isproc=True)
-        p.action_label(far='near', name=u'exec_shldw', isproc=True)
-        p.action_label(far='near', name=u'exec_shll', isproc=True)
-        p.action_label(far='near', name=u'exec_shlw', isproc=True)
-        p.action_label(far='near', name=u'exec_shr', isproc=True)
-        p.action_label(far='near', name=u'exec_shrb', isproc=True)
-        p.action_label(far='near', name=u'exec_shrd', isproc=True)
-        p.action_label(far='near', name=u'exec_shrdl', isproc=True)
-        p.action_label(far='near', name=u'exec_shrdw', isproc=True)
-        p.action_label(far='near', name=u'exec_shrl', isproc=True)
-        p.action_label(far='near', name=u'exec_shrw', isproc=True)
-        p.action_label(far='near', name=u'exec_sub', isproc=True)
-        p.action_label(far='near', name=u'exec_subb', isproc=True)
-        p.action_label(far='near', name=u'exec_subl', isproc=True)
-        p.action_label(far='near', name=u'exec_subw', isproc=True)
-        p.action_label(far='near', name=u'exec_xor', isproc=True)
-        p.action_label(far='near', name=u'exec_xorb', isproc=True)
-        p.action_label(far='near', name=u'exec_xorl', isproc=True)
-        p.action_label(far='near', name=u'exec_xorw', isproc=True)
-        p.action_label(far='near', name=u'incebx', isproc=True)
-        p.action_label(far='near', name=u'load_raw', isproc=True)
-        p.action_label(far='near', name=u'loc_1ab0d', isproc=True)
-        p.action_label(far='near', name=u'main', isproc=True)
-        p.action_label(far='near', name=u'prepare_samples', isproc=True)
-        p.action_label(far='near', name=u'printeax', isproc=True)
-        #p.add_label(far='near',name=u'start',isproc=True)
-        p.action_label(far='near', name=u'sub_11ba6', isproc=True)
-        p.action_label(far='near', name=u'sub_11c0c', isproc=True)
-        p.action_label(far='near', name=u'sub_1279a', isproc=True)
-        p.action_label(far='near', name=u'sub_1281a', isproc=True)
-        p.action_label(far='near', name=u'sub_13017', isproc=True)
-        p.action_label(far='near', name=u'sub_13044', isproc=True)
-        p.action_label(far='near', name=u'sub_13177', isproc=True)
-        p.action_label(far='near', name=u'sub_131da', isproc=True)
-        p.action_label(far='near', name=u'sub_131ef', isproc=True)
-        p.action_label(far='near', name=u'sub_13429', isproc=True)
-        p.action_label(far='near', name=u'sub_135ca', isproc=True)
-        p.action_label(far='near', name=u'sub_13623', isproc=True)
-        p.action_label(far='near', name=u'sub_137d5', isproc=True)
-        p.action_label(far='near', name=u'sub_13826', isproc=True)
-        p.action_label(far='near', name=u'sub_13cf6', isproc=True)
-        p.action_label(far='near', name=u'sub_13d95', isproc=True)
-        p.action_label(far='near', name=u'sub_13e9b', isproc=True)
-        p.action_label(far='near', name=u'sub_14087', isproc=True)
-        p.action_label(far='near', name=u'sub_140b6', isproc=True)
-        p.action_label(far='near', name=u'sub_1415e', isproc=True)
-        p.action_label(far='near', name=u'sub_154f4', isproc=True)
-        p.action_label(far='near', name=u'sub_15577', isproc=True)
-        p.action_label(far='near', name=u'sub_1609f', isproc=True)
-        p.action_label(far='near', name=u'sub_16cf6', isproc=True)
-        p.action_label(far='near', name=u'sub_1725f', isproc=True)
-        p.action_label(far='near', name=u'sub_17824', isproc=True)
-        p.action_label(far='near', name=u'sub_182db', isproc=True)
-        p.action_label(far='near', name=u'sub_1ab8c', isproc=True)
-        p.action_label(far='near', name=u'sub_40d5c0', isproc=True)
-        p.action_label(far='near', name=u'test_adc', isproc=True)
-        p.action_label(far='near', name=u'test_add', isproc=True)
-        p.action_label(far='near', name=u'test_and', isproc=True)
-        p.action_label(far='near', name=u'test_bcd', isproc=True)
-        p.action_label(far='near', name=u'test_bsx', isproc=True)
-        p.action_label(far='near', name=u'test_bt', isproc=True)
-        p.action_label(far='near', name=u'test_btc', isproc=True)
-        p.action_label(far='near', name=u'test_btr', isproc=True)
-        p.action_label(far='near', name=u'test_bts', isproc=True)
-        p.action_label(far='near', name=u'test_cmp', isproc=True)
-        p.action_label(far='near', name=u'test_conv', isproc=True)
-        p.action_label(far='near', name=u'test_dec', isproc=True)
-        p.action_label(far='near', name=u'test_divb', isproc=True)
-        p.action_label(far='near', name=u'test_divl', isproc=True)
-        p.action_label(far='near', name=u'test_divw', isproc=True)
-        p.action_label(far='near', name=u'test_idivb', isproc=True)
-        p.action_label(far='near', name=u'test_idivl', isproc=True)
-        p.action_label(far='near', name=u'test_idivw', isproc=True)
-        p.action_label(far='near', name=u'test_imulb', isproc=True)
-        p.action_label(far='near', name=u'test_imull', isproc=True)
-        p.action_label(far='near', name=u'test_imull2', isproc=True)
-        p.action_label(far='near', name=u'test_imulw', isproc=True)
-        p.action_label(far='near', name=u'test_imulw2', isproc=True)
-        p.action_label(far='near', name=u'test_inc', isproc=True)
-        p.action_label(far='near', name=u'test_jcc', isproc=True)
-        p.action_label(far='near', name=u'test_lea', isproc=True)
-        p.action_label(far='near', name=u'test_loop', isproc=True)
-        p.action_label(far='near', name=u'test_misc', isproc=True)
-        p.action_label(far='near', name=u'test_mul', isproc=True)
-        p.action_label(far='near', name=u'test_mulb', isproc=True)
-        p.action_label(far='near', name=u'test_mull', isproc=True)
-        p.action_label(far='near', name=u'test_mulw', isproc=True)
-        p.action_label(far='near', name=u'test_neg', isproc=True)
-        p.action_label(far='near', name=u'test_not', isproc=True)
-        p.action_label(far='near', name=u'test_or', isproc=True)
-        p.action_label(far='near', name=u'test_popcnt', isproc=True)
-        p.action_label(far='near', name=u'test_rcl', isproc=True)
-        p.action_label(far='near', name=u'test_rcr', isproc=True)
-        p.action_label(far='near', name=u'test_rol', isproc=True)
-        p.action_label(far='near', name=u'test_ror', isproc=True)
-        p.action_label(far='near', name=u'test_sar', isproc=True)
-        p.action_label(far='near', name=u'test_sbb', isproc=True)
-        p.action_label(far='near', name=u'test_shl', isproc=True)
-        p.action_label(far='near', name=u'test_shld', isproc=True)
-        p.action_label(far='near', name=u'test_shr', isproc=True)
-        p.action_label(far='near', name=u'test_shrd', isproc=True)
-        p.action_label(far='near', name=u'test_string', isproc=True)
-        p.action_label(far='near', name=u'test_sub', isproc=True)
-        p.action_label(far='near', name=u'test_xchg', isproc=True)
-        p.action_label(far='near', name=u'test_xor', isproc=True)
+        p.action_label(far=False, name=u'__2stm_module', isproc=True)
+        p.action_label(far=False, name=u'_adlib_18389', isproc=True)
+        p.action_label(far=False, name=u'_adlib_18395', isproc=True)
+        p.action_label(far=False, name=u'_adlib_clean', isproc=True)
+        p.action_label(far=False, name=u'_adlib_init', isproc=True)
+        p.action_label(far=False, name=u'_adlib_set', isproc=True)
+        p.action_label(far=False, name=u'_adlib_sndoff', isproc=True)
+        p.action_label(far=False, name=u'_alloc_dma_buf', isproc=True)
+        p.action_label(far=False, name=u'_calc_14043', isproc=True)
+        p.action_label(far=False, name=u'_callsubx', isproc=True)
+        p.action_label(far=False, name=u'_checksb', isproc=True)
+        p.action_label(far=False, name=u'_clean_int8_mem_timr', isproc=True)
+        p.action_label(far=False, name=u'_clean_timer', isproc=True)
+        p.action_label(far=False, name=u'_configure_timer', isproc=True)
+        p.action_label(far=False, name=u'_copy_printable', isproc=True)
+        p.action_label(far=False, name=u'_covox_deinit', isproc=True)
+        p.action_label(far=False, name=u'_covox_init', isproc=True)
+        p.action_label(far=False, name=u'_covox_off', isproc=True)
+        p.action_label(far=False, name=u'_covox_on', isproc=True)
+        p.action_label(far=False, name=u'_cpy_printable', isproc=True)
+        p.action_label(far=False, name=u'_dma_186e3', isproc=True)
+        p.action_label(far=False, name=u'_doschdir', isproc=True)
+        p.action_label(far=False, name=u'_dosexec', isproc=True)
+        p.action_label(far=False, name=u'_dosfindnext', isproc=True)
+        p.action_label(far=False, name=u'_dosfread', isproc=True)
+        p.action_label(far=False, name=u'_dosgetcurdir', isproc=True)
+        p.action_label(far=False, name=u'_dosseek', isproc=True)
+        p.action_label(far=False, name=u'_draw_frame', isproc=True)
+        p.action_label(far=False, name=u'_e669_module', isproc=True)
+        p.action_label(far=False, name=u'_eff_1387f', isproc=True)
+        p.action_label(far=False, name=u'_eff_13886', isproc=True)
+        p.action_label(far=False, name=u'_eff_1389d', isproc=True)
+        p.action_label(far=False, name=u'_eff_138a4', isproc=True)
+        p.action_label(far=False, name=u'_eff_138d2', isproc=True)
+        p.action_label(far=False, name=u'_eff_1392f', isproc=True)
+        p.action_label(far=False, name=u'_eff_139ac', isproc=True)
+        p.action_label(far=False, name=u'_eff_139b2', isproc=True)
+        p.action_label(far=False, name=u'_eff_139b9', isproc=True)
+        p.action_label(far=False, name=u'_eff_13a43', isproc=True)
+        p.action_label(far=False, name=u'_eff_13a94', isproc=True)
+        p.action_label(far=False, name=u'_eff_13ad7', isproc=True)
+        p.action_label(far=False, name=u'_eff_13b06', isproc=True)
+        p.action_label(far=False, name=u'_eff_13b78', isproc=True)
+        p.action_label(far=False, name=u'_eff_13b88', isproc=True)
+        p.action_label(far=False, name=u'_eff_13ba3', isproc=True)
+        p.action_label(far=False, name=u'_eff_13bb2', isproc=True)
+        p.action_label(far=False, name=u'_eff_13bc0', isproc=True)
+        p.action_label(far=False, name=u'_eff_13bc8', isproc=True)
+        p.action_label(far=False, name=u'_eff_13c02', isproc=True)
+        p.action_label(far=False, name=u'_eff_13c34', isproc=True)
+        p.action_label(far=False, name=u'_eff_13c3f', isproc=True)
+        p.action_label(far=False, name=u'_eff_13c64', isproc=True)
+        p.action_label(far=False, name=u'_eff_13c88', isproc=True)
+        p.action_label(far=False, name=u'_eff_13c95', isproc=True)
+        p.action_label(far=False, name=u'_eff_13ca2', isproc=True)
+        p.action_label(far=False, name=u'_eff_13cb3', isproc=True)
+        p.action_label(far=False, name=u'_eff_13cc9', isproc=True)
+        p.action_label(far=False, name=u'_eff_13cdd', isproc=True)
+        p.action_label(far=False, name=u'_eff_13ce8', isproc=True)
+        p.action_label(far=False, name=u'_eff_13de5', isproc=True)
+        p.action_label(far=False, name=u'_eff_13def', isproc=True)
+        p.action_label(far=False, name=u'_eff_13e1e', isproc=True)
+        p.action_label(far=False, name=u'_eff_13e2d', isproc=True)
+        p.action_label(far=False, name=u'_eff_13e32', isproc=True)
+        p.action_label(far=False, name=u'_eff_13e7f', isproc=True)
+        p.action_label(far=False, name=u'_eff_13e84', isproc=True)
+        p.action_label(far=False, name=u'_eff_13e8c', isproc=True)
+        p.action_label(far=False, name=u'_eff_13f05', isproc=True)
+        p.action_label(far=False, name=u'_eff_13f3b', isproc=True)
+        p.action_label(far=False, name=u'_eff_13fbe', isproc=True)
+        p.action_label(far=False, name=u'_eff_14020', isproc=True)
+        p.action_label(far=False, name=u'_eff_14030', isproc=True)
+        p.action_label(far=False, name=u'_eff_14067', isproc=True)
+        p.action_label(far=False, name=u'_eff_nullsub', isproc=True)
+        p.action_label(far=False, name=u'_ems_deinit', isproc=True)
+        p.action_label(far=False, name=u'_ems_init', isproc=True)
+        p.action_label(far=False, name=u'_ems_mapmem', isproc=True)
+        p.action_label(far=False, name=u'_ems_mapmem2', isproc=True)
+        p.action_label(far=False, name=u'_ems_mapmemx', isproc=True)
+        p.action_label(far=False, name=u'_ems_mapmemy', isproc=True)
+        p.action_label(far=False, name=u'_ems_realloc', isproc=True)
+        p.action_label(far=False, name=u'_ems_realloc2', isproc=True)
+        p.action_label(far=False, name=u'_ems_release', isproc=True)
+        p.action_label(far=False, name=u'_ems_restore_mapctx', isproc=True)
+        p.action_label(far=False, name=u'_ems_save_mapctx', isproc=True)
+        p.action_label(far=False, name=u'_f1_draw', isproc=True)
+        p.action_label(far=False, name=u'_f1_help', isproc=True)
+        p.action_label(far=False, name=u'_f2_draw_waves', isproc=True)
+        p.action_label(far=False, name=u'_f2_draw_waves2', isproc=True)
+        p.action_label(far=False, name=u'_f2_waves', isproc=True)
+        p.action_label(far=False, name=u'_f3_draw', isproc=True)
+        p.action_label(far=False, name=u'_f3_textmetter', isproc=True)
+        p.action_label(far=False, name=u'_f4_draw', isproc=True)
+        p.action_label(far=False, name=u'_f4_patternnae', isproc=True)
+        p.action_label(far=False, name=u'_f5_draw_spectr', isproc=True)
+        p.action_label(far=False, name=u'_f5_graphspectr', isproc=True)
+        p.action_label(far=False, name=u'_f6_undoc', isproc=True)
+        p.action_label(far=False, name=u'_far_module', isproc=True)
+        p.action_label(far=False, name=u'_filelist_198b8', isproc=True)
+        p.action_label(far=False, name=u'_find_mods', isproc=True)
+        p.action_label(far=False, name=u'_get_comspec', isproc=True)
+        p.action_label(far=False, name=u'_get_keybsw', isproc=True)
+        p.action_label(far=False, name=u'_getexename', isproc=True)
+        p.action_label(far=False, name=u'_getint_vect', isproc=True)
+        p.action_label(far=False, name=u'_getmemallocstrat', isproc=True)
+        p.action_label(far=False, name=u'_graph_1c070', isproc=True)
+        p.action_label(far=False, name=u'_hex_1be39', isproc=True)
+        p.action_label(far=False, name=u'_init_f5_spectr', isproc=True)
+        p.action_label(far=False, name=u'_init_vga_waves', isproc=True)
+        p.action_label(far=False, name=u'_init_vga_waves_chunk', isproc=True)
+        p.action_label(far=False, name=u'_initclockfromrtc', isproc=True)
+        p.action_label(far=False, name=u'_inr_module', isproc=True)
+        p.action_label(far=False, name=u'_inr_read_118b0', isproc=True)
+        p.action_label(far=False, name=u'_inr_read_119b7', isproc=True)
+        p.action_label(far=False, name=u'_int1a_timer', isproc=True)
+        p.action_label(far=False, name=u'_keyb_screen_loop', isproc=True)
+        p.action_label(far=False, name=u'_loadcfg', isproc=True)
+        p.action_label(far=False, name=u'_mem_reallocx', isproc=True)
+        p.action_label(far=False, name=u'_memalloc', isproc=True)
+        p.action_label(far=False, name=u'_memalloc12k', isproc=True)
+        p.action_label(far=False, name=u'_memclean', isproc=True)
+        p.action_label(far=False, name=u'_memfill8080', isproc=True)
+        p.action_label(far=False, name=u'_memfree', isproc=True)
+        p.action_label(far=False, name=u'_memfree_18a28', isproc=True)
+        p.action_label(far=False, name=u'_memrealloc', isproc=True)
+        p.action_label(far=False, name=u'_message_1be77', isproc=True)
+        p.action_label(far=False, name=u'_midi_153c0', isproc=True)
+        p.action_label(far=False, name=u'_midi_153d6', isproc=True)
+        p.action_label(far=False, name=u'_midi_153f1', isproc=True)
+        p.action_label(far=False, name=u'_midi_15413', isproc=True)
+        p.action_label(far=False, name=u'_midi_15442', isproc=True)
+        p.action_label(far=False, name=u'_midi_1544d', isproc=True)
+        p.action_label(far=False, name=u'_midi_15466', isproc=True)
+        p.action_label(far=False, name=u'_midi_154ac', isproc=True)
+        p.action_label(far=False, name=u'_midi_154da', isproc=True)
+        p.action_label(far=False, name=u'_midi_154de', isproc=True)
+        p.action_label(far=False, name=u'_midi_clean', isproc=True)
+        p.action_label(far=False, name=u'_midi_set', isproc=True)
+        p.action_label(far=False, name=u'_midi_sndoff', isproc=True)
+        p.action_label(far=False, name=u'_mod_1021e', isproc=True)
+        p.action_label(far=False, name=u'_mod_1024a', isproc=True)
+        p.action_label(far=False, name=u'_mod_102f5', isproc=True)
+        p.action_label(far=False, name=u'_mod_n_t_module', isproc=True)
+        p.action_label(far=False, name=u'_mod_read_10311', isproc=True)
+        p.action_label(far=False, name=u'_mod_readfile_12247', isproc=True)
+        p.action_label(far=False, name=u'_mod_sub_12220', isproc=True)
+        p.action_label(far=False, name=u'_modules_search', isproc=True)
+        p.action_label(far=False, name=u'_mouse_1c7a9', isproc=True)
+        p.action_label(far=False, name=u'_mouse_1c7cf', isproc=True)
+        p.action_label(far=False, name=u'_mouse_deinit', isproc=True)
+        p.action_label(far=False, name=u'_mouse_getpos', isproc=True)
+        p.action_label(far=False, name=u'_mouse_hide', isproc=True)
+        p.action_label(far=False, name=u'_mouse_hide2', isproc=True)
+        p.action_label(far=False, name=u'_mouse_init', isproc=True)
+        p.action_label(far=False, name=u'_mouse_show', isproc=True)
+        p.action_label(far=False, name=u'_mouse_showcur', isproc=True)
+        p.action_label(far=False, name=u'_mtm_module', isproc=True)
+        p.action_label(far=False, name=u'_my_i16toa10_0', isproc=True)
+        p.action_label(far=False, name=u'_my_i32toa10_0', isproc=True)
+        p.action_label(far=False, name=u'_my_i8toa10', isproc=True)
+        p.action_label(far=False, name=u'_my_i8toa10_0', isproc=True)
+        p.action_label(far=False, name=u'_my_pnt_u32toa_fill', isproc=True)
+        p.action_label(far=False, name=u'_my_putdigit', isproc=True)
+        p.action_label(far=False, name=u'_my_u16toa10', isproc=True)
+        p.action_label(far=False, name=u'_my_u16toa_10', isproc=True)
+        p.action_label(far=False, name=u'_my_u16tox', isproc=True)
+        p.action_label(far=False, name=u'_my_u32toa', isproc=True)
+        p.action_label(far=False, name=u'_my_u32toa10', isproc=True)
+        p.action_label(far=False, name=u'_my_u32toa10_0', isproc=True)
+        p.action_label(far=False, name=u'_my_u32toa_0', isproc=True)
+        p.action_label(far=False, name=u'_my_u32toa_fill', isproc=True)
+        p.action_label(far=False, name=u'_my_u32tox', isproc=True)
+        p.action_label(far=False, name=u'_my_u4tox', isproc=True)
+        p.action_label(far=False, name=u'_my_u8toa10', isproc=True)
+        p.action_label(far=False, name=u'_my_u8toa_10', isproc=True)
+        p.action_label(far=False, name=u'_my_u8tox', isproc=True)
+        p.action_label(far=False, name=u'_myasmsprintf', isproc=True)
+        p.action_label(far=False, name=u'_myputdigit', isproc=True)
+        p.action_label(far=False, name=u'_mystrlen', isproc=True)
+        p.action_label(far=False, name=u'_mystrlen_0', isproc=True)
+        p.action_label(far=False, name=u'_nongravis_182e7', isproc=True)
+        p.action_label(far=False, name=u'_nullsub_2', isproc=True)
+        p.action_label(far=False, name=u'_nullsub_3', isproc=True)
+        p.action_label(far=False, name=u'_nullsub_4', isproc=True)
+        p.action_label(far=False, name=u'_nullsub_5', isproc=True)
+        p.action_label(far=False, name=u'_parse_cmdline', isproc=True)
+        p.action_label(far=False, name=u'_pcspeaker_deinit', isproc=True)
+        p.action_label(far=False, name=u'_pcspeaker_init', isproc=True)
+        p.action_label(far=False, name=u'_pcspeaker_off', isproc=True)
+        p.action_label(far=False, name=u'_pcspeaker_on', isproc=True)
+        p.action_label(far=False, name=u'_psm_module', isproc=True)
+        p.action_label(far=False, name=u'_put_message', isproc=True)
+        p.action_label(far=False, name=u'_put_message2', isproc=True)
+        p.action_label(far=False, name=u'_read2buffer', isproc=True)
+        p.action_label(far=False, name=u'_read_module', isproc=True)
+        p.action_label(far=False, name=u'_readallmoules', isproc=True)
+        p.action_label(far=False, name=u'_readmixersb', isproc=True)
+        p.action_label(far=False, name=u'_readsb', isproc=True)
+        p.action_label(far=False, name=u'_recolortxt', isproc=True)
+        p.action_label(far=False, name=u'_rereadrtc_settmr', isproc=True)
+        p.action_label(far=False, name=u'_restore_intvector', isproc=True)
+        p.action_label(far=False, name=u'_s3m_module', isproc=True)
+        p.action_label(far=False, name=u'_sb16_18540', isproc=True)
+        p.action_label(far=False, name=u'_sb16_deinit', isproc=True)
+        p.action_label(far=False, name=u'_sb16_detect_port', isproc=True)
+        p.action_label(far=False, name=u'_sb16_init', isproc=True)
+        p.action_label(far=False, name=u'_sb16_off', isproc=True)
+        p.action_label(far=False, name=u'_sb16_on', isproc=True)
+        p.action_label(far=False, name=u'_sb16_sound_off', isproc=True)
+        p.action_label(far=False, name=u'_sb16_sound_on', isproc=True)
+        p.action_label(far=False, name=u'_set_dmachn_mask', isproc=True)
+        p.action_label(far=False, name=u'_set_egasequencer', isproc=True)
+        p.action_label(far=False, name=u'_set_keybsw', isproc=True)
+        p.action_label(far=False, name=u'_set_timer', isproc=True)
+        p.action_label(far=False, name=u'_set_timer_int', isproc=True)
+        p.action_label(far=False, name=u'_setint_vect', isproc=True)
+        p.action_label(far=False, name=u'_setmemalloc1', isproc=True)
+        p.action_label(far=False, name=u'_setmemalloc2', isproc=True)
+        p.action_label(far=False, name=u'_setmemallocstrat', isproc=True)
+        p.action_label(far=False, name=u'_setsnd_handler', isproc=True)
+        p.action_label(far=False, name=u'_setvideomode', isproc=True)
+        p.action_label(far=False, name=u'_snd_deinit', isproc=True)
+        p.action_label(far=False, name=u'_snd_initialze', isproc=True)
+        p.action_label(far=False, name=u'_snd_off', isproc=True)
+        p.action_label(far=False, name=u'_snd_off_chunk', isproc=True)
+        p.action_label(far=False, name=u'_snd_on', isproc=True)
+        p.action_label(far=False, name=u'_someplaymode', isproc=True)
+        p.action_label(far=False, name=u'_spectr_1b084', isproc=True)
+        p.action_label(far=False, name=u'_spectr_1b406', isproc=True)
+        p.action_label(far=False, name=u'_spectr_1bbc1', isproc=True)
+        p.action_label(far=False, name=u'_spectr_1bc2d', isproc=True)
+        p.action_label(far=False, name=u'_spectr_1bce9', isproc=True)
+        p.action_label(far=False, name=u'_spectr_1c4f8', isproc=True)
+        # p.add_label(far=False,name=u'_start',isproc=True)
+        p.action_label(far=False, name=u'_stereo_clean', isproc=True)
+        p.action_label(far=False, name=u'_stereo_init', isproc=True)
+        p.action_label(far=False, name=u'_stereo_set', isproc=True)
+        p.action_label(far=False, name=u'_stereo_sndoff', isproc=True)
+        p.action_label(far=False, name=u'_strcpy_count', isproc=True)
+        p.action_label(far=False, name=u'_strcpy_count_0', isproc=True)
+        p.action_label(far=False, name=u'_text_1bf69', isproc=True)
+        p.action_label(far=False, name=u'_text_init', isproc=True)
+        p.action_label(far=False, name=u'_text_init2', isproc=True)
+        p.action_label(far=False, name=u'_txt_1abae', isproc=True)
+        p.action_label(far=False, name=u'_txt_blinkingoff', isproc=True)
+        p.action_label(far=False, name=u'_txt_draw_bottom', isproc=True)
+        p.action_label(far=False, name=u'_txt_draw_top_title', isproc=True)
+        p.action_label(far=False, name=u'_txt_enableblink', isproc=True)
+        p.action_label(far=False, name=u'_u16tox', isproc=True)
+        p.action_label(far=False, name=u'_u32tox', isproc=True)
+        p.action_label(far=False, name=u'_u4tox', isproc=True)
+        p.action_label(far=False, name=u'_u8tox', isproc=True)
+        p.action_label(far=False, name=u'_ult_1150b', isproc=True)
+        p.action_label(far=False, name=u'_ult_module', isproc=True)
+        p.action_label(far=False, name=u'_ult_read', isproc=True)
+        p.action_label(far=False, name=u'_video_prp_mtr_positn', isproc=True)
+        p.action_label(far=False, name=u'_vlm_141df', isproc=True)
+        p.action_label(far=False, name=u'_volume_prepare_waves', isproc=True)
+        p.action_label(far=False, name=u'_write_scr', isproc=True)
+        p.action_label(far=False, name=u'_writemixersb', isproc=True)
+        p.action_label(far=False, name=u'_writesb', isproc=True)
+        p.action_label(far=False, name=u'affpal', isproc=True)
+        p.action_label(far=False, name=u'aincecx', isproc=True)
+        p.action_label(far=False, name=u'aincedx', isproc=True)
+        p.action_label(far=False, name=u'chanl_2_eff_13813', isproc=True)
+        p.action_label(far=False, name=u'exec_adc', isproc=True)
+        p.action_label(far=False, name=u'exec_adcb', isproc=True)
+        p.action_label(far=False, name=u'exec_adcl', isproc=True)
+        p.action_label(far=False, name=u'exec_adcw', isproc=True)
+        p.action_label(far=False, name=u'exec_add', isproc=True)
+        p.action_label(far=False, name=u'exec_addb', isproc=True)
+        p.action_label(far=False, name=u'exec_addl', isproc=True)
+        p.action_label(far=False, name=u'exec_addw', isproc=True)
+        p.action_label(far=False, name=u'exec_and', isproc=True)
+        p.action_label(far=False, name=u'exec_andb', isproc=True)
+        p.action_label(far=False, name=u'exec_andl', isproc=True)
+        p.action_label(far=False, name=u'exec_andw', isproc=True)
+        p.action_label(far=False, name=u'exec_bt', isproc=True)
+        p.action_label(far=False, name=u'exec_btc', isproc=True)
+        p.action_label(far=False, name=u'exec_btcl', isproc=True)
+        p.action_label(far=False, name=u'exec_btcw', isproc=True)
+        p.action_label(far=False, name=u'exec_btl', isproc=True)
+        p.action_label(far=False, name=u'exec_btr', isproc=True)
+        p.action_label(far=False, name=u'exec_btrl', isproc=True)
+        p.action_label(far=False, name=u'exec_btrw', isproc=True)
+        p.action_label(far=False, name=u'exec_bts', isproc=True)
+        p.action_label(far=False, name=u'exec_btsl', isproc=True)
+        p.action_label(far=False, name=u'exec_btsw', isproc=True)
+        p.action_label(far=False, name=u'exec_btw', isproc=True)
+        p.action_label(far=False, name=u'exec_cmp', isproc=True)
+        p.action_label(far=False, name=u'exec_cmpb', isproc=True)
+        p.action_label(far=False, name=u'exec_cmpl', isproc=True)
+        p.action_label(far=False, name=u'exec_cmpw', isproc=True)
+        p.action_label(far=False, name=u'exec_dec', isproc=True)
+        p.action_label(far=False, name=u'exec_decb', isproc=True)
+        p.action_label(far=False, name=u'exec_decl', isproc=True)
+        p.action_label(far=False, name=u'exec_decw', isproc=True)
+        p.action_label(far=False, name=u'exec_inc', isproc=True)
+        p.action_label(far=False, name=u'exec_incb', isproc=True)
+        p.action_label(far=False, name=u'exec_incl', isproc=True)
+        p.action_label(far=False, name=u'exec_incw', isproc=True)
+        p.action_label(far=False, name=u'exec_neg', isproc=True)
+        p.action_label(far=False, name=u'exec_negb', isproc=True)
+        p.action_label(far=False, name=u'exec_negl', isproc=True)
+        p.action_label(far=False, name=u'exec_negw', isproc=True)
+        p.action_label(far=False, name=u'exec_not', isproc=True)
+        p.action_label(far=False, name=u'exec_notb', isproc=True)
+        p.action_label(far=False, name=u'exec_notl', isproc=True)
+        p.action_label(far=False, name=u'exec_notw', isproc=True)
+        p.action_label(far=False, name=u'exec_or', isproc=True)
+        p.action_label(far=False, name=u'exec_orb', isproc=True)
+        p.action_label(far=False, name=u'exec_orl', isproc=True)
+        p.action_label(far=False, name=u'exec_orw', isproc=True)
+        p.action_label(far=False, name=u'exec_rcl', isproc=True)
+        p.action_label(far=False, name=u'exec_rclb', isproc=True)
+        p.action_label(far=False, name=u'exec_rcll', isproc=True)
+        p.action_label(far=False, name=u'exec_rclw', isproc=True)
+        p.action_label(far=False, name=u'exec_rcr', isproc=True)
+        p.action_label(far=False, name=u'exec_rcrb', isproc=True)
+        p.action_label(far=False, name=u'exec_rcrl', isproc=True)
+        p.action_label(far=False, name=u'exec_rcrw', isproc=True)
+        p.action_label(far=False, name=u'exec_rol', isproc=True)
+        p.action_label(far=False, name=u'exec_rolb', isproc=True)
+        p.action_label(far=False, name=u'exec_roll', isproc=True)
+        p.action_label(far=False, name=u'exec_rolw', isproc=True)
+        p.action_label(far=False, name=u'exec_ror', isproc=True)
+        p.action_label(far=False, name=u'exec_rorb', isproc=True)
+        p.action_label(far=False, name=u'exec_rorl', isproc=True)
+        p.action_label(far=False, name=u'exec_rorw', isproc=True)
+        p.action_label(far=False, name=u'exec_sar', isproc=True)
+        p.action_label(far=False, name=u'exec_sarb', isproc=True)
+        p.action_label(far=False, name=u'exec_sarl', isproc=True)
+        p.action_label(far=False, name=u'exec_sarw', isproc=True)
+        p.action_label(far=False, name=u'exec_sbb', isproc=True)
+        p.action_label(far=False, name=u'exec_sbbb', isproc=True)
+        p.action_label(far=False, name=u'exec_sbbl', isproc=True)
+        p.action_label(far=False, name=u'exec_sbbw', isproc=True)
+        p.action_label(far=False, name=u'exec_shl', isproc=True)
+        p.action_label(far=False, name=u'exec_shlb', isproc=True)
+        p.action_label(far=False, name=u'exec_shld', isproc=True)
+        p.action_label(far=False, name=u'exec_shldl', isproc=True)
+        p.action_label(far=False, name=u'exec_shldw', isproc=True)
+        p.action_label(far=False, name=u'exec_shll', isproc=True)
+        p.action_label(far=False, name=u'exec_shlw', isproc=True)
+        p.action_label(far=False, name=u'exec_shr', isproc=True)
+        p.action_label(far=False, name=u'exec_shrb', isproc=True)
+        p.action_label(far=False, name=u'exec_shrd', isproc=True)
+        p.action_label(far=False, name=u'exec_shrdl', isproc=True)
+        p.action_label(far=False, name=u'exec_shrdw', isproc=True)
+        p.action_label(far=False, name=u'exec_shrl', isproc=True)
+        p.action_label(far=False, name=u'exec_shrw', isproc=True)
+        p.action_label(far=False, name=u'exec_sub', isproc=True)
+        p.action_label(far=False, name=u'exec_subb', isproc=True)
+        p.action_label(far=False, name=u'exec_subl', isproc=True)
+        p.action_label(far=False, name=u'exec_subw', isproc=True)
+        p.action_label(far=False, name=u'exec_xor', isproc=True)
+        p.action_label(far=False, name=u'exec_xorb', isproc=True)
+        p.action_label(far=False, name=u'exec_xorl', isproc=True)
+        p.action_label(far=False, name=u'exec_xorw', isproc=True)
+        p.action_label(far=False, name=u'incebx', isproc=True)
+        p.action_label(far=False, name=u'load_raw', isproc=True)
+        p.action_label(far=False, name=u'loc_1ab0d', isproc=True)
+        p.action_label(far=False, name=u'main', isproc=True)
+        p.action_label(far=False, name=u'prepare_samples', isproc=True)
+        p.action_label(far=False, name=u'printeax', isproc=True)
+        # p.add_label(far=False,name=u'start',isproc=True)
+        p.action_label(far=False, name=u'sub_11ba6', isproc=True)
+        p.action_label(far=False, name=u'sub_11c0c', isproc=True)
+        p.action_label(far=False, name=u'sub_1279a', isproc=True)
+        p.action_label(far=False, name=u'sub_1281a', isproc=True)
+        p.action_label(far=False, name=u'sub_13017', isproc=True)
+        p.action_label(far=False, name=u'sub_13044', isproc=True)
+        p.action_label(far=False, name=u'sub_13177', isproc=True)
+        p.action_label(far=False, name=u'sub_131da', isproc=True)
+        p.action_label(far=False, name=u'sub_131ef', isproc=True)
+        p.action_label(far=False, name=u'sub_13429', isproc=True)
+        p.action_label(far=False, name=u'sub_135ca', isproc=True)
+        p.action_label(far=False, name=u'sub_13623', isproc=True)
+        p.action_label(far=False, name=u'sub_137d5', isproc=True)
+        p.action_label(far=False, name=u'sub_13826', isproc=True)
+        p.action_label(far=False, name=u'sub_13cf6', isproc=True)
+        p.action_label(far=False, name=u'sub_13d95', isproc=True)
+        p.action_label(far=False, name=u'sub_13e9b', isproc=True)
+        p.action_label(far=False, name=u'sub_14087', isproc=True)
+        p.action_label(far=False, name=u'sub_140b6', isproc=True)
+        p.action_label(far=False, name=u'sub_1415e', isproc=True)
+        p.action_label(far=False, name=u'sub_154f4', isproc=True)
+        p.action_label(far=False, name=u'sub_15577', isproc=True)
+        p.action_label(far=False, name=u'sub_1609f', isproc=True)
+        p.action_label(far=False, name=u'sub_16cf6', isproc=True)
+        p.action_label(far=False, name=u'sub_1725f', isproc=True)
+        p.action_label(far=False, name=u'sub_17824', isproc=True)
+        p.action_label(far=False, name=u'sub_182db', isproc=True)
+        p.action_label(far=False, name=u'sub_1ab8c', isproc=True)
+        p.action_label(far=False, name=u'sub_40d5c0', isproc=True)
+        p.action_label(far=False, name=u'test_adc', isproc=True)
+        p.action_label(far=False, name=u'test_add', isproc=True)
+        p.action_label(far=False, name=u'test_and', isproc=True)
+        p.action_label(far=False, name=u'test_bcd', isproc=True)
+        p.action_label(far=False, name=u'test_bsx', isproc=True)
+        p.action_label(far=False, name=u'test_bt', isproc=True)
+        p.action_label(far=False, name=u'test_btc', isproc=True)
+        p.action_label(far=False, name=u'test_btr', isproc=True)
+        p.action_label(far=False, name=u'test_bts', isproc=True)
+        p.action_label(far=False, name=u'test_cmp', isproc=True)
+        p.action_label(far=False, name=u'test_conv', isproc=True)
+        p.action_label(far=False, name=u'test_dec', isproc=True)
+        p.action_label(far=False, name=u'test_divb', isproc=True)
+        p.action_label(far=False, name=u'test_divl', isproc=True)
+        p.action_label(far=False, name=u'test_divw', isproc=True)
+        p.action_label(far=False, name=u'test_idivb', isproc=True)
+        p.action_label(far=False, name=u'test_idivl', isproc=True)
+        p.action_label(far=False, name=u'test_idivw', isproc=True)
+        p.action_label(far=False, name=u'test_imulb', isproc=True)
+        p.action_label(far=False, name=u'test_imull', isproc=True)
+        p.action_label(far=False, name=u'test_imull2', isproc=True)
+        p.action_label(far=False, name=u'test_imulw', isproc=True)
+        p.action_label(far=False, name=u'test_imulw2', isproc=True)
+        p.action_label(far=False, name=u'test_inc', isproc=True)
+        p.action_label(far=False, name=u'test_jcc', isproc=True)
+        p.action_label(far=False, name=u'test_lea', isproc=True)
+        p.action_label(far=False, name=u'test_loop', isproc=True)
+        p.action_label(far=False, name=u'test_misc', isproc=True)
+        p.action_label(far=False, name=u'test_mul', isproc=True)
+        p.action_label(far=False, name=u'test_mulb', isproc=True)
+        p.action_label(far=False, name=u'test_mull', isproc=True)
+        p.action_label(far=False, name=u'test_mulw', isproc=True)
+        p.action_label(far=False, name=u'test_neg', isproc=True)
+        p.action_label(far=False, name=u'test_not', isproc=True)
+        p.action_label(far=False, name=u'test_or', isproc=True)
+        p.action_label(far=False, name=u'test_popcnt', isproc=True)
+        p.action_label(far=False, name=u'test_rcl', isproc=True)
+        p.action_label(far=False, name=u'test_rcr', isproc=True)
+        p.action_label(far=False, name=u'test_rol', isproc=True)
+        p.action_label(far=False, name=u'test_ror', isproc=True)
+        p.action_label(far=False, name=u'test_sar', isproc=True)
+        p.action_label(far=False, name=u'test_sbb', isproc=True)
+        p.action_label(far=False, name=u'test_shl', isproc=True)
+        p.action_label(far=False, name=u'test_shld', isproc=True)
+        p.action_label(far=False, name=u'test_shr', isproc=True)
+        p.action_label(far=False, name=u'test_shrd', isproc=True)
+        p.action_label(far=False, name=u'test_string', isproc=True)
+        p.action_label(far=False, name=u'test_sub', isproc=True)
+        p.action_label(far=False, name=u'test_xchg', isproc=True)
+        p.action_label(far=False, name=u'test_xor', isproc=True)
 
-        #TODO
-        #self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop ax bx')), u'\tR(POP(ax));\n\tR(POP(bx));\n')
+        # TODO
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,2')), u'\tR(CMP(*(dw*)&m.var2, 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,bx')), u'\tR(CMP(*(dw*)&m.var2, bx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-12')), u'\tR(CMP(*(db*)&m.var3, -12));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-13')), u'\tR(CMP(*(db*)&m.var3, -13));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,3')), u'\tR(CMP(*(db*)&m.var3, 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,ecx')), u'\tR(CMP(*(db*)&m.var3, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc var3')), u'\tR(INC(*(db*)&m.var3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp [cs:table+ax]')), '\t\tR(JMP(__dispatch_call));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,5')), u'\tR(MOV(*(db*)&m.a, 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,ah')), u'\tR(MOV(*(db*)&m.a, ah));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,al')), u'\tR(MOV(*(db*)&m.a, al));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp b,256+3+65536')), u'\tR(CMP(m.b, 256+3+65536));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,1')), u'\tR(CMP(m.var1, 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,al')), u'\tR(CMP(m.var1, al));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov b,ax')), u'\tR(MOV(m.b, ax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,var1')), u'\tR(MOV(dl, m.var1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,g')), u'\tR(MOV(ebx, m.g));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+i+table], dl')), u'\tR(MOV(*(raddr(ss,ebp+i+offset(_text,table))), dl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pOp  ebx ebp    eax')), u'\tR(POP(ebx));\n\tR(POP(ebp));\n\tR(POP(eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop     small word ptr [esp]')), u'\tR(POP(small));\n\tR(POP(word));\n\tR(POP(ptr));\n\tR(POP(*(dw*)(raddr(ss,esp))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop  dx cx ; linear address of allocated memory block')), u'\tR(POP(dx));\n\tR(POP(cx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop ds es')), u'\tR(POP(ds));\n\tR(POP(es));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push  eax ebp  ebx')), u'\tR(PUSH(eax));\n\tR(PUSH(ebp));\n\tR(PUSH(ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push bx cx ; linear address of allocated memory block')), u'\tR(PUSH(bx));\n\tR(PUSH(cx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push bx fs')), u'\tR(PUSH(bx));\n\tR(PUSH(fs));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop fs cx')), u'\tR(POP(fs));\n\tR(POP(cx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push es ds')), u'\tR(PUSH(es));\n\tR(PUSH(ds));\n')
 
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP eax,1')), u'\tR(CMP(eax, 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp ebx,'dcba'")), u'\tR(CMP(ebx, 0x64636261));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("sub dl,'a'")), u"\tR(SUB(dl, 'a'));\n")
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx)), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp a,1')), u'\tR(CMP(*(db*)&m.a, 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop ax bx')), u'\tR(POP(ax));\n\tR(POP(bx));\n')
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp [doublequote+4],'d'")), u"\tR(CMP(*(raddr(ds,offset(_data,doublequote)+4)), 'd'));\n")
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp dword ptr buffer,'tseT'")), u'\tR(CMP(*(dd*)(raddr(ds,offset(_data,buffer))), 0x74736554));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            "mov ah,9            ; DS:DX->'$'-terminated string")), u'\tR(MOV(ah, 9));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov dl,'c'")), u"\tR(MOV(dl, 'c'));\n")
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov ecx,'dcba'")), u'\tR(MOV(ecx, 0x64636261));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP [var1],111')), u'\tR(CMP(*(raddr(ds,offset(_data,var1))), 111));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP [var1],3')), u'\tR(CMP(*(raddr(ds,offset(_data,var1))), 3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP [var2],1')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2))), 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP [var2],13')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2))), 13));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP [var3],35')), u'\tR(CMP(*(raddr(ds,offset(_data,var3))), 35));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP eax,133')), u'\tR(CMP(eax, 133));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP eax,2')), u'\tR(CMP(eax, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP eax,3')), u'\tR(CMP(eax, 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('INC [var1]')), u'\tR(INC(*(raddr(ds,offset(_data,var1)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('INC [var1]')), u'\tR(INC(m.var1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('INC [var2]')), u'\tR(INC(*(dw*)(raddr(ds,offset(_data,var2)))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('INC [var3]')), u'\tR(INC(*(raddr(ds,offset(_data,var3)))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('INC eax')), u'\tR(INC(eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('INC edx')), u'\tR(INC(edx));\n')
 
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp b,256+3')), u'\tR(CMP(m.b, 256+3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call [cs:table+ax]')), '\tR(CALL(__disp));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP eax,1')), u'\tR(CMP(eax, 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp ebx,'dcba'")), u'\tR(CMP(ebx, 0x64636261));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("sub dl,'a'")), u"\tR(SUB(dl, 'a'));\n")
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx)), 2));\n')
+
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp [doublequote+4],'d'")), u"\tR(CMP(*(raddr(ds,offset(_data,doublequote)+4)), 'd'));\n")
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("cmp dword ptr buffer,'tseT'")), u'\tR(CMP(*(dd*)(raddr(ds,offset(_data,buffer))), 0x74736554));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov ah,9            ; DS:DX->'$'-terminated string")), u'\tR(MOV(ah, 9));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov dl,'c'")), u"\tR(MOV(dl, 'c'));\n")
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov ecx,'dcba'")), u'\tR(MOV(ecx, 0x64636261));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('CMP [var1],111')), u'\tR(CMP(m.var1, 111));\n')
+
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JA failure')), u'\t\tR(JA(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JAE failure')), u'\t\tR(JNC(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JB failure')), u'\t\tR(JC(failure));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'JE @VBL2    ;on attends la fin du retrace')), u'\t\tR(JZ(arbvbl2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'JE @VBL22    ;on attends la fin du retrace')), u'\t\tR(JZ(arbvbl22));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JE @VBL2    ;on attends la fin du retrace')), u'\t\tR(JZ(arbvbl2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JE @VBL22    ;on attends la fin du retrace')), u'\t\tR(JZ(arbvbl22));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JE failure')), u'\t\tR(JZ(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JMP exitLabel')), u'\t\tR(JMP(exitlabel));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'JNE @VBL1    ;on attends le retrace')), u'\t\tR(JNZ(arbvbl1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'JNE @VBL12    ;on attends le retrace')), u'\t\tR(JNZ(arbvbl12));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JNE @VBL1    ;on attends le retrace')), u'\t\tR(JNZ(arbvbl1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JNE @VBL12    ;on attends le retrace')), u'\t\tR(JNZ(arbvbl12));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JNE failure')), u'\t\tR(JNZ(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('JNZ  @@saaccvaaaax')), u'\t\tR(JNZ(arbarbsaaccvaaaax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('JNZ  @@saaccvaaaax')), u'\t\tR(JNZ(arbarbsaaccvaaaax));\n')
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('LODSB')), 'LODSB;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('MOV DX,3DAh')), u'\tR(MOV(dx, 0x3DA));\n')
@@ -5619,96 +5635,63 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('aas')), '\tR(AAS);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('adc     dl, cl')), u'\tR(ADC(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('adc     dx, cx')), u'\tR(ADC(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('adc     edx, ecx')), u'\tR(ADC(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('adc     edx, ecx')), u'\tR(ADC(edx, ecx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     dl, cl')), u'\tR(ADD(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     dx, cx')), u'\tR(ADD(dx, cx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     ebx, 4')), u'\tR(ADD(ebx, 4));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     edx, ecx')), u'\tR(ADD(edx, ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 10h')), u'\tR(ADD(esp, 0x10));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 114h')), u'\tR(ADD(esp, 0x114));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     edx, ecx')), u'\tR(ADD(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 10h')), u'\tR(ADD(esp, 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 114h')), u'\tR(ADD(esp, 0x114));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 2')), u'\tR(ADD(esp, 2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 20h')), u'\tR(ADD(esp, 0x20));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 4Ch')), u'\tR(ADD(esp, 0x4C));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'add bl,30h          ; convert to ASCII')), u'\tR(ADD(bl, 0x30));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'add bl,7            ; "A" to "F"')), u'\tR(ADD(bl, 7));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 20h')), u'\tR(ADD(esp, 0x20));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add     esp, 4Ch')), u'\tR(ADD(esp, 0x4C));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add bl,30h          ; convert to ASCII')), u'\tR(ADD(bl, 0x30));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add bl,7            ; "A" to "F"')), u'\tR(ADD(bl, 7));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add edi,14*320')), u'\tR(ADD(edi, 14*320));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('add word ptr [var5+2],50')), u'\tR(ADD(*(dw*)(raddr(ds,offset(_data,var5)+2)), 50));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     ah, 0F7h')), u'\tR(AND(ah, 0x0F7));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('add word ptr [var5+2],50')), u'\tR(ADD(*(dw*)(raddr(ds,offset(_data,var5)+2)), 50));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     ah, 0F7h')), u'\tR(AND(ah, 0x0F7));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     dl, cl')), u'\tR(AND(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     dx, cx')), u'\tR(AND(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     ecx, 40h')), u'\tR(AND(ecx, 0x40));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     edx, ecx')), u'\tR(AND(edx, ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     eflags, 40h')), u'\tR(AND(eflags, 0x40));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     eflags, 8D5h')), u'\tR(AND(eflags, 0x8D5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     esp, 0FFFFFFF0h')), u'\tR(AND(esp, 0x0FFFFFFF0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 0D5h')), u'\tR(AND(flags, 0x0D5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 1')), u'\tR(AND(flags, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 11h')), u'\tR(AND(flags, 0x11));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 801h')), u'\tR(AND(flags, 0x801));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 8C5h')), u'\tR(AND(flags, 0x8C5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 8D5h')), u'\tR(AND(flags, 0x8D5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'and bl,0Fh          ; only low-Nibble')), u'\tR(AND(bl, 0x0F));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     ecx, 40h')), u'\tR(AND(ecx, 0x40));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     edx, ecx')), u'\tR(AND(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     eflags, 40h')), u'\tR(AND(eflags, 0x40));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     eflags, 8D5h')), u'\tR(AND(eflags, 0x8D5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     esp, 0FFFFFFF0h')), u'\tR(AND(esp, 0x0FFFFFFF0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 0D5h')), u'\tR(AND(flags, 0x0D5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 1')), u'\tR(AND(flags, 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 11h')), u'\tR(AND(flags, 0x11));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 801h')), u'\tR(AND(flags, 0x801));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 8C5h')), u'\tR(AND(flags, 0x8C5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and     flags, 8D5h')), u'\tR(AND(flags, 0x8D5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('and bl,0Fh          ; only low-Nibble')), u'\tR(AND(bl, 0x0F));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     ax, bx')), u'\tR(BSF(ax, bx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     ax, di')), u'\tR(BSF(ax, di));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     ax, si')), u'\tR(BSF(ax, si));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     eax, ebx')), u'\tR(BSF(eax, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     eax, edi')), u'\tR(BSF(eax, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     eax, ebx')), u'\tR(BSF(eax, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsf     eax, edi')), u'\tR(BSF(eax, edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     ax, bx')), u'\tR(BSR(ax, bx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     ax, di')), u'\tR(BSR(ax, di));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     eax, ebx')), u'\tR(BSR(eax, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     eax, edx')), u'\tR(BSR(eax, edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     eax, esi')), u'\tR(BSR(eax, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     edx, eax')), u'\tR(BSR(edx, eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     eax, ebx')), u'\tR(BSR(eax, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     eax, edx')), u'\tR(BSR(eax, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     eax, esi')), u'\tR(BSR(eax, esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bsr     edx, eax')), u'\tR(BSR(edx, eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bswap   eax')), u'\tR(BSWAP(eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bt      cx, dx')), u'\tR(BT(cx, dx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bt      ecx, edx')), u'\tR(BT(ecx, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bt      ecx, edx')), u'\tR(BT(ecx, edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bt eax,0')), u'\tR(BT(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bt eax,2')), u'\tR(BT(eax, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btc     cx, dx')), u'\tR(BTC(cx, dx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('btc     ecx, edx')), u'\tR(BTC(ecx, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btc     ecx, edx')), u'\tR(BTC(ecx, edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btc eax,0')), u'\tR(BTC(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btc eax,2')), u'\tR(BTC(eax, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btr     cx, dx')), u'\tR(BTR(cx, dx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('btr     ecx, edx')), u'\tR(BTR(ecx, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btr     ecx, edx')), u'\tR(BTR(ecx, edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btr eax,0')), u'\tR(BTR(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('btr eax,2')), u'\tR(BTR(eax, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts     cx, dx')), u'\tR(BTS(cx, dx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts     ecx, edx')), u'\tR(BTS(ecx, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts     ecx, edx')), u'\tR(BTS(ecx, edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts eax,0')), u'\tR(BTS(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('bts eax,2')), u'\tR(BTS(eax, 2));\n')
-
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cbw')), '\tR(CBW);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cdq')), '\tR(CDQ);\n')
@@ -5717,30 +5700,19 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmc')), '\tR(CMC);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     dl, cl')), u'\tR(CMP(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     dx, cx')), u'\tR(CMP(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, ebx')), u'\tR(CMP(ebx, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, edi')), u'\tR(CMP(ebx, edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, esi')), u'\tR(CMP(ebx, esi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmp     ebx, offset unk_40F064')), u'\tR(CMP(ebx, offset(initcall,unk_40f064)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, ebx')), u'\tR(CMP(ebx, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, edi')), u'\tR(CMP(ebx, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, esi')), u'\tR(CMP(ebx, esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ebx, offset unk_40F064')), u'\tR(CMP(ebx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     ecx, 1')), u'\tR(CMP(ecx, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     edi, ebx')), u'\tR(CMP(edi, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     edi, ebx')), u'\tR(CMP(edi, ebx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     edx, 1')), u'\tR(CMP(edx, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     edx, ecx')), u'\tR(CMP(edx, ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     esi, ebx')), u'\tR(CMP(esi, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     esi, edi')), u'\tR(CMP(esi, edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     esi, esi')), u'\tR(CMP(esi, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 1000h')), u'\tR(CMP(i, 0x1000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 100h')), u'\tR(CMP(i, 0x100));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     edx, ecx')), u'\tR(CMP(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     esi, ebx')), u'\tR(CMP(esi, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     esi, edi')), u'\tR(CMP(esi, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     esi, esi')), u'\tR(CMP(esi, esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 1000h')), u'\tR(CMP(i, 0x1000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 100h')), u'\tR(CMP(i, 0x100));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 10h')), u'\tR(CMP(i, 0x10));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 20h')), u'\tR(CMP(i, 0x20));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp     i, 4')), u'\tR(CMP(i, 4));\n')
@@ -5750,14 +5722,12 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var-1],0')), u'\tR(CMP(*(raddr(ds,offset(_data,var)-1)), 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var0+5],0')), u'\tR(CMP(*(raddr(ds,offset(_data,var0)+5)), 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var1+1],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var1],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1))), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var1],2')), u'\tR(CMP(m.var1, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2+2],6')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2)+2)), 6));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2-1],5')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2)-1)), 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var2],4')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var2))), 4));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+3*4],4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+ebp],4000000')), u'\tR(CMP(*(raddr(ss,offset(_data,var3)+ebp)), 4000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+3*4],4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var3+ebp],4000000')), u'\tR(CMP(*(raddr(ss,offset(_data,var3)+ebp)), 4000000));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var4+t],1')), u'\tR(CMP(*(raddr(ds,offset(_data,var4)+t)), 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var4],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var4))), 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp [var],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var))), 5));\n')
@@ -5767,49 +5737,33 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp al,ah')), u'\tR(CMP(al, ah));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ax,-5')), u'\tR(CMP(ax, -5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bh,0cch')), u'\tR(CMP(bh, 0x0cc));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,001111111B')), u'\tR(CMP(bl, 0x7f));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,001111111B')), u'\tR(CMP(bl, 0x7f));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,0ddh')), u'\tR(CMP(bl, 0x0dd));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,192')), u'\tR(CMP(bl, 192));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,193')), u'\tR(CMP(bl, 193));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmp bl,39h          ; above 9?')), u'\tR(CMP(bl, 0x39));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,39h          ; above 9?')), u'\tR(CMP(bl, 0x39));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bl,al')), u'\tR(CMP(bl, al));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bx,-1')), u'\tR(CMP(bx, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bx,1')), u'\tR(CMP(bx, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bx,4+5*256')), u'\tR(CMP(bx, 4+5*256));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp bx,6*256+5')), u'\tR(CMP(bx, 6*256+5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [a],5')), u'\tR(CMP(*(raddr(ds,offset(_data,a))), 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [edi+1],6')), u'\tR(CMP(*(raddr(ds,edi+1)), 6));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [edi+7],132')), u'\tR(CMP(*(raddr(ds,edi+7)), 132));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [esi],1')), u'\tR(CMP(*(raddr(ds,esi)), 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [esi],4')), u'\tR(CMP(*(raddr(ds,esi)), 4));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmp byte ptr [testOVerlap+1],1')), u'\tR(CMP(*(raddr(ds,offset(_data,testoverlap)+1)), 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [var1+1],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [var1+2],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+2)), 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],55')), u'\tR(CMP(*(raddr(es,0)), 55));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],56')), u'\tR(CMP(*(raddr(es,0)), 56));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],57')), u'\tR(CMP(*(raddr(es,0)), 57));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ch,001111111B')), u'\tR(CMP(ch, 0x7f));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ch,011111100B')), u'\tR(CMP(ch, 0xfc));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [a],5')), u'\tR(CMP(*(raddr(ds,offset(_data,a))), 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [edi+1],6')), u'\tR(CMP(*(raddr(ds,edi+1)), 6));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [edi+7],132')), u'\tR(CMP(*(raddr(ds,edi+7)), 132));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [esi],1')), u'\tR(CMP(*(raddr(ds,esi)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [esi],4')), u'\tR(CMP(*(raddr(ds,esi)), 4));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [testOVerlap+1],1')), u'\tR(CMP(*(raddr(ds,offset(_data,testoverlap)+1)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [var1+1],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr [var1+2],5')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+2)), 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],55')), u'\tR(CMP(*(raddr(es,0)), 55));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],56')), u'\tR(CMP(*(raddr(es,0)), 56));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp byte ptr es:[0],57')), u'\tR(CMP(*(raddr(es,0)), 57));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ch,001111111B')), u'\tR(CMP(ch, 0x7f));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ch,011111100B')), u'\tR(CMP(ch, 0xfc));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dl,2')), u'\tR(CMP(dl, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dl,4')), u'\tR(CMP(dl, 4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dl,5')), u'\tR(CMP(dl, 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dword ptr var4,11')), u'\tR(CMP(*(dd*)(raddr(ds,offset(_data,var4))), 11));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dword ptr var4,11')), u'\tR(CMP(*(dd*)(raddr(ds,offset(_data,var4))), 11));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dx,-1')), u'\tR(CMP(dx, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dx,0')), u'\tR(CMP(dx, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp dx,11')), u'\tR(CMP(dx, 11));\n')
@@ -5819,19 +5773,13 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,-5')), u'\tR(CMP(eax, -5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0')), u'\tR(CMP(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,000f3h')), u'\tR(CMP(eax, 0x000f3));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0101010101010101b')), u'\tR(CMP(eax, 0x5555));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0101010101010101b')), u'\tR(CMP(eax, 0x5555));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0101b')), u'\tR(CMP(eax, 0x5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,077123456h')), u'\tR(CMP(eax, 0x077123456));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0ffff0003h')), u'\tR(CMP(eax, 0x0ffff0003));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0ffff00f3h')), u'\tR(CMP(eax, 0x0ffff00f3));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0ffffff03h')), u'\tR(CMP(eax, 0x0ffffff03));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0fffffff3h')), u'\tR(CMP(eax, 0x0fffffff3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,077123456h')), u'\tR(CMP(eax, 0x077123456));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0ffff0003h')), u'\tR(CMP(eax, 0x0ffff0003));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0ffff00f3h')), u'\tR(CMP(eax, 0x0ffff00f3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0ffffff03h')), u'\tR(CMP(eax, 0x0ffffff03));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,0fffffff3h')), u'\tR(CMP(eax, 0x0fffffff3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,1')), u'\tR(CMP(eax, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,2')), u'\tR(CMP(eax, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp eax,256')), u'\tR(CMP(eax, 256));\n')
@@ -5843,8 +5791,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebp,9')), u'\tR(CMP(ebp, 9));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,0')), u'\tR(CMP(ebx, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,010B')), u'\tR(CMP(ebx, 0x2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,0ffffff00h')), u'\tR(CMP(ebx, 0x0ffffff00));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,0ffffff00h')), u'\tR(CMP(ebx, 0x0ffffff00));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,1')), u'\tR(CMP(ebx, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,100h')), u'\tR(CMP(ebx, 0x100));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,12345')), u'\tR(CMP(ebx, 12345));\n')
@@ -5852,65 +5799,46 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,3')), u'\tR(CMP(ebx, 3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ebx,TWO')), u'\tR(CMP(ebx, TWO));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,-5')), u'\tR(CMP(ecx, -5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,0af222h')), u'\tR(CMP(ecx, 0x0af222));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,0af222h')), u'\tR(CMP(ecx, 0x0af222));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,0dff1h')), u'\tR(CMP(ecx, 0x0dff1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,0ffffh')), u'\tR(CMP(ecx, 0x0ffff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,3')), u'\tR(CMP(ecx, 3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp ecx,5')), u'\tR(CMP(ecx, 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edi,0')), u'\tR(CMP(edi, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edi,esi')), u'\tR(CMP(edi, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edi,offset var4+1')), u'\tR(CMP(edi, offset(_data,var4)+1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edi,offset var4+4')), u'\tR(CMP(edi, offset(_data,var4)+4));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edi,offset var4+1')), u'\tR(CMP(edi, offset(_data,var4)+1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edi,offset var4+4')), u'\tR(CMP(edi, offset(_data,var4)+4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,-2')), u'\tR(CMP(edx, -2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,0')), u'\tR(CMP(edx, 0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,0abcdef77h')), u'\tR(CMP(edx, 0x0abcdef77));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,0abcdef77h')), u'\tR(CMP(edx, 0x0abcdef77));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,0ffffh')), u'\tR(CMP(edx, 0x0ffff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,1')), u'\tR(CMP(edx, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp edx,10')), u'\tR(CMP(edx, 10));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,0')), u'\tR(CMP(esi, 0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,offset var1+1')), u'\tR(CMP(esi, offset(_data,var1)+1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,offset var3+4')), u'\tR(CMP(esi, offset(_data,var3)+4));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,offset var1+1')), u'\tR(CMP(esi, offset(_data,var1)+1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp esi,offset var3+4')), u'\tR(CMP(esi, offset(_data,var3)+4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[1],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+1)), 2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx+si],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx+si)), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx+si],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx+si)), 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1[bx],2')), u'\tR(CMP(*(raddr(ds,offset(_data,var1)+bx)), 2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3+3*4,4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3+ebp,4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+ebp)), 4000000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr [var5+2],25')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5)+2)), 25));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr [var5+2],50')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5)+2)), 50));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr var5,0')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5))), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3+3*4,4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+3*4)), 4000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3+ebp,4000000')), u'\tR(CMP(*(raddr(ds,offset(_data,var3)+ebp)), 4000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr [var5+2],25')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5)+2)), 25));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr [var5+2],50')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5)+2)), 50));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp word ptr var5,0')), u'\tR(CMP(*(dw*)(raddr(ds,offset(_data,var5))), 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpsb')), 'CMPSB;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpsd')), '\tR(CMPSD);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpsw')), '\tR(CMPSW);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg al, dl')), u'\tR(CMPXCHG(al, dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg ax, dx')), u'\tR(CMPXCHG(ax, dx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmpxchg byte ptr [ebp+var_20], bl')), u'\tR(CMPXCHG(*(raddr(ss,ebp+var_20)), bl));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmpxchg byte ptr [ebp+var_20], dl')), u'\tR(CMPXCHG(*(raddr(ss,ebp+var_20)), dl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg byte ptr [ebp+var_20], bl')), u'\tR(CMPXCHG(*(raddr(ss,ebp+var_20)), bl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg byte ptr [ebp+var_20], dl')), u'\tR(CMPXCHG(*(raddr(ss,ebp+var_20)), dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg cl, dl')), u'\tR(CMPXCHG(cl, dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg cx, dx')), u'\tR(CMPXCHG(cx, dx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmpxchg dword ptr [ebp+var_20], edx')), u'\tR(CMPXCHG(*(dd*)(raddr(ss,ebp+var_20)), edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg eax, edx')), u'\tR(CMPXCHG(eax, edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg ecx, edx')), u'\tR(CMPXCHG(ecx, edx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'cmpxchg word ptr [ebp+var_20], dx')), u'\tR(CMPXCHG(*(dw*)(raddr(ss,ebp+var_20)), dx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg8b [ebp+var_20]')), u'\tR(CMPXCHG8B(*(dw*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg dword ptr [ebp+var_20], edx')), u'\tR(CMPXCHG(*(dd*)(raddr(ss,ebp+var_20)), edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg eax, edx')), u'\tR(CMPXCHG(eax, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg ecx, edx')), u'\tR(CMPXCHG(ecx, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg word ptr [ebp+var_20], dx')), u'\tR(CMPXCHG(*(dw*)(raddr(ss,ebp+var_20)), dx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmpxchg8b [ebp+var_20]')), u'\tR(CMPXCHG8B(*(dw*)(raddr(ss,ebp+var_20))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cwd')), '\tR(CWD);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cwde')), '\tR(CWDE);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('daa')), '\tR(DAA);\n')
@@ -5918,8 +5846,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('dec     dl')), u'\tR(DEC(dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('dec     dx')), u'\tR(DEC(dx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('dec     edx')), u'\tR(DEC(edx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'dec cl              ; decrease loop counter')), u'\tR(DEC(cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('dec cl              ; decrease loop counter')), u'\tR(DEC(cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('dec cx')), u'\tR(DEC(cx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('dec eax')), u'\tR(DEC(eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('div     cx')), u'\tR(DIV2(cx));\n')
@@ -5929,242 +5856,150 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('idiv    dl')), u'\tR(IDIV1(dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('idiv    s1_0')), u'\tR(IDIV0(s1_0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, cx')), u'\tR(IMUL2_2(ax,cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, cx, 2Dh')), u'\tR(IMUL3_2(ax,cx,0x2D));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, di, 8000h')), u'\tR(IMUL3_2(ax,di,0x8000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, dx, -2Dh')), u'\tR(IMUL3_2(ax,dx,-0x2D));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, si, 7FFFh')), u'\tR(IMUL3_2(ax,si,0x7FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, cx, 2Dh')), u'\tR(IMUL3_2(ax,cx,0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, di, 8000h')), u'\tR(IMUL3_2(ax,di,0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, dx, -2Dh')), u'\tR(IMUL3_2(ax,dx,-0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ax, si, 7FFFh')), u'\tR(IMUL3_2(ax,si,0x7FFF));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    cl')), u'\tR(IMUL1_1(cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    cx')), u'\tR(IMUL1_2(cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, ecx, 2Dh')), u'\tR(IMUL3_4(eax,ecx,0x2D));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, edi, 8000h')), u'\tR(IMUL3_4(eax,edi,0x8000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, edx, -2Dh')), u'\tR(IMUL3_4(eax,edx,-0x2D));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, s1_0')), u'\tR(IMUL2_4(eax,s1_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ebx, esi, 7FFFh')), u'\tR(IMUL3_4(ebx,esi,0x7FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, ecx, 2Dh')), u'\tR(IMUL3_4(eax,ecx,0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, edi, 8000h')), u'\tR(IMUL3_4(eax,edi,0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, edx, -2Dh')), u'\tR(IMUL3_4(eax,edx,-0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    eax, s1_0')), u'\tR(IMUL2_4(eax,s1_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    ebx, esi, 7FFFh')), u'\tR(IMUL3_4(ebx,esi,0x7FFF));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('imul    s1_0')), u'\tR(IMUL1_0(s1_0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc     dl')), u'\tR(INC(dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc     dx')), u'\tR(INC(dx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc     edx')), u'\tR(INC(edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc     i')), u'\tR(INC(i));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc byte ptr [edi+1]')), u'\tR(INC(*(raddr(ds,edi+1))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc byte ptr [edi+7]')), u'\tR(INC(*(raddr(ds,edi+7))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc byte ptr es:[0]')), u'\tR(INC(*(raddr(es,0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc byte ptr [edi+1]')), u'\tR(INC(*(raddr(ds,edi+1))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc byte ptr [edi+7]')), u'\tR(INC(*(raddr(ds,edi+7))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc byte ptr es:[0]')), u'\tR(INC(*(raddr(es,0))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc eax')), u'\tR(INC(eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc ebx')), u'\tR(INC(ebx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc ecx')), u'\tR(INC(ecx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'inc edi              ; increase target address')), u'\tR(INC(edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc edi              ; increase target address')), u'\tR(INC(edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc edi')), u'\tR(INC(edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc edx')), u'\tR(INC(edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('int 10h')), u'\tR(_INT(0x10));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'int 21h                         ; DOS INT 21h')), u'\tR(_INT(0x21));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('int 21h                         ; DOS INT 21h')), u'\tR(_INT(0x21));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('int 31h')), u'\tR(_INT(0x31));\n')
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jC failure')), u'\t\tR(JC(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jNC OK')), u'\t\tR(JNC(ok));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('ja      short loc_407784')), u'\t\tR(JA(loc_407784));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('ja      short loc_407784')), u'\t\tR(JA(loc_407784));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('ja failure')), u'\t\tR(JA(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnbe failure')), u'\t\tR(JA(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jb      short loc_40723E')), u'\t\tR(JC(loc_40723e));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'jb failure  ; // because unsigned comparaison')), u'\t\tR(JC(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jbe     short loc_40752C')), u'\t\tR(JBE(loc_40752c));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jb      short loc_40723E')), u'\t\tR(JC(loc_40723e));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jb failure  ; // because unsigned comparaison')), u'\t\tR(JC(failure));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jbe     short loc_40752C')), u'\t\tR(JBE(loc_40752c));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jc failure')), u'\t\tR(JC(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jcxz    loc_4081F6')), u'\t\tR(JCXZ(loc_4081f6));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jcxz    loc_4081F6')), u'\t\tR(JCXZ(loc_4081f6));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jcxz @df@@@@7')), u'\t\tR(JCXZ(arbdfarbarbarbarb7));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jcxz failure')), u'\t\tR(JCXZ(failure));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'je failure ; http://blog.rewolf.pl/blog/?p=177')), u'\t\tR(JZ(failure));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('je failure ; http://blog.rewolf.pl/blog/?p=177')), u'\t\tR(JZ(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('je failure')), u'\t\tR(JZ(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('je ok')), u'\t\tR(JZ(ok));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jecxz   short loc_4083E9')), u'\t\tR(JECXZ(loc_4083e9));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jg      short loc_40707C')), u'\t\tR(JG(loc_40707c));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jecxz   short loc_4083E9')), u'\t\tR(JECXZ(loc_4083e9));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jg      short loc_40707C')), u'\t\tR(JG(loc_40707c));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jg @df@@@@1')), u'\t\tR(JG(arbdfarbarbarbarb1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jg failure')), u'\t\tR(JG(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jge     short loc_406EBA')), u'\t\tR(JGE(loc_406eba));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jge     short loc_406EBA')), u'\t\tR(JGE(loc_406eba));\n')
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jge @df@@@@2')), u'\t\tR(JGE(arbdfarbarbarbarb2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jge failure')), u'\t\tR(JGE(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jl      short loc_406B3F')), u'\t\tR(JL(loc_406b3f));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jl      short loc_406B3F')), u'\t\tR(JL(loc_406b3f));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jl @df@@@@4')), u'\t\tR(JL(arbdfarbarbarbarb4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jl failure')), u'\t\tR(JL(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jle     short loc_406CF8')), u'\t\tR(JLE(loc_406cf8));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jle     short loc_406CF8')), u'\t\tR(JLE(loc_406cf8));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jle @df@@@@5')), u'\t\tR(JLE(arbdfarbarbarbarb5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jle failure')), u'\t\tR(JLE(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp     exec_rclb')), u'\t\tR(JMP(exec_rclb));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp     exec_rclb')), u'\t\tR(JMP(exec_rclb));\n')
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp     short loc_40D571')), u'\t\tR(JMP(loc_40d571));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp [cs:table+ax]')), '\t\tR(JMP(__dispatch_call));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp     short loc_40D571')), u'\t\tR(JMP(loc_40d571));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp exitLabel')), u'\t\tR(JMP(exitlabel));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp failure')), u'\t\tR(JMP(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp finTest')), u'\t\tR(JMP(fintest));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jmp next')), u'\t\tR(JMP(next));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnC failure')), u'\t\tR(JNC(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jna short P2')), u'\t\tR(JBE(p2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb     short loc_4075C2')), u'\t\tR(JNC(loc_4075c2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb     short loc_407658')), u'\t\tR(JNC(loc_407658));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb     short loc_4076EE')), u'\t\tR(JNC(loc_4076ee));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb     short loc_4075C2')), u'\t\tR(JNC(loc_4075c2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb     short loc_407658')), u'\t\tR(JNC(loc_407658));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb     short loc_4076EE')), u'\t\tR(JNC(loc_4076ee));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnb failure')), u'\t\tR(JNC(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnc failure')), u'\t\tR(JNC(failure));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnc noerror')), u'\t\tR(JNC(noerror));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jne exitLabel')), u'\t\tR(JNZ(exitlabel));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jne failure')), u'\t\tR(JNZ(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns     short loc_408008')), u'\t\tR(JNS(loc_408008));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns     short loc_40809E')), u'\t\tR(JNS(loc_40809e));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns     short loc_408139')), u'\t\tR(JNS(loc_408139));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns     short loc_408008')), u'\t\tR(JNS(loc_408008));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns     short loc_40809E')), u'\t\tR(JNS(loc_40809e));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns     short loc_408139')), u'\t\tR(JNS(loc_408139));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jns failure')), u'\t\tR(JNS(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnz     loc_409652')), u'\t\tR(JNZ(loc_409652));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnz     short loc_4046D6')), u'\t\tR(JNZ(loc_4046d6));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'jnz P1              ; jump if cl is not equal 0 (zeroflag is not set)')), u'\t\tR(JNZ(p1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnz     loc_409652')), u'\t\tR(JNZ(loc_409652));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnz     short loc_4046D6')), u'\t\tR(JNZ(loc_4046d6));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnz P1              ; jump if cl is not equal 0 (zeroflag is not set)')), u'\t\tR(JNZ(p1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jnz failure')), u'\t\tR(JNZ(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('js      short loc_407E46')), u'\t\tR(JS(loc_407e46));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('js      short loc_407F72')), u'\t\tR(JS(loc_407f72));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('js      short loc_407E46')), u'\t\tR(JS(loc_407e46));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('js      short loc_407F72')), u'\t\tR(JS(loc_407f72));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('js @df@@@@')), u'\t\tR(JS(arbdfarbarbarbarb));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('js failure')), u'\t\tR(JS(failure));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('jz      short loc_40458F')), u'\t\tR(JZ(loc_40458f));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jz      short loc_40458F')), u'\t\tR(JZ(loc_40458f));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('jz failure')), u'\t\tR(JZ(failure));\n')
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+4000h]')), u'\tR(eax = eax+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+40h]')), u'\tR(eax = eax+0x40);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+ecx+40h]')), u'\tR(eax = eax+ecx+0x40);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+ecx]')), u'\tR(eax = eax+ecx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax]')), u'\tR(eax = eax);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+4000h]')), u'\tR(eax = ebx+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+40h]')), u'\tR(eax = ebx+0x40);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('lea     eax, [ebx+edx+4000h]')), u'\tR(eax = ebx+edx+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+edx]')), u'\tR(eax = ebx+edx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx]')), u'\tR(eax = ebx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+4000h]')), u'\tR(eax = ecx+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+40h]')), u'\tR(eax = ecx+0x40);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'lea     eax, [ecx+ecx*2+4000h]')), u'\tR(eax = ecx+ecx*2+0x4000);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('lea     eax, [ecx+ecx*2-0Ah]')), u'\tR(eax = ecx+ecx*2-0x0A);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+ecx*2]')), u'\tR(eax = ecx+ecx*2);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+ecx]')), u'\tR(eax = ecx+ecx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx]')), u'\tR(eax = ecx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi+4000h]')), u'\tR(eax = edi+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi+40h]')), u'\tR(eax = edi+0x40);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi+ecx]')), u'\tR(eax = edi+ecx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi]')), u'\tR(eax = edi);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+4000h]')), u'\tR(eax = edx+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+40h]')), u'\tR(eax = edx+0x40);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'lea     eax, [edx+ecx*4+4000h]')), u'\tR(eax = edx+ecx*4+0x4000);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('lea     eax, [edx+ecx*4-0Ah]')), u'\tR(eax = edx+ecx*4-0x0A);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+ecx*4]')), u'\tR(eax = edx+ecx*4);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+ecx]')), u'\tR(eax = edx+ecx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx]')), u'\tR(eax = edx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+4000h]')), u'\tR(eax = esi+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+40h]')), u'\tR(eax = esi+0x40);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('lea     eax, [esi+ecx*8-0Ah]')), u'\tR(eax = esi+ecx*8-0x0A);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+ecx*8]')), u'\tR(eax = esi+ecx*8);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+ecx]')), u'\tR(eax = esi+ecx);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi]')), u'\tR(eax = esi);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:0[eax*2]')), u'\tR(eax = 0+eax*2);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:0[ebx*4]')), u'\tR(eax = 0+ebx*4);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:0[ecx*8]')), u'\tR(eax = 0+ecx*8);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     ebx, [ebp+table]')), u'\tR(ebx = ebp+offset(_text,table));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'lea     ebx, [esi+ecx*8+4000h]')), u'\tR(ebx = esi+ecx*8+0x4000);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [ebp+ecx_vals]')), u'\tR(edi = ebp+ecx_vals);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+2]')), u'\tR(edi = i+2);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+3]')), u'\tR(edi = i+3);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+4]')), u'\tR(edi = i+4);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+5]')), u'\tR(edi = i+5);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i-10h]')), u'\tR(edi = i-0x10);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edx, [i+56h]')), u'\tR(edx = i+0x56);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     esi, [i+1]')), u'\tR(esi = i+1);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea eax,enddata')), u'\tR(eax = offset(_data,enddata));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea ebx,beginningdata')), u'\tR(ebx = offset(_data,beginningdata));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+4000h]')), u'\tR(eax = eax+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+40h]')), u'\tR(eax = eax+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+ecx+40h]')), u'\tR(eax = eax+ecx+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax+ecx]')), u'\tR(eax = eax+ecx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [eax]')), u'\tR(eax = eax);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+4000h]')), u'\tR(eax = ebx+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+40h]')), u'\tR(eax = ebx+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+edx+4000h]')), u'\tR(eax = ebx+edx+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx+edx]')), u'\tR(eax = ebx+edx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ebx]')), u'\tR(eax = ebx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+4000h]')), u'\tR(eax = ecx+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+40h]')), u'\tR(eax = ecx+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+ecx*2+4000h]')), u'\tR(eax = ecx+ecx*2+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+ecx*2-0Ah]')), u'\tR(eax = ecx+ecx*2-0x0A);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+ecx*2]')), u'\tR(eax = ecx+ecx*2);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx+ecx]')), u'\tR(eax = ecx+ecx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [ecx]')), u'\tR(eax = ecx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi+4000h]')), u'\tR(eax = edi+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi+40h]')), u'\tR(eax = edi+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi+ecx]')), u'\tR(eax = edi+ecx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edi]')), u'\tR(eax = edi);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+4000h]')), u'\tR(eax = edx+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+40h]')), u'\tR(eax = edx+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+ecx*4+4000h]')), u'\tR(eax = edx+ecx*4+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+ecx*4-0Ah]')), u'\tR(eax = edx+ecx*4-0x0A);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+ecx*4]')), u'\tR(eax = edx+ecx*4);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx+ecx]')), u'\tR(eax = edx+ecx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [edx]')), u'\tR(eax = edx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+4000h]')), u'\tR(eax = esi+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+40h]')), u'\tR(eax = esi+0x40);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+ecx*8-0Ah]')), u'\tR(eax = esi+ecx*8-0x0A);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+ecx*8]')), u'\tR(eax = esi+ecx*8);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi+ecx]')), u'\tR(eax = esi+ecx);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, [esi]')), u'\tR(eax = esi);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:0[eax*2]')), u'\tR(eax = 0+eax*2);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:0[ebx*4]')), u'\tR(eax = 0+ebx*4);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:0[ecx*8]')), u'\tR(eax = 0+ecx*8);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     ebx, [ebp+table]')), u'\tR(ebx = ebp+offset(_text,table));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     ebx, [esi+ecx*8+4000h]')), u'\tR(ebx = esi+ecx*8+0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [ebp+ecx_vals]')), u'\tR(edi = ebp+ecx_vals);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+2]')), u'\tR(edi = i+2);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+3]')), u'\tR(edi = i+3);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+4]')), u'\tR(edi = i+4);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i+5]')), u'\tR(edi = i+5);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edi, [i-10h]')), u'\tR(edi = i-0x10);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     edx, [i+56h]')), u'\tR(edx = i+0x56);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     esi, [i+1]')), u'\tR(esi = i+1);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea eax,enddata')), u'\tR(eax = offset(_data,enddata));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea ebx,beginningdata')), u'\tR(ebx = offset(_data,beginningdata));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edi,buffer')), u'\tR(edi = offset(_data,buffer));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edi,f')), u'\tR(edi = offset(_data,f));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edi,testOVerlap')), u'\tR(edi = offset(_data,testoverlap));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edi,testOVerlap')), u'\tR(edi = offset(_data,testoverlap));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edi,var1')), u'\tR(edi = offset(_data,var1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edx,fileName')), u'\tR(edx = offset(_data,filename));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea edx,fileName')), u'\tR(edx = offset(_data,filename));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea esi,b')), u'\tR(esi = offset(_data,b));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea esi,f')), u'\tR(esi = offset(_data,f));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea esi,var2')), u'\tR(esi = offset(_data,var2));\n')
@@ -6174,726 +6009,381 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lodsd')), 'LODSD;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lodsw')), 'LODSW;\n')
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('loop    loc_408464')), u'\t\tR(LOOP(loc_408464));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('loop    loc_408464')), u'\t\tR(LOOP(loc_408464));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('loop dffd')), u'\t\tR(LOOP(dffd));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('loope   loc_4084DF')), u'\t\tR(LOOPE(loc_4084df));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('loope   loc_4084DF')), u'\t\tR(LOOPE(loc_4084df));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('loope toto1')), u'\t\tR(LOOPE(toto1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('loopne  loc_40855A')), u'\t\tR(LOOPNE(loc_40855a));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('loopne  loc_40855A')), u'\t\tR(LOOPNE(loc_40855a));\n')
 
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [ebp+ecx_0], ecx_0_0')), u'\tR(MOV(*(dw*)(raddr(ss,ebp+ecx_0)), ecx_0_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+edx_0], edx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+edx_0)), edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s0], esi')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+s0)), esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s1], 0')), u'\tR(MOV(*(raddr(ss,ebp+s1)), 0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s1], 1')), u'\tR(MOV(*(raddr(ss,ebp+s1)), 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s2], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+s2)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+var_1C], edx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_1C)), edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+var_20], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], edi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], edi_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), edi_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], edx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], op0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), op0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], op1')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), op1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], r')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), r));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], resz')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), resz));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], s1_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), s1_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], eax_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), eax_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], op1')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), op1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], resz')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), resz));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], rh')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), rh));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], s1_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), s1_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], ecx_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), ecx_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], edi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], edx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], esi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], flags')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), flags));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], resh')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), resh));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x18)), eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], edi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x18)), edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], edx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x18)), edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x18)), res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+1Ch], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x1C)), eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+1Ch], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x1C)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], eax_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+4)), eax_0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp+4], ebx    ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), ebx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     [esp+4], edi    ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), edi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp+4], esi    ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), esi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp+4], esi    ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), esi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     [esp+4], i      ; op0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+4)), i));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+4)), res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     [esp+8], ebx    ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ecx_0_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), ecx_0_0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     [esp+8], edi    ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), edi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp+8], edi    ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], edx_0_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), edx_0_0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     [esp+8], esi    ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), esi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp+8], esi    ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], esi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], esi_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), esi_0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp+8], i      ; s1')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), i));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], i')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), i));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], op0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), op0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], resh')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), resh));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], s0_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), s0_0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp], ebx      ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), ebx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp], ebx      ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), ebx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     [esp], edi      ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+ecx_0], ecx_0_0')), u'\tR(MOV(*(dw*)(raddr(ss,ebp+ecx_0)), ecx_0_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+edx_0], edx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+edx_0)), edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s0], esi')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+s0)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s1], 0')), u'\tR(MOV(*(raddr(ss,ebp+s1)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s1], 1')), u'\tR(MOV(*(raddr(ss,ebp+s1)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+s2], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+s2)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+var_1C], edx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_1C)), edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+var_20], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], edi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], edi_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), edi_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], edx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], op0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), op0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], op1')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), op1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], r')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), r));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], resz')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), resz));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+0Ch], s1_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x0C)), s1_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], eax_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), eax_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], op1')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), op1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], resz')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), resz));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], rh')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), rh));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+10h], s1_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x10)), s1_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], ecx_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), ecx_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], edi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], edx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], esi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], flags')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), flags));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+14h], resh')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x14)), resh));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x18)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], edi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x18)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], edx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x18)), edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+18h], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+0x18)), res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+1Ch], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x1C)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+1Ch], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x1C)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], eax_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+4)), eax_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], ebx    ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], edi    ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], esi    ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], esi    ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], i      ; op0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+4)), i));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+4], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+4)), res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], eax')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ebx    ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ebx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ecx')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], ecx_0_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), ecx_0_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], edi    ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], edi    ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], edx_0_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), edx_0_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], esi    ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], esi    ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], esi')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], esi_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), esi_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], i      ; s1')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), i));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], i')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), i));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], op0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), op0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], res')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], resh')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), resh));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], s0_0')), u'\tR(MOV(*(dw*)(raddr(ss,esp+8)), s0_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp], ebx      ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp], ebx      ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp], edi      ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dl, al')), u'\tR(MOV(dl, al));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [ebp+var_20+4], 0FBCA7h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20+4)), 0x0FBCA7));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [ebp+var_20+4], 12345h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20+4)), 0x12345));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [ebp+var_20], 0FBCA7654h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), 0x0FBCA7654));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [ebp+var_20], 65423456h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), 0x65423456));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [ebp+var_20], 6789ABCDh')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), 0x6789ABCD));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 0 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 1 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 1000h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x1000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 1234h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x1234));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 17h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x17));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+0Ch], 80000000h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x80000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+10h], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+10h], 1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+10h], 10h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 0x10));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+10h], 11h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 0x11));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+14h], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+1Ch], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x1C)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 0 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 0 ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     dword ptr [esp+4], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 0FFFC70F9h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x0FFFC70F9));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 0FFFFFFD3h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x0FFFFFFD3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 0FFFFFFFFh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x0FFFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1 ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 10000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 10000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 10000h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 100h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x100));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 100h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x100));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 10h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1234001Dh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1234001D));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 12341h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12341));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 12345678h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12345678));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 12345678h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12345678));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 12348000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12348000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 127Eh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x127E));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 17h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x17));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1FF7Fh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FF7F));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1FF80h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FF80));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1FF81h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FF81));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 1FFFFh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 2 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 2 ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 20000h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x20000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 2Dh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x2D));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 3 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 3 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 4 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 4));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 7FFFFFFFh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x7FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 80000000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 80000000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 80000001h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80000001));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 80008688h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80008688));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 8000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x8000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 8000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x8000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 80h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 80h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 812FADAh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x812FADA));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 81h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x81));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], 82345679h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x82345679));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+4], offset aXorw ; "xorw"')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), offset(_rdata,axorw)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov     dword ptr [esp+8], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FBCA7654h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FBCA7654));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFFFFFFh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 0Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0F));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 10000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x10000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 100h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x100));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 12340128h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x12340128));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 12Ch ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x12C));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 1Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1F));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 2 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 2Dh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x2D));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 2Dh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x2D));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 303Bh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x303B));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 340128h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x340128));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 3Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3F));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFFFFFh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFFh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 7Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7F));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 80000000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x80000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 8000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x8000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 8000h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x8000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 81234567h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x81234567));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 81238567h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x81238567));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp+8], 8234A6F8h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x8234A6F8));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0 ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0E));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFE0080h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFE0080));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFE0080h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFE0080));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFECh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFEC));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFECh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFEC));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFFDh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFD));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFFFh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFFFh ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 0FFFFFFFFh ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 10000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x10000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 100h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x100));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 10h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x10));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 12340004h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x12340004));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 12341h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x12341));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 12343h ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x12343));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1234561Dh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1234561D));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 14h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x14));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 14h ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x14));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 17h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x17));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1E));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1FEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1FFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1FFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1FFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1FFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 1FFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 2 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 21AD3D34h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x21AD3D34));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3E));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3FEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3FFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3FFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3FFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3FFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 3FFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFFFFE));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 4 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 4));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 43210123h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x43210123));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 7Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x7E));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 7FFFFFFFh ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x7FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 80000000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 80000000h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80000000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 80008481h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80008481));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 8000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x8000));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 80h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], 813F3421h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x813F3421));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], offset a10sA08lxB08lx ; "%-10s A=%08lx B=%08lx\\n"')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10sa08lxb08lx)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], offset a10sAh08lxAl08l ; "%-10s AH=%08lx AL=%08lx B=%08lx RH=%08l"...')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10sah08lxal08l)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], offset a10sD ; "%-10s %d\\n"')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10sd)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     dword ptr [esp], offset a10sEax08lxA08l ; "%-10s EAX=%08lx A=%08lx C=%08lx CC=%02l"...')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10seax08lxa08l)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [ebp+var_20+4], 0FBCA7h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20+4)), 0x0FBCA7));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [ebp+var_20+4], 12345h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20+4)), 0x12345));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [ebp+var_20], 0FBCA7654h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), 0x0FBCA7654));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [ebp+var_20], 65423456h')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), 0x65423456));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [ebp+var_20], 6789ABCDh')), u'\tR(MOV(*(dd*)(raddr(ss,ebp+var_20)), 0x6789ABCD));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 0 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 1 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 1000h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x1000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 1234h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x1234));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 17h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x17));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+0Ch], 80000000h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x0C)), 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+10h], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+10h], 1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+10h], 10h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+10h], 11h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x10)), 0x11));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+14h], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x14)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+1Ch], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+0x1C)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 0 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 0 ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 0FFFC70F9h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x0FFFC70F9));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 0FFFFFFD3h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x0FFFFFFD3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 0FFFFFFFFh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1 ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 10000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 10000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 10000h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 100h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x100));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 100h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x100));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 10h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1234001Dh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1234001D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 12341h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12341));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 12345678h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12345678));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 12345678h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12345678));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 12348000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x12348000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 127Eh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x127E));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 17h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x17));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1FF7Fh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FF7F));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1FF80h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FF80));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1FF81h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FF81));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 1FFFFh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x1FFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 2 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 2 ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 20000h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x20000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 2Dh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 3 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 3 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 4 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 4));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 7FFFFFFFh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x7FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 80000000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 80000000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 80000001h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80000001));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 80008688h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80008688));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 8000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 8000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 80h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 80h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x80));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 812FADAh ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x812FADA));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 81h ; s1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x81));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], 82345679h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), 0x82345679));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+4], offset aXorw ; "xorw"')), u'\tR(MOV(*(dd*)(raddr(ss,esp+4)), offset(_rdata,axorw)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FBCA7654h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FBCA7654));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFFFFFFh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0FF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 0Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x0F));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1 ; iflags')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 10000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x10000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 100h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x100));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 12340128h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x12340128));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 12Ch ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x12C));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1FF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 1Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x1F));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 2 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 2Dh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 2Dh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x2D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3 ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 303Bh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x303B));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 340128h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x340128));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3FF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 3Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x3F));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFFFFFh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFFh')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7FFh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7FF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 7Fh ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x7F));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 80000000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 8000h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 8000h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 81234567h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x81234567));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 81238567h ; op1')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x81238567));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp+8], 8234A6F8h')), u'\tR(MOV(*(dd*)(raddr(ss,esp+8)), 0x8234A6F8));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0 ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0E));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFE0080h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFE0080));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFE0080h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFE0080));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFECh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFEC));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFECh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFEC));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFFDh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFD));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFFFh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFFFh ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 0FFFFFFFFh ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 10000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x10000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 100h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x100));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 10h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 12340004h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x12340004));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 12341h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x12341));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 12343h ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x12343));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1234561Dh ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1234561D));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 14h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x14));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 14h ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x14));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 17h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x17));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1E));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1FEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1FFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1FFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1FFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1FFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 1FFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x1FFFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 2 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 21AD3D34h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x21AD3D34));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3 ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3E));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3FEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3FFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3FFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3FFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3FFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 3FFFFFFEh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x3FFFFFFE));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 4 ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 4));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 43210123h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x43210123));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 7Eh ; op0h')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x7E));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 7FFFFFFFh ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x7FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 80000000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 80000000h ; s0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 80008481h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80008481));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 8000h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x8000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 80h ; op0')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x80));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], 813F3421h ; s2')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), 0x813F3421));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], offset a10sA08lxB08lx ; "%-10s A=%08lx B=%08lx\\n"')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10sa08lxb08lx)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], offset a10sAh08lxAl08l ; "%-10s AH=%08lx AL=%08lx B=%08lx RH=%08l"...')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10sah08lxal08l)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], offset a10sD ; "%-10s %d\\n"')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10sd)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     dword ptr [esp], offset a10sEax08lxA08l ; "%-10s EAX=%08lx A=%08lx C=%08lx CC=%02l"...')), u'\tR(MOV(*(dd*)(raddr(ss,esp)), offset(_rdata,a10seax08lxa08l)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 0')), u'\tR(MOV(eax, 0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 0FFFF7FFFh')), u'\tR(MOV(eax, 0x0FFFF7FFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 0FFFF7FFFh')), u'\tR(MOV(eax, 0x0FFFF7FFF));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 1')), u'\tR(MOV(eax, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 12340407h')), u'\tR(MOV(eax, 0x12340407));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 7FFFFFFFh')), u'\tR(MOV(eax, 0x7FFFFFFF));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     eax, dword ptr [ebp+var_20]')), u'\tR(MOV(eax, *(dd*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, ebx')), u'\tR(MOV(eax, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, edi')), u'\tR(MOV(eax, edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, edx')), u'\tR(MOV(eax, edx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, esi')), u'\tR(MOV(eax, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, flags')), u'\tR(MOV(eax, flags));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, res')), u'\tR(MOV(eax, res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, s0_0')), u'\tR(MOV(eax, s0_0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebp, esp')), u'\tR(MOV(ebp, esp));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ebx, (offset str_buffer+800h)')), u'\tR(MOV(ebx, offset(_bss,str_buffer)+0x800));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 12340407h')), u'\tR(MOV(eax, 0x12340407));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, 7FFFFFFFh')), u'\tR(MOV(eax, 0x7FFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, dword ptr [ebp+var_20]')), u'\tR(MOV(eax, *(dd*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, ebx')), u'\tR(MOV(eax, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, edi')), u'\tR(MOV(eax, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, edx')), u'\tR(MOV(eax, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, esi')), u'\tR(MOV(eax, esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, flags')), u'\tR(MOV(eax, flags));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, res')), u'\tR(MOV(eax, res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     eax, s0_0')), u'\tR(MOV(eax, s0_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebp, esp')), u'\tR(MOV(ebp, esp));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, (offset str_buffer+800h)')), u'\tR(MOV(ebx, offset(_bss,str_buffer)+0x800));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 1')), u'\tR(MOV(ebx, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 1234040Ah')), u'\tR(MOV(ebx, 0x1234040A));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 12340506h')), u'\tR(MOV(ebx, 0x12340506));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 12345678h')), u'\tR(MOV(ebx, 0x12345678));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 1234040Ah')), u'\tR(MOV(ebx, 0x1234040A));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 12340506h')), u'\tR(MOV(ebx, 0x12340506));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 12345678h')), u'\tR(MOV(ebx, 0x12345678));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 2')), u'\tR(MOV(ebx, 2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 8234A6F8h')), u'\tR(MOV(ebx, 0x8234A6F8));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+iflags]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+iflags))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+op0h]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+op0h))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+s0]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+s0))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+s2]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+s2))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+var_4]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+var_4))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ebx, dword ptr [ebp+var_20+4]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+var_20+4))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, edi')), u'\tR(MOV(ebx, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, 8234A6F8h')), u'\tR(MOV(ebx, 0x8234A6F8));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+iflags]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+iflags))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+op0h]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+op0h))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+s0]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+s0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+s2]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+s2))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, [ebp+var_4]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+var_4))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, dword ptr [ebp+var_20+4]')), u'\tR(MOV(ebx, *(dd*)(raddr(ss,ebp+var_20+4))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, edi')), u'\tR(MOV(ebx, edi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, i')), u'\tR(MOV(ebx, i));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 1')), u'\tR(MOV(ecx, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 10h')), u'\tR(MOV(ecx, 0x10));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 11h')), u'\tR(MOV(ecx, 0x11));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 1234h')), u'\tR(MOV(ecx, 0x1234));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 10h')), u'\tR(MOV(ecx, 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 11h')), u'\tR(MOV(ecx, 0x11));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 1234h')), u'\tR(MOV(ecx, 0x1234));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 4')), u'\tR(MOV(ecx, 4));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 65324h')), u'\tR(MOV(ecx, 0x65324));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+ecx_0]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+ecx_0))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+edx_0]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+edx_0))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ecx, [ebp+i*4+ecx_vals]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+i*4+ecx_vals))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+s0]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+s0))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+s1]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+s1))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+var_20]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ecx, dword ptr [ebp+var_20+4]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+var_20+4))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ecx, dword ptr [ebp+var_20]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, edi')), u'\tR(MOV(ecx, edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, res')), u'\tR(MOV(ecx, res));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     edi, (offset str_buffer+810h)')), u'\tR(MOV(edi, offset(_bss,str_buffer)+0x810));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 0FBCA7654h')), u'\tR(MOV(edi, 0x0FBCA7654));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 0FFFFFFF7h')), u'\tR(MOV(edi, 0x0FFFFFFF7));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, 65324h')), u'\tR(MOV(ecx, 0x65324));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+ecx_0]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+ecx_0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+edx_0]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+edx_0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+i*4+ecx_vals]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+i*4+ecx_vals))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+s0]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+s0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+s1]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+s1))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, [ebp+var_20]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, dword ptr [ebp+var_20+4]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+var_20+4))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, dword ptr [ebp+var_20]')), u'\tR(MOV(ecx, *(dd*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, edi')), u'\tR(MOV(ecx, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ecx, res')), u'\tR(MOV(ecx, res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, (offset str_buffer+810h)')), u'\tR(MOV(edi, offset(_bss,str_buffer)+0x810));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 0FBCA7654h')), u'\tR(MOV(edi, 0x0FBCA7654));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 0FFFFFFF7h')), u'\tR(MOV(edi, 0x0FFFFFFF7));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 1')), u'\tR(MOV(edi, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 12340128h')), u'\tR(MOV(edi, 0x12340128));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 12340205h')), u'\tR(MOV(edi, 0x12340205));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 123405A0h')), u'\tR(MOV(edi, 0x123405A0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 12345h')), u'\tR(MOV(edi, 0x12345));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 20h')), u'\tR(MOV(edi, 0x20));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 80000000h')), u'\tR(MOV(edi, 0x80000000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+iflags]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+iflags))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+op0]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+op0))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+s1]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+s1))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+s2]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+s2))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     edi_0, (offset str_buffer+810h)')), u'\tR(MOV(edi_0, offset(_bss,str_buffer)+0x810));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 12340128h')), u'\tR(MOV(edi, 0x12340128));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 12340205h')), u'\tR(MOV(edi, 0x12340205));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 123405A0h')), u'\tR(MOV(edi, 0x123405A0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 12345h')), u'\tR(MOV(edi, 0x12345));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 20h')), u'\tR(MOV(edi, 0x20));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, 80000000h')), u'\tR(MOV(edi, 0x80000000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+iflags]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+iflags))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+op0]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+op0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+s1]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+s1))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi, [ebp+s2]')), u'\tR(MOV(edi, *(dd*)(raddr(ss,ebp+s2))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edi_0, (offset str_buffer+810h)')), u'\tR(MOV(edi_0, offset(_bss,str_buffer)+0x810));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 1')), u'\tR(MOV(edx, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 10h')), u'\tR(MOV(edx, 0x10));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 11h')), u'\tR(MOV(edx, 0x11));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 12340507h')), u'\tR(MOV(edx, 0x12340507));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 12345678h')), u'\tR(MOV(edx, 0x12345678));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 17h')), u'\tR(MOV(edx, 0x17));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 340128h')), u'\tR(MOV(edx, 0x340128));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 10h')), u'\tR(MOV(edx, 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 11h')), u'\tR(MOV(edx, 0x11));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 12340507h')), u'\tR(MOV(edx, 0x12340507));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 12345678h')), u'\tR(MOV(edx, 0x12345678));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 17h')), u'\tR(MOV(edx, 0x17));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 340128h')), u'\tR(MOV(edx, 0x340128));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, 8')), u'\tR(MOV(edx, 8));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, [ebp+s1]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+s1))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, [ebp+var_1C]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+var_1C))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     edx, dword ptr [ebp+var_20]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, ebx')), u'\tR(MOV(edx, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, edi')), u'\tR(MOV(edx, edi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, esi')), u'\tR(MOV(edx, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, res')), u'\tR(MOV(edx, res));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, resh')), u'\tR(MOV(edx, resh));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     edx, dword ptr [ebp+var_20]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 0FFFEFDFCh')), u'\tR(MOV(esi, 0x0FFFEFDFC));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 1000h')), u'\tR(MOV(esi, 0x1000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 10h')), u'\tR(MOV(esi, 0x10));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 12340306h')), u'\tR(MOV(esi, 0x12340306));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, [ebp+s1]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+s1))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, [ebp+var_1C]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+var_1C))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, dword ptr [ebp+var_20]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, ebx')), u'\tR(MOV(edx, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, edi')), u'\tR(MOV(edx, edi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, esi')), u'\tR(MOV(edx, esi));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, res')), u'\tR(MOV(edx, res));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, resh')), u'\tR(MOV(edx, resh));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     edx, dword ptr [ebp+var_20]')), u'\tR(MOV(edx, *(dd*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 0FFFEFDFCh')), u'\tR(MOV(esi, 0x0FFFEFDFC));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 1000h')), u'\tR(MOV(esi, 0x1000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 10h')), u'\tR(MOV(esi, 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, 12340306h')), u'\tR(MOV(esi, 0x12340306));\n')
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+iflags]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+iflags))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+op0]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+op0))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+op0h]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+op0h))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+s0]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+s0))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+s1]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+s1))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, esi_0')), u'\tR(MOV(esi, esi_0));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     esi, offset unk_40E008')), u'\tR(MOV(esi, offset(_data,unk_40e008)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi_0, ebx')), u'\tR(MOV(esi_0, ebx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     i, 12345678h')), u'\tR(MOV(i, 0x12345678));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+iflags]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+iflags))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+op0]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+op0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+op0h]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+op0h))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+s0]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+s0))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, [ebp+s1]')), u'\tR(MOV(esi, *(dd*)(raddr(ss,ebp+s1))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, esi_0')), u'\tR(MOV(esi, esi_0));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi, offset unk_40E008')), u'\tR(MOV(esi, offset(_data,unk_40e008)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     esi_0, ebx')), u'\tR(MOV(esi_0, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     i, 12345678h')), u'\tR(MOV(i, 0x12345678));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     i, esi')), u'\tR(MOV(i, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     op0, 32432434h')), u'\tR(MOV(op0, 0x32432434));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     op0, 32432434h')), u'\tR(MOV(op0, 0x32432434));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov   al,0')), u'\tR(MOV(al, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov   dx,3c8h')), u'\tR(MOV(dx, 0x3c8));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov   dx,3c9h')), u'\tR(MOV(dx, 0x3c9));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov   esi,offset pal_jeu')), u'\tR(MOV(esi, offset(_data,pal_jeu)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov   esi,offset pal_jeu')), u'\tR(MOV(esi, offset(_data,pal_jeu)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov  bx,ax')), u'\tR(MOV(bx, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov  fs,ax')), u'\tR(MOV(fs, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov [a],5')), u'\tR(MOV(*(raddr(ds,offset(_data,a))), 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov [load_handle],eax')), u'\tR(MOV(*(dd*)(raddr(ds,offset(_data,load_handle))), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov [load_handle],eax')), u'\tR(MOV(m.load_handle, eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,03dh')), u'\tR(MOV(ah, 0x03d));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,03eh')), u'\tR(MOV(ah, 0x03e));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,03fh')), u'\tR(MOV(ah, 0x03f));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,042h')), u'\tR(MOV(ah, 0x042));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,48h')), u'\tR(MOV(ah, 0x48));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,4Ah')), u'\tR(MOV(ah, 0x4A));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov ah,4ch                    ; AH=4Ch - Exit To DOS')), u'\tR(MOV(ah, 0x4c));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,4ch                    ; AH=4Ch - Exit To DOS')), u'\tR(MOV(ah, 0x4c));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,7')), u'\tR(MOV(ah, 7));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov ah,9                        ; AH=09h - Print DOS Message')), u'\tR(MOV(ah, 9));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ah,9                        ; AH=09h - Print DOS Message')), u'\tR(MOV(ah, 9));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov al,-5')), u'\tR(MOV(al, -5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov al,00h  ;ouverture du fichier pour lecture.')), u'\tR(MOV(al, 0x00));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('mov al,00h ;debut du fichier')), u'\tR(MOV(al, 0x00));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov al,00h  ;ouverture du fichier pour lecture.')), u'\tR(MOV(al, 0x00));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov al,00h ;debut du fichier')), u'\tR(MOV(al, 0x00));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov al,1')), u'\tR(MOV(al, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov al,7')), u'\tR(MOV(al, 7));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov al,[a]')), u'\tR(MOV(al, *(raddr(ds,offset(_data,a)))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,-1')), u'\tR(MOV(ax, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,0002h')), u'\tR(MOV(ax, 0x0002));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,0007')), u'\tR(MOV(ax, 0007));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,01010101010101010b')), u'\tR(MOV(ax, 0xaaaa));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,01111111111111111b')), u'\tR(MOV(ax, 0xffff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,01010101010101010b')), u'\tR(MOV(ax, 0xaaaa));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,01111111111111111b')), u'\tR(MOV(ax, 0xffff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,08h')), u'\tR(MOV(ax, 0x08));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,13h')), u'\tR(MOV(ax, 0x13));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,3h')), u'\tR(MOV(ax, 0x3));\n')
@@ -6903,45 +6393,30 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ax,bp')), u'\tR(MOV(ax, bp));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,-1')), u'\tR(MOV(bl, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,0')), u'\tR(MOV(bl, 0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,011111111B')), u'\tR(MOV(bl, 0xff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,011111111B')), u'\tR(MOV(bl, 0xff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,1')), u'\tR(MOV(bl, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,192')), u'\tR(MOV(bl, 192));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,[a+1]')), u'\tR(MOV(bl, *(raddr(ds,offset(_data,a)+1))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bl,al')), u'\tR(MOV(bl, al));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,(1024*10/16)+5')), u'\tR(MOV(bx, (1024*10/16)+5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,(1024*10/16)-1')), u'\tR(MOV(bx, (1024*10/16)-1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,(1024*10/16)+5')), u'\tR(MOV(bx, (1024*10/16)+5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,(1024*10/16)-1')), u'\tR(MOV(bx, (1024*10/16)-1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,10')), u'\tR(MOV(bx, 10));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,1024*10/16')), u'\tR(MOV(bx, 1024*10/16));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,1024*10/16')), u'\tR(MOV(bx, 1024*10/16));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,5')), u'\tR(MOV(bx, 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,ax')), u'\tR(MOV(bx, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,fs')), u'\tR(MOV(bx, fs));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,word ptr [d]')), u'\tR(MOV(bx, *(dw*)(raddr(ds,offset(_data,d)))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,word ptr [e]')), u'\tR(MOV(bx, *(dw*)(raddr(ds,offset(_data,e)))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr [a],5')), u'\tR(MOV(*(raddr(ds,offset(_data,a))), 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr [esi],-2')), u'\tR(MOV(*(raddr(ds,esi)), -2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr [var1+1],5')), u'\tR(MOV(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,byte ptr [edi]')), u'\tR(MOV(dl, *(raddr(ds,edi))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr ds:[0],55')), u'\tR(MOV(*(raddr(ds,0)), 55));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr es:[0],55')), u'\tR(MOV(*(raddr(es,0)), 55));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr es:[0],56')), u'\tR(MOV(*(raddr(es,0)), 56));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ch,011111111B')), u'\tR(MOV(ch, 0xff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,word ptr [d]')), u'\tR(MOV(bx, *(dw*)(raddr(ds,offset(_data,d)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov bx,word ptr [e]')), u'\tR(MOV(bx, *(dw*)(raddr(ds,offset(_data,e)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr [a],5')), u'\tR(MOV(*(raddr(ds,offset(_data,a))), 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr [esi],-2')), u'\tR(MOV(*(raddr(ds,esi)), -2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr [var1+1],5')), u'\tR(MOV(*(raddr(ds,offset(_data,var1)+1)), 5));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,byte ptr [edi]')), u'\tR(MOV(dl, *(raddr(ds,edi))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr ds:[0],55')), u'\tR(MOV(*(raddr(ds,0)), 55));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr es:[0],55')), u'\tR(MOV(*(raddr(es,0)), 55));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov byte ptr es:[0],56')), u'\tR(MOV(*(raddr(es,0)), 56));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ch,011111111B')), u'\tR(MOV(ch, 0xff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cl,2')), u'\tR(MOV(cl, 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov cl,8            ; number of ASCII')), u'\tR(MOV(cl, 8));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cl,8            ; number of ASCII')), u'\tR(MOV(cl, 8));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cx,-1')), u'\tR(MOV(cx, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cx,-5')), u'\tR(MOV(cx, -5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov cx,0')), u'\tR(MOV(cx, 0));\n')
@@ -6951,52 +6426,39 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,[edi+1]')), u'\tR(MOV(dl, *(raddr(ds,edi+1))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,[edi]')), u'\tR(MOV(dl, *(raddr(ds,edi))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ds, _data')), u'\tR(MOV(ds, seg_offset(_data)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ds:[edi],cl')), u'\tR(MOV(*(raddr(ds,edi)), cl));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov dword ptr es:[0],077aaFF00h')), u'\tR(MOV(*(dd*)(raddr(es,0)), 0x077aaFF00));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov dword ptr es:[20*320+160],077aaFF00h')), u'\tR(MOV(*(dd*)(raddr(es,20*320+160)), 0x077aaFF00));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ds:[edi],cl')), u'\tR(MOV(*(raddr(ds,edi)), cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dword ptr es:[0],077aaFF00h')), u'\tR(MOV(*(dd*)(raddr(es,0)), 0x077aaFF00));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dword ptr es:[20*320+160],077aaFF00h')), u'\tR(MOV(*(dd*)(raddr(es,20*320+160)), 0x077aaFF00));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dx,-1')), u'\tR(MOV(dx, -1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dx,0')), u'\tR(MOV(dx, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dx,5')), u'\tR(MOV(dx, 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dx,[edi+1]')), u'\tR(MOV(dx, *(dw*)(raddr(ds,edi+1))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dx,cx')), u'\tR(MOV(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax, 0ffffffffh')), u'\tR(MOV(eax, 0x0ffffffff));\n')
-        #self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add('mov eax, B')), u'\tR(MOV(eax, B));\n')
-        #self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add('mov eax, CC')), u'\tR(MOV(eax, CC));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax, 0ffffffffh')), u'\tR(MOV(eax, 0x0ffffffff));\n')
+        # self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add('mov eax, B')), u'\tR(MOV(eax, B));\n')
+        # self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,'',proc_instance.add('mov eax, CC')), u'\tR(MOV(eax, CC));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,-1')), u'\tR(MOV(eax, -1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,-1-(-2+3)')), u'\tR(MOV(eax, -1-(-2+3)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,-1-(-2+3)')), u'\tR(MOV(eax, -1-(-2+3)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,-4')), u'\tR(MOV(eax, -4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,-5')), u'\tR(MOV(eax, -5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,-8')), u'\tR(MOV(eax, -8));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,0')), u'\tR(MOV(eax, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,0100b')), u'\tR(MOV(eax, 0x4));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov eax,011111111111111111111111111111111b')), u'\tR(MOV(eax, 0xffffffff));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,012345678h')), u'\tR(MOV(eax, 0x012345678));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,077aaFF00h')), u'\tR(MOV(eax, 0x077aaFF00));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,0ffff00f3h')), u'\tR(MOV(eax, 0x0ffff00f3));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,0ffffff03h')), u'\tR(MOV(eax, 0x0ffffff03));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,011111111111111111111111111111111b')), u'\tR(MOV(eax, 0xffffffff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,012345678h')), u'\tR(MOV(eax, 0x012345678));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,077aaFF00h')), u'\tR(MOV(eax, 0x077aaFF00));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,0ffff00f3h')), u'\tR(MOV(eax, 0x0ffff00f3));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,0ffffff03h')), u'\tR(MOV(eax, 0x0ffffff03));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,1')), u'\tR(MOV(eax, 1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,1024*1024')), u'\tR(MOV(eax, 1024*1024));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,1024*1024')), u'\tR(MOV(eax, 1024*1024));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,10B')), u'\tR(MOV(eax, 0x2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,2')), u'\tR(MOV(eax, 2));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,256+3+65536')), u'\tR(MOV(eax, 256+3+65536));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,256+3+65536')), u'\tR(MOV(eax, 256+3+65536));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,3')), u'\tR(MOV(eax, 3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,4')), u'\tR(MOV(eax, 4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,5')), u'\tR(MOV(eax, 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,511')), u'\tR(MOV(eax, 511));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov eax,taille_moire  ;::!300000h-1 ;182400h-1 ;1582080 ;0300000h-1 ;2mega 182400h-1')), u'\tR(MOV(eax, taille_moire));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,taille_moire  ;::!300000h-1 ;182400h-1 ;1582080 ;0300000h-1 ;2mega 182400h-1')), u'\tR(MOV(eax, taille_moire));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov eax,teST2')), u'\tR(MOV(eax, teST2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebp,10')), u'\tR(MOV(ebp, 10));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebp,2')), u'\tR(MOV(ebp, 2));\n')
@@ -7008,90 +6470,65 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0')), u'\tR(MOV(ebx, 0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,00fffh')), u'\tR(MOV(ebx, 0x00fff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,01B')), u'\tR(MOV(ebx, 0x1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0FFFFFFFFh')), u'\tR(MOV(ebx, 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0FFFFFFFFh')), u'\tR(MOV(ebx, 0x0FFFFFFFF));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0a000h')), u'\tR(MOV(ebx, 0x0a000));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0aabbccddh')), u'\tR(MOV(ebx, 0x0aabbccdd));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0aabbccddh')), u'\tR(MOV(ebx, 0x0aabbccdd));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0f222h')), u'\tR(MOV(ebx, 0x0f222));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0ffff01ffh')), u'\tR(MOV(ebx, 0x0ffff01ff));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0ffffffffh')), u'\tR(MOV(ebx, 0x0ffffffff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0ffff01ffh')), u'\tR(MOV(ebx, 0x0ffff01ff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,0ffffffffh')), u'\tR(MOV(ebx, 0x0ffffffff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,2')), u'\tR(MOV(ebx, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,255')), u'\tR(MOV(ebx, 255));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,3')), u'\tR(MOV(ebx, 3));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,5')), u'\tR(MOV(ebx, 5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,[g]')), u'\tR(MOV(ebx, *(dd*)(raddr(ds,offset(_data,g)))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,[load_handle]')), u'\tR(MOV(ebx, *(dd*)(raddr(ds,offset(_data,load_handle)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,[g]')), u'\tR(MOV(ebx, m.g));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,[load_handle]')), u'\tR(MOV(ebx, m.load_handle));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,eax')), u'\tR(MOV(ebx, eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,-1')), u'\tR(MOV(ecx, -1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,000ff00ffh')), u'\tR(MOV(ecx, 0x000ff00ff));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,0a0000h')), u'\tR(MOV(ecx, 0x0a0000));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,000ff00ffh')), u'\tR(MOV(ecx, 0x000ff00ff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,0a0000h')), u'\tR(MOV(ecx, 0x0a0000));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,0df01h')), u'\tR(MOV(ecx, 0x0df01));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,0f0ffh')), u'\tR(MOV(ecx, 0x0f0ff));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,0ffffffffh')), u'\tR(MOV(ecx, 0x0ffffffff));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,0ffffffffh')), u'\tR(MOV(ecx, 0x0ffffffff));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,10')), u'\tR(MOV(ecx, 10));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,2')), u'\tR(MOV(ecx, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,3')), u'\tR(MOV(ecx, 3));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,320*200/4')), u'\tR(MOV(ecx, 320*200/4));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,320*200/4')), u'\tR(MOV(ecx, 320*200/4));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,5')), u'\tR(MOV(ecx, 5));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,60')), u'\tR(MOV(ecx, 60));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ecx,t')), u'\tR(MOV(ecx, t));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,1')), u'\tR(MOV(edi, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,8')), u'\tR(MOV(edi, 8));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov edi,OFFSET AsCii ; get the offset address')), u'\tR(MOV(edi, offset(_data,ascii)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,OFFSET AsCii ; get the offset address')), u'\tR(MOV(edi, offset(_data,ascii)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,esi')), u'\tR(MOV(edi, esi));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset str2')), u'\tR(MOV(edi, offset(_data,str2)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset str3')), u'\tR(MOV(edi, offset(_data,str3)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset var1')), u'\tR(MOV(edi, offset(_data,var1)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset var2')), u'\tR(MOV(edi, offset(_data,var2)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset var4')), u'\tR(MOV(edi, offset(_data,var4)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset str2')), u'\tR(MOV(edi, offset(_data,str2)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset str3')), u'\tR(MOV(edi, offset(_data,str3)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset var1')), u'\tR(MOV(edi, offset(_data,var1)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset var2')), u'\tR(MOV(edi, offset(_data,var2)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edi,offset var4')), u'\tR(MOV(edi, offset(_data,var4)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,0')), u'\tR(MOV(edx, 0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,0abcdef77h')), u'\tR(MOV(edx, 0x0abcdef77));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,0abcdef77h')), u'\tR(MOV(edx, 0x0abcdef77));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,2')), u'\tR(MOV(edx, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,4')), u'\tR(MOV(edx, 4));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov edx,OFFSET ASCiI ; DOS 1+ WRITE STRING TO STANDARD OUTPUT')), u'\tR(MOV(edx, offset(_data,ascii)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,OFFSET ASCiI ; DOS 1+ WRITE STRING TO STANDARD OUTPUT')), u'\tR(MOV(edx, offset(_data,ascii)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,edi')), u'\tR(MOV(edx, edi));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov edx,offset _msg             ; DS:EDX -> $ Terminated String')), u'\tR(MOV(edx, offset(_data,_msg)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov edx,offset _msg             ; DS:EDX -> $ Terminated String')), u'\tR(MOV(edx, offset(_data,_msg)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov es,ax')), u'\tR(MOV(es, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,2')), u'\tR(MOV(esi, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,6')), u'\tR(MOV(esi, 6));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset str1')), u'\tR(MOV(esi, offset(_data,str1)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset testOVerlap')), u'\tR(MOV(esi, offset(_data,testoverlap)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset var1')), u'\tR(MOV(esi, offset(_data,var1)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset var2')), u'\tR(MOV(esi, offset(_data,var2)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset var3')), u'\tR(MOV(esi, offset(_data,var3)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset str1')), u'\tR(MOV(esi, offset(_data,str1)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset testOVerlap')), u'\tR(MOV(esi, offset(_data,testoverlap)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset var1')), u'\tR(MOV(esi, offset(_data,var1)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset var2')), u'\tR(MOV(esi, offset(_data,var2)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov esi,offset var3')), u'\tR(MOV(esi, offset(_data,var3)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsb')), 'MOVSB;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsd')), 'MOVSD;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsw')), 'MOVSW;\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,[h2]')), u'\tR(MOVSX(bx, *(raddr(ds,offset(_data,h2)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,[h2]')), u'\tR(MOVSX(bx, m.h2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,bl')), u'\tR(MOVSX(bx, bl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,byte ptr [h2]')), u'\tR(MOVSX(bx, *(raddr(ds,offset(_data,h2)))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,byte ptr [h]')), u'\tR(MOVSX(bx, *(raddr(ds,offset(_data,h)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,byte ptr [h2]')), u'\tR(MOVSX(bx, *(raddr(ds,offset(_data,h2)))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx bx,byte ptr [h]')), u'\tR(MOVSX(bx, *(raddr(ds,offset(_data,h)))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movsx ecx,cx')), u'\tR(MOVSX(ecx, cx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movzx eax, DDD')), u'\tR(MOVZX(eax, DDD));\n') # ERROR
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movzx eax, DDD')), u'\tR(MOVZX(eax, DDD));\n')  # ERROR
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movzx ecx,bx')), u'\tR(MOVZX(ecx, bx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mul     cl')), u'\tR(MUL1_1(cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mul     cx')), u'\tR(MUL1_2(cx));\n')
@@ -7109,49 +6546,39 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('not eax')), u'\tR(NOT(eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      dl, cl')), u'\tR(OR(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      dx, cx')), u'\tR(OR(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      ebx, 0FFFFFFFFh')), u'\tR(OR(ebx, 0x0FFFFFFFF));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      edx, ecx')), u'\tR(OR(edx, ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      res, 0FFFFFFFFh')), u'\tR(OR(res, 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      ebx, 0FFFFFFFFh')), u'\tR(OR(ebx, 0x0FFFFFFFF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      edx, ecx')), u'\tR(OR(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or      res, 0FFFFFFFFh')), u'\tR(OR(res, 0x0FFFFFFFF));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or cl,0f0h')), u'\tR(OR(cl, 0x0f0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or cx,cx')), u'\tR(OR(cx, cx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('or eax,eax')), u'\tR(OR(eax, eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('out   dx,al')), u'\tR(OUT(dx, al));\n')
 
-
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcl     dl, cl')), u'\tR(RCL(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcl     dx, cl')), u'\tR(RCL(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcl     edx, cl')), u'\tR(RCL(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcl     edx, cl')), u'\tR(RCL(edx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcr     dl, cl')), u'\tR(RCR(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcr     dx, cl')), u'\tR(RCR(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcr     edx, cl')), u'\tR(RCR(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rcr     edx, cl')), u'\tR(RCR(edx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('ret')), '\tR(RETN);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('retn')), '\tR(RETN);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rol     dl, cl')), u'\tR(ROL(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rol     dx, cl')), u'\tR(ROL(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('rol     edx, cl')), u'\tR(ROL(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rol     edx, cl')), u'\tR(ROL(edx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rol ebx,1')), u'\tR(ROL(ebx, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('rol ebx,31')), u'\tR(ROL(ebx, 31));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('ror     dl, cl')), u'\tR(ROR(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('ror     dx, cl')), u'\tR(ROR(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('ror     edx, cl')), u'\tR(ROR(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('ror     edx, cl')), u'\tR(ROR(edx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sar     dl, cl')), u'\tR(SAR(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sal     dl, cl')), u'\tR(SAL(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sar     dx, cl')), u'\tR(SAR(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sar     edx, cl')), u'\tR(SAR(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sar     edx, cl')), u'\tR(SAR(edx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sar eax,1')), u'\tR(SAR(eax, 1));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sar eax,2')), u'\tR(SAR(eax, 2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sbb     dl, cl')), u'\tR(SBB(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sbb     dx, cx')), u'\tR(SBB(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sbb     edx, ecx')), u'\tR(SBB(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sbb     edx, ecx')), u'\tR(SBB(edx, ecx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('scasb')), 'SCASB;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('scasd')), 'SCASD;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('scasw')), 'SCASW;\n')
@@ -7160,97 +6587,66 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('setz    cl')), u'\tR(SETZ(cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shl     dl, cl')), u'\tR(SHL(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shl     dx, cl')), u'\tR(SHL(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shl     edx, cl')), u'\tR(SHL(edx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shld    dx, bx, cl')), u'\tR(SHLD(dx, bx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shld    edx, ebx, cl')), u'\tR(SHLD(edx, ebx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shl     edx, cl')), u'\tR(SHL(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shld    dx, bx, cl')), u'\tR(SHLD(dx, bx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shld    edx, ebx, cl')), u'\tR(SHLD(edx, ebx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shr     dl, cl')), u'\tR(SHR(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shr     dx, cl')), u'\tR(SHR(dx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shr     edx, cl')), u'\tR(SHR(edx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shr     edx, cl')), u'\tR(SHR(edx, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shr eax,16')), u'\tR(SHR(eax, 16));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shr ecx,16')), u'\tR(SHR(ecx, 16));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shrd    dx, bx, cl')), u'\tR(SHRD(dx, bx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shrd    edx, ebx, cl')), u'\tR(SHRD(edx, ebx, cl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('shrd eax, edx, 8')), u'\tR(SHRD(eax, edx, 8));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shrd    dx, bx, cl')), u'\tR(SHRD(dx, bx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shrd    edx, ebx, cl')), u'\tR(SHRD(edx, ebx, cl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('shrd eax, edx, 8')), u'\tR(SHRD(eax, edx, 8));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('stc')), '\tR(STC);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('std')), '\tR(STD);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'sti                             ; Set The Interrupt Flag')), '\tR(STI);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sti                             ; Set The Interrupt Flag')), '\tR(STI);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('stosb')), 'STOSB;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('stosd')), 'STOSD;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('stosw')), 'STOSW;\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     dl, cl')), u'\tR(SUB(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     dx, cx')), u'\tR(SUB(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     edx, ecx')), u'\tR(SUB(edx, ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     esp, 10h')), u'\tR(SUB(esp, 0x10));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     esp, 114h')), u'\tR(SUB(esp, 0x114));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     esp, 14h')), u'\tR(SUB(esp, 0x14));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     edx, ecx')), u'\tR(SUB(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     esp, 10h')), u'\tR(SUB(esp, 0x10));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     esp, 114h')), u'\tR(SUB(esp, 0x114));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub     esp, 14h')), u'\tR(SUB(esp, 0x14));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub eax,eax')), u'\teax = 0;AFFECT_ZF(0); AFFECT_SF(eax,0);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub eax,ebx')), u'\tR(SUB(eax, ebx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub ebx,eax')), u'\tR(SUB(ebx, eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub word ptr [var5+2],25')), u'\tR(SUB(*(dw*)(raddr(ds,offset(_data,var5)+2)), 25));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('test    ebx, ebx')), u'\tR(TEST(ebx, ebx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('sub word ptr [var5+2],25')), u'\tR(SUB(*(dw*)(raddr(ds,offset(_data,var5)+2)), 25));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test    ebx, ebx')), u'\tR(TEST(ebx, ebx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test al,010B')), u'\tR(TEST(al, 0x2));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test al,0B')), u'\tR(TEST(al, 0x0));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test ax,ax')), u'\tR(TEST(ax, ax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test bh,01h')), u'\tR(TEST(bh, 0x01));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test bh,02h')), u'\tR(TEST(bh, 0x02));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('test eax,eax')), u'\tR(TEST(eax, eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'xadd    byte ptr [ebp+var_20], al')), u'\tR(XADD(*(raddr(ss,ebp+var_20)), al));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    byte ptr [ebp+var_20], al')), u'\tR(XADD(*(raddr(ss,ebp+var_20)), al));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    dl, al')), u'\tR(XADD(dl, al));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'xadd    dword ptr [ebp+var_20], eax')), u'\tR(XADD(*(dd*)(raddr(ss,ebp+var_20)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    dword ptr [ebp+var_20], eax')), u'\tR(XADD(*(dd*)(raddr(ss,ebp+var_20)), eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    dx, ax')), u'\tR(XADD(dx, ax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    eax, eax')), u'\tR(XADD(eax, eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    edx, eax')), u'\tR(XADD(edx, eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'xadd    word ptr [ebp+var_20], ax')), u'\tR(XADD(*(dw*)(raddr(ss,ebp+var_20)), ax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'xchg    al, byte ptr [ebp+var_20]')), u'\tR(XCHG(al, *(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    eax, eax')), u'\tR(XADD(eax, eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    edx, eax')), u'\tR(XADD(edx, eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xadd    word ptr [ebp+var_20], ax')), u'\tR(XADD(*(dw*)(raddr(ss,ebp+var_20)), ax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    al, byte ptr [ebp+var_20]')), u'\tR(XCHG(al, *(raddr(ss,ebp+var_20))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    al, dl')), u'\tR(XCHG(al, dl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    ax, dx')), u'\tR(XCHG(ax, dx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'xchg    ax, word ptr [ebp+var_20]')), u'\tR(XCHG(ax, *(dw*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'xchg    eax, dword ptr [ebp+var_20]')), u'\tR(XCHG(eax, *(dd*)(raddr(ss,ebp+var_20))));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    eax, edx')), u'\tR(XCHG(eax, edx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    ax, word ptr [ebp+var_20]')), u'\tR(XCHG(ax, *(dw*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    eax, dword ptr [ebp+var_20]')), u'\tR(XCHG(eax, *(dd*)(raddr(ss,ebp+var_20))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg    eax, edx')), u'\tR(XCHG(eax, edx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xchg eax,ebx')), u'\tR(XCHG(eax, ebx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xlat')), '\tR(XLAT);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     dl, cl')), u'\tR(XOR(dl, cl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     dx, cx')), u'\tR(XOR(dx, cx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     eax, eax')), u'\teax = 0;AFFECT_ZF(0); AFFECT_SF(eax,0);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     ebx, ebx')), u'\tebx = 0;AFFECT_ZF(0); AFFECT_SF(ebx,0);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     ecx, ecx')), u'\tecx = 0;AFFECT_ZF(0); AFFECT_SF(ecx,0);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     edi, edi')), u'\tedi = 0;AFFECT_ZF(0); AFFECT_SF(edi,0);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     edx, ecx')), u'\tR(XOR(edx, ecx));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     edx, edx')), u'\tedx = 0;AFFECT_ZF(0); AFFECT_SF(edx,0);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     esi, esi')), u'\tesi = 0;AFFECT_ZF(0); AFFECT_SF(esi,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     eax, eax')), u'\teax = 0;AFFECT_ZF(0); AFFECT_SF(eax,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     ebx, ebx')), u'\tebx = 0;AFFECT_ZF(0); AFFECT_SF(ebx,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     ecx, ecx')), u'\tecx = 0;AFFECT_ZF(0); AFFECT_SF(ecx,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     edi, edi')), u'\tedi = 0;AFFECT_ZF(0); AFFECT_SF(edi,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     edx, ecx')), u'\tR(XOR(edx, ecx));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     edx, edx')), u'\tedx = 0;AFFECT_ZF(0); AFFECT_SF(edx,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     esi, esi')), u'\tesi = 0;AFFECT_ZF(0); AFFECT_SF(esi,0);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     i, i')), u'\ti = 0;AFFECT_ZF(0); AFFECT_SF(i,0);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     res, res')), u'\tres = 0;AFFECT_ZF(0); AFFECT_SF(res,0);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor     res, res')), u'\tres = 0;AFFECT_ZF(0); AFFECT_SF(res,0);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor al,bl')), u'\tR(XOR(al, bl));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor ax,ax')), u'\tax = 0;AFFECT_ZF(0); AFFECT_SF(ax,0);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor ax,bx')), u'\tR(XOR(ax, bx));\n')
@@ -7266,14 +6662,10 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('xor esi,esi')), u'\tesi = 0;AFFECT_ZF(0); AFFECT_SF(esi,0);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'iret')), '\tR(IRET);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'retf')), '\tR(RETF);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'lds     bx, offset unk_40F064')), u'\tR(LDS(bx, offset(initcall,unk_40f064)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'les     bx, offset unk_40F064')), u'\tR(LES(bx, offset(initcall,unk_40f064)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'lfs     bx, offset unk_40F064')), u'\tR(LFS(bx, offset(initcall,unk_40f064)));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'lgs     bx, offset unk_40F064')), u'\tR(LGS(bx, offset(initcall,unk_40f064)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lds     bx, offset unk_40F064')), u'\tR(LDS(bx, offset(initcall,unk_40f064)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('les     bx, offset unk_40F064')), u'\tR(LES(bx, offset(initcall,unk_40f064)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lfs     bx, offset unk_40F064')), u'\tR(LFS(bx, offset(initcall,unk_40f064)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lgs     bx, offset unk_40F064')), u'\tR(LGS(bx, offset(initcall,unk_40f064)));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'pusha')), '\tR(PUSHA);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'popa')), '\tR(POPA);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'cli')), '\tR(CLI);\n')
@@ -7285,34 +6677,20 @@ class ParserTest(unittest.TestCase):
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'nop')), None)
 
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lods	[byte ptr fs:si]')), u'\tR(LODS(*(raddr(fs,si)),1));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('scas	[word ptr fs:si]')), u'\tR(SCAS(*(dw*)(raddr(fs,si)),2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'movs [dword ptr es:di], [dword ptr fs:si]')), u'MOVS(*(dd*)(raddr(es,di)), *(dd*)(raddr(fs,si)), 4);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov al, 'Z' - 'A' +1")), u"\tR(MOV(al, 'Z'-'A'+1));\n")
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'mov ax,  not 1')), '\tR(MOV(ax, ~1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lods	[byte ptr fs:si]')), u'\tR(LODS(*(raddr(fs,si)),1));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('scas	[word ptr fs:si]')), u'\tR(SCAS(*(dw*)(raddr(fs,si)),2));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('movs [dword ptr es:di], [dword ptr fs:si]')), u'MOVS(*(dd*)(raddr(es,di)), *(dd*)(raddr(fs,si)), 4);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code("mov al, 'Z' - 'A' +1")), u"\tR(MOV(al, 'Z'-'A'+1));\n")
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'mov ax,  not 1')), '\tR(MOV(ax, ~1));\n')
 
-
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], eax')), '\tR(MOV(*(dd*)(raddr(ss,esp+8)), eax));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:40h[eax*2]')), u'\tR(eax = 0x40+eax*2);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:40h[ebx*4]')), u'\tR(eax = 0x40+ebx*4);\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:40h[ecx*8]')), u'\tR(eax = 0x40+ecx*8);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ds:byte_41411F[eax], dl')), u'\tR(MOV(*(raddr(ds,offset(_bss,byte_41411f)+eax)), dl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, large ds:4000h')), u'\tR(eax = 0x4000);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'mov     ebx, offset _test_btc')), u'\tR(MOV(ebx, offset(initcall,_test_btc)));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop     dword ptr [esp]')), u'\tR(POP(*(dd*)(raddr(ss,esp))));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [esp+8], eax')), '\tR(MOV(*(dd*)(raddr(ss,esp+8)), eax));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:40h[eax*2]')), u'\tR(eax = 0x40+eax*2);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:40h[ebx*4]')), u'\tR(eax = 0x40+ebx*4);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, ds:40h[ecx*8]')), u'\tR(eax = 0x40+ecx*8);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ds:byte_41411F[eax], dl')), u'\tR(MOV(*(raddr(ds,offset(_bss,byte_41411f)+eax)), dl));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('lea     eax, large ds:4000h')), u'\tR(eax = 0x4000);\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     ebx, offset _test_btc')), u'\tR(MOV(ebx, offset(initcall,_test_btc)));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop     dword ptr [esp]')), u'\tR(POP(*(dd*)(raddr(ss,esp))));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop     eax')), u'\tR(POP(eax));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop     ebp')), u'\tR(POP(ebp));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop     ebx')), u'\tR(POP(ebx));\n')
@@ -7332,66 +6710,24 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('popf')), '\tR(POPF);\n')
 
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push    0')), u'\tR(PUSH(0));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('push    0BC6058h')), u'\tR(PUSH(0x0BC6058));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('push    9ABCDEFh')), u'\tR(PUSH(0x9ABCDEF));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push    0BC6058h')), u'\tR(PUSH(0x0BC6058));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push    9ABCDEFh')), u'\tR(PUSH(0x9ABCDEF));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push    esi')), u'\tR(PUSH(esi));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push ds')), u'\tR(PUSH(ds));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push ebx')), u'\tR(PUSH(ebx));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push es')), u'\tR(PUSH(es));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pushad')), '\tR(PUSHAD);\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pushf')), '\tR(PUSHF);\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'rep')), '\tREP\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repe')), '\tREPE\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repne')), '\tREPNE\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    dword ptr [ebx-4]')), '\tR(CALL(__disp));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    exec_adc')), u'\tR(CALL(kexec_adc));\n')
+        # self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'rep')), '\tREP\n')
+        # self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repe')), '\tREPE\n')
+        # self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repne')), '\tREPNE\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(u'repne lodsb')), 'LODSB;\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    dword ptr [ebx-4]')), '\tR(CALL(__disp));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    exec_adc')), u'\tR(CALL(kexec_adc));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    printf')), '\tR(CALL(__disp));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    test_bcd')), u'\tR(CALL(ktest_bcd));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('call [cs:table+ax]')), '\tR(CALL(__disp));\n')
+        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call    test_bcd')), u'\tR(CALL(ktest_bcd));\n')
         self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('call printeax')), u'\tR(CALL(kprinteax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp a,1')), u'\tR(CMP(*(db*)&m.a, 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp b,256+3')), u'\tR(CMP(m.b, 256+3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,2')), u'\tR(CMP(*(dw*)&m.var2, 2));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var2,bx')), u'\tR(CMP(*(dw*)&m.var2, bx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-12')), u'\tR(CMP(*(db*)&m.var3, -12));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,-13')), u'\tR(CMP(*(db*)&m.var3, -13));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,3')), u'\tR(CMP(*(db*)&m.var3, 3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var3,ecx')), u'\tR(CMP(*(db*)&m.var3, ecx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('inc var3')), u'\tR(INC(*(db*)&m.var3));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,5')), u'\tR(MOV(*(db*)&m.a, 5));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,ah')), u'\tR(MOV(*(db*)&m.a, ah));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov a,al')), u'\tR(MOV(*(db*)&m.a, al));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp c,256+3+65536')), u'\tR(CMP(m.c, 256+3+65536));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,1')), u'\tR(CMP(m.var1, 1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('cmp var1,al')), u'\tR(CMP(m.var1, al));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov b,ax')), u'\tR(MOV(m.b, ax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov c,eax')), u'\tR(MOV(m.c, eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov dl,var1')), u'\tR(MOV(dl, m.var1));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov ebx,g')), u'\tR(MOV(ebx, m.g));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('mov     [ebp+i+table], dl')), u'\tR(MOV(*(raddr(ss,ebp+i+offset(_text,table))), dl));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('pOp  ebx ebp    eax')), u'\tR(POP(ebx));\n\tR(POP(ebp));\n\tR(POP(eax));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance,
-                                                      p.action_code('pop     small word ptr [esp]')), u'\tR(POP(small));\n\tR(POP(word));\n\tR(POP(ptr));\n\tR(POP(*(dw*)(raddr(ss,esp))));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'pop  dx cx ; linear address of allocated memory block')), u'\tR(POP(dx));\n\tR(POP(cx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop ds es')), u'\tR(POP(ds));\n\tR(POP(es));\n')
-        self.assertEqual(
-            proc_instance.generate_c_cmd(cpp_instance, p.action_code('push  eax ebp  ebx')), u'\tR(PUSH(eax));\n\tR(PUSH(ebp));\n\tR(PUSH(ebx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code(
-            'push bx cx ; linear address of allocated memory block')), u'\tR(PUSH(bx));\n\tR(PUSH(cx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push bx fs')), u'\tR(PUSH(bx));\n\tR(PUSH(fs));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('pop fs cx')), u'\tR(POP(fs));\n\tR(POP(cx));\n')
-        self.assertEqual(proc_instance.generate_c_cmd(cpp_instance, p.action_code('push es ds')), u'\tR(PUSH(es));\n\tR(PUSH(ds));\n')
+
 
 if __name__ == "__main__":
     unittest.main()
-

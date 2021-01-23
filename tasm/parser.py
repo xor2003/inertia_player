@@ -201,13 +201,16 @@ def labeldef(context, nodes, name):
     print("labeldef " + str(nodes) + " ~~")
     return context.extra.action_label(name.value)
 
+
 def instrprefix(context, nodes):
-    print("prefix " + str(nodes) + " ~~")
-    o = context.extra.proc.create_instruction_object(nodes[0])
+    logging.debug("instrprefix " + str(nodes) + " ~~")
+    instruction = nodes[0]
+    o = context.extra.proc.create_instruction_object(instruction)
     o.line = get_raw(context)
     o.line_number = get_line_number(context)
     context.extra.proc.stmts.append(o)
-    return o
+    return []# nodes
+
 
 '''
 def listtostring(l):  # TODO remove
@@ -228,6 +231,10 @@ def asminstruction(context, nodes, instruction, args):
     # if args:
     #    args = [listtostring(i) for i in args] # TODO temporary workaround
     # args = build_ast(args)
+    if instruction == []:
+        return nodes
+    if args == None:
+        args = []
     o = context.extra.proc.create_instruction_object(instruction, args)
     o.line = get_raw(context)
     o.line_number = get_line_number(context)
@@ -288,6 +295,11 @@ def STRING(context, nodes):
     return Token('STRING', nodes)
 
 actions = {
+    "instrprefix": instrprefix,
+    "INTEGER": INTEGER,
+    "LABEL": LABEL,
+    "STRING": STRING,
+    "anddir": anddir,
     "asminstruction": asminstruction,
     "assdir": assdir,
     "datadir": datadir,
@@ -295,28 +307,23 @@ actions = {
     "endpdir": endpdir,
     "endsdir": endsdir,
     "equdir": equdir,
-    "instrprefix": instrprefix,
     "labeldef": labeldef,
     "macrodir": macrodir,
-    "procdir": procdir,
-    "segdir": segdir,
-    "segmentdir": segmentdir,
-    "INTEGER": INTEGER,
-    "register": register,
-"segmentregister": segmentregister,
     "notdir": notdir,
+    "offsetdir": offsetdir,
     "ordir": ordir,
+    "procdir": procdir,
+    "ptrdir": ptrdir,
+    "register": register,
+    "register": register,
+    "segdir": segdir,
+    "segmdir": segmdir,
+    "segmentdir": segmentdir,
+    "segmentregister": segmentregister,
+    "segoverride": segoverride,
+    "sqexpr": sqexpr,
     "xordir": xordir,
-    "anddir": anddir,
     "expr": make_token,
-    "LABEL": LABEL,
-    "STRING": STRING,
-    #    "addop": make_token,
-    #    "binaryop": make_token,
-    #    "mulop": make_token,
-    #    "orop": make_token,
-    #    "relop": make_token,
-    #    "shiftop": make_token,
     "aexpr": make_token,
     "cexpr": make_token,
     "cxzexpr": make_token,
@@ -325,14 +332,7 @@ actions = {
     "recordconst": make_token,
     "simpleexpr": make_token,
     "sizearg": make_token,
-    "term": expr,
-    "segoverride": segoverride,
-    "ptrdir": ptrdir,
-    "offsetdir": offsetdir,
-    "segmdir": segmdir,
-    "register": register,
-    "sqexpr": sqexpr
-
+    "term": make_token
 }
 
 recognizers = {
@@ -1280,55 +1280,6 @@ end startd
 
     def parse_args(self, text):
         return text
-        # logging.debug "parsing: [%s]" %text
-        escape = False
-        string = False
-        result = []
-        token = ""
-        # value = 0
-        for c in text:
-            # logging.debug "[%s]%s: %s: %s" %(token, c, escape, string)
-            if c == '\\':
-                token += c
-            #               if c == '\\':
-            #                       escape = True
-            #                       continue
-
-            if escape:
-                if not string:
-                    raise SyntaxError("escape found in no string: %s" % text)
-
-                logging.debug("escaping[%s]" % c)
-                escape = False
-                token += c
-                continue
-
-            if string:
-                if c == '\'' or c == '"':
-                    string = False
-
-                token += c
-                continue
-
-            if c == '\'' or c == '"':
-                string = True
-                token += c
-                continue
-
-            if c == ',':
-                result.append(token.strip())
-                token = ""
-                continue
-
-            if c == ';':  # comment, bailing out
-                break
-
-            token += c
-        token = token.strip()
-        if len(token):
-            result.append(token)
-        # logging.debug result
-        return result
 
     def parse_line_data(self, line):
         cmd = line.split()

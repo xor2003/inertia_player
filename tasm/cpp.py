@@ -156,9 +156,14 @@ class Cpp(object):
                 self.__indirection = 0
                 return value
             else:
-                value = "offset(%s,%s)" % (g.segment, g.name)
-                if self.__seg_prefix == 'cs':
-                    self.body += '\tcs=seg_offset(' + g.segment + ');\n'
+                if g.elements == 1 and self.__isjustlabel and not self.lea and g.size==self.__current_size:
+                    # traceback.print_stack(file=sys.stdout)
+                    value = "m." + g.name
+                    self.__indirection = 0
+                else:
+                    value = "offset(%s,%s)" % (g.segment, g.name)
+                    if self.__seg_prefix == 'cs':
+                        self.body += '\tcs=seg_offset(' + g.segment + ');\n'
             # ?self.__indirection = 1
         elif isinstance(g, op.label):
             value = "k" + g.name.lower()  # .capitalize()
@@ -620,11 +625,22 @@ class Cpp(object):
         expr, _ = self.remove_squere_bracets(expr)
 
         islabel = self.find_and_call_tokens(expr, 'LABEL')
-        if islabel and not offsetdir and any(self.__context.has_global(i) and \
-                                             isinstance(self.__context.get_global(i), op.var) for i in islabel):
-            indirection = 1
+        if islabel and not offsetdir:
+            for i in islabel:
+                if self.__context.has_global(i):
+                    g = self.__context.get_global(i)
+                    if isinstance(g, op.var):
+                        size = g.size
+                        indirection = 1
+                        break
+
+        # for "label" or "[label]" get size
+        self.__isjustlabel = (isinstance(origexpr, Token) and origexpr.type == 'LABEL') \
+        or (isinstance(origexpr, Token) and origexpr.type == 'sqexpr' and \
+            isinstance(origexpr.value, Token) and origexpr.value.type == 'LABEL')
 
         self.__indirection = indirection
+        self.__current_size = size
         self.find_and_call_tokens(expr, 'LABEL', self.convert_label)
         indirection = self.__indirection
         if self.__current_size != 0:  # and (indirection != 1 or size == 0):
@@ -846,9 +862,9 @@ class Cpp(object):
         # name = re.sub(prog, '', name)
         indirection = -5
 
-        # segoverride = self.find_and_call_tokens(name, 'segoverride')
-        # if segoverride:
-        #   self.__seg_prefix = segoverride[0].value
+        segoverride = self.find_and_call_tokens(name, 'segoverride')
+        if segoverride:
+             self.__seg_prefix = segoverride[0].value
         #    name = self.remove_tokens(name, ['segoverride', 'segmentregister'])
 
         if isinstance(name, Token) and name.type == 'register':
@@ -858,10 +874,13 @@ class Cpp(object):
         if labeldir:
             labeldir[0] = self.resolve_label(labeldir[0])
             if self.__context.has_global(labeldir[0]):
-                if isinstance(self.__context.get_global(labeldir[0]), op.var):
+                g = self.__context.get_global(labeldir[0])
+                if isinstance(g, op.var):
                     indirection = 1  # []
-                elif isinstance(self.__context.get_global(labeldir[0]), op.label):
+                elif isinstance(g, op.label):
                     indirection = -1  # direct using number
+            else:
+                name = labeldir[0]
 
         ptrdir = self.find_and_call_tokens(name, 'ptrdir')
         if ptrdir:
@@ -918,7 +937,7 @@ class Cpp(object):
                 elif ptrdir[0] == 'near':
                     self.__far = False
 
-            return name
+        return name
 
     def _label(self, name, proc):
         ret = ""
