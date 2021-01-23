@@ -147,7 +147,8 @@ class Cpp(object):
         elif isinstance(g, op.var):
             logging.debug("it is var " + str(g.size))
             size = g.size
-            self.__current_size = size
+            if self.__current_size == 0:  # TODO check
+                self.__current_size = size
             if size == 0:
                 raise Exception("invalid var '%s' size %u" % (name, size))
             if g.issegment:
@@ -192,16 +193,17 @@ class Cpp(object):
 
     def is_register(self, expr):
         expr = expr.lower()
+        size = 0
         if len(expr) == 2 and expr[0] in ['a', 'b', 'c', 'd'] and expr[1] in ['h', 'l']:
             logging.debug('is reg res 1')
-            return 1
+            size = 1
         elif expr in ['ax', 'bx', 'cx', 'dx', 'si', 'di', 'sp', 'bp', 'ds', 'cs', 'es', 'fs', 'gs', 'ss']:
             logging.debug('is reg res 2')
-            return 2
+            size = 2
         elif expr in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'esp', 'ebp']:
             logging.debug('is reg res 4')
-            return 4
-        return 0
+            size = 4
+        return size
 
     def find_and_call_tokens(self, expr, lookfor, call=None):
         l = []
@@ -296,7 +298,7 @@ class Cpp(object):
             elif expr.type == 'INTEGER':
                 try:
                     # v = self.__context.parse_int(expr.value)
-                    v = int(expr.value)
+                    v = eval(expr.value)
                     size = self.guess_int_size(v)
                     return size
                 except:
@@ -546,8 +548,8 @@ class Cpp(object):
             pass
         return result
 
-    def convert_sqbr_reference(self, expr, destination, size):
-        if not (self.lea and not destination):
+    def convert_sqbr_reference(self, expr, destination, size, lea=False):
+        if not (lea and not destination):
             if size == 1:
                 expr = "*(raddr(%s,%s))" % (self.__seg_prefix, expr)
             elif size == 2:
@@ -580,7 +582,7 @@ class Cpp(object):
             return expr.value
         return expr
 
-    def expand(self, expr, def_size=0, destination=False):
+    def expand(self, expr, def_size=0, destination=False, lea=False):
         logging.debug("EXPAND(expr:\"%s\")" % expr)
         origexpr = expr
         self.__seg_prefix = "ds"
@@ -591,18 +593,17 @@ class Cpp(object):
 
         # calculate the segment register
         segoverride = self.find_and_call_tokens(expr, 'segoverride')
+        sqexpr = self.find_and_call_tokens(expr, 'sqexpr')
+        if sqexpr:
+            indirection = 1
         if segoverride:
             self.__seg_prefix = segoverride[0].value
             expr = self.remove_tokens(expr, ['segmentregister'])
         else:
-            issqexpr = self.find_and_call_tokens(expr, 'sqexpr')
-            if issqexpr:
-                indirection = 1
-                for i in reversed(issqexpr):
-                    if isinstance(i, Token) and i.value== 'register' and i.value.value in ['bp','ebp','sp','esp']:
-                        self.__seg_prefix = "ss"
-                    else:
-                        self.__seg_prefix = "ds"
+            if sqexpr:
+                regs = self.find_and_call_tokens(sqexpr, 'register')
+                if regs and any([i in ['bp', 'ebp', 'sp', 'esp'] for i in regs]): #TODO doublecheck
+                    self.__seg_prefix = "ss"
 
         offsetdir = self.find_and_call_tokens(expr, 'offsetdir')
         if offsetdir:
@@ -619,14 +620,14 @@ class Cpp(object):
         expr, _ = self.remove_squere_bracets(expr)
 
         islabel = self.find_and_call_tokens(expr, 'LABEL')
-        if islabel and not offsetdir and all(self.__context.has_global(i) and \
+        if islabel and not offsetdir and any(self.__context.has_global(i) and \
                                              isinstance(self.__context.get_global(i), op.var) for i in islabel):
             indirection = 1
 
         self.__indirection = indirection
         self.find_and_call_tokens(expr, 'LABEL', self.convert_label)
         indirection = self.__indirection
-        if self.__current_size != 0:
+        if self.__current_size != 0:  # and (indirection != 1 or size == 0):
             size = self.__current_size
 
         if ptrdir:
@@ -637,7 +638,7 @@ class Cpp(object):
         expr = self.tokenstostring(expr)
 
         if indirection == 1:
-            expr = self.convert_sqbr_reference(expr, destination, size)
+            expr = self.convert_sqbr_reference(expr, destination, size, lea=lea)
 
         return expr
 
@@ -807,7 +808,7 @@ class Cpp(object):
         name = re.sub(r'@', "arb", name)
 
         return name
-        #????
+        # ????
         if not name in self.proc.labels:
             try:
                 offset, proc, pos = self.__context.get_offset(name)
@@ -845,33 +846,33 @@ class Cpp(object):
         # name = re.sub(prog, '', name)
         indirection = -5
 
-        #segoverride = self.find_and_call_tokens(name, 'segoverride')
-        #if segoverride:
+        # segoverride = self.find_and_call_tokens(name, 'segoverride')
+        # if segoverride:
         #   self.__seg_prefix = segoverride[0].value
         #    name = self.remove_tokens(name, ['segoverride', 'segmentregister'])
 
-        if isinstance(name, Token) and name.type =='register':
-            indirection = 0 # based register value
+        if isinstance(name, Token) and name.type == 'register':
+            indirection = 0  # based register value
 
         labeldir = self.find_and_call_tokens(name, 'LABEL')
         if labeldir:
             labeldir[0] = self.resolve_label(labeldir[0])
             if self.__context.has_global(labeldir[0]):
                 if isinstance(self.__context.get_global(labeldir[0]), op.var):
-                    indirection = 1# []
+                    indirection = 1  # []
                 elif isinstance(self.__context.get_global(labeldir[0]), op.label):
-                    indirection = -1# direct using number
+                    indirection = -1  # direct using number
 
         ptrdir = self.find_and_call_tokens(name, 'ptrdir')
         if ptrdir:
             if ptrdir[0].lower() in ['near', 'far', 'short']:
-                indirection = -1#
+                indirection = -1  #
             else:
                 indirection = 1
 
         sqexpr = self.find_and_call_tokens(name, 'sqexpr')
         if sqexpr:
-                indirection = 1
+            indirection = 1
 
         if indirection == 1:
             name = self.expand(name)
@@ -880,7 +881,7 @@ class Cpp(object):
             if labeldir:
                 name = labeldir[0]
 
-        #name = self.resolve_label(name)
+        # name = self.resolve_label(name)
         logging.debug("label %s" % name)
         hasglobal = False
         if name in self.__blacklist:
@@ -1474,7 +1475,7 @@ else goto __dispatch_call;
 
     def _lea(self, dst, src):
         self.lea = True
-        r = "\tR(%s = %s);\n" % (self.expand(dst, destination=True), self.expand(src))
+        r = "\tR(%s = %s);\n" % (self.expand(dst, destination=True, lea=True), self.expand(src, lea=True))
         self.lea = False
         return r
 
@@ -1517,8 +1518,8 @@ else goto __dispatch_call;
             return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
 
     def isrelativejump(self, label):
-        labeldir = self.find_and_call_tokens(label, 'LABEL')
-        result = labeldir and re.match('.*?(\$\+2)', labeldir[0])  # skip j* $+2
+        result = isinstance(label, list) and label[0] == '$' and isinstance(label[1], Token) and label[1].type == 'INTEGER'
+        # skip j* $+2
         return result
 
     def _instruction2(self, cmd, dst, src):

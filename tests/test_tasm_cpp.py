@@ -1268,12 +1268,12 @@ class CppTest(unittest.TestCase):
         self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'byte ptr es:[0]'),def_size=0,destination=False),u'*(raddr(es,0))')
         self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'byte ptr es:[0]'),def_size=1,destination=True),u'*(raddr(es,0))')
         '''
-        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:0[eax*2]'), def_size=0, destination=False), u'0+eax*2')
-        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:0[ebx*4]'), def_size=0, destination=False), u'0+ebx*4')
-        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:0[ecx*8]'), def_size=0, destination=False), u'0+ecx*8')
-        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:40h[eax*2]'), def_size=0, destination=False), u'0x40+eax*2')
-        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:40h[ebx*4]'), def_size=0, destination=False), u'0x40+ebx*4')
-        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:40h[ecx*8]'), def_size=0, destination=False), u'0x40+ecx*8')
+        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:0[eax*2]'), def_size=0, destination=False), u'*(dw*)(raddr(ds,0+eax*2))')
+        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:0[ebx*4]'), def_size=0, destination=False), u'*(dw*)(raddr(ds,0+ebx*4))')
+        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:0[ecx*8]'), def_size=0, destination=False), u'*(dw*)(raddr(ds,0+ecx*8))')
+        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:40h[eax*2]'), def_size=0, destination=False), u'*(dw*)(raddr(ds,0x40+eax*2))')
+        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:40h[ebx*4]'), def_size=0, destination=False), u'*(dw*)(raddr(ds,0x40+ebx*4))')
+        self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:40h[ecx*8]'), def_size=0, destination=False), u'*(dw*)(raddr(ds,0x40+ecx*8))')
         '''
         self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:[edi]'),def_size=1,destination=True),u'*(raddr(ds,edi))')
         self.assertEqual(cpp_instance.expand(expr=p.parse_arg(u'ds:byte_41411F[eax]'),def_size=1,destination=True),u'*(raddr(ds,offset(_bss,byte_41411F)+eax))')
