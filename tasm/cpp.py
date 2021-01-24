@@ -59,6 +59,51 @@ def convert_number_to_c(expr):
     return expr
 
 
+def is_register(expr):
+    expr = expr.lower()
+    size = 0
+    if len(expr) == 2 and expr[0] in ['a', 'b', 'c', 'd'] and expr[1] in ['h', 'l']:
+        logging.debug('is reg res 1')
+        size = 1
+    elif expr in ['ax', 'bx', 'cx', 'dx', 'si', 'di', 'sp', 'bp', 'ds', 'cs', 'es', 'fs', 'gs', 'ss']:
+        logging.debug('is reg res 2')
+        size = 2
+    elif expr in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'esp', 'ebp']:
+        logging.debug('is reg res 4')
+        size = 4
+    return size
+
+
+def guess_int_size(v):
+    size = 0
+    if v < 0:
+        v = -2 * v - 1
+    if v < 256:
+        size = 1
+    elif v < 65536:
+        size = 2
+    elif v < 4294967296:
+        size = 4
+    logging.debug('get_size res %d' % size)
+    return size
+
+
+def typetosize(value):
+    value = value.lower()
+    try:
+        size = {'byte': 1, 'sbyte': 1, 'word': 2, 'sword': 2, 'small': 2, 'dword': 4, 'sdword': 4, \
+                'large': 4, 'fword': 6, 'qword': 8, 'tbyte': 10}[value]
+    except KeyError:
+        logging.debug("Cannot find size for %s" % value)
+        size = 0
+    return size
+
+
+def mangle_label(name):
+    name = name.lower()
+    return re.sub(r'\$', '_tmp', name)
+
+
 class Cpp(object):
     def __init__(self, context, outfile="", skip_first=0, blacklist=[], skip_output=[], skip_dispatch_call=False,
                  skip_addr_constants=False, header_omit_blacklisted=False, function_name_remapping={}):
@@ -186,7 +231,7 @@ class Cpp(object):
                                         else:
                                                 value = "offsetof(struct Mem,%s)" %(name_original)
                                 '''
-                value = "offsetof(struct Mem,%s)" % (name_original)
+                value = "offsetof(struct Mem,%s)" % name_original
                 if self.__indirection == 1:
                     self.__indirection = 0
             elif self.__indirection == -1:
@@ -195,20 +240,6 @@ class Cpp(object):
             else:
                 raise Exception("invalid indirection %d name '%s' size %u" % (self.__indirection, name, size))
         return value
-
-    def is_register(self, expr):
-        expr = expr.lower()
-        size = 0
-        if len(expr) == 2 and expr[0] in ['a', 'b', 'c', 'd'] and expr[1] in ['h', 'l']:
-            logging.debug('is reg res 1')
-            size = 1
-        elif expr in ['ax', 'bx', 'cx', 'dx', 'si', 'di', 'sp', 'bp', 'ds', 'cs', 'es', 'fs', 'gs', 'ss']:
-            logging.debug('is reg res 2')
-            size = 2
-        elif expr in ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'esp', 'ebp']:
-            logging.debug('is reg res 4')
-            size = 4
-        return size
 
     def find_and_call_tokens(self, expr, lookfor, call=None):
         l = []
@@ -228,7 +259,7 @@ class Cpp(object):
                 result = self.find_and_call_tokens(expr[i], lookfor, call)
                 if result:
                     l = l + result
-        if l == []:
+        if not l:
             l = None
         return l
 
@@ -266,7 +297,7 @@ class Cpp(object):
                 result = self.remove_tokens(expr[i], lookfor)
                 if result:
                     l.append(result)
-            if l == []:
+            if not l:
                 l = None
             return l
         return expr
@@ -281,7 +312,7 @@ class Cpp(object):
         if ptrdir:
             value = ptrdir[0]
             # logging.debug('get_size res 1')
-            return self.typetosize(value)
+            return typetosize(value)
 
         issqexpr = self.find_and_call_tokens(expr, 'sqexpr')
         if issqexpr:
@@ -299,12 +330,12 @@ class Cpp(object):
 
         if isinstance(expr, Token):
             if expr.type in ('register', 'segmentregister'):
-                return self.is_register(expr.value)
+                return is_register(expr.value)
             elif expr.type == 'INTEGER':
                 try:
                     # v = self.__context.parse_int(expr.value)
                     v = eval(expr.value)
-                    size = self.guess_int_size(v)
+                    size = guess_int_size(v)
                     return size
                 except:
                     pass
@@ -338,19 +369,6 @@ class Cpp(object):
         #    return 0
 
         return 0
-
-    def guess_int_size(self, v):
-        size = 0
-        if v < 0:
-            v = -2 * v - 1
-        if v < 256:
-            size = 1
-        elif v < 65536:
-            size = 2
-        elif v < 4294967296:
-            size = 4
-        logging.debug('get_size res %d' % size)
-        return size
 
     def expand_equ_cb(self, match):
         name = match.group(0).lower()
@@ -648,7 +666,7 @@ class Cpp(object):
         if ptrdir:
             value = ptrdir[0]
             # logging.debug('get_size res 1')
-            size = self.typetosize(value)
+            size = typetosize(value)
 
         expr = self.tokenstostring(expr)
 
@@ -812,20 +830,6 @@ class Cpp(object):
                 size = g.size
         return size
 
-    def typetosize(self, value):
-        value = value.lower()
-        try:
-            size = {'byte': 1, 'sbyte': 1, 'word': 2, 'sword': 2, 'small': 2, 'dword': 4, 'sdword': 4, \
-                    'large': 4, 'fword': 6, 'qword': 8, 'tbyte': 10}[value]
-        except KeyError:
-            logging.debug("Cannot find size for %s" % value)
-            size = 0
-        return size
-
-    def mangle_label(self, name):
-        name = name.lower()
-        return re.sub(r'\$', '_tmp', name)
-
     def resolve_label(self, name):
         name = name.lower()
         name = re.sub(r'@', "arb", name)
@@ -852,10 +856,10 @@ class Cpp(object):
                 if u[1] == proc:
                     if pos < u[2]:
                         self.__unbounded[i] = (name, proc, pos)
-                return self.mangle_label(name)
+                return mangle_label(name)
             self.__unbounded.append((name, proc, pos))
 
-        return self.mangle_label(name)
+        return mangle_label(name)
 
     def jump_to_label(self, name):
         logging.debug("jump_to_label(%s)" % name)
@@ -875,6 +879,7 @@ class Cpp(object):
         #    name = self.remove_tokens(name, ['segoverride', 'segmentregister'])
 
         if isinstance(name, Token) and name.type == 'register':
+            name = name.value
             indirection = 0  # based register value
 
         labeldir = self.find_and_call_tokens(name, 'LABEL')
@@ -950,7 +955,7 @@ class Cpp(object):
         ret = ""
         if proc:
             ret += " // Procedure %s() start\n" % (name)
-        ret += "%s:\n" % self.mangle_label(name)
+        ret += "%s:\n" % mangle_label(name)
         return ret
 
     def schedule(self, name):
@@ -987,7 +992,8 @@ class Cpp(object):
         '''
         return ret
 
-    def _ret(self):
+    @staticmethod
+    def _ret():
         return "\tR(RETN);\n"
 
     def parse2(self, dst, src):
@@ -1405,7 +1411,7 @@ else goto __dispatch_call;
 """
             % (self.__namespace))
 
-        if self.__skip_addr_constants == False:
+        if not self.__skip_addr_constants:
             for name, addr in self.__proc_addr:
                 self.hd.write("static const uint16_t addr_%s = 0x%04x;\n" % (name, addr))
 
@@ -1467,7 +1473,7 @@ else goto __dispatch_call;
 //      void _start();
 """
             % (self.__namespace, self.__namespace))
-        if self.__skip_dispatch_call == False:
+        if not self.__skip_dispatch_call:
             self.hd.write(
                 """     
 """)
@@ -1488,7 +1494,7 @@ else goto __dispatch_call;
         # self.fd.write("void %sContext::__start() { %s\t%s(); \n}\n" %(self.namespace, data_impl, start))
         self.fd.write(" %s\n" % data_impl)
 
-        if self.__skip_dispatch_call == False:
+        if not self.__skip_dispatch_call:
             self.fd.write("\nvoid %sContext::__dispatch_call(uint16_t addr) {\n\tswitch(addr) {\n" % self.__namespace)
             self.__proc_addr.sort(cmp=lambda x, y: x[1] - y[1])
             for name, addr in self.__proc_addr:

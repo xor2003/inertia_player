@@ -231,7 +231,7 @@ class _jnb(basejmp):
         return visitor._jnc(self.label)
 
 def flatten(S):
-    if S == []:
+    if not S:
         return S
     if isinstance(S[0], list):
         return flatten(S[0]) + flatten(S[1:])

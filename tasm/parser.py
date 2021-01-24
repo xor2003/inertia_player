@@ -176,47 +176,47 @@ def datadir(context, nodes, label, type, values):
 
 
 def segdir(context, nodes, type, name):
-    # print("segdir " + str(nodes) + " ~~")
+    logging.debug("segdir " + str(nodes) + " ~~")
     context.extra.action_simplesegment(type, name)
     return nodes
 
 
 def segmentdir(context, nodes, name):
-    # print("segmentdir " + str(nodes) + " ~~")
+    logging.debug("segmentdir " + str(nodes) + " ~~")
     context.extra.action_segment(name.value)
     return nodes
 
 
 def endsdir(context, nodes, name):
-    # print("ends " + str(nodes) + " ~~")
+    logging.debug("ends " + str(nodes) + " ~~")
     context.extra.action_endseg()
     return nodes
 
 
 def procdir(context, nodes, name, type):
-    print("procdir " + str(nodes) + " ~~")
+    logging.debug("procdir " + str(nodes) + " ~~")
     context.extra.action_proc(name, type)
     return nodes
 
 
 def endpdir(context, nodes, name):
-    print("endp " + str(name) + " ~~")
+    logging.debug("endp " + str(name) + " ~~")
     context.extra.action_endp()
     return nodes
 
 
 def equdir(context, nodes, name, value):
-    print("equdir " + str(nodes) + " ~~")
+    logging.debug("equdir " + str(nodes) + " ~~")
     return context.extra.action_equ(name, value)
 
 
 def assdir(context, nodes, name, value):
-    print("assdir " + str(nodes) + " ~~")
+    logging.debug("assdir " + str(nodes) + " ~~")
     return context.extra.action_assign(name, value)
 
 
 def labeldef(context, nodes, name):
-    print("labeldef " + str(nodes) + " ~~")
+    logging.debug("labeldef " + str(nodes) + " ~~")
     return context.extra.action_label(name.value)
 
 
@@ -228,22 +228,6 @@ def instrprefix(context, nodes):
     o.line_number = get_line_number(context)
     context.extra.proc.stmts.append(o)
     return []  # nodes
-
-
-'''
-def listtostring(l):  # TODO remove
-    if isinstance(l, list):
-        l = [listtostring(i) for i in l]
-        s = ""
-        for i in l:
-            if s != "" and re.match(r'[A-Za-z_]', s[-1]) and (
-                    re.match(r'[A-Za-z_]', i[0]) or i[0] == '['):
-                s = s + ' '
-            s = s + i
-        l = s
-    return l
-'''
-
 
 def asminstruction(context, nodes, instruction, args):
     logging.debug("instruction " + str(nodes) + " ~~")
@@ -262,7 +246,7 @@ def asminstruction(context, nodes, instruction, args):
 
 
 def enddir(context, nodes, label):
-    # print("end " + str(nodes) + " ~~")
+    logging.debug("end " + str(nodes) + " ~~")
     if label:
         context.extra.entry_point = label.value.lower()
     return nodes
@@ -297,22 +281,18 @@ def segmentregister(context, nodes):
 
 
 def sqexpr(context, nodes):
-    # global indirection
-    # indirection = 1
-    # print("/~"+str(nodes)+"~\\")
+    logging.debug("/~"+str(nodes)+"~\\")
     res = nodes[1]
     return Token('sqexpr', res)
 
 
 def offsetdir(context, nodes):
-    # print("offset /~"+str(nodes)+"~\\")
-    # global indirection
-    # indirection = -1
+    logging.debug("offset /~"+str(nodes)+"~\\")
     return Token('offsetdir', nodes[1])
 
 
 def segmdir(context, nodes):
-    # print("offset /~"+str(nodes)+"~\\")
+    logging.debug("offset /~"+str(nodes)+"~\\")
     # global indirection
     # indirection = -1
     return Token('segmdir', nodes[1])
@@ -973,7 +953,7 @@ class Parser:
             elif cmd0l == 'include':
                 self.action_include(line)
                 continue
-        '''
+    '''
 
     def tokenstostring(self, l):  # TODO remove
         if isinstance(l, str):
@@ -1013,7 +993,7 @@ class Parser:
         self.create_segment(name)
 
     def action_proc(self, name, type):
-        logging.info("procedure name %s" % name)
+        logging.info("procedure name %s" % name.value)
         name = name.value.lower()
         far = ''
         for i in type:
@@ -1025,7 +1005,8 @@ class Parser:
                                         logging.debug "procedure %s, #%d" %(name, len(self.proc_list))
                                         self.proc_list.append(name)
                                         self.set_global(name, self.proc)
-                                        '''
+        '''
+
         self.action_label(name, far=far, isproc=True)
 
     def action_simplesegment(self, type, name):
