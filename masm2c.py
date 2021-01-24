@@ -76,7 +76,7 @@ def process(i):
   '''
   numeric_level = logging.INFO
   ##if i == '-d':
-  numeric_level = logging.DEBUG
+  #numeric_level = logging.DEBUG
   logging.basicConfig(
      handlers=[logging.FileHandler(name+'.log', 'w', 'utf-8')], 
      format="[%(filename)s:%(lineno)s - %(funcName)20s()] %(message)s",
@@ -85,7 +85,7 @@ def process(i):
 
   root = logging.getLogger()
   #if i == '-d':
-  root.setLevel(logging.DEBUG)
+  root.setLevel(logging.INFO)
   #   return
 
   handler = logging.StreamHandler(sys.stderr)

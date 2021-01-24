@@ -1550,9 +1550,7 @@ else goto __dispatch_call;
             return "\t\tR(%s(%s));\n" % (cmd.upper(), label)
 
     def isrelativejump(self, label):
-        result = isinstance(label, list) and label[0] == '$' and isinstance(label[1], Token) and label[
-            1].type == 'INTEGER'
-        # skip j* $+2
+        result = '$' in str(label) # skip j* $+2
         return result
 
     def _instruction2(self, cmd, dst, src):

@@ -59,7 +59,14 @@ macroidre = re.compile(r'([A-Za-z@_\$\?][A-Za-z0-9@_\$\?]*)')
 
 
 def get_line_number(context):
-    return parglare.pos_to_line_col(context.input_str, context.start_position)[0]
+    #old_line, old_col = parglare.pos_to_line_col(context.input_str, context.start_position)
+    new_line = context.input_str[: context.start_position].count('\n') + 1
+    #line_start_pos = context.input_str.rfind('\n', 0, context.start_position)
+    #if line_start_pos == -1:
+    #    line_start_pos = 0
+    #new_col = context.start_position - line_start_pos - 1
+    #assert(old_line == new_line and old_col == new_col)
+    return  new_line
 
 
 def get_raw(context):
