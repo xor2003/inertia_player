@@ -75,7 +75,7 @@ db fruity;
 db gameover;
 db quit;
 db delaytime;
- db dummy2[1]; // padding
+ db dummy2[5]; // padding
  db text[16]; // segment text
 
                         db stack[STACK_SIZE];

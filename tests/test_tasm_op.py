@@ -34,7 +34,7 @@ import tasm.op
 from tasm.op import label
 from tasm.op import var
 import tasm.parser
-from tasm.parser import Parser
+from tasm.parser import Parser, calculate_type_size
 import tasm.proc
 from tasm.proc import Proc
 import traceback
@@ -1217,12 +1217,12 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(parser_instance.parse_int(v=u'0b'), 0)
 
     def test_calculate_data_size(self):
-        parser_instance = Parser([])
-        self.assertEqual(parser_instance.calculate_type_size(type='db'), 1)
-        self.assertEqual(parser_instance.calculate_type_size(type='dd'), 4)
-        self.assertEqual(parser_instance.calculate_type_size(type='dq'), 8)
-        self.assertEqual(parser_instance.calculate_type_size(type='dw'), 2)
-        self.assertEqual(parser_instance.calculate_type_size(type='dt'), 10)
+        #parser_instance = Parser([])
+        self.assertEqual(calculate_type_size(type='db'), 1)
+        self.assertEqual(calculate_type_size(type='dd'), 4)
+        self.assertEqual(calculate_type_size(type='dq'), 8)
+        self.assertEqual(calculate_type_size(type='dw'), 2)
+        self.assertEqual(calculate_type_size(type='dt'), 10)
 
     @patch.object(logging, 'debug')
     def test_action_data(self, mock_debug):

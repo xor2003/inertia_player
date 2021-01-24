@@ -47,6 +47,7 @@ class Proc(object):
         Proc.last_addr += 4
         # self.__line_number = line_number
         self.far = far
+        self.used = False
 
     def add_label(self, label, proc, line_number=0):
         self.stmts.append(op.label(label, proc, line_number=line_number))

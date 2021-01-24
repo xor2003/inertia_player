@@ -46,6 +46,7 @@ class var(object):
         self.segment = segment
         self.issegment = issegment
         self.elements = elements
+        self.used = False
         #logging.debug("op.var(%s)" %(str(self.__dict__).replace('\n',' ')))
 
 
@@ -394,9 +395,11 @@ class label(baseop):
 
     def __init__(self, name, proc, line_number=0, far=False):
         self.name = name
+        self.original_name = name
         self.line_number = line_number
         self.far = far
         self.proc = proc
+        self.used = False
 
     def visit(self, visitor):
         return visitor._label(self.name, self.proc)
@@ -535,6 +538,7 @@ class _equ(baseop):
 class _assignment(baseop):
     def __init__(self, dst, src):
         self.dst, self.src = dst, src
+        self.original_name = ''
 
     def visit(self, visitor):
         logging.debug("~ %s = %s" % (self.dst, self.src))

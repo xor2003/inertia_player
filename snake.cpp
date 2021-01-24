@@ -5,10 +5,7 @@
  */
 
 #include "snake.h"
-
 #include <curses.h>
-
-#include <unistd.h>
 
 //namespace snake {
 
@@ -60,12 +57,12 @@ X86_REGREF
 __disp=_i;
 if (__disp==kbegin) goto main;
 else goto __dispatch_call;
-#define bottom top+row	// 0 17 bottom equ top+row
-#define right left+col	// 0 16 right equ left+col
-#define col 40	// 0 15 col equ 40
-#define row 15	// 0 14 row equ 15
-#define top 2	// 0 13 top equ 2
-#define left 0	// 0 12 left equ 0
+#define bottom top + row	// 0 0 bottom equ top + row
+#define right left + col	// 0 0 right equ left + col
+#define col 40	// 0 0 col equ 40
+#define row 15	// 0 0 row equ 15
+#define top 2	// 0 0 top equ 2
+#define left 0	// 0 0 left equ 0
  // Procedure main() start
 main:
 	R(MOV(ax, seg_offset(data)));	// 40 mov ax, data
@@ -77,11 +74,9 @@ main:
 	R(bx = offset(data,msg));	// 50 lea bx, msg
 	R(MOV(dx, 00));	// 51 mov dx,00
 	R(CALL(kwritestringat));	// 52 call writestringat
-	R(bx = offset(data,instructions));	// 54 lea dx, instructions
-	R(MOV(dx, 00));	// 51 mov dx,00
-	R(CALL(kwritestringat));	// 52 call writestringat
-//	R(MOV(ah, 0x09));	// 55 mov ah, 09H
-//	R(_INT(0x21));	// 56 int 21h
+	R(dx = offset(data,instructions));	// 54 lea dx, instructions
+	R(MOV(ah, 0x09));	// 55 mov ah, 09H
+	R(_INT(0x21));	// 56 int 21h
 	R(MOV(ah, 0x07));	// 58 mov ah, 07h
 	R(_INT(0x21));	// 59 int 21h
 	R(MOV(ax, 0x0003));	// 60 mov ax, 0003H
@@ -126,17 +121,11 @@ quit_mainloop:
 	R(_INT(0x21));	// 112 int 21h
  // Procedure delay() start
 delay:
-	dx=realElapsedTime()*18;
-	sleep(1);
-//	RETN;
-//	sleep(m.delaytime/18);
-//	RETN;
 	R(MOV(ah, 00));	// 123 mov ah, 00
-//	R(_INT(0x1A));	// 124 int 1Ah
+	R(_INT(0x1A));	// 124 int 1Ah
 	R(MOV(bx, dx));	// 125 mov bx, dx
 jmp_delay:
-	dx=realElapsedTime()*18;
-//	R(_INT(0x1A));	// 128 int 1Ah
+	R(_INT(0x1A));	// 128 int 1Ah
 	R(SUB(dx, bx));	// 129 sub dx, bx
 	R(CMP(dl, m.delaytime));	// 131 cmp dl, delaytime
 		R(JL(jmp_delay));	// 132 jl jmp_delay
@@ -149,9 +138,7 @@ regenerate:
 	R(CMP(m.fruitactive, 1));	// 145 cmp fruitactive, 1
 		R(JZ(ret_fruitactive));	// 146 je ret_fruitactive
 	R(MOV(ah, 00));	// 147 mov ah, 00
-//	R(INT(0x1A));	// 148 int 1Ah
-	dx=realElapsedTime()*18;
-
+	R(_INT(0x1A));	// 148 int 1Ah
 	R(PUSH(dx));	// 150 push dx
 	R(MOV(ax, dx));	// 151 mov ax, dx
 	dx = 0;AFFECT_ZF(0); AFFECT_SF(dx,0);	// 152 xor dx, dx
@@ -227,7 +214,7 @@ setcursorpos:
  // Procedure draw() start
 draw:
 	R(bx = offset(data,scoremsg));	// 245 lea bx, scoremsg
-	R(MOV(dx, 0x0109));	// 246 mov dx, 0109
+	R(MOV(dx, 0x0109));	// 246 mov dx, 0109h
 	R(CALL(kwritestringat));	// 247 call writestringat
 	R(ADD(dx, 7));	// 250 add dx, 7
 	R(CALL(ksetcursorpos));	// 251 call setcursorpos
@@ -253,23 +240,15 @@ out_draw:
 	R(RETN);	// 274 ret
  // Procedure readchar() start
 readchar:
-//	R(MOV(ah, 0x01));	// 285 mov ah, 01H
-//	R(INT(0x16));	// 286 int 16H
-notimeout(stdscr,true);
-nodelay(stdscr,true);
-dl=getch();
-if (dl==ERR) dl=0;
-	R(RETN);	// 289 ret
-//if (_kbhit())
-	goto keybdpressed;
+	R(MOV(ah, 0x01));	// 285 mov ah, 01H
+	R(_INT(0x16));	// 286 int 16H
 		R(JNZ(keybdpressed));	// 287 jnz keybdpressed
 	dl = 0;AFFECT_ZF(0); AFFECT_SF(dl,0);	// 288 xor dl, dl
 	R(RETN);	// 289 ret
 keybdpressed:
-//	R(MOV(ah, 0x00));	// 292 mov ah, 00H
-//	R(INT(0x16));	// 293 int 16H
-//	R(MOV(dl, al));	// 294 mov dl,al
-dl = wgetch(stdscr);
+	R(MOV(ah, 0x00));	// 292 mov ah, 00H
+	R(_INT(0x16));	// 293 int 16H
+	R(MOV(dl, al));	// 294 mov dl,al
 	R(RETN);	// 295 ret
  // Procedure keyboardfunctions() start
 keyboardfunctions:
@@ -278,30 +257,30 @@ keyboardfunctions:
 		R(JZ(next_14));	// 310 je next_14
 	R(CMP(dl, 'w'));	// 313 cmp dl, 'w'
 		R(JNZ(next_11));	// 314 jne next_11
-	R(CMP(*(db*)&m.head, 'v'));	// 315 cmp head, 'v'
+	R(CMP(*(raddr(ds,offset(data,head))), 'v'));	// 315 cmp head, 'v'
 		R(JZ(next_14));	// 316 je next_14
-	R(MOV(*(db*)&m.head, '^'));	// 317 mov head, '^'
+	R(MOV(*(raddr(ds,offset(data,head))), '^'));	// 317 mov head, '^'
 	R(RETN);	// 318 ret
 next_11:
 	R(CMP(dl, 's'));	// 320 cmp dl, 's'
 		R(JNZ(next_12));	// 321 jne next_12
-	R(CMP(*(db*)&m.head, '^'));	// 322 cmp head, '^'
+	R(CMP(*(raddr(ds,offset(data,head))), '^'));	// 322 cmp head, '^'
 		R(JZ(next_14));	// 323 je next_14
-	R(MOV(*(db*)&m.head, 'v'));	// 324 mov head, 'v'
+	R(MOV(*(raddr(ds,offset(data,head))), 'v'));	// 324 mov head, 'v'
 	R(RETN);	// 325 ret
 next_12:
 	R(CMP(dl, 'a'));	// 327 cmp dl, 'a'
 		R(JNZ(next_13));	// 328 jne next_13
-	R(CMP(*(db*)&m.head, '>'));	// 329 cmp head, '>'
+	R(CMP(*(raddr(ds,offset(data,head))), '>'));	// 329 cmp head, '>'
 		R(JZ(next_14));	// 330 je next_14
-	R(MOV(*(db*)&m.head, '<'));	// 331 mov head, '<'
+	R(MOV(*(raddr(ds,offset(data,head))), '<'));	// 331 mov head, '<'
 	R(RETN);	// 332 ret
 next_13:
 	R(CMP(dl, 'd'));	// 334 cmp dl, 'd'
 		R(JNZ(next_14));	// 335 jne next_14
-	R(CMP(*(db*)&m.head, '<'));	// 336 cmp head, '<'
+	R(CMP(*(raddr(ds,offset(data,head))), '<'));	// 336 cmp head, '<'
 		R(JZ(next_14));	// 337 je next_14
-	R(MOV(*(db*)&m.head, '>'));	// 338 mov head,'>'
+	R(MOV(*(raddr(ds,offset(data,head))), '>'));	// 338 mov head,'>'
 next_14:
 	R(CMP(dl, 'q'));	// 340 cmp dl, 'q'
 		R(JZ(quit_keyboardfunctions));	// 341 je quit_keyboardfunctions
@@ -358,16 +337,15 @@ next_3:
 	R(INC(dh));	// 422 inc dh
 done_checking_the_head:
 	R(MOV(*(dw*)(raddr(ds,bx)), dx));	// 425 mov [bx],dx
-	R(CALL(kreadcharat));	// 427 call readcharat ;dx
+	R(CALL(kreadcharat));	// 427 call readcharat
 	R(CMP(bl, 'F'));	// 430 cmp bl, 'F'
 		R(JZ(i_ate_fruit));	// 431 je i_ate_fruit
 	R(MOV(cx, dx));	// 435 mov cx, dx
 	R(POP(dx));	// 436 pop dx
-	R(CMP(bl, '*'));	// 437 cmp bl, '*'    ;the snake bit itself, gameover
+	R(CMP(bl, '*'));	// 437 cmp bl, '*'
 		R(JZ(game_over));	// 438 je game_over
 	R(MOV(bl, 0));	// 439 mov bl, 0
 	R(CALL(kwritecharat));	// 440 call writecharat
-//R(RETN);	// 461 ret
 	R(MOV(dx, cx));	// 441 mov dx, cx
 	R(CMP(dh, top));	// 448 cmp dh, top
 		R(JZ(game_over));	// 449 je game_over
@@ -445,9 +423,7 @@ writecharat:
 	R(SHL(dx, 1));	// 565 shl dx,1
 	R(ADD(ax, dx));	// 566 add ax, dx
 	R(MOV(di, ax));	// 567 mov di, ax
-//	R(MOV(*(raddr(es,di)), bl));	// 568 mov es:[di], bl
-if (bl==0) bl=' ';
-{mvaddch(di/160, (di/2)%80, bl);refresh();}
+	R(MOV(*(raddr(es,di)), bl));	// 568 mov es:[di], bl
 	R(POP(dx));	// 569 pop dx
 	R(RETN);	// 570 ret
  // Procedure readcharat() start
@@ -471,8 +447,7 @@ readcharat:
 	R(SHL(dx, 1));	// 601 shl dx,1
 	R(ADD(ax, dx));	// 602 add ax, dx
 	R(MOV(di, ax));	// 603 mov di, ax
-//	R(MOV(bl, *(raddr(es,di))));	// 604 mov bl,es:[di]
-bl=mvinch(di/160, (di/2)%80)&A_CHARTEXT;
+	R(MOV(bl, *(raddr(es,di))));	// 604 mov bl,es:[di]
 	R(POP(dx));	// 605 pop dx
 	R(RETN);	// 606 ret
  // Procedure writestringat() start
@@ -500,10 +475,9 @@ loop_writestringat:
 	R(MOV(al, *(raddr(ds,bx))));	// 642 mov al, [bx]
 	R(TEST(al, al));	// 643 test al, al
 		R(JZ(exit_writestringat));	// 644 jz exit_writestringat
-//	R(MOV(*(raddr(es,di)), al));	// 645 mov es:[di], al
-//	R(INC(di));	// 646 inc di
-//	R(INC(di));	// 647 inc di
-{mvaddch(di/160, (di/2)%80, al); /*attroff(COLOR_PAIR(ah))*/;di+=2;refresh();}
+	R(MOV(*(raddr(es,di)), al));	// 645 mov es:[di], al
+	R(INC(di));	// 646 inc di
+	R(INC(di));	// 647 inc di
 	R(INC(bx));	// 648 inc bx
 		R(JMP(loop_writestringat));	// 649 jmp loop_writestringat
 exit_writestringat:
@@ -581,7 +555,7 @@ struct Memory m = {
 0, // gameover
 0, // quit
 5, // delaytime
-{0}, // padding
+{0,0,0,0,0}, // padding
 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // segment text
 
                 {0}
