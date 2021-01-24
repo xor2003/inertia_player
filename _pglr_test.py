@@ -86,6 +86,9 @@ def ptrdir(context, nodes):
     else:
         return [Token('ptrdir', nodes[0]), nodes[1]]
 
+def includedir(context, nodes, name):
+    print(str(name))
+    return nodes
 
 def asminstruction(context, nodes, instruction, args):
     global cur_segment
@@ -165,6 +168,7 @@ recognizers = {
 }
 
 actions = {
+    "includedir": includedir,
     "instrprefix": instrprefix,
     "macrodir": macro_action,
     "asminstruction": asminstruction,

@@ -11,7 +11,6 @@ from builtins import object
 from builtins import range
 from builtins import str
 
-import parglare
 from parglare import Grammar, Parser as PGParser
 
 import tasm.cpp
@@ -52,6 +51,16 @@ def escape(s):
         return escape(s.value)
     else:
         return s.translate(s.maketrans({"\\": r"\\"})).replace("''", "'").replace('""', '"')
+
+def read_asm_file(file_name):
+        logging.info("opening file %s..." % file_name)
+        if sys.version_info >= (3, 0):
+            fd = open(file_name, 'rt', encoding="cp437")
+        else:
+            fd = open(file_name, 'rt')
+        content = fd.read()
+        fd.close()
+        return content
 
 
 macroids = []
@@ -181,6 +190,11 @@ def datadir(context, nodes, label, type, values):
     logging.debug("datadir " + str(nodes) + " ~~")
     return context.extra.datadir_action(label.lower(), type, values)
 
+def includedir(context, nodes, name):
+    #context.parser.input_str = context.input_str[:context.end_position] + '\n' + read_asm_file(name) \
+    #+ '\n' + context.input_str[context.end_position:]
+    result = context.extra.parse_include_file_lines(name)
+    return result
 
 def segdir(context, nodes, type, name):
     logging.debug("segdir " + str(nodes) + " ~~")
@@ -314,6 +328,7 @@ def STRING(context, nodes):
 
 
 actions = {
+    "includedir": includedir,
     "instrprefix": instrprefix,
     "INTEGER": INTEGER,
     "LABEL": LABEL,
@@ -365,10 +380,10 @@ class ParglareParser(object):
             logging.debug("Allocated ParglareParser instance")
 
             file_name = os.path.dirname(os.path.realpath(__file__)) + "/_masm61.pg"
-            grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
+            cls._inst.grammar = Grammar.from_file(file_name, ignore_case=True, recognizers=recognizers)
             ## cls._inst.parser = PGParser(grammar, debug=True, debug_trace=True, actions=action.all)
             ## cls._inst.parser = PGParser(grammar, debug=True, actions=action.all)
-            cls._inst.parser = PGParser(grammar,
+            cls._inst.parser = PGParser(cls._inst.grammar,
                                         actions=actions)  # , build_tree = True, call_actions_during_tree_build = True)
 
         return cls._inst
@@ -500,15 +515,6 @@ class Parser:
     def get_offset(self, name):
         return self.__offsets[name.lower()]
 
-    def include(self, basedir, fname):
-        logging.info("file: %s" % fname)
-        # path = fname.split('\\')[self.strip_path:]
-        path = fname
-        # path = os.path.join(basedir, os.path.pathsep.join(path))
-        logging.info("including %s" % path)
-
-        self.parse_file(path)
-
     def eval(self, stmt):
         try:
             return self.parse_int(stmt)
@@ -596,7 +602,7 @@ class Parser:
         return s
 
     def get_global_value(self, v, base):
-        logging.info("get_global_value(%s)" % v)
+        logging.debug("get_global_value(%s)" % v)
         g = self.get_global(v)
         logging.debug(g)
         if isinstance(g, op._equ) or isinstance(g, op._assignment):
@@ -901,19 +907,6 @@ class Parser:
         '''
 
     def parse_file(self, fname):
-        logging.info("opening file %s..." % fname)
-        if sys.version_info >= (3, 0):
-            fd = open(fname, 'rt', encoding="cp437")
-        else:
-            fd = open(fname, 'rt')
-
-        self.parse_(fd, fname)
-
-        fd.close()
-
-        return self
-
-    def parse_(self, fd, fname):
         self.line_number = 0
         skipping_binary_data = False
         num = 0x1000
@@ -925,8 +918,7 @@ class Parser:
 
             self.c_data.append("{0}, // padding\n")
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // protective\n")
-        self.parse_file_lines(fd, fname, skipping_binary_data)
-
+        self.parse_file_lines(fname, skipping_binary_data)
         num = (0x10 - (self.__binary_data_size & 0xf)) & 0xf
         if num:
             l = num * ['0']
@@ -937,10 +929,16 @@ class Parser:
 
             self.c_data.append("{" + ",".join(l) + "}, // padding\n")
             self.h_data.append(" db " + labell + "[" + str(num) + "]; // padding\n")
+        return self
 
-    def parse_file_lines(self, fd, fname, skipping_binary_data):
-        self.parse_args_new_data(fd.read())
+    def parse_file_lines(self, file_name, skipping_binary_data):
+        content = read_asm_file(file_name)
+        self.parse_args_new_data(content, file_name=file_name)
         return
+
+    def parse_include_file_lines(self, file_name):
+        content = read_asm_file(file_name)
+        return self.parse_file_inside(content, file_name=file_name)
 
         '''
             elif cmd0l == 'assume':
@@ -1048,9 +1046,9 @@ class Parser:
         logging.debug("segment %s ends" % self.__segment)
         self.__segment = "default_seg"
 
-    def action_include(self, line):
-        cmd = line.split()
-        self.include(os.path.dirname(fname), cmd[1])
+    def action_include(self, name):
+        logging.info("including %s" % name)
+        self.parse_file(name)
 
     def action_endp(self):
         self.proc = self.get_global('mainproc')
@@ -1103,6 +1101,18 @@ end startd
     end startd
     ''').asminstruction.arg
         del self.__globals['default_seg']
+        return result
+
+    def parse_include(self, line, file_name=None):
+        parser = PGParser(self.__lex.grammar,
+                                    actions=actions)  # , build_tree = True, call_actions_during_tree_build = True)
+        result = parser.parse('''.model tiny
+    some_seg segment
+        ''' + line + '''
+    some_seg ends
+        end start
+        ''', file_name=file_name, extra=self)  # context = self.__pgcontext)
+        del self.__globals['some_seg']
         return result
 
     def datadir_action(self, name, type, args):
@@ -1171,68 +1181,19 @@ end startd
         # self.__pgcontext = PGContext(extra = self)
         self.__binary_data_size = 0
         self.__dummy_enum = 0  # one dummy number is used for "default_seg" creation
+        return self.parse_file_insideseg(text)
+
+    def parse_file_insideseg(self, text):
         return self.parse_args_new_data(text)[0][1][1][0].insegmentdir
 
-    def parse_args_new_data(self, text):
+    def parse_file_inside(self, text, file_name=None):
+        return self.parse_include(text, file_name)
+
+    def parse_args_new_data(self, text, file_name=None):
         logging.debug("parsing: [%s]" % text)
 
-        result = self.__lex.parser.parse(text, extra=self)  # context = self.__pgcontext)
+        result = self.__lex.parser.parse(text, file_name=file_name, extra=self)  # context = self.__pgcontext)
         # result = self.__lex.parser.call_actions(tree)
         logging.debug(str(result))
         return result
 
-    def parse_args(self, text):
-        return text
-
-    def parse_line_data(self, line):
-        cmd = line.split()
-        cmd1l = cmd[1].lower()
-        cmd0 = str(cmd[0])
-        cmd0 = cmd0.lower()
-        if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
-            name = cmd0
-            cmd0l = cmd0
-            name = re.sub(r'@', "arb", name)
-            arg = line[len(cmd0l):].strip()
-            arg = arg[len(cmd1l):].strip()
-            args = self.parse_args(arg)
-            return name, cmd1l, args
-        else:
-            arg = line[len(cmd0):].strip()
-            args = self.parse_args(arg)
-            return "", cmd0, args
-
-    def parse_line_data_new(self, line):
-        # logging.error(line)
-        cmd = line.split()
-        cmd1l = cmd[1].lower()
-        cmd0 = str(cmd[0])
-        cmd0 = cmd0.lower()
-        if cmd1l in ['db', 'dw', 'dd', 'dq', 'dt']:
-            name = cmd0
-            cmd0l = cmd0
-            arg = line[len(cmd0l):]
-            # arg = arg[len(cmd1l):].strip()
-            arg = name + " " + arg + '\n'
-            # logging.error(arg)
-            args = self.parse_args_new_data(line + '\n')
-            # logging.info(str(args))
-            # argg = args.values
-            # argg = [escape(i) for i in args.values]
-            # args.label = re.sub(r'@', "arb", args.label)
-            '''
-            j=[]
-            for i in argg:
-                if isinstance(i,list):
-                    i=" ".join(i)
-                j=j+[i]
-            argg = j
-            '''
-            # args = (args.label, args.type, argg)
-            return args
-        else:
-            # arg = line[len(cmd0):].strip()
-            args = self.parse_args_new_data(line + '\n')
-            # logging.error(args.values)
-            args = ("", args.type, args.values)
-            return args

@@ -119,7 +119,7 @@ class baseop(object):
     def parse_arg(self, arg):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
-        args = tasm.parser.Parser().parse_args(arg)
+        args = arg
         if len(args) > 0:
             return args[0]
         return ""
@@ -160,7 +160,7 @@ class _sub(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.dst, self.src = lex.parse_args(arg)
+        self.dst, self.src = arg
 
     def visit(self, visitor):
         return visitor._sub(self.dst, self.src)
@@ -170,7 +170,7 @@ class _mul(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.arg = lex.parse_args(arg)
+        self.arg = arg
 
     def visit(self, visitor):
         return visitor._mul(self.arg)
@@ -189,7 +189,7 @@ class _xor(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.dst, self.src = lex.parse_args(arg)
+        self.dst, self.src = arg
 
     def visit(self, visitor):
         return visitor._xor(self.dst, self.src)
@@ -409,7 +409,7 @@ class _lea(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.dst, self.src = lex.parse_args(arg)
+        self.dst, self.src = arg
 
     def visit(self, visitor):
         return visitor._lea(self.dst, self.src)
@@ -447,7 +447,7 @@ class _imul(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.arg = lex.parse_args(arg)
+        self.arg = arg
 
     def visit(self, visitor):
         return visitor._imul(self.arg)
@@ -457,7 +457,7 @@ class _movs(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.dst, self.src = lex.parse_args(arg)
+        self.dst, self.src = arg
 
     def visit(self, visitor):
         return visitor._movs(self.dst, self.src)
@@ -516,14 +516,14 @@ class _instruction2(baseop):
         # print "text %s" %text
         #               traceback.print_stack(file=sys.stdout)
         lex = tasm.parser.Parser()
-        self.dst, self.src = lex.parse_args(arg)
+        self.dst, self.src = arg
 
     def visit(self, visitor):
         return visitor._instruction2(self.cmd, self.dst, self.src)
 
 class _instruction3(baseop):
     def __init__(self, arg):
-        self.dst, self.src, self.c = tasm.parser.Parser().parse_args(arg)
+        self.dst, self.src, self.c = arg
 
     def visit(self, visitor):
         return visitor._instruction3(self.cmd, self.dst, self.src, self.c)
