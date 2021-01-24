@@ -419,6 +419,7 @@ class Parser():
         logging.debug("set_global(name='%s',value=%s)" % (name, stuff))
         if name in self.__globals:
             raise Exception("global %s was already defined", name)
+        value.used = False
         self.__globals[name] = value
 
     def dump_object(self, value):
@@ -452,6 +453,7 @@ class Parser():
             logging.debug("get_global KeyError %s" % (name))
             raise
         g.used = True
+        assert(self.__globals[name].used)
         return g
 
     def get_globals(self):
