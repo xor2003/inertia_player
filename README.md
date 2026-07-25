@@ -2,6 +2,8 @@
 
 A clean-room modernization of Inertia Player V1.22, preserving the original DOS program and reverse-engineering references alongside the modern SDL2/notcurses/libmikmod player and behavioral tests.
 
+![Inertia Player](iplay.png)
+
 ## Layout
 
 - `original/`: original executable, disassembly, listing, and translated reference output.
