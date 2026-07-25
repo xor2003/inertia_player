@@ -56,6 +56,7 @@ jobs:
           update: true
           install: >-
             make
+            p7zip
             mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-ucrt-x86_64-pkgconf
             mingw-w64-ucrt-x86_64-SDL2
@@ -78,7 +79,18 @@ jobs:
             awk 'index($3, "/ucrt64/bin/") { print $3 }' |
             sort -u |
             while read -r dll; do cp "$dll" "dist/$package/"; done
-          powershell.exe -NoProfile -Command "Compress-Archive -Force -Path 'dist/$package/*' -DestinationPath 'dist/$package.zip'"
+          (
+            cd "dist/$package"
+            7z a -tzip "../$package.zip" ./*
+          )
+          powershell.exe -NoProfile -Command "\
+            \$env:PATH=(Get-Location).Path + ';C:\\Windows\\System32'; \
+            \$env:SDL_AUDIODRIVER='dummy'; \
+            Set-Location 'dist/$package'; \
+            .\\iplay.exe --help; \
+            if (\$LASTEXITCODE -ne 0) { exit \$LASTEXITCODE }; \
+            .\\iplay.exe HACKER4.S3M --blocks=1 --sdl-audio; \
+            exit \$LASTEXITCODE"
           sha256sum "dist/$package.zip" > "dist/$package.zip.sha256"
       - uses: actions/upload-artifact@v4
         with:
