@@ -8,15 +8,51 @@
 #include <cstdio>
 #include <cstring>
 #include <csignal>
-#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include <sys/select.h>
-#include <termios.h>
 #include <algorithm>
 #include <string>
 #include <vector>
+#ifdef _WIN32
+#include <windows.h>
+#include <conio.h>
+#include <io.h>
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
+#define isatty _isatty
+typedef unsigned tcflag_t;
+struct termios {
+    tcflag_t c_lflag;
+    unsigned char c_cc[2];
+};
+struct winsize {
+    unsigned short ws_row;
+    unsigned short ws_col;
+};
+#define ICANON 1u
+#define ECHO 2u
+#define VMIN 0
+#define VTIME 1
+#define TCSANOW 0
+#define TIOCGWINSZ 0
+static int tcgetattr(int, struct termios *value) {
+    if (value) std::memset(value, 0, sizeof(*value));
+    return 0;
+}
+static int tcsetattr(int, int, const struct termios *) { return 0; }
+static int ioctl(int, int, struct winsize *size) {
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    if (!size || !GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info)) return -1;
+    size->ws_col = (unsigned short)(info.srWindow.Right - info.srWindow.Left + 1);
+    size->ws_row = (unsigned short)(info.srWindow.Bottom - info.srWindow.Top + 1);
+    return 0;
+}
+#else
+#include <sys/ioctl.h>
+#include <sys/select.h>
+#include <termios.h>
 #include <unistd.h>
+#endif
 
 struct AudioCapture {
     unsigned long calls;
@@ -567,6 +603,11 @@ static int native_audio_sink_open_sdl(NativeAudioSink *sink) {
 }
 
 static int native_stdin_read_byte(char *ch) {
+#ifdef _WIN32
+    if (!ch || !_kbhit()) return 0;
+    *ch = (char)_getch();
+    return 1;
+#else
     fd_set fds;
     struct timeval tv;
     int rc;
@@ -578,6 +619,7 @@ static int native_stdin_read_byte(char *ch) {
     rc = select(STDIN_FILENO + 1, &fds, 0, 0, &tv);
     if (rc <= 0 || !FD_ISSET(STDIN_FILENO, &fds)) return 0;
     return read(STDIN_FILENO, ch, 1) == 1;
+#endif
 }
 
 enum NativeKeyboardAction {

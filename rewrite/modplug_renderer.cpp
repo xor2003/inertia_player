@@ -5,7 +5,11 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 #include <vector>
 
 typedef void *(*OpenMptCreateFromMemoryFn)(const void *, std::size_t, void *, void *, const void *);
@@ -126,7 +130,30 @@ static bool read_file(const char *path, std::vector<unsigned char> *data) {
 
 template <typename Function>
 static Function openmpt_symbol(void *library, const char *name) {
+#ifdef _WIN32
+    return reinterpret_cast<Function>(GetProcAddress((HMODULE)library, name));
+#else
     return reinterpret_cast<Function>(dlsym(library, name));
+#endif
+}
+
+static void *native_library_open(const char *unix_name, const char *windows_name) {
+#ifdef _WIN32
+    (void)unix_name;
+    return (void *)LoadLibraryA(windows_name);
+#else
+    (void)windows_name;
+    return dlopen(unix_name, RTLD_NOW | RTLD_LOCAL);
+#endif
+}
+
+static void native_library_close(void *library) {
+    if (!library) return;
+#ifdef _WIN32
+    FreeLibrary((HMODULE)library);
+#else
+    dlclose(library);
+#endif
 }
 
 static void clear_stats(IplayModplugPcmStats *stats);
@@ -171,7 +198,7 @@ IplayMikmodPcmSource *iplay_mikmod_pcm_source_open_file(const char *path) {
     if (!path) return 0;
     source = new IplayMikmodPcmSource;
     std::memset(source, 0, sizeof(*source));
-    source->library = dlopen("libmikmod.so.3", RTLD_NOW | RTLD_LOCAL);
+    source->library = native_library_open("libmikmod.so.3", "libmikmod-3.dll");
     if (!source->library) {
         delete source;
         return 0;
@@ -206,7 +233,7 @@ IplayMikmodPcmSource *iplay_mikmod_pcm_source_open_file(const char *path) {
     md_sndfxvolume = openmpt_symbol<unsigned char *>(source->library, "md_sndfxvolume");
     md_pansep = openmpt_symbol<unsigned char *>(source->library, "md_pansep");
     md_reverb = openmpt_symbol<unsigned char *>(source->library, "md_reverb");
-    driver = dlsym(source->library, "drv_nos");
+    driver = openmpt_symbol<void *>(source->library, "drv_nos");
     if (!register_driver || !register_loaders || !init || !load || !start ||
         !source->exit_library || !source->player_stop || !source->player_free ||
         !source->player_active || !source->player_set_position || !source->player_get_order ||
@@ -215,7 +242,7 @@ IplayMikmodPcmSource *iplay_mikmod_pcm_source_open_file(const char *path) {
         !source->voice_get_volume || !source->voice_real_volume || !source->write_bytes ||
         !md_mode || !md_mixfreq || !md_device || !md_volume ||
         !md_musicvolume || !md_sndfxvolume || !md_pansep || !md_reverb || !driver) {
-        dlclose(source->library);
+        native_library_close(source->library);
         delete source;
         return 0;
     }
@@ -230,7 +257,7 @@ IplayMikmodPcmSource *iplay_mikmod_pcm_source_open_file(const char *path) {
     register_driver(driver);
     register_loaders();
     if (init(0) != 0) {
-        dlclose(source->library);
+        native_library_close(source->library);
         delete source;
         return 0;
     }
@@ -238,7 +265,7 @@ IplayMikmodPcmSource *iplay_mikmod_pcm_source_open_file(const char *path) {
     source->module = load(path, 64, 0);
     if (!source->module) {
         source->exit_library();
-        dlclose(source->library);
+        native_library_close(source->library);
         delete source;
         return 0;
     }
@@ -353,7 +380,7 @@ void iplay_mikmod_pcm_source_close(IplayMikmodPcmSource *source) {
     if (source->module && source->player_stop) source->player_stop();
     if (source->module && source->player_free) source->player_free(source->module);
     if (source->initialized && source->exit_library) source->exit_library();
-    if (source->library) dlclose(source->library);
+    native_library_close(source->library);
     delete source;
 }
 
@@ -417,7 +444,7 @@ static void clear_stats(IplayModplugPcmStats *stats) {
 static void openmpt_telemetry_open(IplayModplugRenderer *renderer) {
     OpenMptCreateFromMemoryFn create;
     if (std::getenv("IPLAY_DISABLE_OPENMPT_TELEMETRY")) return;
-    renderer->openmpt_library = dlopen("libopenmpt.so.0", RTLD_NOW | RTLD_LOCAL);
+    renderer->openmpt_library = native_library_open("libopenmpt.so.0", "libopenmpt-0.dll");
     if (!renderer->openmpt_library) return;
     create = openmpt_symbol<OpenMptCreateFromMemoryFn>(renderer->openmpt_library, "openmpt_module_create_from_memory");
     renderer->openmpt_destroy = openmpt_symbol<OpenMptDestroyFn>(renderer->openmpt_library, "openmpt_module_destroy");
@@ -432,7 +459,7 @@ static void openmpt_telemetry_open(IplayModplugRenderer *renderer) {
 
 static void openmpt_telemetry_close(IplayModplugRenderer *renderer) {
     if (renderer->openmpt_module && renderer->openmpt_destroy) renderer->openmpt_destroy(renderer->openmpt_module);
-    if (renderer->openmpt_library) dlclose(renderer->openmpt_library);
+    native_library_close(renderer->openmpt_library);
     renderer->openmpt_module = 0;
     renderer->openmpt_library = 0;
     renderer->openmpt_destroy = 0;

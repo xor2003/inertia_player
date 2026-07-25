@@ -61,6 +61,8 @@ jobs:
             mingw-w64-ucrt-x86_64-SDL2
             mingw-w64-ucrt-x86_64-SDL2_image
             mingw-w64-ucrt-x86_64-libmodplug
+            mingw-w64-ucrt-x86_64-libmikmod
+            mingw-w64-ucrt-x86_64-libopenmpt
             mingw-w64-ucrt-x86_64-notcurses
       - name: Build
         run: ./rewrite/build_native_player.sh
