@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef unsigned char db;
+typedef unsigned short dw;
+typedef unsigned long dd;
+
+typedef struct IplayRegs {
+    dd eax;
+    dd ebx;
+    dd ecx;
+    dd edx;
+    dd ebp;
+    dd esi;
+    dd edi;
+} IplayRegs;
+
+void iplay_eff_13e84(IplayRegs *r, db *channel, db byte_24668, db max_volume, db flag_playsettings);
+
+static db channel[0x40];
+static db input_playsettings;
+static db input_byte_24668;
+static db input_max_volume;
+static dw input_ax;
+static dw ret_ax;
+
+static int streq(const char *a, const char *b) {
+    return strcmp(a, b) == 0;
+}
+
+static void put_word(db *mem, unsigned off, dw value) {
+    mem[off] = (db)value;
+    mem[off + 1] = (db)(value >> 8);
+}
+
+void eff_13E84(void);
+#pragma aux eff_13E84 __parm __caller [] __modify __exact [__ax]
+void eff_13E84(void) {
+    IplayRegs r;
+
+    memset(&r, 0, sizeof(r));
+    r.eax = input_ax;
+    iplay_eff_13e84(&r, channel, input_byte_24668, input_max_volume, input_playsettings);
+
+    ret_ax = (dw)r.eax;
+    _asm {
+        mov ax, ret_ax
+    }
+}
+
+int main(int argc, char **argv) {
+    unsigned ax_after;
+    dw period;
+
+    if (argc != 12) return 2;
+    if (!streq(argv[1], "abieff13e84")) return 2;
+
+    memset(channel, 0, sizeof(channel));
+    period = (dw)strtoul(argv[2], 0, 0);
+    put_word(channel, 0, period);
+    channel[0x09] = (db)strtoul(argv[3], 0, 0);
+    channel[0x0c] = (db)strtoul(argv[4], 0, 0);
+    channel[0x0d] = (db)strtoul(argv[5], 0, 0);
+    input_playsettings = (db)strtoul(argv[6], 0, 0);
+    channel[0x08] = (db)strtoul(argv[7], 0, 0);
+    input_byte_24668 = (db)strtoul(argv[8], 0, 0);
+    input_max_volume = (db)strtoul(argv[9], 0, 0);
+    channel[0x34] = (db)strtoul(argv[10], 0, 0);
+    input_ax = (dw)strtoul(argv[11], 0, 0);
+
+    _asm {
+        mov ax, input_ax
+        call eff_13E84
+        mov ax_after, ax
+    }
+
+    printf("ax=%04x data=%02x%02x%02x%02x%02x%02x\n",
+           ax_after,
+           (unsigned)channel[0], (unsigned)channel[1],
+           (unsigned)channel[0x08],
+           (unsigned)channel[0x0c], (unsigned)channel[0x0d],
+           (unsigned)channel[0x34]);
+    return 0;
+}

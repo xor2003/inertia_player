@@ -1,0 +1,13 @@
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.o
+*.obj
+*.map
+*.log
+*.dll
+*.DLL
+rewrite/.build/
+RES.TXT
+!IPLAY.EXE
+!original/IPLAY.EXE
