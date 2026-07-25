@@ -50,6 +50,26 @@ Release archives are produced automatically by
 `.github/workflows/release.yml` when a `v*` tag is pushed. The workflow can
 also be run manually and given a release tag.
 
+### Android
+
+The Android frontend uses SDL2 and libxmp-lite. It opens the bundled
+`HACKER4.S3M` module and provides a system file picker plus large touch
+controls for seek backward, pause/resume, seek forward, visualization mode,
+volume down/up, and exit. The picker uses Android's Storage Access Framework,
+so it does not require broad storage permission. The default visualization is
+an F2-style ten-scope waveform view; the visualization button switches to a
+spectrum view and back.
+
+```bash
+cd android
+./prepare.sh
+gradle :app:assembleDebug
+```
+
+The build requires Android SDK 35, NDK `27.2.12479018`, CMake 3.22.1, JDK 17,
+and Gradle 8.10.2. GitHub Actions builds and verifies the APK automatically;
+local Android SDK installation is optional.
+
 ## Tests
 
 ```bash

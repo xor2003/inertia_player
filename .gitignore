@@ -8,6 +8,12 @@ __pycache__/
 *.dll
 *.DLL
 rewrite/.build/
+android/.gradle/
+android/vendor/
+android/app/.cxx/
+android/app/build/
+android/app/src/main/sdl-java/
+android/app/src/main/assets/
 RES.TXT
 !IPLAY.EXE
 !original/IPLAY.EXE

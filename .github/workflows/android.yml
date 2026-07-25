@@ -1,0 +1,44 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - "android/**"
+      - "samples/HACKER4.S3M"
+      - "iplay.png"
+      - ".github/workflows/android.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - name: Install Android components
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "ndk;27.2.12479018" "cmake;3.22.1"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+      - name: Prepare native dependencies and assets
+        run: ./android/prepare.sh
+      - name: Build debug APK
+        working-directory: android
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Verify APK contents
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -l android/app/build/outputs/apk/debug/app-debug.apk | grep 'lib/arm64-v8a/libmain.so'
+          unzip -l android/app/build/outputs/apk/debug/app-debug.apk | grep 'assets/HACKER4.S3M'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: InertiaPlayer-android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
