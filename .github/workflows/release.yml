@@ -75,7 +75,7 @@ jobs:
           mkdir -p "dist/$package"
           cp rewrite/.build/iplay.exe README.md iplay.png HACKER4.S3M aryx.s3m "dist/$package/"
           ldd rewrite/.build/iplay.exe |
-            awk '/\\/ucrt64\\/bin\\// { print $3 }' |
+            awk 'index($3, "/ucrt64/bin/") { print $3 }' |
             sort -u |
             while read -r dll; do cp "$dll" "dist/$package/"; done
           powershell.exe -NoProfile -Command "Compress-Archive -Force -Path 'dist/$package' -DestinationPath 'dist/$package.zip'"
