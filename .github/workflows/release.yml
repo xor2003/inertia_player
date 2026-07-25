@@ -78,7 +78,7 @@ jobs:
             awk 'index($3, "/ucrt64/bin/") { print $3 }' |
             sort -u |
             while read -r dll; do cp "$dll" "dist/$package/"; done
-          powershell.exe -NoProfile -Command "Compress-Archive -Force -Path 'dist/$package' -DestinationPath 'dist/$package.zip'"
+          powershell.exe -NoProfile -Command "Compress-Archive -Force -Path 'dist/$package/*' -DestinationPath 'dist/$package.zip'"
           sha256sum "dist/$package.zip" > "dist/$package.zip.sha256"
       - uses: actions/upload-artifact@v4
         with:
