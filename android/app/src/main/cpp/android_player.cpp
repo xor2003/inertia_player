@@ -47,6 +47,7 @@ Java_com_xor2003_inertiaplayer_MainActivity_nativeSetSelectedFile(
 struct Player {
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
+    SDL_Texture *background = nullptr;
     SDL_AudioDeviceID audio = 0;
     xmp_context module = nullptr;
     bool running = true;
@@ -55,6 +56,8 @@ struct Player {
     int volume = 80;
     int width = 1280;
     int height = 720;
+    int background_width = 0;
+    int background_height = 0;
     std::array<int16_t, kAudioFrames * kAudioChannels> pcm{};
     std::array<float, 64> spectrum{};
 };
@@ -136,6 +139,37 @@ void update_spectrum(Player &p) {
     }
 }
 
+void load_background(Player &p) {
+    JNIEnv *env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
+    jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
+    if (!env || !activity || !p.renderer) return;
+    jclass type = env->GetObjectClass(activity);
+    jmethodID load = env->GetStaticMethodID(type, "loadBackgroundPixels", "()[I");
+    jmethodID width = env->GetStaticMethodID(type, "backgroundWidth", "()I");
+    jmethodID height = env->GetStaticMethodID(type, "backgroundHeight", "()I");
+    jintArray pixels = load
+        ? static_cast<jintArray>(env->CallStaticObjectMethod(type, load))
+        : nullptr;
+    if (pixels && width && height) {
+        p.background_width = env->CallStaticIntMethod(type, width);
+        p.background_height = env->CallStaticIntMethod(type, height);
+        jint *data = env->GetIntArrayElements(pixels, nullptr);
+        if (data && p.background_width > 0 && p.background_height > 0) {
+            p.background = SDL_CreateTexture(p.renderer, SDL_PIXELFORMAT_ARGB8888,
+                SDL_TEXTUREACCESS_STATIC, p.background_width, p.background_height);
+            if (p.background) {
+                SDL_UpdateTexture(p.background, nullptr, data,
+                    p.background_width * (int)sizeof(jint));
+                SDL_SetTextureBlendMode(p.background, SDL_BLENDMODE_NONE);
+            }
+            env->ReleaseIntArrayElements(pixels, data, JNI_ABORT);
+        }
+        env->DeleteLocalRef(pixels);
+    }
+    env->DeleteLocalRef(type);
+    env->DeleteLocalRef(activity);
+}
+
 void queue_audio(Player &p) {
     if (p.paused || SDL_GetQueuedAudioSize(p.audio) > p.pcm.size() * sizeof(int16_t) * 4)
         return;
@@ -157,6 +191,18 @@ void render(Player &p) {
     SDL_RenderClear(p.renderer);
 
     const int controls_top = button_rect(p, 0).y - 12;
+    if (p.background && p.background_width > 0 && p.background_height > 0) {
+        const double scale = std::min(
+            (double)p.width / p.background_width,
+            (double)controls_top / p.background_height);
+        SDL_Rect destination{
+            (p.width - (int)(p.background_width * scale)) / 2,
+            (controls_top - (int)(p.background_height * scale)) / 2,
+            (int)(p.background_width * scale),
+            (int)(p.background_height * scale)
+        };
+        SDL_RenderCopy(p.renderer, p.background, nullptr, &destination);
+    }
     if (p.view == 0) {
         constexpr int scopes = 10;
         const int top = 18;
@@ -313,6 +359,7 @@ int main(int, char **) {
     p.renderer = SDL_CreateRenderer(p.window, -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!p.renderer) p.renderer = SDL_CreateRenderer(p.window, -1, SDL_RENDERER_SOFTWARE);
+    load_background(p);
 
     p.module = xmp_create_context();
     if (!p.window || !p.renderer || !p.module || !load_asset(p.module, "HACKER4.S3M"))
@@ -350,6 +397,7 @@ int main(int, char **) {
     xmp_end_player(p.module);
     xmp_release_module(p.module);
     xmp_free_context(p.module);
+    if (p.background) SDL_DestroyTexture(p.background);
     SDL_DestroyRenderer(p.renderer);
     SDL_DestroyWindow(p.window);
     SDL_Quit();

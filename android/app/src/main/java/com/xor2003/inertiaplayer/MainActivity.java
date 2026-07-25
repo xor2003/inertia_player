@@ -2,6 +2,8 @@ package com.xor2003.inertiaplayer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import org.libsdl.app.SDLActivity;
@@ -13,6 +15,8 @@ import java.io.InputStream;
 public final class MainActivity extends SDLActivity {
     private static final int OPEN_MODULE = 1201;
     private static MainActivity instance;
+    private static int backgroundWidth;
+    private static int backgroundHeight;
 
     private static native void nativeSetSelectedFile(String path);
 
@@ -34,6 +38,33 @@ public final class MainActivity extends SDLActivity {
             });
             activity.startActivityForResult(intent, OPEN_MODULE);
         });
+    }
+
+    public static int[] loadBackgroundPixels() {
+        final MainActivity activity = instance;
+        if (activity == null) return null;
+        try (InputStream input = activity.getAssets().open("iplay.png")) {
+            Bitmap bitmap = BitmapFactory.decodeStream(input);
+            if (bitmap == null) return null;
+            backgroundWidth = bitmap.getWidth();
+            backgroundHeight = bitmap.getHeight();
+            int[] pixels = new int[backgroundWidth * backgroundHeight];
+            bitmap.getPixels(pixels, 0, backgroundWidth, 0, 0,
+                    backgroundWidth, backgroundHeight);
+            bitmap.recycle();
+            return pixels;
+        } catch (Exception error) {
+            android.util.Log.e("InertiaPlayer", "Could not load background", error);
+            return null;
+        }
+    }
+
+    public static int backgroundWidth() {
+        return backgroundWidth;
+    }
+
+    public static int backgroundHeight() {
+        return backgroundHeight;
     }
 
     @Override

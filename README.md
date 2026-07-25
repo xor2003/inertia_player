@@ -58,7 +58,8 @@ controls for seek backward, pause/resume, seek forward, visualization mode,
 volume down/up, and exit. The picker uses Android's Storage Access Framework,
 so it does not require broad storage permission. The default visualization is
 an F2-style ten-scope waveform view; the visualization button switches to a
-spectrum view and back.
+spectrum view and back. The F2 view uses the packaged high-resolution
+`iplay.png` as an aspect-fitted background.
 
 ```bash
 cd android
