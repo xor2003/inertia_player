@@ -16,4 +16,4 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../../../../vendor/libxmp libxmp)
 add_library(main SHARED android_player.cpp)
 target_include_directories(main PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/../../../../vendor/libxmp/include)
-target_link_libraries(main PRIVATE SDL2 SDL2main xmp-lite log android)
+target_link_libraries(main PRIVATE SDL2 SDL2main xmp_shared log android)
