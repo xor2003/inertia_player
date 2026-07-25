@@ -218,7 +218,7 @@ void seek(Player &p, int delta) {
 
 void request_file_picker() {
     JNIEnv *env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
-    jobject activity = SDL_AndroidGetActivity();
+    jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
     if (!env || !activity) return;
     jclass type = env->GetObjectClass(activity);
     jmethodID method = env->GetStaticMethodID(type, "openModulePicker", "()V");
