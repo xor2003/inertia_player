@@ -1,0 +1,104 @@
+name: Build and release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag (for example v0.1.0)
+        required: true
+        default: v0.1.0
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libsdl2-dev libsdl2-image-dev libnotcurses-dev libmodplug-dev
+      - name: Build
+        run: ./rewrite/build_native_player.sh
+      - name: Smoke test
+        run: ./rewrite/.build/iplay --help
+      - name: Package
+        shell: bash
+        run: |
+          set -euo pipefail
+          package=InertiaPlayer-linux-x86_64
+          mkdir -p "dist/$package"
+          cp rewrite/.build/iplay README.md iplay.png HACKER4.S3M aryx.s3m "dist/$package/"
+          tar -C dist -czf "dist/$package.tar.gz" "$package"
+          (cd dist && sha256sum "$package.tar.gz" > "$package.tar.gz.sha256")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-release
+          path: |
+            dist/*.tar.gz
+            dist/*.sha256
+
+  windows:
+    runs-on: windows-2025
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            make
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-SDL2
+            mingw-w64-ucrt-x86_64-SDL2_image
+            mingw-w64-ucrt-x86_64-libmodplug
+            mingw-w64-ucrt-x86_64-notcurses
+      - name: Build
+        run: ./rewrite/build_native_player.sh
+      - name: Smoke test
+        run: ./rewrite/.build/iplay.exe --help
+      - name: Package
+        run: |
+          set -euo pipefail
+          package=InertiaPlayer-windows-x86_64
+          mkdir -p "dist/$package"
+          cp rewrite/.build/iplay.exe README.md iplay.png HACKER4.S3M aryx.s3m "dist/$package/"
+          ldd rewrite/.build/iplay.exe |
+            awk '/\\/ucrt64\\/bin\\// { print $3 }' |
+            sort -u |
+            while read -r dll; do cp "$dll" "dist/$package/"; done
+          powershell.exe -NoProfile -Command "Compress-Archive -Force -Path 'dist/$package' -DestinationPath 'dist/$package.zip'"
+          sha256sum "dist/$package.zip" > "dist/$package.zip.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: |
+            dist/*.zip
+            dist/*.sha256
+
+  release:
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*-release"
+          path: dist
+          merge-multiple: true
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Inertia Player $TAG" --notes "Native Ubuntu and Windows builds. Both archives include the player, background image, and sample modules."
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber dist/*
