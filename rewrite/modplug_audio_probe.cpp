@@ -35,6 +35,7 @@ struct winsize {
 #define VTIME 1
 #define TCSANOW 0
 #define TIOCGWINSZ 0
+#define realpath(path, resolved) _fullpath((resolved), (path), PATH_MAX)
 static int tcgetattr(int, struct termios *value) {
     if (value) std::memset(value, 0, sizeof(*value));
     return 0;
