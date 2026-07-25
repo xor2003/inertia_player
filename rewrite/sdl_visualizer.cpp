@@ -105,6 +105,7 @@ static void line(int x0, int y0, int x1, int y1, Uint32 color) {
 static bool load_f2_background(std::vector<Uint32> &pixels, int &width, int &height) {
     const char *override_path = std::getenv("IPLAY_F2_BACKGROUND");
     static const char *paths[] = {
+        "iplay.png",
         "rewrite/assets/iplay.png",
         "assets/iplay.png"
     };
